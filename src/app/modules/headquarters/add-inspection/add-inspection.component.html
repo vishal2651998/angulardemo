@@ -1,0 +1,286 @@
+<div *ngIf="loading" class="loading-small-screen-scroll trst" style="left:50% !important">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+
+<div class="wrapper" *ngIf="!selectedLocationsFlag && !loading">
+
+    <div id="content" class="container-fluid">
+        <div id="header">
+            <div class="prob-header row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0">
+                <div class="header-row">
+                    <span class="new-text">New Audit/Inspection</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="prob-new">
+            <div class="row new-pro-cont col-lg-8 col-xl-8 step1">
+                <div class="form-cont col-lg-12">
+                    <form [formGroup]="inspectionForm" class="form-horizontal">
+                        <div class="new-prob-head">
+                            <div class="new-col title">
+                                New Audit/Inspection
+                            </div>
+                            <div class="new-col actions">
+                                <div (click)="submit('cancel')" class="btn cancel">Cancel <img src="assets/images/parts/cancel-icon.png" />
+                                </div>
+        
+                                <div *ngIf="isPublished == '1'" class="btn next draft" (click)="submit('draft')">
+                                    Save Draft <img src="../../../../assets/images/parts/save-draft.png" width="15" height="15"/>
+                                </div>
+        
+                                <div class="btn" (click)="submit('publish')"  [ngClass]="selectedShops.length != 0 ? 'publish' : 'publish-disabled'">
+                                    {{isPublished == '2' ? 'Update' : 'Publish'}} <img style="width: 16px;height: 15px;" src="assets/images/parts/publish.png" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div [style.height.px]="innerHeight-100" >
+                            <div class="ps form-fields" [perfectScrollbar]="sconfig">
+                                <div class="form-items">
+                                    <div class="prob-form-row">
+                                        <!-- <div  class="form-col upload-col">
+                                            <span *ngIf="!imageData && !imageData?.show && !imageData?.logoUrl" (click)="uploadLogo()" class="prob-upload prob-upload-new">
+                                                <a  class="browse-button"></a>
+                                                <input style="display: none" type="file" accept='image/*'
+                                                     #selectFile />
+                                                <span class="upload-txt">Upload Banner Image</span>
+                                            </span>
+                                            <img (click)="uploadLogo()" class="cursor-pointer"
+                                            style="border-radius: 8px; width: 100%; height: 100%;object-fit: fill;"
+                                            *ngIf="imageData && imageData?.logoUrl" [src]="imageData?.logoUrl">
+                                        <img class="cursor-pointer" *ngIf="imageData && imageData?.show"
+                                            [src]="imageData?.show"
+                                            style="border-radius: 8px;width: 100%; height: 100%;object-fit: fill;">
+                                        <div *ngIf="(imageData && imageData?.show) || (imageData && imageData?.logoUrl)"
+                                            class="action-box position-absolute d-flex align-items-center">
+                                            <span (click)="uploadLogo()" class="edit action"></span>
+                                            <span (click)="deleteLogo()" class="delete action"></span>
+                                        </div>
+                                        </div> -->
+
+                                        <div class="form-col upload-col col-3 pr-2" style="position: relative; height: 172px;">
+                                            <span *ngIf="!imageData && !imageData?.show && !imageData?.logoUrl"
+                                                (click)="uploadLogo()" class="prob-upload prob-upload-new">
+                                                <a class="browse-button"></a>
+                                                <input style="display: none" type="file" accept='image/*' #selectFile />
+                                                <span class="upload-txt">Upload Banner Image</span>
+                                            </span>
+
+                                            <img (click)="uploadLogo()" class="cursor-pointer"
+                                                style="border-radius: 8px; max-width: 100%; max-height: 100%;object-fit: fill;"
+                                                *ngIf="imageData && imageData?.logoUrl" [src]="imageData?.logoUrl">
+                                            <img class="cursor-pointer" *ngIf="imageData && imageData?.show"
+                                                [src]="imageData?.show"
+                                                style="border-radius: 8px;max-width: 100%; max-height: 100%;object-fit: fill;">
+                                            <div *ngIf="(imageData && imageData?.show) || (imageData && imageData?.logoUrl)"
+                                                class="action-box position-absolute d-flex align-items-center">
+                                                <span (click)="uploadLogo()" class="edit action-1"></span>
+                                                <span (click)="deleteLogo()" class="delete action-1"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-col field-col">
+                                            <div class="row mb-23">
+                                                <div class="col-md-12" [ngClass]="submitted && inspectionForm && !!inspectionForm?.controls && !!inspectionForm?.controls['typeId'] && !!inspectionForm?.controls['typeId'].errors && !!inspectionForm?.controls['typeId'].errors.required ? 'input-error' : ''">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new wft-bg">Type</span>
+                                                            <span class="label-col required  required-txt">Required</span>
+                                                        </div>
+                                                        <p-dropdown [filter]="true" [options]="typesList" formControlName="typeId" optionLabel="name" optionValue="id" class="p-dropdown-aud cursor"  placeholder="Select" ></p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-23">
+                                                <div class="col-md-12" [ngClass]="submitted && inspectionForm && !!inspectionForm?.controls && !!inspectionForm?.controls['title'] && !!inspectionForm?.controls['title'].errors && !!inspectionForm?.controls['title'].errors.required ? 'input-error' : ''">
+                                                    <div class="prob-form-control input-filed">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new inspection-bg">Title</span>
+                                                            <span class="label-col required required-txt">Required</span>
+                                                        </div>
+                                                        <input formControlName="title" type="text" class="p-input-aud w-100 input" placeholder="Title">
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                        </div>
+                                    </div>
+
+                                    
+
+                                    <div class="prob-form-row">
+
+                                        <div class="form-col field-col">
+                                            <div class="row mb-28">
+                                                <div class="col-md-6 pl-0">
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-7 " [ngClass]="submitted && inspectionForm && !!inspectionForm?.controls && !!inspectionForm?.controls['networkId'] && !!inspectionForm?.controls['networkId'].errors && !!inspectionForm?.controls['networkId'].errors.required ? 'input-error' : ''">
+                                                            <div class="prob-form-control">
+                                                                <div class="field-label split">
+                                                                    <span class="label-col part-label aud-label-new nt-bg">Network</span> 
+                                                                    <span class="label-col required  required-txt">Required</span>                                                          
+                                                                </div>
+                                                                <p-dropdown [disabled]="selectedNetworkId" [options]="networkList" formControlName="networkId" (onChange)="eventChanged('networkId', $event)"  optionLabel="name" optionValue="id" class="p-dropdown-aud" placeholder="Select"></p-dropdown>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-5 pl-0 flex-inline-end cursor" (click)="selectLocation()">
+                                                            <div  class="green-aid-btn">
+                                                                <img src="../../../../assets/images/common/map-green.png">
+                                                                <span>Select locations</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row " *ngIf="selectedLocationsDisplay">
+                                                        <div class="col-md-6">
+                                                            <div class="select-temp">
+                                                                <div class="aud-col1 aud-bg-icon loc-icon"></div>
+                                                                <div class=" aud-col2">
+                                                                    <div class=" aud-ins-text-1">Selected Locations </div>
+                                                                    <div class="aud-text-2">
+                                                                        <div class="inline-text"><div class="inline-text green-text green-text-20">{{selectedShops.length}}&nbsp;</div><span (click)="selectLocation()" class="link-text">View</span></div>
+                                                                    </div>                                    
+                                                                </div> 
+                                                            </div> 
+                                                        </div>
+                                                        <div class="col-md-6"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6  pr-0" [ngClass]="submitted && inspectionForm && !!inspectionForm?.controls && !!inspectionForm?.controls['templates'] && !!inspectionForm?.controls['templates'].errors && !!inspectionForm?.controls['templates'].errors.required ? 'input-error' : ''">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new template-bg">Template</span>
+                                                            <span class="label-col required required-txt">Required</span>
+                                                        </div>
+                                                        <div >
+                                                            <p-dropdown  [options]="[{id:templateSelectedId,name:templateSelectedName}]" optionLabel="name" optionValue="id"  formControlName="templates" (click)="manageList('dekra-template')" class="p-dropdown-aud no-dropdown cursor" placeholder="Select Template" ></p-dropdown>
+                                                        </div>  
+                                                        <div class="row mt-3" *ngIf="templateSelect && templateSelect.length>0">
+                                                            <div class="col-md-6 pr-0">                                                      
+                                                                <div class="select-temp">
+                                                                    <div class="aud-col1 aud-bg-icon gts-green-icon"></div>
+                                                                    <div class=" aud-col2">
+                                                                        <div class=" aud-ins-text-1">No. Of Sections </div>
+                                                                        <div class="aud-text-2">
+                                                                            <div class="inline-text"><div class="inline-text green-text green-text-20">{{templateSelect[0].secs}}&nbsp;</div></div>
+                                                                        </div>                                    
+                                                                    </div> 
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="select-temp">
+                                                                    <div class="aud-col1 aud-bg-icon qs-icon"></div>
+                                                                    <div class=" aud-col2">
+                                                                        <div class=" aud-ins-text-1">No. of Questions </div>
+                                                                        <div class="aud-text-2">
+                                                                            <div class="inline-text"><div class="inline-text  green-text green-text-20">{{templateSelect[0].qs}}</div></div>
+                                                                        </div>                                    
+                                                                    </div> 
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row mb-28">
+                                                <div class="col-md-6  pl-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new clock-bg">How often is this <span class="green-text">“{{selectedTitle}}”</span> conducted?</span>                                                           
+                                                        </div>
+                                                        <p-dropdown formControlName="inspectionTime" [options]="condOption" optionLabel="name" optionValue="id"  class="p-dropdown-aud" placeholder="Select">
+                                                    </p-dropdown>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6  pr-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new clock-bg">Total time from Communication to Completion</span>                                                           
+                                                        </div>
+                                                        <p-dropdown formControlName="totalTime" [options]="completeOption" optionLabel="name" optionValue="id"  class="p-dropdown-aud" placeholder="Select">
+                                                    </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-28">
+                                                <div class="col-md-3  pl-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new calendar-bg">Start Date</span>                                                           
+                                                        </div>
+                                                        <p-calendar [(ngModel)]="startDate" [minDate] = today formControlName="startDate" class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" placeholder="Select Date" dateFormat="M dd, yy" styleClass="inline-block date-box"></p-calendar> 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 pl-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new calendar-bg">Completion deadline</span>                                                           
+                                                        </div>
+                                                        <p-calendar formControlName="completionDeadline" [minDate]="startDate" class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" placeholder="Select Date" dateFormat="M dd, yy" styleClass="inline-block date-box"></p-calendar> 
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 pr-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new user-bg">Dekra owner</span>                                                           
+                                                        </div>
+                                                        <input formControlName="dekraOwner" type="text" placeholder="Dekra owner" class="p-input-aud"  />
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3   pr-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new user-bg">Network owner</span>                                                           
+                                                        </div>
+                                                        <input formControlName="customerOwner" type="text" placeholder="Network owner" class="p-input-aud" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-28">
+                                                <div class="col-md-12  p-0">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span class="label-col part-label aud-label-new tag-bg">Tag</span>                                                           
+                                                        </div>
+                                                        <div >
+
+                                                            <p-dropdown (click)="manageList('tags')" formControlName="tags" 
+                                                            class="p-dropdown-aud no-dropdown"                                                       
+                                                         placeholder="Select Tag"  [options]="[{id:tagSelectedId,name:tagSelectedName}]" optionLabel="name" optionValue="id">
+                                                    </p-dropdown>
+                                                            
+                                                        </div>
+                                                        <div class="row tag-box m-0 mt-3 p-0" *ngIf="tagSelectedName && tagSelectedName.length > 0">
+                                                            <div class="tag-box-data" *ngFor="let name of tagSelectedName; let t=index">
+                                                                <div class="d-flex align-items-center">
+                                                                    <span class="fs-12 mr-2">{{name}}</span>
+                                                                    <img class="cursor" (click)="removeSelection(t)" src="assets/images/close-icon.png" alt=""
+                                                                        role="button" height="10" width="10" title="Remove">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        
+        </div>
+    </div>
+</div>
+<div *ngIf="selectedLocationsFlag">
+    <app-inspection-location-list [selectionData]="selectionData" [selectedLocationList]="selectedShops" (saveData)="saveData($event)"></app-inspection-location-list>
+</div>
+
+

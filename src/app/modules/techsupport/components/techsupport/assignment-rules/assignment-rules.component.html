@@ -1,0 +1,460 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="prob-index">
+    <div class="probing-content">
+       
+        <div class="escalationv2-list-head ">
+          <div class="prob-head-col head-col-1 text-left">
+            <span>
+            <img
+                class="head-img"
+                src="assets/images/escalations/tech-support-assignment-rule.png"
+            />
+            </span>
+            <span class="head-title">
+            Tech Support Assignment Rules
+            </span>            
+
+            <!--span *ngIf="!addednewProduct" class="cursor thread-add-new" (click)="newMatrix($event)">
+                <span><i class="pi pi-plus" style="font-size: 13px; margin-right: 4px;"></i></span>
+                <span>Add New</span>
+            </span-->
+            </div>
+            <div class="prob-head-col head-col-2 text-right">
+              <span *ngIf="notesUpdatedByName != ''" class="rt-cont-sp">
+                <img src="assets/images/customers/notes-date-icon.png"/>
+                <span class="rt-cont-label">&nbsp;&nbsp;Last modified:&nbsp;</span> 
+                <span class="rt-cont-text">{{notesUpdatedOnDate}}&nbsp;by&nbsp;{{notesUpdatedByName}}</span>  
+              </span>
+              <span
+                *ngIf="publishbutton"
+                class="tab tab-5 action-col"
+                (click)="cancelAssignmentRules()"
+                >Cancel <span class="cancel-btn"></span
+              ></span>
+              <span
+                *ngIf="publishbutton"
+                class="tab tab-6 action-col"
+                (click)="saveAssignmentRules(true)"
+              >
+                Save
+                <span class="submit-btn"> </span>
+              </span>
+
+              <!--
+                  <span [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || matrixActionFlag), 'show': (headerCheck == 'unchecked' || loading)}">
+                    <span *ngIf="!publishbutton" class="action-col cursor edit-make" (click)="editMake()">Edit Make</span>
+                </span>
+                -->
+            </div>
+
+        </div>
+        
+        <div class="prob-list-cont prob-list-cont-escalation" [ngClass]="{ 'es-no-item-new-div' : ItemEmpty }" [style.height.px]="emptyHeight">
+            
+            <div *ngIf="loading" class="loading-small-screen-scroll" align="center">
+                <img src="assets/images/loading.svg" alt="Loader" />
+            </div>
+        
+            <div *ngIf="!initLoading && !ItemEmpty">
+            <p-table 
+            [value]="productsList"               
+            [styleClass]="
+            'p-datatable-sm p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+            "
+            [columns]="cols"            
+            [autoLayout]="true"
+            [scrollable]="true"
+            [lazy]="true"
+            [scrollHeight]="innerHeightFix"
+            (onRowReorder)="onRowReorder($event)"
+            [totalRecords]="itemTotal"
+            >
+                <ng-template pTemplate="header" let-columns >
+                    <tr >   
+                        <th class="tech-sticky-col tech-col-1"></th>                     
+                        <th *ngFor="let col of columns" class="{{col.columnpclass}}">
+                            <span *ngIf="col.field=='resize'">&nbsp;</span>
+                            <span *ngIf="col.field!='resize'" class=""></span>{{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template 
+                pTemplate="body" 
+                let-productsList
+                let-rowData 
+                let-columns="columns" 
+                let-index="rowIndex">
+                    <tr 
+                    [pReorderableRow]="index" 
+                     class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.newmatrix }}"
+                      [ngClass] = " { 'disableClass' : productsList.isActive=='0'  } "
+
+                    >
+                    <td class="tech-sticky-col tech-col-1">
+                        <span class="pi pi-bars reorder-bg-image" pReorderableRowHandle></span>
+                    </td>
+
+                        <td 
+                             #ptabletdata
+                            class="{{ col.columnpclass }}  oneclassstep font-email"
+                            pEditableColumn
+                            *ngFor="let col of columns" class="{{col.columnpclass}}">
+                      
+                            <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+                            <ng-container *ngTemplateOutlet="inputtype3"> </ng-container>
+                            <ng-container *ngTemplateOutlet="inputtype4"> </ng-container>
+                            
+                            <ng-template #inputtype2>
+                              <div *ngIf="col.inputType == '2'">                                
+                              <div *ngIf="col.headerId == '3'" [class]="'overflowclassdash'">
+                                <!--<p-cellEditor>
+                                  <ng-template pTemplate="input">
+                                    <p-dropdown
+                                      [id]="
+                                        'product_options' + productsList.id + col.headerId
+                                      "
+                                      [filter]="true"
+                                      (onChange)="
+                                        onChangeOption(
+                                          $event,
+                                          productsList,
+                                          col.headerId,
+                                          col.columnName,
+                                          index
+                                        )
+                                      "
+                                      filterBy="name"
+                                      [placeholder]="'Select'"
+                                      appendTo="body"                                        
+                                      [options]="priorityLists"
+                                      optionLabel="name"
+                                      [(ngModel)]="rowData[col.field]"
+                                      dataKey="name"
+                                      class="input-with-icon-inside-select {{
+                                        productsList.isPredefined
+                                      }}  mat-typography"
+                                    ></p-dropdown>
+                                  </ng-template>
+                
+                                  <ng-template class="text-center" pTemplate="output">
+                                    -->
+                                    <span class="cursor"
+                                      [id]="
+                                        'product_options' + productsList.id + col.headerId
+                                      "
+                                      *ngIf="rowData[col.field]?.name"
+                                    >
+                                      {{ rowData[col.field].name }}
+                                    </span>
+                                    <span *ngIf="!rowData[col.field]?.name">
+                                      <span class="cursor"
+                                        [id]="
+                                          'product_options' +
+                                          productsList.id +
+                                          col.headerId
+                                        "
+                                        *ngIf="rowData[col.field]"
+                                        >{{ rowData[col.field] }}</span
+                                      >
+                                      <span class="cursor"
+                                        [id]="
+                                          'product_options' +
+                                          productsList.id +
+                                          col.headerId
+                                        "
+                                        *ngIf="!rowData[col.field]"
+                                        >Select</span
+                                      >
+                                    </span>
+                                    <!--
+                                    <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                  </ng-template>
+                                </p-cellEditor>-->
+                              </div>
+                              <div *ngIf="col.headerId == '4'" [class]="'overflowclassdash'">
+                                <p-cellEditor>
+                                  <ng-template pTemplate="input">
+                                    <p-dropdown
+                                      [id]="
+                                        'product_options' + productsList.id + col.headerId
+                                      "
+                                     
+                                      (onChange)="
+                                        onChangeOption(
+                                          $event,
+                                          productsList,
+                                          col.headerId,
+                                          col.columnName,
+                                          index
+                                        )
+                                      "
+                                    
+                                      [placeholder]="'Select'"
+                                      appendTo="body"                                        
+                                      [options]="productsList.optionNameListsArr"
+                                      
+                                      [(ngModel)]="rowData[col.field]"
+                                      
+                                      class="input-with-icon-inside-select {{
+                                        productsList.isPredefined
+                                      }}  mat-typography"
+                                    ></p-dropdown>
+                                  </ng-template>
+                
+                                  <ng-template class="text-center" pTemplate="output">
+                                    
+                                    <span class="cursor"
+                                      [id]="
+                                        'product_options' + productsList.id + col.headerId
+                                      "
+                                      *ngIf="rowData[col.field]?.name"
+                                    >
+                                      {{ rowData[col.field].name }}
+                                    </span>
+                                    <span *ngIf="!rowData[col.field]?.name">
+                                      <span class="cursor"
+                                        [id]="
+                                          'product_options' +
+                                          productsList.id +
+                                          col.headerId
+                                        "
+                                        *ngIf="rowData[col.field]"
+                                        >{{ rowData[col.field] }}</span
+                                      >
+                                      <span class="cursor"
+                                        [id]="
+                                          'product_options' +
+                                          productsList.id +
+                                          col.headerId
+                                        "
+                                        *ngIf="!rowData[col.field]"
+                                        >Select</span
+                                      >
+                                    </span>
+                                    <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                  </ng-template>
+                                </p-cellEditor>
+                              </div>
+                              <div *ngIf="col.headerId == '12'" [class]="'overflowclassdash'">
+                                <p-cellEditor>
+                                  <ng-template pTemplate="input">
+                                    <p-dropdown
+                                      [id]="
+                                        'product_options' + productsList.id + col.headerId
+                                      "
+                                      [filter]="true"
+                                      (onChange)="
+                                        onChangeOption(
+                                          $event,
+                                          productsList,
+                                          col.headerId,
+                                          col.columnName,
+                                          index
+                                        )
+                                      "
+                                      filterBy="name"
+                                      [placeholder]="'Select'"
+                                      appendTo="body"                                        
+                                      [options]="statusLists"
+                                      optionLabel="name"
+                                      [(ngModel)]="rowData[col.field]"
+                                      dataKey="name"
+                                      class="input-with-icon-inside-select {{
+                                        productsList.isPredefined
+                                      }}  mat-typography"
+                                    ></p-dropdown>
+                                  </ng-template>
+                
+                                  <ng-template class="text-center" pTemplate="output">
+                                    
+                                    <span class="cursor"
+                                    [ngClass]="{ 'rules-red-text' : rowData[col.field].name=='Disabled' }"
+                                    [id]="
+                                      'product_options' + productsList.id + col.headerId
+                                    "
+                                    *ngIf="rowData[col.field]?.name"
+                                  >
+                                    {{ rowData[col.field].name }}
+                                  </span>
+                                  <span *ngIf="!rowData[col.field]?.name">
+                                    <span class="cursor"
+                                    [ngClass]="{ 'rules-red-text' : rowData[col.field]=='Disabled' }"
+                                      [id]="
+                                        'product_options' +
+                                        productsList.id +
+                                        col.headerId
+                                      "
+                                      *ngIf="rowData[col.field]"
+                                      >{{ rowData[col.field] }}</span
+                                    >
+                                      <span class="cursor"
+                                        [id]="
+                                          'product_options' +
+                                          productsList.id +
+                                          col.headerId
+                                        "
+                                        *ngIf="!rowData[col.field]"
+                                        >Select</span
+                                      >
+                                    </span>
+                                    <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                  </ng-template>
+                                </p-cellEditor>
+                              </div> 
+                              </div>
+                              </ng-template>
+
+                              <ng-template #inputtype3>
+                              
+                                <div *ngIf="col.inputType == '3'">
+                                  <div [class]="'overflowclassdash'" [ngClass]="{ 'workstreamcol' : col.headerId == '2' }" >
+                                    <div
+                                    title="{{rowData[col.field]}}"
+                                    class="cursor"
+                                    [id]="'product_options' + productsList.id + col.headerId"
+                                    (click)="
+                                      manageOption(
+                                        rowData[col.field],
+                                        productsList,
+                                        col.headerId,
+                                        col.columnName,
+                                        index
+                                      )
+                                    "
+                                    *ngIf="rowData[col.field].length>0"
+                                  >
+                                      <span class="font-email font-email-edit-c2">
+                                          {{rowData[col.field]}}
+                                      </span>
+                                      <span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+                
+                
+                                  </div>
+                                  <div
+                                    class="cursor"
+                                    [id]="'product_options' + productsList.id + col.headerId"
+                                    *ngIf="rowData[col.field].length==0"
+                                    (click)="
+                                      manageOption(
+                                        rowData[col.field],
+                                        productsList,
+                                        col.headerId,
+                                        col.columnName,
+                                        index)"
+                                  >
+                                  <div *ngIf="(col.headerId == '5' && productsList.optionType!='4') ||  col.headerId != '5'" class="font-email cursor">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div *ngIf="col.headerId == '5' && productsList.optionType=='4' " class="font-email">Any<!--span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span--></div>
+                                  </div>
+                                  </div> 
+                                </div>
+                              </ng-template>
+
+                              <ng-template #inputtype4 [class]="'overflowclassdash'">                              
+                                
+                                <div [id]="'product_options' + productsList.id + col.headerId" class="escalation-email-div" *ngIf="col.inputType == '4' && rowData[col.field]">
+
+                                  <div class="escalation-email-data cursor" 
+                                  *ngIf="rowData[col.field][0]" 
+                                    (click)="managePreference('new', productsList, col.field, col.headerId)">
+                                    <div class="escalation-email-profile">
+                                      <img [src]="rowData[col.field][0].profileImg">
+                                      <!--<span class="availability availability-status1"></span>-->
+                                    </div>
+                                    <div class="escalation-email-text">
+                                      <div ><span class="font-email font-email-edit-c1" [title]="rowData[col.field][0].email">{{ rowData[col.field][0].email }}</span><span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                      <div class="font-role" *ngIf="rowData[col.field][0].role">{{ rowData[col.field][0].role }}</div>
+                                      <div class="font-role" *ngIf="!rowData[col.field][0].role">No title</div>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="escalation-email-data cursor" 
+                                  *ngIf="!rowData[col.field][0]" 
+                                    (click)="managePreference('new', productsList, col.field, col.headerId)">
+                                   
+                                    <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p1esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p2esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p3esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p4esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p5esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                        
+
+                                    </div>
+                                    
+                                </div>
+
+                                <div [id]="'product_options' + productsList.id + col.headerId" 
+                                *ngIf="col.inputType == '4' && !rowData[col.field]"                                
+                                (click)="managePreference('new', productsList, col.field, col.headerId)" > 
+                                                            
+                                 <div *ngIf="productsList.id != '' ">
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p1esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p2esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p3esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p4esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p5esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                        
+                                 </div>
+                                 
+                                </div>
+
+                                <div [id]="'product_options' + productsList.id + col.headerId" 
+                                *ngIf="col.inputType == '4' && !rowData[col.field]"                                
+                                (click)="managePreference('new', productsList, col.field, col.headerId)" > 
+                                                            
+                                 <div *ngIf="productsList.id != '' ">
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p1esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p2esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p3esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p4esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor unassigned-text" *ngIf="col.field == 'p5esc'">Unassigned<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                        
+                                 </div>
+                                 <div *ngIf="productsList.id == ''">
+                                  <div class="font-email cursor" *ngIf="col.field == 'p1esc'">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor" *ngIf="col.field == 'p2esc'">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor" *ngIf="col.field == 'p3esc'">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor" *ngIf="col.field == 'p4esc'">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                  <div class="font-email cursor" *ngIf="col.field == 'p5esc'">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                </div>
+                                </div>
+                
+                              </ng-template>
+
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            </div>
+
+            <div *ngIf="!initLoading && ItemEmpty"  >
+              <div *ngIf="displayNoRecords == '1'" class="es-no-item-list-new-div"> 
+                <div class="es-no-item-list">
+                  <div class="es-no-item-container">
+                    <div class="es-no-item-width">
+                    <img width="225" src="assets/images/escalations/no-escalation.png" alt="no-escalation" />
+                  </div>
+                    <p class="es-item-text">Get started by tapping on "Add New".</p>
+                    <span class="es-add-new" (click)="newMatrix($event)">Add New</span>
+                  
+                </div>
+                </div>   
+              </div>
+             
+              <div *ngIf="displayNoRecords == '2'" class="es-no-item-list-new-div"> 
+                <div class="es-no-item-list">
+                  <div class="es-no-item-container">
+                    <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                    <p class="es-no-item-text">No result found</p>              
+                  </div>
+                </div>   
+              </div>
+            
+            </div>
+
+        </div>
+        
+    </div>
+</div>

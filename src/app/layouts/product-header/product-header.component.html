@@ -1,0 +1,617 @@
+<div class="head-row head-brand notification-warning-header"
+  [ngClass]="{'hide': access == 'manageThread' || access == 'managePart' || access == 'manageSib' || access == 'manageKnowledgearticles'}">
+  <div class="push-msg" *ngIf="!apiUrl.newupdateRefresh && (!isIncognitoBrowser && (definedNotifyText || enableDesktopPush))">
+    <div class="push-enablepopup text-center">
+      <div *ngIf="!definedNotifyText && enableDesktopPush">
+        <span><img style="margin-right: 4px" src="assets/images/landing-page/notify-normalone.png" /></span>
+        Please
+        <span class="hilight-text cursor" (click)="notifyPopupScreen('top-left')">Turn ON Notifications</span>
+        to stay informed about your {{ platformName }} activity
+      </div>
+      <div *ngIf="definedNotifyText">
+        <span><img style="margin-right: 4px" src="assets/images/landing-page/notify-normalone.png" /></span>
+        Please
+        <span class="hilight-text cursor" (click)="notifyPopupScreen('top-left')">Turn ON Notifications</span>
+        to stay informed about your {{ platformName }} activity
+      </div>
+    </div>
+  </div>
+  <div class="push-msg" style="background:#fa712d;" *ngIf="apiUrl.newupdateRefresh">
+    <div class="push-enablepopup text-center">
+      <div>
+        <span><img style="margin-right: 8px;height: 18px;" src="assets/images/landing-page/tapon-refresh.png" /></span>
+        New updates to the website are available.
+        <span class="hilight-text cursor" (click)="refreshPopupScreen()">Tap here to refresh the page</span>
+        . Make sure to save or post your changes before refreshing the page.
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="showItemheader" class="prob-header d-flex align-items-center justify-content-between flex-wrap">
+  <div class="head-row head-brand" [ngClass]="{ 'col-lg-9 col-md-9 col-lg-9 paddingRt0 paddingLt0' : newButtonEnable }">
+    <div [style.max-width]="''+newCol2Width+'px'" title="Home page"  class="head-col logo"
+      [ngClass]="{'businessLogo':collabticDomain,'lordstown-logo': domainId == 94, 'logoTop': TVSIBDomain && (showCountryFlag || countryName == 'Global'), 'tvs-logo': tvslogoHeight, 'landing-display-inline col-lg-3 col-md-3 col-lg-3' : newButtonEnable, 'logo-cba-pr': platformId==platFormTypes.CbaForum}">
+      <img (click)="taponlogo()" src="{{ platformLogo }}" class="b-logo cursor" alt="Logo" *ngIf="(loadLogo)" />
+      <!--img (click)="taponlogo()" src="{{ assetPathplatform }}/cba-car-logo.png" *ngIf="loadLogo && platformId==platFormTypes.CbaForum"
+        class="cba-car-logo cursor" alt="Logo" /-->
+      <span class="head-col country-name-text" *ngIf="TVSIBDomain && (showCountryFlag || countryName == 'Global')"><span
+          class="country-name-in-text">{{countryName}}</span></span>
+      <span *ngIf="collabticDomain && roleId == 3" title="Edit Logo" (click)="changeBusinessLogo()" class="logoediticon logoedit"><img src="assets/images/profile/sname-edit-icon.png"></span>
+    </div>
+
+    <div *ngIf="welcomeProfileFlag && !newButtonEnable" class="head-col welcome-text hide">
+      Good Morning {{ apiUrl.userName }}!
+    </div>
+    <div *ngIf="headTitleFlag" class="head-col head-title text-right" [innerHTML]="headTitle"></div>
+    <div *ngIf="newButtonEnable" class="head-col head-col-3 text-right" [ngClass]="{ 'landing-display-inline col-lg-3 col-md-3 col-lg-3' : newButtonEnable, 'new-threads-btn' : access=='threads' || access=='search' || access=='techsupportteam' || access=='techsupportrules' || access=='kaizen' || access=='gtsList' || access=='headquarters' || access=='customers' ||access=='market-place' || access=='market-place-quiz' }">
+      <div class="head-col-6 col-lg-12 col-md-12 col-lg-12 paddingRt0 paddingLt0">
+        <div class="head-col head-col-4 col-lg-2 col-md-2 col-lg-2 paddingRt0 paddingLt0 new-home-menu custom-padding-header">
+          <div *ngIf="defaultNewButton && access != 'search'" class="head-col">
+            <span *ngIf="access != 'standard-report' && access != 'faq'" class="home-new-button {{access}}" [ngClass]="{'setOpacity5hidden': (apiUrl.enableAccessLevel && this.apiUrl.newThreadAccessLevel == 0 && access != 'adas') , 'hide': (apiUrl.techsupportNewButton || apiUrl.jobandratecardNewButton) }" (click)="newPage()">{{newTextHead}}</span>
+            <span *ngIf="newReport && access == 'standard-report'" class="home-new-button {{access}}" [ngClass]="{'setOpacity5': newReportTxt == 'New Vehicle'}" (click)="newPage()">{{newReportTxt}}</span>
+            <span *ngIf="access == 'faq'" class="home-new-button {{access}}" (click)="newPage()">New FAQ</span>
+          </div>
+          <span *ngIf="!defaultNewButton && itemsEmptyRecord && access != 'search'" class="home-new-button threads setOpacity5" (click)="getHeaderMenuItems()">NEW</span>
+          <span *ngIf="!defaultNewButton && !itemsEmptyRecord && access != 'search'">
+            <p-menubar [model]="items" title="Create New">
+              <img id="logo" src="assets/images/new-menu.png">
+            </p-menubar>
+          </span>
+        </div>
+        <div class="head-col head-col-5 search-col col-lg-10 col-md-10 col-lg-10 paddingRt0 paddingLt0"
+        [ngClass]="{ 'auto-search': (autoSearchCompleteEnable && (access == 'threads' || access == 'search')), 'auto-search-left': ((autoSearchCompleteEnable && ( access == 'threads' || access == 'search')) && apiUrl.newThreadAccessLevel == 0) }"
+        >
+          <span *ngIf="searchFlag" class="search-div"
+          [ngClass]="{ 'search-filter search-btn': searchClose || searchTick, 'search-bg': searchBgFlag}">
+          <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+
+            <span *ngIf="access == 'kaizen' || access=='gtsList' || access=='headquarters' || access=='customers' || access == 'techsupportrules' || access == 'techsupportteam'">
+            <a *ngIf="!searchTick && !searchClose" class="search-icon">
+              <img alt="Search" src="{{ assetPath }}/search-ic-header.svg" onload="SVGInject(this)" />
+            </a>
+            <input type="text" (click)="taponsearch($event)" class="form-control search-control"
+              [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey" maxlength="50"
+              [readonly]="searchReadonlyFlag" placeholder="{{ searchPlacehoder }} "
+              (input)="onSearchChange($event.target.value)"
+              [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" />
+
+            <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()">
+              <img alt="Search Close" src="{{assetPath}}/close-icon.svg" onload="SVGInject(this)" /></a>
+            <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()">
+              <img alt="Search" src="{{assetPath}}/search-ic-header.svg" onload="SVGInject(this)" /></a>
+              </span>
+
+              <span *ngIf="access != 'kaizen'  && access != 'gtsList' && access != 'customers' && access != 'headquarters' && access != 'techsupportrules' && access != 'techsupportteam'" class="auto-complete-search" [ngClass]="{ 'auto-complete-search-swidth' : access == 'landingpage' || access == 'dashboard-v2' }">
+
+                <a *ngIf="!searchTick && !searchClose" class="search-icon">
+                  <img alt="Search" src="{{ assetPath }}/search-ic-header.svg" onload="SVGInject(this)" />
+                </a>
+
+                <p-autoComplete
+                  #autocomplete
+                  [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey"
+                  [suggestions]="acResults"
+                  (completeMethod)="acSearch($event)"
+                  (onClear)="clearSearchValue()"
+                  (input)="onSearchChange($event.target.value)"
+                  (keydown.enter)="autocomplete.hide();onSearchSubmit($event)"
+                  [forceSelection]=false
+                  [minLength]="1"
+                  [group]="true"
+                  [placeholder]="searchPlacehoder"
+                  [panelStyleClass]="access"
+                >
+                <ng-template let-group pTemplate="group">
+                  <div class="search-content" (click)="goToDetailPage(group, group.id, group.type,group.domainId)">
+                    <span [ngClass]="{ 'hide' : access == 'standard-report' }" class="content-type type-{{group.type}}"></span>
+                    <span *ngIf="access != 'standard-report'" class="content-text">
+                      <span *ngIf="group.term !=''" class="">{{group.term}}, </span>
+                      <span *ngIf="group.type == 4 && group.partNumber !='' "  class="">{{group.partNumber}}, </span>
+                      <span *ngIf="group.type == 4 && group.partName !='' "  class="">{{group.partName}}, </span>
+                      <span class="">ID# {{group.id}}</span>
+                      <span *ngIf="group.type != 8 && group.make !='' && group.make != 'General Make'"  class="">, {{group.make}}</span>
+                      <span *ngIf="group.type == 8 && group.make !='' && group.make[0] != 'General'"  class="">, {{group.make}}</span>
+                      <span *ngIf="group.make =='' "  class=""></span>
+                      <span *ngIf="group.type != 8 && group.model !='' && group.model != 'General'"  class="">, {{group.model}}</span>
+                      <span *ngIf="group.type == 8 && group.model !='' && group.model[0] != 'General'"  class="">, {{group.model}}</span>
+                      <span *ngIf="group.model =='' "  class=""></span>
+                    </span>
+                    <span *ngIf="access == 'standard-report'" class="content-text report-text">
+                      <span *ngIf="group.rcId != 3">
+                        <span>{{group.name}}</span>
+                        <span *ngIf="group.term !=''">, {{group.term}}</span>
+                        <span *ngIf="group.slug !=''">, ({{group.slug}})</span>
+                        <span *ngIf="group.dtcCode !=''">, {{group.dtcCode}}</span>
+                        <span *ngIf="group.dtcDesc !=''">, {{group.dtcDesc}}</span>
+                        <span *ngIf="group.year !='' && group.year !='None'"  class="">, {{group.year}}</span>
+                      </span>
+                      <span *ngIf="group.rcId == 3">
+                        <span *ngIf="group.make !='' && group.make !='None'"  class="">{{group.make}}</span>
+                        <span *ngIf="group.model !='' && group.model !='None'"  class="">, {{group.model}}</span>
+                        <span *ngIf="group.year !='' && group.year !='None'"  class="">, {{group.year}}</span>
+                        <span *ngIf="group.equipmentStr != ''&& group.equipmentStr !='None'"class="">, {{group.equipmentStr}}</span>
+                      </span>
+                    </span>
+                  </div>
+              </ng-template>
+              </p-autoComplete>
+
+                <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()">
+                  <img alt="Search Close" src="{{assetPath}}/close-icon.svg" onload="SVGInject(this)" /></a>
+                <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()">
+                  <img alt="Search" src="{{assetPath}}/search-ic-header.svg" onload="SVGInject(this)" /></a>
+
+              </span>
+          </form>
+
+          </span>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="col-sm-12 head-row head-brand"
+    [ngClass]="{ 'col-lg-5 col-md-5' : !recentVinFlag , 'col-lg-4 col-md-4' : recentVinFlag , 'hide' : access == 'manageThread' || access == 'managePart' || access == 'manageSib' || access == 'manageKnowledgearticles' }">
+  </div>
+ -->
+  <div class="col-sm-12 head-row head-prof"
+    [ngClass]="{ 'col-lg-5 col-md-5' : !newButtonEnable, 'col-lg-3 col-md-3 new-menu-rt' : newButtonEnable, 'col-lg-10 col-md-10 search-width': (!newButtonEnable && enableCloseIcon && access != 'docpreview'), 
+      'col-lg-6 col-md-6': access == 'manageThread' || access == 'managePart' || access == 'manageSib' || access == 'manageKnowledgearticles' || (recentVinFlag && !newButtonEnable)  }">
+    <div *ngIf="recentVinFlag" class="head-col vin-col" [ngClass]="{ 'vin-col-new-button': newButtonEnable }">
+      <div class="vin-div" title="Tap here to see recently used VINs or VINs scanned with your app for faster VIN entry" (click)="recentVins()">
+        <img src="assets/images/landing-VIN.png">
+        <span class="vin-text">Recent VINs</span>
+      </div>
+    </div>
+
+    <div class="head-col search-col"  [ngClass]="{ 'search-col-new-button': recentVinFlag && newButtonEnable }">
+      <span *ngIf="!newButtonEnable && searchFlag" class="search-div head-auto-search"
+        [ngClass]="{'report-search': access == 'standard-report', 'search-filter search-btn': searchClose || searchTick, 'search-bg': searchBgFlag}">
+        <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+          <span *ngIf="(autoSearchCompleteEnable && access != 'documents' && access != 'knowledgeArticles' && access != 'standard-report') || (!autoSearchCompleteEnable)">
+            <a *ngIf="!searchTick && !searchClose" class="search-icon">
+              <!-- <img alt="Search" src="{{ assetPath }}/search-icon.png" /> -->
+              <img alt="Search" src="{{ assetPath }}/search-ic-header.svg" onload="SVGInject(this)" />
+            </a>
+            <input  type="text" (click)="taponsearch($event)" class="form-control search-control"
+              [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey" maxlength="50"
+              [readonly]="searchReadonlyFlag" placeholder="{{ searchPlacehoder }}"
+              (input)="onSearchChange($event.target.value)"
+              [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" />
+            <!--div *ngIf="submitted && f.searchKey.errors" class="invalid-feedback page-error-text">
+                          <div *ngIf="f.searchKey.errors.required">Please enter search keyword</div>
+                      </div-->
+            <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()">
+              <img alt="Search Close" src="{{assetPath}}/close-icon.svg" onload="SVGInject(this)" /></a>
+            <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()">
+              <img alt="Search" src="{{assetPath}}/search-ic-header.svg" onload="SVGInject(this)" /></a>
+
+          </span>
+
+          <span *ngIf="(autoSearchCompleteEnable && (access=='documents' || access=='knowledgeArticles' || access == 'standard-report'))" class="auto-complete-search">
+
+            <a *ngIf="!searchTick && !searchClose" class="search-icon">
+              <!-- <img alt="Search" src="{{ assetPath }}/search-icon.png" /> -->
+              <img alt="Search" src="{{ assetPath }}/search-ic-header.svg" onload="SVGInject(this)" />
+            </a>
+
+            <p-autoComplete
+            #autocomplete
+            [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey"
+            [suggestions]="acResults"
+            (completeMethod)="acSearch($event)"
+            (onClear)="clearSearchValue()"
+            (input)="onSearchChange($event.target.value)"
+            (keydown.enter)="autocomplete.hide();onSearchSubmit($event)"
+            [forceSelection]=false
+            [minLength]="1"
+            [group]="true"
+            [placeholder]="searchPlacehoder"
+            [panelStyleClass]="access"
+          >
+          <ng-template let-group pTemplate="group">
+            <div class="search-content" (click)="goToDetailPage(group, group.id, group.type,group.domainId)">
+              <span class="hide content-type type-{{group.type}}"></span>
+              <span *ngIf="access != 'standard-report'" class="content-text">
+                <span *ngIf="group.term !=''" class="">{{group.term}}</span>
+                <span class="">, ID# {{group.id}}</span>
+                <span *ngIf="group.make !='' && group.make != 'General Make'">, {{group.make}}</span>
+                <span *ngIf="group.make ==''"></span>
+                <span *ngIf="group.model !='' && group.model != 'General Model'">, {{group.model}}</span>
+                <span *ngIf="group.model ==''"></span>
+              </span>
+              <span *ngIf="access == 'standard-report'" class="content-text report-text">
+                <span *ngIf="group.rcId != 3">
+                  <span>{{group.name}}</span>
+                  <span *ngIf="group.term !=''">, {{group.term}}</span>
+                  <span *ngIf="group.slug !=''">, ({{group.slug}})</span>
+                  <span *ngIf="group.dtcCode !=''">, {{group.dtcCode}}</span>
+                  <span *ngIf="group.dtcDesc !=''">, {{group.dtcDesc}}</span>
+                  <span *ngIf="group.year !='' "  class="">, {{group.year}}</span>
+                </span>
+                <span *ngIf="group.rcId == 3">
+                  <span *ngIf="group.make !='' "  class="">{{group.make}}</span>
+                  <span *ngIf="group.model !='' "  class="">, {{group.model}}</span>
+                  <span *ngIf="group.year !='' "  class="">, {{group.year}}</span>
+                  <span *ngIf="group.equipmentStr != ''"class="">, {{group.equipmentStr}}</span>
+                </span>
+              </span>
+            </div>
+        </ng-template>
+        </p-autoComplete>
+
+            <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()">
+              <img alt="Search Close" src="{{assetPath}}/close-icon.svg" onload="SVGInject(this)" /></a>
+            <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()">
+              <img alt="Search" src="{{assetPath}}/search-ic-header.svg" onload="SVGInject(this)" /></a>
+
+          </span>
+
+        </form>
+      </span>
+      <!-- cart section -->
+      <span class="cart-item " *ngIf="showCartIcon" (clickOutside)="onClickedOutside()">
+        <a (click)="openCartPopup = !openCartPopup" >
+            <img src="assets/images/service-provider/marketPlace-cart-header.png" style="width:auto;font-family:lato">
+            <span *ngIf="cart && (cart?.manuals?.length > 0 || cart?.trainings?.length > 0)"
+              class="count-txt"  >{{cart.totalItems}}</span>
+        </a>
+        <!--cart popup--><!-- (clickOutside)="openCartPopup = false" -->
+
+        <ng-container *ngIf="openCartPopup">
+            <div class="cart-popup custom-top-popup" *ngIf="cart?.trainings.length > 0 || cart?.manuals.length > 0">
+                <div class="cart-product-div" *ngFor="let training of cart.trainings; let trainingIndex = index " [class.border-bottom-0]="cart?.manuals.length == 0 && trainingIndex == cart?.trainings.length - 1">
+                    <div class="img-div cursor-pointer" (click)="redirectToInnerDetailPageByRouter(training, false)"> <img [src]="training?.bannerImageUrl"
+                            onerror="this.src='assets/images/service-provider/training-blank-1.png'" class="product-img">
+                    </div>
+                    <div class="product-content-div">
+                        <h4 class="ttl cursor-pointer" (click)="redirectToInnerDetailPageByRouter(training, false)">{{training.trainingName}}</h4>
+                        <!-- <p class="text">Training mode: {{training?.trainingMode}}</p> -->
+                        <p class="product-price">
+                            <b *ngIf="training?.isBirdPrice == '0'" class="green-text">${{training?.price}}</b>
+                            <span *ngIf="training?.isBirdPrice == '1'">
+                                <b class="green-text">
+                                    ${{training?.birdPrice}}
+                                </b>
+                                <span class="strike-text">
+                                    {{training?.price | currency: 'USD':true:'1.2-2'}}
+                                </span>
+                                <span class="per-discount">
+                                    {{training?.birdPercentage}}% off
+                                </span>
+                            </span>
+                        </p>
+                        <span class="p-button-icon pi pi-times cursor-pointer" (click)="removeTrainingPopup(trainingIndex)" ></span>
+                    </div>
+                </div>
+                <div class="cart-product-div" *ngFor="let manual of this.cart?.manuals;let manualIndex = index" [class.border-bottom-0]="manualIndex == cart?.manuals.length - 1">
+                    <div class="img-div cursor-pointer" (click)="redirectToInnerDetailPageByRouter(manual, true)"><img [src]="manual?.bannerImageUrl"
+                            onerror="this.src='assets/images/service-provider/manual-placeholder.png'" class="product-img">
+                    </div>
+                    <div class="product-content-div">
+                        <h4 class="ttl cursor-pointer" (click)="redirectToInnerDetailPageByRouter(manual, true)">{{manual.manualName}}</h4>
+                        <p class="product-price">
+                            <b class="green-text" *ngIf="manual.isDiscount == '0'">${{manual.price}}</b>
+                            <span *ngIf="manual?.isDiscount == '1'">
+                                <b class="green-text">
+                                    ${{manual?.discountPrice}}
+                                </b>
+                                <span class="strike-text">
+                                    {{manual?.price | currency: 'USD':true:'1.2-2'}}
+                                </span>
+                                <span class="per-discount">
+                                    {{manual?.discountPercentage}}% off
+                                </span>
+                            </span>
+                        </p>
+                        <span class="p-button-icon pi pi-times cursor-pointer" (click)="removeManualPopup(manualIndex)"></span>
+                    </div>
+                </div>
+                <div class="total-amt-div">
+                  <div class="btn-div"><a (click)="checkoutToCart()"
+                      class="main-btn chkout-btn">Checkout</a></div>
+                  <span class="clear-btn" style="cursor:pointer;" (click)="openCartClearPopup = !openCartClearPopup"><img
+                      style="width:17px;height:20px" src="assets/images/service-provider/clear-white.png"></span>
+                </div>
+            </div>
+
+            <div class="custom-top-popup cart-empty-popup text-center"
+                *ngIf="cart?.trainings.length == 0 && cart?.manuals.length == 0">
+                <img src="assets/images/service-provider/empty-cart.png" style="height: 24px; width: 27px;">
+                <span>Shopping cart is empty.</span>
+                <span class="p-button-icon pi pi-times cross cursor-pointer" (click)="openCartPopup = !openCartPopup"></span>
+            </div>
+        </ng-container>
+      </span>
+      <!-- <span class="notification-class-icon-header {{ notification.totalunseenunreadcolor }}"
+        [matBadgeHidden]="notification.totalNotificationcount < 0"
+        matBadge="{{ notification.totalNotificationcount }}">
+        <span (click)="tapnotifications()" class="notification-header-icon">
+          <img src="assets/images/landing-page/landing-notifications.svg" onload="SVGInject(this)" />
+        </span>
+      </span> -->
+      <span [ngClass]="{ 'hide': !notificationButtonEnable }" class="notification-class-icon-header {{ notification.totalunseenunreadcolor }}"
+        [matBadgeHidden]="getTotalCount < 1"
+        matBadge="{{ getTotalCount }}">
+        <span (click)="tapnotifications()"  class="notification-header-icon">
+          <img src="assets/images/landing-page/landing-notifications.svg" onload="SVGInject(this)" />
+        </span>
+      </span>
+      <span class="search-close" [ngClass]="{ 'paddLt' : access == 'docpreview'}" *ngIf="enableCloseIcon">
+        <a title="Close" (click)="closeWindowHeader()">
+          <img src="assets/images/thread-detail/thread-window-close.svg" alt="Close" onload="SVGInject(this)">
+        </a>
+      </span>
+    </div>
+    <div title="{{ apiUrl.userName }}" *ngIf="profileFlag" class="head-col text-center profile"
+      [ngbTooltip]="tipContent" tooltipClass="header-tooltip-content">
+      <span class="head-profile-img" *ngIf="profileContainerFlag">
+        <img class="head-pimg" [src]="apiUrl.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+         <!--span class="rounded-circle" id="profile_pic"
+          [style.background-image]="'url(' + apiUrl.profileImage + ')'"></span-->
+        </span>
+      <span *ngIf="profileContainerFlag" class="prof-name">{{apiUrl.userName}}</span>
+    </div>
+    <ng-template #tipContent>
+      <div class="tooltip-content">
+        <ul>
+          <li>
+            <a *ngIf="showLanguageFlag && domainId != 52" (click)="selectLanguage()">
+              <span class="pro_image">
+                <img src="assets/images/lang-icon-gray.png" />
+              </span>
+              <span class="pro_text">{{ languageName }}</span>
+            </a>
+          </li>
+          <li>
+            <a (click)="tapfrompopup(1)">
+              <span class="pro_image">
+                <img src="assets/images/user_profile_pro_icon.png" />
+              </span>
+              <span class="pro_text">Profile</span>
+            </a>
+          </li>
+          <li *ngIf="(cbaDomain=='3' || platformId == platFormTypes.Collabtic  || platformId == platFormTypes.MahleForum || platformId == platFormTypes.CbaForum) && roleId=='3' && domainId!='318'">
+            <a href="roles-permissions" target="_blank">
+              <span class="pro_image">
+                <img src="assets/images/roles_permissions_icon.png" />
+              </span>
+              <span class="pro_text">Roles & Permissions</span>
+            </a>
+          </li>
+          <li *ngIf="(cbaDomain == '3' || cbaDomain == '1' || (cbaDomain == '2' && domainId == '52')) && roleId == '3' && domainId != '318'">
+            <a (click)="profileLinkNav('system-settings')">
+              <span class="pro_image">
+                <img width="18" src="assets/images/system-settings-icon.png" />
+              </span>
+              <span class="pro_text">System Settings</span>
+            </a>
+          </li>
+          <li *ngIf=" cbaDomain=='1'">
+            <a (click)="profileLinkNav('user-settings')">
+              <span class="pro_image">
+                <img width="18" src="assets/images/user-settings/user-settings-icon.png" />
+              </span>
+              <span class="pro_text">User Settings</span>
+            </a>
+          </li>
+          <!--li *ngIf="dropdownAccess"><a (click)="tapfrompopup(2)" ><span class="pro_image"><img src="assets/images/configure_notification_pro_icon.png"></span><span class="pro_text">Configure Notifications</span></a></li-->
+          <li *ngIf="domainId!='165' && ssoEnabledFlag!='1'">
+            <a (click)="changePassword()">
+              <span class="pro_image">
+                <img src="assets/images/change_password_pro_icon.png" />
+              </span>
+              <span class="pro_text">Change Password</span>
+            </a>
+          </li>
+          <!--li *ngIf="dropdownAccess"><a (click)="tapfrompopup(3)" ><span class="pro_image"><img src="assets/images/dashboard_pro_icon.png"></span><span class="pro_text" style="top: 2px;">Dashboard</span></a></li-->
+          <li *ngIf="(platformId == platFormTypes.Collabtic || platformId == platFormTypes.CbaForum || domainId=='52') && domainId!='318'">
+            <a (click)="bugOrFeature()" class="pro_image"><span class="pro_image"><img
+              src="assets\images\bug_or_feature.png" /></span><span class="pro_text">Bug or Feature</span> </a>
+          </li>
+          <li>
+            <a (click)="logout()" class="logout">
+              <span class="pro_image">
+                <img src="assets/images/logout_pro_icon.png" />
+              </span>
+              <span class="pro_text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<app-dialog-popup *ngIf="displayLogoutPopup" [dialogData]="dialogData" (closewindow)="closewindowPopup($event)">
+</app-dialog-popup>
+<!--p-dialog [header]="false" [(visible)]="displayLogoutPopup" [modal]="true" styleClass="p-fluid logoutPopup-prime"
+  [style]="{ width: '50vw' }">
+  <div class="row col-lg-12 col-md-12 col-sm-12 logout-dialog-main-container">
+    <div class="col col-lg-5 col-md-5 col-sm-5" style="
+        background-color: #332b3f;
+        height: 300px;
+        position: relative;
+        padding: 0px;
+      ">
+      <div class="vertical-center">
+        <img src="assets/images/landing-page/logout-dialog-icon.png" />
+      </div>
+    </div>
+    <div class="col col-lg-7 col-md-7 col-sm-7" style="background-color: #fff; height: 300px">
+      <div class="logout-right-container">
+        <div class="inner-border-container vertical-center">
+          <div class="right-side-text-container">
+            You are logged out of {{ platformName }}
+          </div>
+          <div (click)="closewindowPopup()" class="btn-logout-output">OK</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog-->
+
+<p-dialog [header]="false" [(visible)]="displayPosition" [position]="position"
+  styleClass="p-fluid notification-blocked-prime" [modal]="true" [baseZIndex]="10000" [draggable]="false"
+  [resizable]="false">
+  <img class="close-icon cursor" (click)="displayPosition = false"
+    src="assets/images/landing-page/close-icon-blocker2.png" />
+  <img style="object-fit: cover; width: 100%" src="assets/images/landing-page/notification-block-info.png" />
+</p-dialog>
+
+
+
+
+<p-toast position="top-right"  key="c" (onClose)="onReject(incrementToast)">
+    <ng-template let-message pTemplate="message">
+        <div (click)="tapontoast(message.summary)" class="p-flex cursor push-message-toast  p-flex-column" style="flex: 1">
+            <div class="row col-lg-12 col-md-12 col-sm-12 main-content" >
+               <div class="col-lg-3 col-md-3 col-sm-3 bg-toast-message-type">
+                <div class="img-notification">
+
+                <img *ngIf="(message.summary.displayType=='1' || message.summary.displayType=='2') && message.summary.subType!=5 && message.summary.subType!=8" src="assets/images/notifications/group-thread-toast.png">
+                <img *ngIf="message.summary.displayType=='3'" src="assets/images/notifications/group-announcement-push.png">
+                <img *ngIf="message.summary.displayType=='7'" src="assets/images/notifications/group-document-toast.png">
+                <img *ngIf="message.summary.displayType=='4'" src="assets/images/notifications/group-1.png">
+                <img *ngIf="message.summary.displayType=='1' && message.summary.subType=='5'" src="assets/images/notifications/dispatch-toast.png">
+                <img *ngIf="message.summary.displayType=='1' && message.summary.subType=='8'" style="width: 20px;margin-left: 3px;margin-top: -3px;" src="assets/images/notifications/ro_notification.png">
+                <img *ngIf="message.summary.displayType=='1' && message.summary.subType=='6'"  src="assets/images/notifications/dispatch-toast.png">
+              </div>
+                 </div>
+              <div class="col-lg-9 col-md-9 col-sm-9 sub-content">
+              <div *ngIf="message.summary.displayType=='4'" class="summery-heading">{{message.summary.title}}</div>
+                <div *ngIf="message.summary.displayType=='4'" class="inner-content-text" [innerHTML]="message.detail"></div>
+                <div *ngIf="message.summary.displayType!='4'"  [innerHTML]="message.detail"></div>
+            </div>
+              </div>
+
+        </div>
+    </ng-template>
+</p-toast>
+<span *ngIf="cba90DaysLoginFlag"><p-messages [(value)]="cbaloginmsg" [enableService]="false"></p-messages></span>
+<p-dialog [(visible)]="displayGTSModal" [header]="false" [modal]="true" [draggable]="false" [resizable]="true"
+class="gts-disable-popup">
+<ng-template pTemplate="header">
+  <div class="required-header">
+      <span style="font-size: 18px;font-weight: 500;">Access</span>
+  </div>
+</ng-template>
+<div>
+
+    <div class="label-text">{{gtsText}}</div>
+
+
+</div>
+</p-dialog>
+<p-dialog styleClass="cart-clear-popup" *ngIf="openCartClearPopup" [(visible)]="openCartClearPopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+  <div class="clear-cart-popup">
+          <img src="assets/images/service-provider/cart-clear-orange.png" alt="" style="width:75px;">
+          <div class="warning">Woud you like to empty the cart?</div>
+          <div>
+              <span class="btn yes-button" (click)="clearCart()">
+                  YES
+                  <i class="pi pi-check"></i>
+              </span>
+              <span class="btn no-button" (click)="openCartClearPopup = !openCartClearPopup">
+                  NO
+                  <i class="pi pi-times"></i>
+              </span>
+          </div>
+  </div>
+</p-dialog>
+<!-- remove manual && training popup -->
+<p-dialog styleClass="cart-clear-popup" *ngIf="trainingpopup" [(visible)]="trainingpopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+  <div class="clear-cart-popup">
+          <div class="warning">Would you like to remove the Training ?</div>
+          <div class="pt-2">
+              <button class="btn mr-2" style="background-color: #469073;color:white" (click)="removeTraining()">Yes</button>
+              <button class="btn" style="background-color: #2f3967;color:white" (click)="trainingpopup = !trainingpopup">No</button>
+          </div>
+  </div>
+</p-dialog>
+<p-dialog styleClass="cart-clear-popup" *ngIf="manualpopup" [(visible)]="manualpopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+  <div class="clear-cart-popup">
+          <div class="warning">Would you like to remove the Manual ?</div>
+          <div class="pt-2">
+              <button class="btn mr-2" style="background-color: #469073;color:white" (click)="removeManual()">Yes</button>
+              <button class="btn" style="background-color: #2f3967;color:white" (click)="manualpopup = !manualpopup">No</button>
+          </div>
+  </div>
+</p-dialog>
+
+<!-- training/manual add / remove popup -->
+<div class="custom-top-popup add-remove-popup text-center sm-center-popup" *ngIf="cartUpdatedMessage">
+  <div class="add-remove">
+      <img src="assets/images/service-provider/tick-filled.png" style="height: 19px; width: 19px;">
+      <span style="color:#298368">{{cartUpdatedMessage}}</span>
+  </div>
+</div>
+
+
+
+<p-dialog [(visible)]="displayWelcomeMessage" [(closeOnEscape)]="dialogEscClose" [closable]="dialogClose" [modal]="true" [draggable]="false" [resizable]="true"
+
+class="welcome-message-popup">
+<ng-template pTemplate="header">
+  <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+      <span style="font-size: 18px;font-weight: 500;">Welcome Message</span>
+      <span style="font-size: 15px;font-family: 'Roboto-Regular';" class="float-right"><p-checkbox id="bannerfit_checkbox2"
+        [(ngModel)]="landingWelcomeVideoFlag"
+        (onChange)="UpdateCheckBox('welcome')"
+        [binary]="true" inputId="binary" label="Don't show again"></p-checkbox>&nbsp; <span class="cursor" (click)="closeWelcomeMessagePOPUP()" style="margin-left: 15px" ><img src="assets/images/list-close.png" /></span> </span>
+  </div>
+</ng-template>
+<span *ngIf="loginImageUrl != '' && loginFileType == 'image'" >
+  <div class="welcomepopup-wh">
+  <div class="bg-style cover"  [ngStyle]="{'background-image': 'url(' + loginImageUrl + ')'}"></div>
+</div>
+</span>
+<span  *ngIf="loginImageUrl != '' && loginFileType == 'video'" >
+  <video [src]="loginImageUrl" width="880" height="496" controls style="margin: 10px auto;display: block;border-radius: 10px;">
+      Your browser does not support the video tag.
+  </video>
+</span>
+</p-dialog>
+
+<p-dialog [header]="false" [(visible)]="disclaimerMessage" [modal]="true" styleClass="p-fluid automated-msg-dialog-popup automated-msg-dialog-popup-new"> 
+ 
+  <div class="automated-msg-container">
+    <div class="lt">
+      <img src="assets/images/special-msg-icon.png">
+    </div>
+    <div class="rt">
+      <div class="img-div">
+        <img src="assets/images/desclimer-home-icon.png">
+        <span class="img-div-rt">
+          <span class="text-2 ccgreen-text">DISCLAIMER</span>           
+        </span>
+      </div>
+      <!--div class="cont-div" style="overflow: auto;" [style.height.px]="innerHeight-250"-->
+        <div class="cont-div" style="overflow: auto;">
+        <!--div style="height: 140px">
+          <div class="ps" [perfectScrollbar]="sconfig" -->
+          <!--p class="ptexthello">Hello Team,</p-->
+          <div class="text-3" [innerHTML]="disclaimerText"></div>
+        </div>
+       <!--/div>
+      </div-->
+      <div (click)="closeDisclaimerMessagePOPUP()" class="cursor btn-div ccgreenbg">
+        <span>OK</span>
+        <img src="assets/images/tick-active.png">
+      </div>
+
+      <span class="cbox" style="font-size: 15px;font-family: 'Roboto-Regular';"><p-checkbox id="bannerfit_checkbox2"
+        [(ngModel)]="landingWelcomeMsgFlag"
+        (onChange)="UpdateCheckBox('disclaimer')"
+        [binary]="true" inputId="binary" label="Don't show again"></p-checkbox>&nbsp;</span>
+
+    </div>
+  </div>
+
+</p-dialog>
+
+
+
+

@@ -1,0 +1,59 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">    
+    <div *ngIf="pageRefresh" class="modal-header">
+        <div class="header-part">
+            <div class="close-div"><img (click)="closeRefreshPOPUP()" src="assets/images/landing-page/new-update-close-icon.png"></div>
+            <div class="header-cont">
+                <div class="lt-part"><img src="assets/images/landing-page/new-update-refresh-icon.png"></div>
+                <div class="rt-part">
+                    <p class="line1">New updates to the website are available.</p>
+                    <p class="line2">Make sure to save or post your changes before refreshing the page.</p>                            
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body"> 
+        <div *ngIf="newSignupSetup && !pageRefresh" class="new-signup-setup-cont"> 
+            <div *ngIf="accessType == 'step1'"class="cont-top-img"><img src="assets/images/landing-page/invite-email.png" ></div>
+            <div *ngIf="accessType == 'step2'" class="cont-top-img"><img src="assets/images/landing-page/product-matrix-img.png" ></div>
+            <div *ngIf="accessType == 'step3'" class="cont-top-img"><img src="assets/images/landing-page/product-matrix-img.png" ></div>
+            <div *ngIf="accessType == 'step4'" class="cont-top-img"><img src="assets/images/landing-page/completed-img.png" ></div>
+            <div class="cont-middle-text">{{message}}</div>            
+            <div *ngIf="accessType == 'step1'" class="cont-bottom-img"><img src="assets/images/site/workstream-creation/submit-loader.svg" ></div>
+            <div *ngIf="accessType == 'step2'" class="cont-bottom-img"><img src="assets/images/site/workstream-creation/submit-loader.svg" ></div>
+            <div *ngIf="accessType == 'step3'" class="cont-bottom-button"><div class="action-button cursor" (click)="completedOK('productmatrix')"><span class="btn-text">CONTINUE&nbsp;&nbsp;<span class="action-img"><img src="assets/images/login/continue-arrow.png" alt="" /></span></span></div></div>
+            <div *ngIf="accessType == 'step4'" class="cont-bottom-button"><div class="action-button cursor" (click)="completedOK('landing')"><span class="btn-text">OK&nbsp;&nbsp;<span class="action-img"><img src="assets/images/landing-page/setup-tick.png" alt="" /></span></span></div></div>
+        </div>
+        <div *ngIf="!newSignupSetup && !pageRefresh">         
+            <div *ngIf="!okButtonDisable && !publicEmail" class="domain-url-container non-user-div text-center">  
+                <img src="assets/images/login/non-collabtic-user.png">   
+                <div *ngIf="successMsg!=''"  [innerHTML]="successMsg"></div>
+                <div class="success-div">
+                    <a (click)="closePOPUP()" class="action-button" ><span>OK, GOT IT...</span></a>
+                </div>   
+            </div> 
+            <div *ngIf="okButtonDisable && !publicEmail" class="domain-url-container non-user-div text-center non-email-div"> 
+                <img src="assets/images/login/admin-img.png">  
+                    <p class="small-text6">Waiting for Administrator Approval</p>              
+                    <div *ngIf="okButtonDisable" class="success-div">
+                        <a (click)="returnLogin()" class="action-button action-button-left" ><span>Return to Login&nbsp;&nbsp;<img src="assets/images/login/return-img.png" /></span></a>
+                        <a (click)="continue()" class="action-button action-button-right" ><span>Continue&nbsp;&nbsp;<img src="assets/images/login/white-arrow.png" width="10" height="auto"/></span></a>
+                    </div>                
+            </div>
+            <div *ngIf="publicEmail" class="domain-url-container non-user-div text-center"> 
+                <img src="assets/images/login/popup-close.png" class="close-icon" (click)="closePOPUP()">
+                <img src="assets/images/login/public-email.png">   
+                <div class="public-email-div" *ngIf="successMsg!=''"  [innerHTML]="successMsg"></div>               
+            </div>  
+        </div>
+        <div *ngIf="pageRefresh">
+            <div class="domain-url-container non-user-div text-center non-email-div new-refresh-div">                 
+                <div *ngFor="let msg of message;" >
+                    <span class="regular-bg"><img src="assets/images/landing-page/new-update-tick-icon.png" width="19" height="12" style="position:relative;top:-1px;"/></span><span class="small-text6 regular-text">{{msg}}</span>     
+                </div>                             
+                <div class="ok-tick-div">
+                   <div (click)="pageReload()" class="refresh-button" >Refresh&nbsp;&nbsp;<img src="assets/images/landing-page/new-update-refresh-new-icon.png" width="15" height="16" style="position:relative;top:-1px;"/></div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<div [style.height.px]="innerHeight">
+    
+        <div *ngIf="loading">
+            <div class="loader"><img style="left: 50%;top: 50%;" width="64" src="assets/images/loading.svg" alt="Loader" /></div>
+        </div>
+        <div *ngIf="!loading" >
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin header-container">
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding v-middle">
+                    <span class="heading-text-lt">Shop <span class="green-text">ID# {{shopId}}</span></span>
+                </div>
+                <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 no-padding text-center v-middle">
+                    <span class="heading-text-md">{{storeDetail.storeName}}</span>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding text-right v-middle">
+                    <img class="heading-text-rt cursor" (click)="close()" src="assets/images/shop/detail-close.png" />
+                </div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin shop-view-container">
+                <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 no-padding">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+                        <div class="lt-container">
+                            <div class="user-row">
+                                <div >
+                                    <div class="profile-row system-settings-menu-row" [ngClass]="{ 'active' : tab1, 'normal' : !tab1 }" (click)="selectTap('tab1')">
+                                        <div class="profile-row-inner ">
+                                            <span class="pimg tab1"></span>
+                                            <span class="uname" >Shop Details</span>                                                    
+                                        </div>                    
+                                    </div>     
+                                    <div class="profile-row system-settings-menu-row setOpacity5">
+                                        <div class="profile-row-inner ">
+                                            <span class="pimg tab1"></span>
+                                            <span class="uname" >Technicians</span>                                                    
+                                        </div>                    
+                                    </div> 
+                                    <div class="profile-row system-settings-menu-row setOpacity5">
+                                        <div class="profile-row-inner ">
+                                            <span class="pimg tab1"></span>
+                                            <span class="uname" >Tickets</span>                                                    
+                                        </div>                    
+                                    </div>                                                                                                                           
+                                </div>              
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 no-padding">
+                    <div *ngIf="tab1" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 no-padding"></div>
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8 no-padding">
+                            <div [style.height.px]="innerHeight" class="middle-container">
+                                <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig"> 
+                                    <div >
+                                        <div class="top-row">
+                                            <div class="top-lt" *ngIf="storeDetail.address != ''">
+                                                <div #mapRef id="map" [ngStyle]="{'width': '311px', 'height': '230px'}"></div>
+                                            </div>
+                                            <div class="top-lt" *ngIf="storeDetail.address == ''">
+                                                <img src="assets/images/shop/detail-default-img.png" />
+                                            </div>
+                                            
+                                            <div class="top-rt">
+                                                <span class="title">{{storeDetail.storeName}}</span>
+                                                <div class="img-text-row" *ngIf="storeDetail.address != ''">
+                                                    <img class="img-col" src="assets/images/shop/detail-map.png" />
+                                                    <span class="text-col">
+                                                        <p>Location</p>
+                                                        <p>{{storeDetail.address}}</p>
+                                                    </span>
+                                                </div>
+                                                <div class="img-text-row" *ngIf="storeDetail.emailAddress != ''">
+                                                    <img class="img-col" src="assets/images/shop/detail-mail.png" />
+                                                    <span class="text-col">
+                                                        <p>Email</p>
+                                                        <p><a title="{{storeDetail.emailAddress}}" href="mailto:{{storeDetail.emailAddress}}"></a>{{storeDetail.emailAddress}}</p>
+                                                    </span>
+                                                </div>
+                                                <div class="img-text-row" *ngIf="storeDetail.storeNo != ''">
+                                                    <img class="img-col" src="assets/images/shop/detail-number.png" />
+                                                    <span class="text-col">
+                                                        <p>Store Number</p>
+                                                        <p>{{storeDetail.storeNo}}</p>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style="width:100%;">
+                                            <div class="landing-page-container"> 
+                                                                                           
+                                            <div class="center-middle-width-container">  
+                                                <div class="center-middle-width padding-common" style="padding:0;">                                         
+                                                    <div >
+                                                        <div *ngIf="annLanding">
+                                                            <div class="loader ann-loader"><img style="left: 50%;top: 50%;" width="64" src="assets/images/loading.svg" alt="Loader" /></div>
+                                                        </div>
+                                             <div class="center-container center-container-home" style="padding:0;" *ngIf="!annLanding">
+                                                 <div *ngFor="let currentComponent of landingpageWidgets; let cm = index">
+                                                     <ng-container *ngComponentOutlet="currentComponent.componentName">
+                                                     </ng-container>
+                                                 </div>
+                                             </div>
+
+                                             </div>
+                                             </div>
+                                             </div>
+                                             </div>
+                                         </div>
+
+                                    </div>
+                                     
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 no-padding"></div>
+                    </div>  
+                    <div *ngIf="tab2"></div>
+                    <div *ngIf="tab3"></div>                   
+                </div>
+            </div>
+        </div>
+    
+</div>

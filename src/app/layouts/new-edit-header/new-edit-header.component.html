@@ -1,0 +1,8 @@
+<div class="prob-header row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0" [ngClass]="sectionClass">
+    <div class="header-row">
+        <span *ngIf="pageData.action == 'new'" class="new-text">{{pageData.title}}</span>    
+        <span *ngIf="pageData.action == 'edit'" class="edit-text">{{pageData.title}}<span class="red-text"> ID# {{pageData.id}}</span></span>  
+        <span *ngIf="pageData.action == 'duplicate'" class="edit-text">{{pageData.title}}<span class="red-text"> ID# {{pageData.id}} [DUPLICATE]</span></span>     
+    </div>    
+</div>
+<app-dialog-popup *ngIf="displayLogoutPopup" [dialogData]="dialogData" (closewindow)="closewindowPopup($event)"></app-dialog-popup>

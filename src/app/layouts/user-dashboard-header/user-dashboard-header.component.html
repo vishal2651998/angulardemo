@@ -1,0 +1,28 @@
+<div *ngIf="productListFlag" class="prob-header row col-lg-12 col-md-12 col-sm-12">
+    <div class="col-lg-7 col-md-7 col-sm-12 head-row head-brand">
+        <div class="head-col logo"><img src="assets/images/logo.png" alt="Logo" /></div>
+        <div class="head-col welcome-text hide" style="color:#000;font-size:20px;">User Dashboard</div>
+    </div>
+    <div class="col-lg-5 col-md-5 col-sm-12 head-row head-prof">
+        <div class="head-col search-col">
+            <span *ngIf="searchFlag" class="search-div" [ngClass]="{'search-filter search-btn' : searchClose || searchTick}">
+                <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+                    <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/search-icon.png"></a>
+                    <input type="text" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="50" placeholder="Search.." (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                    <!--div *ngIf="submitted && f.searchKey.errors" class="invalid-feedback page-error-text">
+                        <div *ngIf="f.searchKey.errors.required">Please enter search keyword</div>
+                    </div-->
+                    <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                    <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/search-icon.png"></a>   
+                </form>              
+            </span>
+            <span (click)="tapnotifications()" class="notification-header-icon"><img src="assets/images/landing-page/landing-notifications.svg"></span>
+        </div>
+        <div *ngIf="profileFlag" class="head-col text-center profile">
+            <span class="profile-img">
+                <span class="rounded-circle" id="profile_pic" [style.background-image]="'url('+profileImage+')'" ></span>
+            </span>
+            <span class="prof-name">{{userName}}</span>
+        </div>
+    </div> 
+</div>

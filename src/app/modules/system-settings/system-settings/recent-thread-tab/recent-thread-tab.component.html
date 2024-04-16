@@ -1,0 +1,47 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+<div [style.height.px]="innerHeight">
+    <div class="ps form-fields" [perfectScrollbar]="sconfig">
+        <div class="inner-container">
+            <div class="section-container" *ngFor="let item of systemSettingsData; let s = index;">
+                <div class="title-row">{{item.name}}</div>
+                <div class="content-row">
+
+                    <div class="items display-block">
+
+                        <div class="type-col-1 vtop inline-block">
+                            <span class="settings-icon-green"></span>
+                        </div>
+                        
+                        <div class="type-col-2 inline-block" *ngFor="let type of item.settings; let s1 = index;">
+                            <div class="placeholder-items type-row display-block">
+                                <div class="type-col-2-lt toggle inline-block">
+                                    <p class="p-title">{{type.title}}</p>
+                                    <p class="p-desc">{{type.placeHolder}}</p>
+                                </div>
+                                <div class="type-col-2-rt toggle inline-block top5">
+                                    <!-- toggle -->
+                                    <div class="cursor toggle-box togglebox">
+                                        <span class="toggle-col field-label"></span>
+                                        <span class="toggle-col toggle-option">
+                                            <p-inputSwitch [(ngModel)]="type.toggleBox" (onChange)="onToggleBoxChange(item.settingsId,type.itemId,$event.checked)">
+                                            </p-inputSwitch>
+                                        </span>
+                                    </div>
+                                    <!-- toggle -->
+                                </div>                                    
+                            </div>  
+                                                     
+                        </div>                            
+
+                    </div>                        
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

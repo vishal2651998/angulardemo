@@ -1,0 +1,463 @@
+
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{accessFrom}}"></div>
+<div *ngIf="!loading && estimationView" class="prob-list-cont">
+    <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new documents-grid-row1 documents-grid-row-new-es" [style.max-height.px]="innerHeight">
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs prob-list-cont-escalation-newro" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table [scrollHeight]="pTableHeight"  #table [columns]="repairOrderListColumns" [scrollable]="true" [totalRecords]="detailRepairOrderList.length" id="file-datatable" class="file-datatable thread-list-table shop-list-table" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" [value]="detailRepairOrderList" >
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th style="color: #000000 !important;" *ngFor="let col of columns" class="{{col.columnpclass}}" [ngClass]="{ 'stock-header' : col.field == 'existStock' }">  
+                            <span>{{col.header}}</span> 
+
+                        </th>                            
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-detailRepairOrderList let-i="rowIndex">
+                    <tr class="cursor">
+                        <td class="ro-ta-col-1">
+                            <div class="p-table-col"><span class="" title="{{detailRepairOrderList.id}}">{{detailRepairOrderList.id}}</span></div>
+                        </td>                            
+                        <td class="ro-ta-col-2" >
+                            <div class="p-table-col"><span class="" title="{{detailRepairOrderList.jobcode}}">{{detailRepairOrderList.jobcode}}</span></div>
+                        </td>
+                        <td class="ro-ta-col-3" >
+                            <div class="p-table-col"><span class="" title="{{detailRepairOrderList.jobtitle}}">{{detailRepairOrderList.jobtitle}}</span></div>
+                        </td>
+                        <td class="ro-ta-col-4">
+                            <div class="p-table-col"><span class="" title="{{detailRepairOrderList.jobdesc}}">{{detailRepairOrderList.jobdesc}}</span></div>
+                        </td>
+                        <td class="ro-ta-col-5" >
+                            <div class="p-table-col">
+                              <!--span class="" title="{{detailRepairOrderList.jobprice}}">${{detailRepairOrderList.jobprice}}</span-->
+                              <span *ngIf="(detailRepairOrderList.jobprice>zeroVal || detailRepairOrderList.jobprice == zeroVal)">${{ detailRepairOrderList.jobprice }}</span>
+                              <span *ngIf="zeroVal>detailRepairOrderList.jobprice" data-negative>(${{ detailRepairOrderList.jobpriceShowOnly}})</span>
+                            </div>
+                        </td>
+                        <td class="ro-ta-col-6-new" >
+                            <div class="p-table-col"><span class="" title="{{detailRepairOrderList.jobqty}}">{{detailRepairOrderList.jobqty}}</span></div>
+                        </td>                           
+                        <td class="ro-ta-col-7" >
+                            <div class="p-table-col">
+                              <!--span class="" title="{{detailRepairOrderList.jobtotal}}">${{detailRepairOrderList.jobtotal}}</span-->
+                              <span *ngIf="(detailRepairOrderList.jobtotal>zeroVal || detailRepairOrderList.jobtotal == zeroVal)">${{ detailRepairOrderList.jobtotal}}</span>
+                              <span *ngIf="zeroVal>detailRepairOrderList.jobtotal" data-negative>(${{ detailRepairOrderList.jobtotalShowOnly}})</span>
+                            </div>
+                        </td>      
+                    </tr>
+                </ng-template>
+            </p-table>
+            <!--div class="total-invoice-1">
+              <span class="tax-lt-1">Tax 5%</span>
+              <span class="tax-rt-1">${{taxView}}</span>
+            </div-->
+            <div class="total-invoice-2" style="text-align: right; margin-bottom:0;">
+              <span class="tax-lt-2">Total Amount</span>
+              
+              <span class="tax-rt-2" *ngIf="(totalInvoiceView>zeroVal || totalInvoiceView == zeroVal)"><span *ngIf="totalInvoiceView>0">$</span>{{ totalInvoiceView }}</span>
+              <span class="tax-rt-2" *ngIf="zeroVal>totalInvoiceView" data-negative>(${{ totalInvoiceViewOnly}})</span>
+            </div>
+            
+        </div>
+    </div>    
+</div> 
+
+
+<div *ngIf="!loading && estimationUpdate" class="prob-index ">
+    <div *ngIf="!itemEmpty" class="probing-content probing-content-new" [style.max-height.px]="innerHeight">
+        <div id="matrixTable" class="prob-list-cont prob-list-cont-escalation prob-list-cont-escalation-new prob-list-cont-escalation-newro" [ngClass]="{ 'es-no-item-new-div' : ItemEmpty }">
+            
+            <p-table 
+                  [value]="productsList"               
+                  [styleClass]="
+                  'p-datatable-sm p-datatable-sm1 p-datatable-sm-es p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+                  "
+                  [columns]="repairOrderListColumns"            
+                  [autoLayout]="true"
+                  [scrollable]="true"
+                  [lazy]="true"
+                  
+                  >
+                 
+                      <ng-template pTemplate="header" let-columns >
+                          <tr >   
+                            <th style="border-width: 1px 0 1px 0 !important;color: #000000 !important;" *ngFor="let col of columns" class="{{col.columnpclass}}" [ngClass]="{ 'stock-header' : col.field == 'existStock' }">  
+                              <span>{{col.header}}
+                                <img style="position: relative;top:-1px;left: 3px;cursor: pointer;" src="assets/images/escalations/escalation-help-black.png" *ngIf="col.columnName == 'jobprice'" popoverClass="custom-tooltip menu-tooltip close-tooltip es-help-tooltip-icon" [ngbPopover]="sideMenu" popoverTitle="Enter new price to override previous price" placement="bottom" triggers="hover">
+                              </span>                                 
+                              <ng-template #sideMenu></ng-template>
+                            </th> 
+                            <th style="border-width: 1px 0 1px 0 !important;" class="ro-ta-col-8"></th>                            
+                          </tr>
+                      </ng-template>
+                    
+                    
+                      <ng-template 
+                      pTemplate="body" 
+                      let-productsList
+                      let-rowData 
+                      let-columns="columns" 
+                      let-index="rowIndex">
+                          <tr 
+                          [pReorderableRow]="index" 
+                           class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.newmatrix }}"
+                            
+      
+                          >
+                          
+      
+                              <td  style="border-width: 1px 0 1px 0 !important;"
+                                   #ptabletdata
+                                  class="{{ col.columnpclass }}  oneclassstep font-email"
+                                  pEditableColumn
+                                  *ngFor="let col of columns" class="{{col.columnpclass}}">
+                            
+                                  <ng-container *ngTemplateOutlet="inputtype1"> </ng-container>
+                                  <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+                                  <ng-container *ngTemplateOutlet="inputtype3"> </ng-container>
+                                  <ng-container *ngTemplateOutlet="inputtype4"> </ng-container>
+                                  <ng-container *ngTemplateOutlet="inputtype5"> </ng-container>
+                                  
+                                  <ng-container *ngTemplateOutlet="inputtype7"> </ng-container>
+                                                                 
+                                  <ng-template #inputtype1>
+                                    <div *ngIf="col.inputType == '1'" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >    
+                                        {{ rowData[col.field] }}
+                                    </div>
+                                    </ng-template>  
+
+                                    <ng-template #inputtype2>
+                                        <div *ngIf="col.inputType == '2'">                                
+                                       
+                                        
+                                          <p-cellEditor>
+                                            <ng-template pTemplate="input">
+                                              <p-dropdown
+                                              appendTo="body"
+                                                [id]="
+                                                  'product_options' + productsList.id + col.headerId
+                                                "
+                                                [filter]="true"  resetFilterOnHide="true" filterBy="name" [showClear]="showClear"
+                                                optionLabel="name"
+                                                   optionValue="name"
+                                               
+                                                (onChange)="
+                                                  onChangeOption(
+                                                    $event.value,
+                                                    productsList,
+                                                    col.headerId,
+                                                    col.columnName,
+                                                    index
+                                                  )
+                                                "
+                                              
+                                                [placeholder]="'Select'"
+                                                appendTo="body"                                        
+                                                [options]="jobCodeArray"
+                                                
+                                                [(ngModel)]="rowData[col.field]"
+                                                
+                                                class="input-with-icon-inside-select {{
+                                                  productsList.isPredefined
+                                                }}  mat-typography"
+                                              ></p-dropdown>
+                                            </ng-template>
+                          
+                                            <ng-template class="text-center" pTemplate="output">
+                                              
+                                              <span class="cursor"
+                                                [id]="
+                                                  'product_options' + productsList.id + col.headerId
+                                                "
+                                                *ngIf="rowData[col.field]"
+                                              >
+                                                {{ rowData[col.field] }}
+                                              </span>
+                                              <span *ngIf="!rowData[col.field]">
+                                                <span class="cursor"
+                                                  [id]="
+                                                    'product_options' +
+                                                    productsList.id +
+                                                    col.headerId
+                                                  "
+                                                  *ngIf="rowData[col.field]"
+                                                  >{{ rowData[col.field] }}</span
+                                                >
+                                                <span class="cursor"
+                                                  [id]="
+                                                    'product_options' +
+                                                    productsList.id +
+                                                    col.headerId
+                                                  "
+                                                  *ngIf="!rowData[col.field]"
+                                                  >Select</span
+                                                >
+                                              </span>
+                                              <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                            </ng-template>
+                                          </p-cellEditor>
+                                        
+                                        
+                                        </div>
+                                        </ng-template>  
+                                        
+                                        <ng-template #inputtype3>
+                                            <div *ngIf="col.inputType == '3'">                                
+                                           
+                                            
+                                              <p-cellEditor>
+                                                <ng-template pTemplate="input">
+                                                  <p-dropdown
+                                                  appendTo="body"
+                                                    [id]="
+                                                      'product_options' + productsList.id + col.headerId
+                                                    "
+                                                   [filter]="true"  resetFilterOnHide="true" filterBy="name" [showClear]="showClear"
+                                                   optionLabel="name"
+                                                   optionValue="name"
+                                                    (onChange)="
+                                                      onChangeOption(
+                                                        $event.value,
+                                                        productsList,
+                                                        col.headerId,
+                                                        col.columnName,
+                                                        index
+                                                      )
+                                                    "
+                                                  
+                                                    [placeholder]="'Select'"
+                                                    appendTo="body"                                        
+                                                    [options]="jobTitleArray"
+                                                    
+                                                    [(ngModel)]="rowData[col.field]"
+                                                    
+                                                    class="input-with-icon-inside-select {{
+                                                      productsList.isPredefined
+                                                    }}  mat-typography"
+                                                  ></p-dropdown>
+                                                </ng-template>
+                              
+                                                <ng-template class="text-center" pTemplate="output">
+                                                  
+                                                  <span style="width: 80%;" class="font-email font-email-edit-c2 cursor"
+                                                    [id]="
+                                                      'product_options' + productsList.id + col.headerId
+                                                    "
+                                                    *ngIf="rowData[col.field]"
+                                                  >
+                                                    {{ rowData[col.field] }}
+                                                  </span>
+                                                  <span *ngIf="!rowData[col.field]">
+                                                    <span class="cursor"
+                                                      [id]="
+                                                        'product_options' +
+                                                        productsList.id +
+                                                        col.headerId
+                                                      "
+                                                      *ngIf="rowData[col.field]"
+                                                      >{{ rowData[col.field] }}</span
+                                                    >
+                                                    <span class="cursor"
+                                                      [id]="
+                                                        'product_options' +
+                                                        productsList.id +
+                                                        col.headerId
+                                                      "
+                                                      *ngIf="!rowData[col.field]"
+                                                      >Select</span
+                                                    >
+                                                  </span>
+                                                  <span style="position:relative;top:-4px;" class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                                </ng-template>
+                                              </p-cellEditor>
+                                            
+                                            
+                                            </div>
+                                            </ng-template>  
+
+                                            <ng-template #inputtype4>
+                                                <div *ngIf="col.inputType == '4'">                                
+                                               
+                                                
+                                                  <p-cellEditor>
+                                                    <ng-template pTemplate="input">
+                                                      <p-dropdown
+                                                      appendTo="body"
+                                                        [id]="
+                                                          'product_options' + productsList.id + col.headerId
+                                                        "
+                                                       [filter]="true"  resetFilterOnHide="true" filterBy="name" [showClear]="showClear"
+                                                       optionLabel="name"
+                                                      optionValue="name"                                                     
+                                                        (onChange)="
+                                                          onChangeOption(
+                                                            $event.value,
+                                                            productsList,
+                                                            col.headerId,
+                                                            col.columnName,
+                                                            index
+                                                          )
+                                                        "
+                                                      
+                                                        [placeholder]="'Select'"
+                                                        appendTo="body"                                        
+                                                        [options]="jobDescArray"
+                                                        
+                                                        [(ngModel)]="rowData[col.field]"
+                                                        
+                                                        class="input-with-icon-inside-select {{
+                                                          productsList.isPredefined
+                                                        }}  mat-typography"
+                                                      ></p-dropdown>
+                                                    </ng-template>
+                                  
+                                                    <ng-template class="text-center" pTemplate="output">
+                                                      
+                                                      <span class="cursor font-email font-email-edit-c2"
+                                                        [id]="
+                                                          'product_options' + productsList.id + col.headerId
+                                                        "
+                                                        *ngIf="rowData[col.field]"
+                                                      >
+                                                        {{ rowData[col.field] }}
+                                                      </span>
+                                                      <span *ngIf="!rowData[col.field]">
+                                                        <span class="cursor"
+                                                          [id]="
+                                                            'product_options' +
+                                                            productsList.id +
+                                                            col.headerId
+                                                          "
+                                                          *ngIf="rowData[col.field]"
+                                                          >{{ rowData[col.field] }}</span
+                                                        >
+                                                        <span class="cursor"
+                                                          [id]="
+                                                            'product_options' +
+                                                            productsList.id +
+                                                            col.headerId
+                                                          "
+                                                          *ngIf="!rowData[col.field]"
+                                                          >Select</span
+                                                        >
+                                                      </span>
+                                                      <span style="position:relative;top:-4px;" class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                                    </ng-template>
+                                                  </p-cellEditor>
+                                                
+                                                
+                                                </div>
+                                                </ng-template>  
+
+                                                <ng-template #inputtype5>
+
+                                                    <div *ngIf="col.inputType == '5'" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >    
+                                                      <p-cellEditor>
+                                                    
+
+                                                        <ng-template pTemplate="input">
+                                                          <input [placeholder]="col.header" style="width: 80px !important;" [id]="'product_options' + productsList.id + col.headerId" 
+                                                          (input)="inputChange( $event,
+                                                          productsList,
+                                                          col.headerId,
+                                                          col.columnName,
+                                                          index)" 
+                                                          (keypress)="isNumberKey($event,rowData[col.field],col.columnName)"
+                                                          pInputText type="text"  [(ngModel)]="rowData[col.field]">                                          
+                                                        </ng-template>
+
+                                                        <ng-template class="text-center" pTemplate="output">
+                                                          
+                                                          <span class="cursor"
+                                                          [id]="
+                                                            'product_options' + productsList.id + col.headerId
+                                                          "
+                                                          *ngIf="rowData[col.field]"
+                                                        >
+                                                        <span *ngIf="col.headerId != '5'">{{ rowData[col.field] }}</span>
+                                                        <span *ngIf="col.headerId == '5' && (rowData[col.field]>zeroVal || rowData[col.field] == zeroVal)">${{ rowData[col.field] }}</span>
+                                                        <span *ngIf="col.headerId == '5' && zeroVal>rowData[col.field]" data-negative>(${{ productsList.jobpriceShowOnly}})</span>                                                       
+                                                      
+                                                        </span>
+
+                                                        <span class="cursor"
+                                                        [id]="
+                                                          'product_options' +
+                                                          productsList.id +
+                                                          col.headerId
+                                                        "
+                                                        *ngIf="!rowData[col.field]"
+                                                        ></span>
+                                                      
+                                                  
+                                                    <span *ngIf="rowData[col.field]!=''" style="position:relative;" class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+
+                                                        </ng-template>
+                                                      </p-cellEditor>  
+
+                                                    </div>
+                                                    
+                                                    </ng-template> 
+                                    
+                                                   
+      
+                                      <ng-template #inputtype7>
+                                        <div *ngIf="col.inputType == '7'" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >   
+                                          
+                                          <span *ngIf="(rowData[col.field]>zeroVal || rowData[col.field] == zeroVal)">${{ rowData[col.field] }}</span>
+                                          <span *ngIf="zeroVal>rowData[col.field]" data-negative>(${{ productsList.jobtotalShowOnly}})</span>
+
+                                           
+                                        </div>
+                                        </ng-template> 
+
+                                                                      </td>
+
+                              <td style="border-width: 1px 0 1px 0 !important;" class="cursor-pointer ro-ta-col-8" >
+                                <span  [matMenuTriggerFor]="more" (click)="$event.stopPropagation();" class="custom-icon-user-dashboard more-icon-new"><img src="assets/images/more-icon.png" alt="Action"></span>
+                                
+                                <mat-toolbar color="primary">
+                                  <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                      <div class="part-menu">
+                                          <ul class="more-actions">
+                                              <li class="cursor active" (click)="deleteAction(index)"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Remove</li>
+                                          </ul>
+                                      </div>
+                                  </mat-menu>
+                                </mat-toolbar>
+  
+                              </td>
+
+                          </tr>
+                      </ng-template>
+                  </p-table>          
+              
+              <div class="total-invoice-2" >
+                <div class="total-invoice-1">
+                  <span class="tax-lt-1" [ngClass]="{ 'visibile-visbile' : repairOrderList.length>productsList.length && !itemEmpty, 'visibile-hidden' : repairOrderList.length==productsList.length || itemEmpty }"><div class="addjob" (click)="addjob()"><span ><i class="pi pi-plus" style="font-size: 13px; margin-right: 4px;"></i></span><span >Add Job</span></div></span>
+                  <span class="tax-rt-1" [ngClass]="{ 'visibile-visbile' : totalInvoice2,  'visibile-hidden' : !totalInvoice2 }">
+                    <span class="tax-lt-2">Total Amount</span>                    
+                    <span class="tax-rt-2" *ngIf="(totalInvoice>zeroVal || totalInvoice == zeroVal)"><span *ngIf="totalInvoice>0">$</span>{{ totalInvoice }}</span>
+                    <span class="tax-rt-2" *ngIf="zeroVal>totalInvoice" data-negative>(${{ totalInvoiceShowOnly}})</span>
+                    <span style="width:40px;display:inline-block;"></span>
+                  </span>
+                </div>                    
+              </div>
+        </div>
+    </div>  
+    <div class="addjob-placeholder" *ngIf="productsList?.length==0 && itemEmpty">
+      <img class="addjob-img" src="assets/images/repair-order/add-job-empty.png" alt="job" style="vertical-align: revert;">
+      <div class="addjob-text">Get started by tapping on "Add Jobs”</div>
+      <div *ngIf="repairOrderList.length>productsList.length" class="addjob" (click)="addjob()"><span ><i  class="pi pi-plus" style="font-size: 13px; margin-right: 4px;"></i></span><span >Add Job</span></div>  
+    </div>
+    
+</div> 
+
+
+
+
+    
+    
+    
+    
+    
+

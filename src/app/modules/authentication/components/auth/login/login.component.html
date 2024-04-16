@@ -1,0 +1,102 @@
+<div *ngIf="fromSSO" class="login-loader text-center"><img src="assets/images/loading.svg" alt="Loader" width="60" height="60" /></div>    
+<div *ngIf="loading" class="login-loader text-center"><img src="assets/images/filter/filter-loading.svg" alt="Loader" width="100" height="100" /></div>    
+
+
+<div class="main-container" [style.height.px]="innerHeight" *ngIf="!fromSSO">  
+    <div *ngIf="!loading" class="mcont-col-1" >
+        <div class="header-logo"  [ngClass]="{ 'canoo-logo': domainId == '69'}" ><span [ngClass]="{ 'bgsize-cover': domainId == '24' , 'bgsize-90': domainId == '68' }" [style.background-image]="'url(' + headerLogo + ')'"></span><label class="country-name-text" *ngIf="showCountryFlag">{{countryName}}</label></div>
+        <div class="mcont-inner-div" >
+            <!-- Enter Domain Name -->
+            <div class="mcont-inner-col" *ngIf="subDomainFlag">
+                <div class="heading">LOGIN</div>
+                <div class="label">Enter business or team account URL​</div>
+                <form [formGroup]="subdomainForm" (ngSubmit)="subdomainFormValue()">
+                    <div class="input-group" [ngClass]="{ 'active': companyNameInputFlag , 'error': domainServerError }">
+                        <div class="input-group-prepend domain-img normal"  [ngClass]="{ 'active': companyNameInputFlag, 'setOpacity3' : loading1 }"></div>
+                        <input #myInput3 type="text" class="form-control inputtext"  [ngClass]="{ 'setOpacity3' : loading1 }" matInput #domainInput placeholder="Enter company name" formControlName="companyName" maxlength="40" (keyup)="onKeypress(1,$event)"  />                                            
+                        <div class="input-group-postpend" [ngClass]="{ 'setOpacity3' : loading1 }">{{MainDomainName}}</div>
+                        <div *ngIf="!loading1" class="input-group-postpend-arrow" (click)="subdomainFormValue()" [ngClass]="{ 'active': companyNameInputFlag }"></div>
+                        <div *ngIf="loading1" class="input-group-postpend-arrow loading-img"></div>                         
+                    </div>                                        
+                    <div class="login-invalid-feedback" *ngIf="domainServerError">
+                        <img src="assets/images/login/error-img.png" /> <span>{{domainServerErrorMsg}}</span>
+                    </div>
+                    <div class="example-text"><span>Example: </span>fieldpulse{{MainDomainName}}</div>
+                    <div class="line-row">
+                        <span class="line-col-1"><img src="assets/images/login/help-icon.png" /><a (click)="domainURL()">I’m not sure about the URL</a></span>
+                        <span class="line-col-2">Don't have an account? <a routerLink="/auth/signup">Sign Up</a></span>
+                    </div>
+                </form>
+            </div>            
+            <div  class="mcont-inner-col " *ngIf="loginFlag">
+                <div class="responsive-uimg" *ngIf="loginFlagS2"><span class="rounded-circle user-img" [style.background-image]="'url(' + userImg + ')'"></span></div>
+                <div *ngIf="!TVSIBDomain" class="heading login-heading">Welcome to login page for {{MainDomainNameIdentity}} account</div>
+                <div *ngIf="TVSIBDomain" class="heading login-heading">Welcome to TVSIB Interactive Technical Forum</div>
+                <div class="sub-domain-name">​{{subDomainURL}}<a (click)="bookmarkURL()">&nbsp;&nbsp;<img src="assets/images/login/bookmark.png" /></a></div>
+                <div *ngIf="!tvsSSOFlag">
+                    <form [formGroup]="loginForm">                    
+                        <div class="input-group" [ngClass]="{ 'active': userNameInputFlag, 'error': loginUserError }">
+                            <div class="input-group-prepend email-img normal"  [ngClass]="{ 'active': userNameInputFlag, 'setOpacity3' : loading2  }"></div>
+                            <input #myInput1 type="text" class="form-control inputtext"  [ngClass]="{ 'setOpacity3' : loading2 }" matInput placeholder="Email or Stage Name" formControlName="userName" maxlength="100" (keyup)="onKeypress(2,$event)"/>                                                                    
+                            <div *ngIf="!loading2 && loginFlagS1" (click)="loginSubmitStep1()" class="input-group-postpend-arrow" [ngClass]="{ 'active': userNameInputFlag }"></div>  
+                            <div *ngIf="loading2" class="input-group-postpend-arrow loading-img"></div>                        
+                        </div>                       
+                        <div *ngIf="loginFlagS2" class="input-group" [ngClass]="{ 'active': passwordInputFlag, 'error':loginPwdError }">
+                            <div class="input-group-prepend pass-img normal"  [ngClass]="{ 'active': passwordInputFlag, 'setOpacity3' : loading3 }"></div>
+                            <input #myInput2 [type]="pwdFieldTextType ? 'text' : 'password'" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading3 }" matInput placeholder="Password" formControlName="password" maxlength="50" (keyup)="onKeypress(3,$event)"/>
+                            <div (click)="showPassword(pwdFieldTextType)" class="input-group-pwd normal" [ngClass]="{ 'active' : pwdFieldTextType }"></div>
+                            <div *ngIf="!loading3" (click)="loginSubmitStep2()" class="input-group-postpend-arrow" [ngClass]="{ 'active': passwordInputArrowFlag }"></div>
+                            <div *ngIf="loading3" class="input-group-postpend-arrow loading-img"></div>                        
+                        </div>                    
+                        <div class="login-invalid-feedback" *ngIf="loginServerError">
+                            <img src="assets/images/login/error-img.png" /> <span>{{loginServerErrorMsg}}</span>
+                        </div>
+                    </form>
+                </div> 
+                <div *ngIf="tvsSSOFlag"><app-tvssso (otherUserAction)="returnLogin($event)"></app-tvssso></div> 
+                <div *ngIf="!showLanguageFlag">
+                    <div class="forgot-text" *ngIf="loginFlagS2"><a (click)="forgotPassword()">Forgot Password?</a></div> 
+                    <div class="line-row" >
+                        <span *ngIf="platformIdInfo != '2'" class="line-col-1"><a class="back-text" (click)="gotoMainPage()"><img *ngIf="!loginFlagS2" src="assets/images/login/back-arrow-green.png" /><img *ngIf="loginFlagS2" src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>
+                        <span class="line-col-2">Don't have an account? <a routerLink="/auth/signup">Sign Up</a></span>
+                    </div>
+                </div>
+                <div *ngIf="tvsSSOFlagNormalFlow && !tvsSSOFlag && !loginFlagS2">
+                    <div class="line-row" >
+                        <span class="line-col-1"><a class="back-text" (click)="enableTVSSSO()"><img *ngIf="!loginFlagS2" src="assets/images/login/back-arrow-blue.png" /><span>BACK </span></a></span>
+                     </div>
+                </div>
+                <div *ngIf="showLanguageFlag">
+                    <div class="line-row no-line-row" >
+                        <span class="line-col-1" *ngIf="!tvsSSOFlagNormalFlow && loginFlagS2"><span class="back-text" (click)="gotoMainPage()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK TO MAIN PAGE</span></span></span>
+                        <span class="line-col-1" *ngIf="tvsSSOFlagNormalFlow && !tvsSSOFlag && loginFlagS2"><span class="back-text" (click)="enableTVSSSO()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></span></span>                        
+                        <div class="line-col-2 forgot-text" *ngIf="!tvsSSOFlag && loginFlagS2"><a (click)="forgotPassword()">Forgot Password?</a></div> 
+                    </div>
+                    
+                    <div class="line-row" *ngIf="domainId != '52'"> 
+                        <span class="line-col-1 lang-col">
+                            <img class="lang-icon" src="assets/images/login/lang-icon.png" />
+                            <span class="lang-text">Language:</span>
+                            <span (click)="selectLanguage()" class="lang-name-text">{{languageName}}</span>
+                            <img (click)="selectLanguage()" class="lang-arrow-icon" src="assets/images/login/lang-down-arrow.png" />                                
+                        </span>                           
+                        <span *ngIf="(!tvsSSOFlag)" class="line-col-2">Don't have an account? <a routerLink="/auth/signup">Sign Up</a></span>
+                    </div>
+                </div> 
+            </div>            
+        </div>
+        <app-auth-footer></app-auth-footer>
+    </div>
+    
+    <div *ngIf="!subDomainFlag && (!loading && platformIdInfo != '1') || (!loading &&  this.domainName == 'vinfast')" class="mcont-col-2" [style.height.px]="innerHeight">
+        <app-auth-right-panel [class]="setbgClassName"></app-auth-right-panel>
+    </div>  
+    <div *ngIf="!subDomainFlag && (!loading && platformIdInfo == '1' && this.domainName != 'vinfast')" class="mcont-col-2" [style.height.px]="innerHeight">
+        <div class="responsive-bgimg" [ngClass]="{ 'contain' : !landingBannerFit, 'cover': landingBannerFit}" [ngStyle]="{'background-image': 'url(' + loginImageUrl + ')'}"></div>
+    </div>
+    <div *ngIf="subDomainFlag && !loading" class="mcont-col-2" [style.height.px]="innerHeight">
+        <app-auth-right-panel [class]="setbgClassName"></app-auth-right-panel>
+    </div>
+    
+</div>
+

@@ -1,0 +1,350 @@
+<div class="head-row head-brand">
+<div class="push-msg" style="background:#fa712d;margin-top: -1px;" *ngIf="pageData.pageName == 'thread' && apiUrl.newupdateRefresh">
+  <div class="push-enablepopup text-center">
+    <div>
+      <span><img style="margin-right: 8px;height: 18px;" src="assets/images/landing-page/tapon-refresh.png" /></span>
+      New updates to the website are available.
+      <span class="hilight-text cursor" (click)="refreshPopupScreen()">Tap here to refresh the page</span>
+      . Make sure to save or post your changes before refreshing the page.
+    </div>
+  </div>
+</div>
+</div>
+
+
+<div *ngIf="pageData.pageName == 'search' || pageData.pageName == 'thread' || pageData.pageName == 'repairorder' || pageData.pageName == 'knowledgearticles' || pageData.pageName == 'gts' || pageData.pageName == 'market-place' || pageData.pageName == 'manual' || pageData.pageName == 'ppfr' || pageData.pageName == 'announcement' || pageData.pageName == 'Bug and Feature'"
+  class="td-head row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0" [ngClass]="{'search-head-row': pageData.pageName == 'search'}">
+  <div class="left-head padding0 margin0"
+  [ngClass]="{'col-4 col-lg-4 col-md-4 col-xl-4 col-sm-12': !collabticFixes, 'col-2 col-lg-2 col-md-2 col-xl-2 col-sm-12 logo-col logo-col-fixes': collabticFixes}">
+    <span *ngIf="!collabticFixes" class="thread-text {{(pageData?.pageName=='market-place' || pageData?.pageName=='manual') ? 'flex-align-center' : ''}}">
+      <!--span *ngIf="teamSystem" class="cursor team-back-icon" (click)="closeWindow()"></span-->
+      <span *ngIf="pageData.pageName=='thread' || pageData.pageName=='ppfr'">{{pageData.title}}</span>
+      <span *ngIf="pageData.pageName=='repairorder'">Repair Order Details</span>
+      <span *ngIf="pageData.pageName=='knowledgearticles'">Knowledge Article</span>
+      <span *ngIf="pageData.pageName=='gts'">GTS</span>
+      <span *ngIf="pageData.pageName=='market-place'">Training</span>
+      <span *ngIf="pageData.pageName=='manual'">Manual</span>
+      <span *ngIf="pageData.pageName=='announcement'">Announcement</span>
+      <span *ngIf="pageData.pageName!='repairorder'" class="detail-page-header-id">&nbsp;ID# {{pageData.threadId}}</span>
+      <span class="margin-left-10px" *ngIf="pageData?.pageName=='gts' && gtsAPI?.isProcedureAvailable && pageData?.createAccess">
+        <button (click)="startGTS()" class="start-gts-btn new-button-gts-design">
+          <img width="23px" height="23px" class="w-25" src="assets/images/gts/play.png" alt="">
+          Start GTS
+        </button>
+      </span>
+      <span *ngIf="pageData.pageName=='market-place' || pageData.pageName=='manual'" [ngStyle]="{ 'background-color' : pageData?.trainingStatusColor }" class="margin-left-10px new-status-design-market-place">{{pageData?.trainingStatus}}</span>
+    </span>
+    <span *ngIf="collabticFixes">
+      <img (click)="taponlogo()" src="{{ platformLogo }}" class="b-logo cursor" alt="Logo" />
+    </span>
+    <span *ngIf="!collabticFixes && pageData?.pageName!='market-place' && pageData?.pageName!='manual'" class="btn thread-status cursor-default"
+      [ngStyle]="{ 'background-color' : pageData.threadStatusBgColor, 'color' : pageData.threadStatusColorValue }">{{pageData.threadStatus}}</span>
+
+    <span *ngIf="!collabticFixes && techSubmmit && pageData.closeThread == '1'"><span class="tech-summit-text">Tech Summit
+        Score</span><span class="tech-summit-circle">{{pageData.scorePoint}}</span></span>
+  </div>
+  <div *ngIf="pageData.pageName=='market-place' || pageData.pageName=='manual'" class="col-4 col-lg-4 col-md-4 col-xl-4 col-sm-12 padding0 margin0 custom-page-title">
+     {{headingPageTitle}}
+  </div>
+  <div class="right-head padding0 margin0"
+    [ngClass]="{'col-4 col-lg-4 col-md-4 col-xl-4 col-sm-12' : !collabticFixes && (pageData.pageName=='market-place' || pageData.pageName=='manual'), 'col-8 col-lg-8 col-md-8 col-xl-8 col-sm-12': !collabticFixes && (pageData.pageName!='market-place' && pageData.pageName!='manual'), 'col-10 col-lg-10 col-md-10 col-xl-10 col-sm-12 search-col logo-col-fixes': collabticFixes && (pageData.pageName!='market-place' && pageData.pageName!='manual')}">
+    <ng-template #sideMenu></ng-template>
+    <div *ngIf="collabticFixes" class="search-filter">
+      <app-search-filter [pageData]="pageData" [searchKeyValue]="pageData.searchValue" (searchFilterComponentRef)="searchFilterRef = $event" (searchFilterCallback)="searchFilterCallback($event)" (actionHeader)="actionHeader($event)"></app-search-filter>
+    </div>
+    <ul [ngClass]="{'ul-inline': collabticFixes}">
+      <!--
+      <li class="paddingR30" *ngIf="pageData.assignedToName!=''">
+        <a style="cursor: default;" title=""><span style="position: relative;top: -4px;">Assigned to:</span><span class="ass-span"><img onerror="this.src='assets/images/thumb_profile_image.png'" class="ass-img" [src]="pageData.assignedToProfile"></span><span style="position: relative;top: -4px;color:#000000;">{{pageData.assignedToName}}</span></a>
+      </li>
+-->
+
+    <li class="paddingR30" *ngIf="pageData.pageName == 'repairorder'">
+      <a title="Copy Link" (click)="threadHeaderEvent('copylink')">
+        <img src="assets/images/thread-detail/copy-icon.png" alt="">
+        <span>Copy Link</span>
+        <div *ngIf="copiedModal" class="copied-txt-div">
+          <div class="copied-txt-inner-div">Link Copied</div>
+      </div>
+      </a>
+    </li>
+
+    <li class="paddingR30" *ngIf="pageData.pageName == 'repairorder' && pageData.repairOrderEditFlag">
+      <a title="Edit" (click)="threadHeaderEvent('edit')">
+        <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+        <span>Edit</span>
+      </a>
+     </li>
+
+    <li class="paddingR30" *ngIf="pageData.pageName == 'repairorder'">
+      <a title="Delete" *ngIf="pageData.repairOrderDeleteFlag" (click)="threadHeaderEvent('delete')">
+        <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+        <span>Delete</span>
+      </a>
+     </li>
+
+     <li class="paddingR30" *ngIf="pageData.pageName == 'repairorder' && pageData.repairOrderApproveFlag">
+      <div class="repair-order-btn-div" (click)="threadHeaderEvent('approve')"><span class="repair-order-btn-text"> Approve&nbsp;&nbsp;<span style="position: relative;top: 1px;" class="p-button-icon p-button-icon-right pi pi-check" aria-hidden="true"></span></span></div>
+    </li>  
+  
+
+      <li class="paddingR30" *ngIf="!collabticFixes && ppfrAccess">
+        <a title="{{ppfrText}} PPFR Form" (click)="threadHeaderEvent('ppfr')"><img
+            src="assets/images/thread-detail/ppfr.png"><span>{{ppfrText}} PPFR Form</span></a>
+      </li>
+
+      <li class="paddingR30" *ngIf="!collabticFixes && !msTeamAccessMobile && pageData.reopenThread"
+        [ngClass]="{'setOpacity3' : reopenTextFlag }">
+        <a title="Re-open {{pageData.title}}" (click)="threadHeaderEvent('reopen')">
+          <img src="assets/images/thread-detail/{{reopenThreadImg}}"><span>Re-open {{pageData.title}}</span>
+        </a>
+      </li>
+      <li *ngIf="pageData.pageName == 'thread' && !teamSystem && !newTab" class="paddingR30 hide">
+        <a title="Show New Tab" (click)="viewThread(pageData.threadId)">Show New Tab</a>
+      </li>
+      <li class="paddingR30 "
+        *ngIf="!collabticFixes && (pageData.pageName=='thread' || pageData.pageName!='gts' || pageData.pageName=='knowledgearticles' || pageData.pageName=='announcement') && pageData.editAccess">
+        <a title="Edit" (click)="editThread(pageData.threadId,pageData.pageName)">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit</span>
+        </a>
+      </li>
+      <li class="paddingR30 "
+        *ngIf="!collabticFixes && pageData.pageName=='gts' && pageData.editAccess">
+        <a title="Edit GTS Detail" (click)="editThread(pageData.threadId,pageData.pageName)">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit GTS Detail</span>
+        </a>
+      </li>
+      <li class="paddingR30 "
+        *ngIf="!collabticFixes && pageData.pageName=='gts' && pageData.editAccess && pageData.flowchartURL != ''">
+        <a title="Edit Workflow" (click)="editThread(pageData.threadId,pageData.pageName,'workflow')">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit Workflow</span>
+        </a>
+      </li>
+      <li class="paddingR30 " *ngIf="!collabticFixes && (pageData.pageName=='market-place' && !pageData?.hideEditDelete) && pageData.threadOwnerAccess">
+        <a title="Edit" (click)="editThread(pageData.threadId,'market-place')">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit</span>
+        </a>
+      </li>
+      <li class="paddingR30" *ngIf="!collabticFixes && pageData.pageName=='Bug and Feature' && pageData.threadOwnerAccess">
+        <a title="Edit" (click)="editThread(pageData.threadId,'Bug and Feature')"><img
+            src="assets/images/thread-detail/thread-edit.png"><span>Edit</span></a>
+      </li>
+      <li class="paddingR30 " *ngIf="!collabticFixes && (pageData.pageName=='manual' && !pageData?.hideEditDelete) && pageData.threadOwnerAccess">
+        <a title="Edit" (click)="editThread(pageData.threadId,'manual')">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit</span>
+        </a>
+      </li>
+      <li class="paddingR30 "
+          *ngIf="!collabticFixes && (pageData.pageName=='market-place' && !pageData.hideEditDelete && !pageData?.hideDelete) && pageData.threadOwnerAccess">
+        <a [ngbTooltip]="tipContent" (click)="threadHeaderEvent('delete')" triggers="hover">
+          <img width="24px" height="24px" src="assets/images/thread-detail/cancel-training.png" alt="cancel" onload="SVGInject(this)">
+          <span>Cancel</span>
+        </a>
+      </li>
+      <ng-template #tipContent><span>Tapping on Cancel will remove the training from the public site and will not be available for purchase. You can restore the training again, if needed.</span></ng-template>
+
+      <li class="paddingR30 "
+          *ngIf="!collabticFixes && (pageData.pageName=='market-place' && pageData.showPermanentDelete) && pageData.threadOwnerAccess">
+        <a [ngbTooltip]="tipContent1" (click)="threadHeaderEvent('permanentDelete')" triggers="hover">
+          <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+          <span>Delete</span>
+        </a>
+      </li>
+      <ng-template #tipContent1><span>Tap here to permanently delete the training</span></ng-template>
+
+      <li class="paddingR30 "
+        *ngIf="!collabticFixes && (pageData.pageName=='manual' && !pageData.hideEditDelete && !pageData?.hideDelete) && pageData.threadOwnerAccess">
+        <a [ngbTooltip]="tipContent4" (click)="threadHeaderEvent('delete')" triggers="hover">
+          <img width="24px" height="24px" src="assets/images/thread-detail/cancel-training.png" alt="cancel"
+            onload="SVGInject(this)">
+          <span>Remove</span>
+        </a>
+      </li>
+      <ng-template #tipContent4><span>Tapping on remove will remove the manual from the public site and will not be available
+          for purchase. You can restore the manual again, if needed.</span></ng-template>
+
+      <li class="paddingR30 "
+      *ngIf="!collabticFixes && (pageData.pageName=='manual' && pageData.showPermanentDelete && pageData?.showRestore) && pageData.threadOwnerAccess">
+        <a [ngbTooltip]="tipContent3" (click)="threadHeaderEvent('permanentDelete')" triggers="hover">
+          <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+          <span>Delete</span>
+        </a>
+      </li>
+      <ng-template #tipContent3><span>Tap here to permanently delete the manual</span></ng-template>
+
+      <li class="paddingR30 "
+          *ngIf="!collabticFixes && (pageData.pageName=='market-place' && pageData?.showRestore) && pageData.threadOwnerAccess">
+        <a [ngbTooltip]="tipContent2" (click)="threadHeaderEvent('restore')" class="svg-color-change" triggers="hover">
+          <img width="24px" height="24px" src="assets/images/thread-detail/restore.png" alt="restore">
+          <span>Restore</span>
+        </a>
+      </li>
+      <ng-template #tipContent2><span>Tapping on Restore will re-publish the training and make it available for sale on the site.</span></ng-template>
+
+      <li class="paddingR30 " *ngIf="!collabticFixes && (pageData.pageName=='manual' && pageData?.showRestore) && pageData.threadOwnerAccess">
+        <a [ngbTooltip]="tipContent5" (click)="threadHeaderEvent('restore')" class="svg-color-change" triggers="hover">
+          <img width="24px" height="24px" src="assets/images/thread-detail/restore.png" alt="restore">
+          <span>Restore</span>
+        </a>
+      </li>
+      <ng-template #tipContent5><span>Tapping on Restore will re-publish the manual and make it available for sale on the
+          site.</span></ng-template>
+
+      <li class="paddingR30 "
+        *ngIf="!collabticFixes && (pageData.pageName=='thread' || pageData.pageName=='gts' || pageData.pageName=='knowledgearticles' || pageData.pageName=='announcement' || pageData.pageName=='Bug and Feature') && pageData.deleteAccess">
+        <a title="Delete" (click)="threadHeaderEvent('delete')">
+          <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+          <span>Delete</span>
+        </a>
+      </li>
+      <li class="paddingR30" *ngIf="!collabticFixes && pageData.pageName=='announcement' && pageData.threadOwnerAccess">
+        <a title="Remove & Archive" (click)="threadHeaderEvent('delete')">
+          <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+          <span>Remove & Archive</span>
+        </a>
+      </li>
+
+      <li class="paddingR30 " *ngIf="!collabticFixes && ((pageData.pageName=='gts' && pageData.createAccess) || (pageData.pageName=='market-place' && !pageData?.hideDuplicate && pageData.threadOwnerAccess))">
+        <a title="Duplicate" (click)="duplicateRecord('duplicate')"><img
+            src="assets/images/{{duplicateCircleImg}}"><span>Duplicate</span></a>
+      </li>
+      <li class="paddingR30 " *ngIf="!collabticFixes && pageData.pageName=='thread' && !apiUrl.threadViewPublicPage">
+        <a title="More" tooltipClass="post-submit-tooltip more-tooltip more-tooltip-new" triggers="click" [autoClose]="true"
+          placement="bottom" [ngbTooltip]="more">
+          <img src='assets/images/thread-detail/thread-more.svg' alt='' onload='SVGInject(this)' />
+          <span *ngIf="!msTeamAccessMobile">More</span></a>
+        <ng-template #more>
+          <div class="thread-owner-reply">
+            <div class="label-tt-cont moreDiv cursor-pointer"
+              *ngIf="!msTeamAccessMobile && reminderShow && pageData.reminderAccess && pageData.closeThread == 0"
+              (click)="threadHeaderEvent('reminder')">
+              <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-reminder.png"></span>
+              <span class="label-tt-cont-rt moreDivRt">
+                <p class="more-cont">Send Reminder</p>
+              </span>
+            </div>
+            <div *ngIf="!msTeamAccessMobile" class="label-tt-cont moreDiv setOpacity3">
+              <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-escalate.png"></span>
+              <span class="label-tt-cont-rt moreDivRt">
+                <p class="more-cont">Escalate</p>
+              </span>
+            </div>
+            <div class="label-tt-cont moreDiv cursor-pointer"
+              *ngIf="pageData.closeAccess && pageData.closeThread == 0" (click)="threadHeaderEvent('close')">
+              <span class="label-tt-cont-lt moreDivLt"><img
+                  src="assets/images/thread-detail/thread-close-white.png"></span>
+              <span class="label-tt-cont-rt moreDivRt">
+                <p class="more-cont">Close {{pageData.title}}</p>
+              </span>
+            </div>
+            <div *ngIf="!msTeamAccessMobile" class="label-tt-cont moreDiv  cursor-pointer"
+              (click)="threadHeaderEvent('threaddashboard')">
+              <span class="label-tt-cont-lt moreDivLt"><img
+                  src="assets/images/thread-detail/more-thred-dashboard.png"></span>
+              <span class="label-tt-cont-rt moreDivRt">
+                <p class="more-cont">{{pageData.title}} Dashboard</p>
+              </span>
+            </div>
+            <div *ngIf="!msTeamAccessMobile" class="label-tt-cont moreDiv  cursor-pointer"
+              (click)="threadHeaderEvent('print')">
+              <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-print.png"></span>
+              <span class="label-tt-cont-rt moreDivRt">
+                <p class="more-cont">Print</p>
+              </span>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+      <li class="close-button paddingL30 text-center {{pageData.pageName}}" *ngIf="!apiUrl.threadViewPublicPage">
+        <a class="close" (click)="closeWindow()" popoverClass="custom-tooltip menu-tooltip close-tooltip" [ngbPopover]="sideMenu" popoverTitle="Exit (Ctrl+X)" placement="bottom" triggers="hover">
+          <img src="assets/images/thread-detail/thread-window-close.svg" alt="Close" onload="SVGInject(this)">
+        </a>
+      </li>
+      <li *ngIf="collabticFixes" class="feedback-button paddingL30 text-center {{pageData.pageName}}">
+        <a class="feedback" (click)="feedback()">Feedback</a>
+      </li>
+    </ul>
+
+  </div>
+</div>
+
+<div *ngIf="!loading && (pageData.pageName == 'kaizen' || pageData.pageName == 'document' || pageData.pageName == 'adas' || pageData.pageName == 'part' || pageData.pageName == 'sib')"
+  class="td-head row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0">
+  <div class="left-head col-12 col-lg-6 col-md-6 col-xl-6 col-sm-12 padding0 margin0">
+    <ng-template #sideMenu></ng-template>
+    <span *ngIf="teamSystem" class="cursor team-back-icon close" (click)="closeWindow()"
+    popoverClass="custom-tooltip menu-tooltip close-tooltip" [ngbPopover]="sideMenu" popoverTitle="Exit (Ctrl+X)" placement="bottom" triggers="hover"></span>
+    <span class="thread-text">
+      <span *ngIf="pageData.pageName != 'sib' && pageData.pageName != 'kaizen' && pageData.pageName != 'adas'">{{title | titlecase}}</span>
+      <span *ngIf="pageData.pageName == 'adas' || (pageData.pageName == 'sib' && pageData.pageName != 'kaizen')">{{title | uppercase}}</span>
+      <span *ngIf="pageData.pageName == 'kaizen'">Reg#</span>
+      <span *ngIf="pageData.pageName != 'kaizen'" class="detail-page-header-id">&nbsp;ID# {{pageData.threadId}}</span>
+      <span *ngIf="pageData.pageName == 'kaizen'" class="detail-page-header-id">&nbsp;{{pageData.threadId}}</span>
+    </span>
+    <span *ngIf="pageData.threadStatus != ''" class="btn thread-status cursor-default"
+      [ngStyle]="{ 'background-color' : pageData.threadStatusBgColor, 'color' : pageData.threadStatusColorValue }">{{pageData.threadStatus}}</span>
+
+  </div>
+  <div class="right-head col-12 col-lg-6 col-md-6 col-xl-6 col-sm-12 padding0 margin0">
+    <ng-template #sideMenu></ng-template>
+    <ul>
+      <li *ngIf="(editFlag && pageData.pageName != 'document' && pageData.pageName != 'adas' && pageData.pageName != 'part') || (partsEditAccess && pageData.pageName == 'part')" class="paddingR30">
+        <a title="Edit" (click)="editThread(pageData.threadId,pageData.pageName)">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit</span>
+        </a>
+      </li>
+      <li class="paddingR30" *ngIf="(editFlag && pageData.pageName != 'document' && pageData.pageName != 'adas' && pageData.pageName != 'part') || (partsDeleteAccess && pageData.pageName == 'part')">
+        <a title="Delete" class="cursor" (click)="threadHeaderEvent('delete')">
+          <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+          <span>Delete</span>
+        </a>
+      </li>
+      <li class="paddingR30" *ngIf="pageData.pageName == 'part' && partsDuplicateAccess">
+        <a title="Duplicate" class="cursor" (click)="editThread(pageData.threadId,pageData.pageName,'duplicate')"><img
+            src="assets/images/{{duplicateCircleImg}}"><span>Duplicate</span></a>
+      </li>
+      <li class="paddingR30" *ngIf="(pageData.editAccess && pageData.pageName == 'document') || (pageData.pageName == 'adas' && (pageData.editAccess || pageData.threadOwnerAccess))">
+        <a title="Edit" (click)="editThread(pageData.threadId,pageData.pageName)">
+          <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+          <span>Edit</span>
+        </a>
+      </li>
+      <li class="paddingR30" *ngIf="(pageData.editAccess && pageData.pageName == 'document') || (pageData.pageName == 'adas' && (pageData.editAccess || pageData.threadOwnerAccess))">
+        <a title="Delete" class="cursor" (click)="threadHeaderEvent('delete')">
+          <img src="assets/images/thread-detail/thread-delete.svg" alt="delete" onload="SVGInject(this)">
+          <span>Delete</span></a>
+      </li>
+      <li class="paddingR30 arrow-tt-hide" *ngIf="pageData.convert && pageData.pageName == 'document'">
+        <a popoverClass="custom-tooltip menu-tooltip doc-title-tooltip" [ngbPopover]="convert" popoverTitle="Convert&nbsp;document&nbsp;to&nbsp;Knowledge&nbsp;Article" placement="bottom" triggers="hover" class="cursor" (click)="threadHeaderEvent('convert')">
+          <img src="assets/images/documents/{{convertDocKAImg}}" alt="convert">
+          <span>Convert</span></a>
+          <ng-template #convert></ng-template>
+      </li>
+      <li class="paddingL30 text-center">
+        <a class="close" (click)="closeWindow()" popoverClass="custom-tooltip menu-tooltip close-tooltip" [ngbPopover]="sideMenu" popoverTitle="Exit (Ctrl+X)" placement="bottom" triggers="hover">
+          <img src="assets/images/thread-detail/thread-window-close.svg" alt="Close" onload="SVGInject(this)">
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="!loading && (pageData.pageName == 'settings' || pageData.pageName == 'faq')" style="padding:8px 20px 8px 20px;"
+  class="td-head row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0">
+  <div class="left-head col-12 col-lg-6 col-md-6 col-xl-6 col-sm-12 padding0 margin0">
+    <div class="back-text {{pageData.pageName}}" [ngClass]="{'back-white': CBADomain}" (click)="closeWindow()">
+      <img src="{{backButton}}"> &nbsp;Back
+    </div>
+    <div *ngIf="newFlag" class="home-new-button {{pageData.pageName}}" (click)="newPage()">{{newTextHead}}</div>
+  </div>
+  <div class="right-head col-12 col-lg-6 col-md-6 col-xl-6 col-sm-12 padding0 margin0"></div>
+</div>
+
+<app-dialog-popup *ngIf="displayLogoutPopup" [dialogData]="dialogData" (closewindow)="closewindowPopup($event)">
+</app-dialog-popup>

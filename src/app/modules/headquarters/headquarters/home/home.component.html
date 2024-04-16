@@ -1,0 +1,21 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="left-section">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{pageAccess}}" (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="right-section">
+    <div class="prob-index">
+        <div class="container-fluid">
+            <div class="center-middle-width-container" [ngClass]="{'p-0':'domainId==1'}">
+                <div class="center-middle-width padding-common padding-common-hq" [ngClass]="{'p-0':(headquartersPageRef && headquartersPageRef.isDealer) || 'domainId==1'}">               
+                    <app-headquarters-home (headquartersComponentRef)="headquartersPageRef = $event" (callback)="headquartersCallback($event)"></app-headquarters-home>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

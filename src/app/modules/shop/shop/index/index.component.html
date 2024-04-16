@@ -1,0 +1,70 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" ></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" ></app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index split-sec1">
+    <div *ngIf="!itemEmpty" class="part-list-head sib-list-head shop-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col  head-col-1 shop-head-col-1">
+            <img src="assets/images/shop/shop-icon.png" >
+            <span class="head-txt shop-head-txt">{{title}}</span>            	
+        </div>
+        <div class="prob-head-col head-col-2 text-right">
+            <div class="list-excel cursor">                
+                <div class="p-table-col upload">
+                    <div class="upload-col attachment-file media-attachment-file files action-dtc upload cursor">
+                        <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                            [chooseLabel]="chooseLableAdas"
+                            [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                            accept=".xls,.xlsx"
+                            (onSelect)="onUpload($event)" 
+                            >
+                        </p-fileUpload>
+                    </div>                    
+                </div>              
+            </div>
+            <div class="list-map cursor">
+                <span (click)="shopView('map')" [ngClass]="{'map-normal' : listView, 'map-selected' : !listView}" class="map">
+                    <img *ngIf="listView" src="assets/images/shop/shop-map-normal.png" >
+                    <img *ngIf="!listView" src="assets/images/shop/shop-map-selected.png" >
+                </span>
+                <span (click)="shopView('list')" [ngClass]="{'list-normal' : !listView, 'list-selected' : listView}" class="list">
+                    <img *ngIf="!listView" src="assets/images/shop/shop-list-normal.png" >
+                    <img *ngIf="listView" src="assets/images/shop/shop-list-selected.png" >
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+      </div>
+    <div class="probing-content cbt-content part-content part-content-new part-right-side-none" [ngClass]="{'filter-expand': expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-shop-list></app-shop-list>
+    </div>
+    <!--div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div-->
+</div>
+
+<p-dialog id="import-progress-dialog" [header]="false" [modal]="true" [draggable]="false" [resizable]="false"  [(visible)]="importProgressDialog" styleClass="p-fluid">
+    <div style="width: 100%;">
+<div class="exportprogressbar">
+    <div class="download-header" >Importing data to File..</div>
+<div class="progress">
+    <div class="progress-bar" [ngStyle]="myStyle()">{{progress}}%</div>
+  </div>
+  <!--div class="cancel-div">
+
+    <button (click)="cancelUpload()" type="button" class="btn btn-info text-right">Cancel</button>
+      </div-->
+
+  </div>
+</div>
+</p-dialog>

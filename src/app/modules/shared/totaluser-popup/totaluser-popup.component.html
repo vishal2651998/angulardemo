@@ -1,0 +1,108 @@
+<div class="modal fade totalUserModal" id="totalUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable  modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 *ngIf="isActiveUser == '0'" class="modal-title" id="exampleModalLabel">{{workstreamName}} -  Total Users ({{totalUserCount}})</h5>
+        <h5 *ngIf="isActiveUser == '1'" class="modal-title" id="exampleModalLabel">{{workstreamName}} -  Active Users ({{totalActiveUserCount}})</h5>
+        <button type="button"  #closeButton class="close pl-0 pr-2 pt-2 pb-0"  data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form>
+          <div class="input-group-append">
+            <input type="serach" [(ngModel)]="SearchText" class="sarch-user" #searchusertext name="search"  placeholder="Search"/>
+            <i class="fa-search"><img src="assets/images/chat/search-icon.png"></i>
+         </div>
+       </form>
+       <!-- <div class="loading-small-screen" *ngIf="isLoadingOnScroll" >
+
+        <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="42px" height="42px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="1"/><circle cx="16" cy="64" r="14.344" fill="#ffffff" fill-opacity="1" transform="rotate(45 64 64)"/><circle cx="16" cy="64" r="12.531" fill="#ffffff" fill-opacity="1" transform="rotate(90 64 64)"/><circle cx="16" cy="64" r="10.75" fill="#ffffff" fill-opacity="1" transform="rotate(135 64 64)"/><circle cx="16" cy="64" r="10.063" fill="#ffffff" fill-opacity="1" transform="rotate(180 64 64)"/><circle cx="16" cy="64" r="8.063" fill="#ffffff" fill-opacity="1" transform="rotate(225 64 64)"/><circle cx="16" cy="64" r="6.438" fill="#ffffff" fill-opacity="1" transform="rotate(270 64 64)"/><circle cx="16" cy="64" r="5.375" fill="#ffffff" fill-opacity="1" transform="rotate(315 64 64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>
+    
+    </div> -->
+
+    <div class="d-flex justify-content-center" *ngIf="isLoadingOnScroll">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+
+   
+    
+    
+    
+
+        <ul  class="list-group list-group-flush"  #UserListScroll >
+          
+        <li class="row" *ngFor="let user of userlist" >
+
+
+           <div class="avtar ml-4 mr-3">
+            <img class="avtar-img" src="{{user.profileImg}}"  alt="">
+            <span *ngIf="user.availability==1" class="active-profile"></span>
+            <span *ngIf="user.availability==2" class="deactive-profile"></span>
+            <span *ngIf="user.availability==0" class="logout-profile"></span>
+          </div>
+          <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+            <span class="name-text">{{user.userName}}</span><br>
+            <span class="small-text">{{user.title}}</span>
+            <span class="badge badge-white"  data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false"> <img src="assets/images/chat/more-icon.png"></span>
+          
+            <div class="dropdown-menu">
+              <p (click)="startNewChat(user)"  class="dropdown-item d-flex align-items-center">
+                <img class="reply-icon" src="assets/images/chat/start-chat-icon.png"> <span class="pl-2"> Start
+                  New Chat</span>
+              </p>
+              <p *ngIf="chatType==chatTypeGroup" (click)="RemoveMemberFromGroup(user)" class="dropdown-item d-flex align-items-center">
+                <img class="reply-icon" src="assets/images/chat/view-profile-icon.png"> <span class="pl-2"> 
+                  Remove from Group</span>
+              </p>
+              <p (click)="OpenUserProfile(user.userId)" class="dropdown-item d-flex align-items-center">
+                <img class="reply-icon" src="assets/images/chat/view-profile-icon.png"> <span class="pl-2"> View
+                  Profile</span>
+              </p>
+            </div>
+
+          
+          </div>
+          </li>
+          <!-- <li class="row active">
+            <div class="avtar ml-4 mr-3">
+             <img class="avtar-img" src="assets/images/chat/user-icon.png"  alt="">
+           </div>
+           <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+             <span class="name-text">Zack C</span><br>
+             <span class="small-text">Owner</span>
+           </div>
+           </li> -->
+
+           <!-- <li class="row">
+            <div class="avtar ml-4 mr-3">
+             <img class="avtar-img" src="assets/images/chat/user-icon.png"  alt="">
+           </div>
+           <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+             <span class="name-text">Zack C</span><br>
+             <span class="small-text">Owner</span>
+           </div>
+           </li>
+
+           <li class="row">
+              <div class="avtar ml-4 mr-3">
+              <img class="avtar-img" src="assets/images/chat/user-icon.png"  alt="">
+            </div>
+            <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+              <span class="name-text">Zack C</span><br>
+              <span class="small-text">Owner</span>
+
+            </div>
+           </li>
+ -->
+      </ul>
+       
+      </div>
+      
+    </div>
+  </div>
+</div>

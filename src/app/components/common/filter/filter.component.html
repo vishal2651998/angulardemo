@@ -1,0 +1,580 @@
+<div id="filter" [ngClass]="{'active': expandFlag, 'active-filter': activeFilter}">
+    <div class="filter-toggle {{filterOptions.page}}" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag, 'active': activeFilter }" (click)="expandAction()">
+        <ng-container *ngIf="expandFlag && !filterLoading">
+            <img *ngIf="activeFilter" src="assets/images/filter/filter-collapse-arrow-active.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+            <img *ngIf="!activeFilter" src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+        </ng-container>
+        <ng-container *ngIf="!expandFlag">
+            <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+        </ng-container>
+    </div>
+    <div *ngIf="expandFlag" class="filter-widgets">
+        <div class="filter-title">
+            <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-icon" onload="SVGInject(this)">
+            Filter 
+            <span class="filter-reset" [ngClass]="{'hide': !activeFilter}" (click)="applyFilter(!resetFlag)">
+                <img src="assets/images/filter/filter-reset-ic.svg" alt="" onload="SVGInject(this)">
+            </span>
+            <span class="filter-pin" popoverClass="custom-tooltip" [matMenuTriggerFor]="filter">
+                <img src="assets/images/filter/filter-setting-ic.svg" alt="" onload="SVGInject(this)">
+            </span>
+            <mat-menu #filter="matMenu">
+                <div id="ng-popover" class="popover prob-tooltip filter-tooltip">
+                    <div class="arrow"></div>
+                    <div class="popover-body" id="ng-popover-cont">
+                        <div class="filter-settings-title">
+                            <img src="assets/images/filter/filter-setting-ic.svg" alt="" onload="SVGInject(this)">
+                            Filter Settings
+                        </div>
+                        <ul>
+                            <li *ngFor="let filterItems of options; let i = index;">
+                                <span class="make">{{filterItems.name}}</span>
+                                <span class="toogle text-right" [ngClass]="{'active': filterItems.widgetsFlag == 1}" (click)="filterToggle($event, i, filterItems.id, filterItems.widgetsFlag)"></span>
+                            </li>
+                        </ul>
+                    </div>                                    
+                </div>                                    
+            </mat-menu>
+        </div>
+        <div *ngIf="filterLoading || sectionLoading" class="filter-loading hidden" [style.height]="'calc(100vh - '+rmlHeight+'px)'">
+            <div class="loader filter-loader"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></div>
+        </div>
+        <div *ngIf="!filterLoading && !sectionLoading" class="filter-area">
+            <perfect-scrollbar class="scrollbar scrollbar-primary thin filter-content" [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                <div *ngIf="availFilter == 0" class="empty-filter">
+                    <div class="empty-filter-bg"></div>
+                    <div class="empty-filter-cont">All Filter Settings turned off</div>
+                </div>
+                <div *ngIf="availFilter > 0">
+                    <div class="filter-list" *ngFor="let filterItems of options; let i = index;">
+                        <div *ngIf="filterItems.id == 1 && filterItems.widgetsFlag == 1" class="filter-field filter-select make-select">
+                            <label class="labeltext" [ngClass]="{'invalid-field': !makeValidFlag}">{{filterItems.name | titlecase}}</label>
+                            <span *ngIf="!makeValidFlag" class="filter-err-info" [matMenuTriggerFor]="makeField"></span>
+                            <mat-menu #makeField="matMenu" backdropClass="ptabletmenu" class="filterErrMenu">
+                                <div id="ng-popover" class="popover prob-tooltip filter-tooltip">
+                                    <div class="arrow"></div>
+                                    <div class="popover-body" id="ng-popover-cont">
+                                        <div class="filter-err-text">No result found for selected make</div>
+                                    </div>
+                                </div>
+                            </mat-menu>
+                            <mat-form-field class="custom-mat-sel prob-catg-sel">
+                                <mat-select placeholder="Select Make" [(value)]="make" (selectionChange)="selectChange('change', makeId, $event.value)" disableOptionCentering>
+                                    <mat-option>
+                                        <ngx-mat-select-search ngModel (ngModelChange)="filterSearchOptions('make', $event)" [formControl]="makeInputFilter" 
+                                            placeholderLabel="Select {{filterItems.name | titlecase}}" 
+                                            noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                    </mat-option>
+                                    <mat-option *ngFor="let m of filteredMakes" [value]="m">
+                                    {{ m }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div *ngIf="make != ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                                <div class="tag-text make-tag-text">
+                                    <span>{{make}}</span>
+                                    <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                                </div>                                
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 2 && filterItems.widgetsFlag == 1 && !mahleEuropeFlag" class="filter-field filter-select model-select">
+                            <label class="labeltext" [ngClass]="{'invalid-field': !modelValidFlag}">{{filterItems.name | titlecase}}</label>
+                            <span *ngIf="!modelValidFlag" class="filter-err-info" [matMenuTriggerFor]="modelField"></span>
+                            <mat-menu #modelField="matMenu" backdropClass="ptabletmenu" class="filterErrMenu">
+                                <div id="ng-popover" class="popover prob-tooltip filter-tooltip">
+                                    <div class="arrow"></div>
+                                    <div class="popover-body" id="ng-popover-cont">
+                                        <div class="filter-err-text">No result found for selected model<span *ngIf="filteredModels.length > 1">s</span></div>
+                                    </div>
+                                </div>
+                            </mat-menu>
+                            <div *ngIf="modelLoading" class="filter-loading">
+                                <div class="loader filter-loader model-loader"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></div>
+                            </div>
+                            <app-models *ngIf="!modelLoading" [defaultPlaceholder]="defaultPlaceholder" [splitIcon]="splitIcon" [filteredModels]="filteredModels" [models]="models" (selectedModels)="selectedModels($event)"></app-models>
+                        </div>
+                        <div *ngIf="filterItems.id == 2 && filterItems.widgetsFlag == 1 && mahleEuropeFlag" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div *ngIf="make == ''" class="cursor def-select filter-select select-tags disabled">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div> 
+                            <div *ngIf="make != ''" class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['model']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['model']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(modelId, t)">close</i>
+                                </div>
+                            </div>
+                        </div> 
+                        <div *ngIf="filterItems.id == 3 && filterItems.widgetsFlag == 1" class="filter-field filter-select year-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <!--p-multiSelect appendTo="body" class="drop-col dropdown" [options]="years"
+                            [selectedItemsLabel]="filterItems.name" placeholder="filterItems.name" [(ngModel)]="filterItems.selectedItems"
+                            autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" 
+                            filterPlaceHolder="Search Years" (onChange)="selectChange('change', filterItems.id, $event.value)">
+                                <ng-template let-filterItems.id pTemplate="selectedItems">
+                                    <ng-container *ngFor="let item of filteredYears; let i = index;">{{item}}<span
+                                            *ngIf="filteredYears.length > i+1">, </span>
+                                    </ng-container>
+                                    <span class="p-placeholder" *ngIf="filteredYears.length == 0">{{filterItems.name | titlecase}}</span>
+                                </ng-template>
+                            </p-multiSelect>
+                            <div *ngIf="filteredYears.length > 0" class="selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredYears; let t=index" class="tag-text year-tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close">close</i>
+                                </div>
+                            </div-->
+                            <app-years [defaultPlaceholder]="defaultPlaceholder" [splitIcon]="splitIcon" [filteredYears]="filteredYears" [years]="years" (selectedYears)="selectedYears($event)"></app-years>
+                        </div>    
+                        <div *ngIf="filterItems.id == 4 && filterItems.widgetsFlag == 1" class="filter-field filter-select workstream-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <app-workstream-list *ngIf="wsFieldCallback" [defaultPlaceholder]="defaultPlaceholder" [filteredWorkstreams]="filteredWorkstreams" [workstreams]="workstreams" (selectedWorkstreams)="selectedWorkstreams($event)"></app-workstream-list>
+                        </div>
+                        <div *ngIf="filterItems.id == 5 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['tagItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['tagItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(tagId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="filterItems.id == 25 && tvsIBdomain && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['countriesItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['countriesItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(countryIdVlaue, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div *ngIf="filterItems.id == 6 && filterItems.widgetsFlag == 1" class="filter-field filter-select media-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <app-media-types [splitIcon]="splitIcon" [filteredMediaTypes]="filteredMediaTypes" [mediaTypes]="mediaTypes" (selectedMediaTypes)="selectedMediaTypes($event)"></app-media-types>
+                        </div>
+                        <div *ngIf="filterItems.id == 7 && filterItems.widgetsFlag == 1" class="filter-field date-field">
+                            <label class="labeltext">Start Date</label>
+                            <mat-form-field color="accent" appearance="fill">
+                                <input matInput placeholder="{{datePlaceholder}}" [matDatepicker]="startDate" (dateChange)="selectChange('change', startDateId, $event.value)" [max]="this.filterOptions?.page?.includes('market-place') ? '' : today" readonly>
+                                <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                                <mat-datepicker #startDate color="primary"></mat-datepicker>
+                            </mat-form-field>
+                            <div *ngIf="startDateValue != ''" class="selected-items filter-selected-items ps">
+                                <div class="tag-text">
+                                    <span>{{startDateValue | date:'MMM dd, yyyy'}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="dateErrorFlag" class="field-error">{{dateErrorTxt}}</div>
+                        </div>
+                        <div *ngIf="filterItems.id == 8 && filterItems.widgetsFlag == 1" class="filter-field date-field">
+                            <label class="labeltext">End Date</label>
+                            <mat-form-field color="accent" appearance="fill">
+                                <input matInput placeholder="{{datePlaceholder}}" [matDatepicker]="endDate" (dateChange)="selectChange('change', endDateId, $event.value)" [min]="startDateValue" [max]="this.filterOptions?.page?.includes('market-place') ? '' : today" readonly>
+                                <mat-datepicker-toggle [ngClass]="{'hide': startDateValue == ''}" matSuffix [for]="endDate"></mat-datepicker-toggle>
+                                <mat-datepicker #endDate color="primary"></mat-datepicker>
+                                <span [ngClass]="{'hide': startDateValue != ''}" class="mat-button-wrapper disable"><svg viewBox="0 0 24 24" width="24px" height="24px" fill="currentColor" focusable="false" class="mat-datepicker-toggle-default-icon ng-star-inserted"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"></path></svg><!----></span>
+                            </mat-form-field>
+                            <div *ngIf="endDateValue != ''" class="selected-items filter-selected-items ps">
+                                <div class="tag-text">
+                                    <span>{{endDateValue | date:'MMM dd, yyyy'}}</span>
+                                </div>
+                            </div>                            
+                        </div>
+                        <div *ngIf="filterItems.id == 11 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(territoryId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                  
+                            <div *ngIf="filteredData['territoryItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['territoryItems']; let ty=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(territoryId, ty)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 12 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(locationId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['locationItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['locationItems']; let l=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(locationId, l)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 13 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(customerId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['customerItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['customerItems']; let c=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(customerId, c)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 14 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(technicianId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['technicianItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['technicianItems']; let tc=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(technicianId, tc)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 15 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(csmId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['csmItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['csmItems']; let csm=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(csmId, csm)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 16 && filterItems.widgetsFlag == 1" class="filter-field filter-select year-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <app-status [defaultPlaceholder]="defaultPlaceholder" [splitIcon]="splitIcon" [filteredStatus]="filteredStatus" [statusPlaceHolder]="statusPlaceHolder" [status]="status" (selectedStatus)="selectedStatus($event)"></app-status>
+                        </div>
+                      
+                        <div *ngIf="filterItems.id == 18 && filterItems.widgetsFlag == 1" class="filter-field filter-select year-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <app-status [defaultPlaceholder]="defaultPlaceholder" [splitIcon]="splitIcon" [filteredStatus]="filteredThreadStatus" [statusPlaceHolder]="threadStatusPlaceHolder" [status]="threadStatusArr" (selectedStatus)="selectedThreadStatus($event)"></app-status>
+                        </div> 
+
+                        <!--div *ngIf="filterItems.id == 19 && filterItems.widgetsFlag == 1" class="filter-field filter-select year-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <app-status [defaultPlaceholder]="defaultPlaceholder" [splitIcon]="splitIcon" [filteredStatus]="filteredErrorCode" [statusPlaceHolder]="errorCodePlaceHolder" [status]="errorCodeArr" (selectedStatus)="selectedErrorCode($event)"></app-status>
+                        </div--> 
+                        <div *ngIf="filterItems.id == 19 && filterItems.widgetsFlag == 1" class="filter-field filter-select year-select">
+                            <label class="labeltext" [ngClass]="{'invalid-field': !errcodeValidFlag}">{{filterItems.name | titlecase}}</label>
+                            <span *ngIf="!errcodeValidFlag" class="filter-err-info" [matMenuTriggerFor]="errField"></span>
+                            <mat-menu #errField="matMenu" backdropClass="ptabletmenu" class="filterErrMenu">
+                                <div id="ng-popover" class="popover prob-tooltip filter-tooltip">
+                                    <div class="arrow"></div>
+                                    <div class="popover-body" id="ng-popover-cont">
+                                        <div class="filter-err-text">No result found for selected error code<span *ngIf="filteredData['errorCodeItems']?.length > 1">s</span></div>
+                                    </div>
+                                </div>
+                            </mat-menu>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['errorCodeItems']?.length > 0" class="selected-items filter-selected-items errorcode-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['errorCodeItems']; let ec=index" class="tag-text">
+                                    <span title="{{item}}">{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(errorCodeId, ec)">close</i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngIf="filterItems.id == 17 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(otuId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['otherUserItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['otherUserItems']; let otu=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(otuId, otu)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 20 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(dnId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['dealerNameItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['dealerNameItems']; let dni=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(dnId, dni)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 21 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(dcId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['dealerCityItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['dealerCityItems']; let dci=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(dcId, dci)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 22 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(daId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['dealerAreaItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['dealerAreaItems']; let dai=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(daId, dai)">close</i>
+                                </div>
+                            </div>
+                        </div>                        
+                        <div *ngIf="filterItems.id == 23 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(pcId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['productCoorItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['productCoorItems']; let pci=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(pcId, pci)">close</i>
+                                </div>
+                            </div>
+                        </div>                       
+                        <div *ngIf="filterItems.id == 24 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageGeoLists(tmId, filterItems.name)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name }} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['tmanagerItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['tmanagerItems']; let tmi=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(tmId, tmi)">close</i>
+                                </div>
+                            </div>
+                        </div>                         
+                        <div *ngIf="filterItems.id == 26 && filterItems.widgetsFlag == 1 && filterOptions.page == 'knowledge-base'" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['probCatgItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['probCatgItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(probCatgId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 26 && filterItems.widgetsFlag == 1 && filterOptions.page != 'knowledge-base'" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['complaintCategoryItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['complaintCategoryItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(complaintCategoryId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 27 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['symtomItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['symtomItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(symtomId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 29 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['languageItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['languageItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(languageId, t)">close</i>
+                                </div>
+                            </div>
+                        </div> 
+                        <div *ngIf="filterItems.id == 28 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div *ngIf="make==''" class="cursor def-select filter-select select-tags disabled">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>
+                            <div *ngIf="make!=''" class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.selectedKey,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['subProductGroupItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['subProductGroupItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(subProductGroupId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 30 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="managePart(filterItems.name,filterItems.selectedKey)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.png">
+                                </div>
+                            </div>                         
+                            <div *ngIf="filteredData['partTypeItems']?.length > 0" class="selected-items filter-selected-items ps">
+                                <div *ngFor="let item of filteredData['partTypeItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(ptypeId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 31 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="managePart(filterItems.name,filterItems.selectedKey)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.png">
+                                </div>
+                            </div>               
+                            <div *ngIf="filteredData['partAssemblyItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['partAssemblyItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(passemblyId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 32 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="managePart(filterItems.name,filterItems.selectedKey)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.png">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['partSystemItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['partSystemItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(psystemId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 33 && filterItems.widgetsFlag == 1" class="filter-field filter-select make-select">
+                            <label class="labeltext">{{'Training type' | titlecase}}</label>
+                            <mat-form-field class="custom-mat-sel prob-catg-sel">
+                                <mat-select placeholder="Select Training Type" [(value)]="trainingTypeValue" (selectionChange)="selectChange('change', trainingTypeId, $event.value)" disableOptionCentering>
+                                    <mat-option *ngFor="let m of trainingTypes" [value]="m.name">
+                                    {{ m?.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div *ngIf="trainingTypeValue" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                                <div class="tag-text make-tag-text">
+                                    <span>{{trainingTypeValue}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 34 && filterItems.widgetsFlag == 1" class="filter-field filter-select make-select">
+                            <label class="labeltext">{{'Training status' | titlecase}}</label>
+                            <mat-form-field class="custom-mat-sel prob-catg-sel">
+                                <mat-select placeholder="Select Training Type" [(value)]="trainingStatusValue" (selectionChange)="selectChange('change', trainingStatusId, $event.value)" disableOptionCentering>
+                                    <mat-option *ngFor="let m of trainingStatus" [value]="m.name">
+                                    {{ m?.name }}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div *ngIf="trainingStatusValue" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                                <div class="tag-text make-tag-text">
+                                    <span>{{trainingStatusValue}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 35 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.name,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['dicvCatgItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['dicvCatgItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(dicvCatgId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="filterItems.id == 36 && filterItems.widgetsFlag == 1" class="filter-field filter-select tag-select">
+                            <label class="labeltext">{{filterItems.name | titlecase}}</label>
+                            <div class="cursor def-select filter-select select-tags" (click)="manageTag(filterItems.name,filterItems.name,filterItems.apiBaseName)">
+                                <div class="tag-col tag-text">
+                                    Select {{filterItems.name | titlecase}} <img src="assets/images/filter/filter-drop-down.svg" class="cust-drop-svg" onload="SVGInject(this)">
+                                </div>
+                            </div>                            
+                            <div *ngIf="filteredData['dicvEmissionItems']?.length > 0" class="selected-items filter-selected-items ps" [perfectScrollbar]="sconfig">
+                                <div *ngFor="let item of filteredData['dicvEmissionItems']; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close" (click)="disableSelection(dicvEmissionId, t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </perfect-scrollbar>
+            <!--div *ngIf="availFilter > 0" class="filter-action text-center">
+                <button *ngIf="disableFilterAction" mat-button disabled>Apply</button>
+                <button *ngIf="!disableFilterAction" mat-raised-button (click)="applyFilter(resetFlag)">Apply</button>
+                <button mat-raised-button mat-warn color="warn" (click)="applyFilter(!resetFlag)">Reset</button>
+            </div-->
+        </div>
+    </div>
+</div>

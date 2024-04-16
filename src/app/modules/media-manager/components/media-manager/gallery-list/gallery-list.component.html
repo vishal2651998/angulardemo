@@ -1,0 +1,96 @@
+<div *ngIf="displayNoRecords" class="no-item-list no-res-list text-center">
+    <div class="item-empty-container">
+        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102" />
+        <p *ngIf="filterrecords" class="item-empty-para empty-res padd-top-20">No result found</p>        
+        <p *ngIf="!filterrecords"  class="item-empty-para empty-res padd-top-20">Nothing to show</p>  
+    </div>
+</div>
+<div *ngIf="mediaView == 'thumb'" class="media-gallery">
+    <ngx-masonry [options]="{ gutter: 1 }" class="media-view-list" id="{{mediaType}}" [updateLayout]="updateMasonryLayout" [ordered]="true">
+        <div ngxMasonryItem id="m-{{a.mediaId}}" class="thumb-row lgc-{{i}}-{{dynamicGid}} {{mediaToggleClass}} {{a.type}} lg-{{a.flagId}} lg-v-{{i}}" *ngFor="let a of mediaList; let i = index;"
+            [ngClass]="{'active': a.activeMode, 'selected': a.selectionMode, 'lg-4-6': a.flagId == 6 && a.linkType == 'site', 'link-doc': a.flagId == 6 && a.typeClass == 'link-doc', 'non-doc': a.flagId == 6 && a.linkType != 'site'}"
+            [attr.data-responsive]="a.thumbFilePath"
+            [attr.data-sub-html]="a.galleryCaption"
+            [attr.data-html]="a.galleryId"
+            [attr.data-poster]="a.posterImg"
+            [attr.data-src]="a.fileImg"
+            [attr.data-iframe] = "a.iframe">
+            <!-- Hidden video div -->
+            <div *ngIf="a.flagId == 2" class="hide" [attr.id]="a.galleryHidden">
+                <video class="lg-video-object lg-html5" controls preload="none">
+                    <source src="{{a.videoUrl}}" type="{{a.mime}}">
+                    Your browser does not support HTML5 video.
+                </video>
+            </div>
+
+            <!-- Hidden audio div -->
+            <div *ngIf="a.flagId == 3" class="hide" [attr.id]="a.galleryHidden">
+                <audio class="lg-video-object lg-html5" controls>
+                    <source src="{{a.audioUrl}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>            
+            
+            <div class="file-col cursor {{a.type}}">
+                <div class="bg-col action-col cursor {{a.type}} {{a.linkImg}}" [ngClass]="{'doc-bg' : a.flagId > 2 && a.flagId < 7 && a.linkType != 'youtube' && a.linkType != 'video' }" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                    <img class="hide" src="{{a.thumbFilePath}}" />
+                    <div *ngIf="a.flagId == 2 || (a.flagId == 6 && a.linkType != 'site')" class="poster">
+                        <img src="assets/images/media/video-thumb.png" alt="Play">
+                    </div>
+                    <div *ngIf="mediaType == 'all' && a.deleteMode" class="media-selection" [ngClass]="{'active': a.selectionMode}" (click)="mediaSelect(i, a.mediaId, a.selectionMode); $event.stopPropagation();"></div>
+                    <div class="media-view" [ngClass]="{'active': a.activeMode, 'inactive': !a.activeMode}" (click)="mediaInfo(i, a.mediaId, 'get'); $event.stopPropagation();"><span></span></div>
+                    <div *ngIf="a.flagId != 6" class="caption text-center" title="{{a.fileCaption}}">{{a.mediaCaption}}</div>
+                    <div *ngIf="a.flagId == 6" class="caption media-caption text-center" title="{{a.linkCaption}}" [innerHTML]="a.linkCaption"></div>
+                </div>
+            </div>
+        </div>
+    </ngx-masonry>
+</div>
+
+<div *ngIf="mediaView == 'list'" class="media-gallery">
+    <div class="content attachment-cont assets-list" id="{{mediaType}}">        
+        <div id="m-{{a.mediaId}}" class="cursor file-row {{mediaToggleClass}} {{a.type}}" [ngClass]="{'active': a.activeMode, 'selected': a.selectionMode}" *ngFor="let a of mediaList; let i = index;"
+             [attr.data-responsive]="a.thumbFilePath"
+             [attr.data-sub-html]="a.galleryCaption"
+             [attr.data-html]="a.galleryId"
+             [attr.data-poster]="a.posterImg"
+             [attr.data-src]="a.fileImg">
+            <!-- Hidden video div -->
+            <div *ngIf="a.flagId == 2" class="hide" [attr.id]="a.galleryHidden">
+                <video class="lg-video-object lg-html5" controls preload="none">
+                    <source src="{{a.videoUrl}}" type="{{a.mime}}">
+                    Your browser does not support HTML5 video.
+                </video>
+            </div>
+
+            <!-- Hidden audio div -->
+            <div *ngIf="a.flagId == 3" class="hide" [attr.id]="a.galleryHidden">
+                <audio class="lg-video-object lg-html5" controls>
+                    <source src="{{a.audioUrl}}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+            <div class="attachment-col file-col">
+                <div class="media-col check-col checkbox" [ngClass]="{'active': a.selectionMode, 'inactive': !a.selectionMode, 'hidden': mediaType == 'recent' || !a.deleteMode}" (click)="mediaSelect(i, a.mediaId, a.selectionMode); $event.stopPropagation();"></div>
+                <div class="media-col bg-col cursor" [ngClass]="{'list-bg' : (a.flagId == 3 || (a.flagId == 6 && a.linkType == 'site')), 'doc-bg': (a.flagId == 2)}" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                    <img class="hide" src="{{a.thumbFilePath}}" />
+                    <div *ngIf="a.flagId == 2 || (a.flagId == 6 && a.linkType != 'site')" class="poster list">
+                        <img src="assets/images/media/video-thumb.png" alt="Play">
+                    </div>
+                </div>
+                <div *ngIf="a.flagId < 6" class="media-col name-col" title="{{a.fileCaption}}">{{a.fileCaption}}</div>
+                <div *ngIf="a.flagId == 6" class="media-col name-col" title="{{a.linkCaption}}" [innerHtml]="a.linkCaption"></div>
+                <div class="media-col upload-by"><span class="label">Uploaded by: </span>{{a.createdBy}}</div>
+                <div class="media-col upload-on"><span class="label">Uploaded on: </span>{{a.createdOn}}</div>
+                <div class="media-col size text-center">
+                    <span class="label">File Size:</span> {{a.fileSize}}                    
+                </div>
+                <div class="media-col more" [ngClass]="{'active': a.activeMode, 'inactive': !a.activeMode}">
+                    <span class="more-icon" (click)="mediaInfo(i, a.mediaId, 'get'); $event.stopPropagation();">
+                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                    </span>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>

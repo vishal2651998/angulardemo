@@ -1,0 +1,36 @@
+<div class="custom-modal modal-container" id="wrapper">
+    <div class="modal-header d-flex justify-content-between align-items-center">
+        <h6 class="modal-title text-center">Add Alternate Model</h6>
+
+        <div class="d-flex align-items-center ">
+            <div (click)="save()" class="px-3 py-0 d-flex align-items-center" style="background-color: green;color: white;border-radius: 15px;text-align: center;cursor: pointer;">
+                <img style="cursor:pointer;padding: 0px 18px 0 0;"  src="assets/images/hq/white-check.png" alt="">
+                Save
+            </div>
+            <img style="cursor:pointer;    margin: 4px 18px 0px 12px;height: 16px;" (click)="closePopup()"  src="assets/images/service-provider/close-icon.png" alt="">
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="container">
+                <div class="col-sm-12">
+                    <div  class="input-shop pb-2 d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                style="min-width: 19px; min-height: 19px;" />
+                            <label class="mb-0">Alternate Model Name</label>
+
+                        </div>
+                        
+                    </div>
+
+                    <div class="input-filed">
+                        <input [(ngModel)]="alternateModel"  type="text" pInputText class="input-bg  w-100"
+                            placeholder="Model Name" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/loading.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+    <div [style.height.px]="innerHeight">
+        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+            <div class="section-container">
+                <div class="title-row">
+                    <img src="assets/images/user-settings/make-notification-icon.png">
+                    <span class="title-text">Make Notifications</span>
+                    <img src="assets/images/black-info-icon.png">
+                    <span class="info-text">Thread notification will be received based on whether the make is turned on/off</span>
+                </div>
+                
+                <div>
+                    <div class="container-col">
+                        <div class="col-left" >
+                            <div class="row-item" *ngFor="let item of configLtData; let s = index;">
+                                <div class="row-item-col action-text">{{item.key}}</div>
+                                <!-- toggle -->
+                                <div class="cursor row-item-col action-toggle">
+                                    <span class="toggle-col field-label"></span>
+                                    <span class="toggle-col toggle-option">
+                                        <p-inputSwitch [(ngModel)]="item.value" (onChange)="onToggleBoxChange('toggle',item.key,$event.checked)">
+                                        </p-inputSwitch>
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="col-center" >&nbsp;</div>
+                        <div class="col-right" >
+                            <div class="row-item" *ngFor="let item of configRtData; let s = index;">
+                                <div class="row-item-col action-text">{{item.key}}</div>
+                                <!-- toggle -->
+                                <div class="cursor row-item-col action-toggle">
+                                    <span class="toggle-col field-label"></span>
+                                    <span class="toggle-col toggle-option">
+                                        <p-inputSwitch [(ngModel)]="item.value" (onChange)="onToggleBoxChange('toggle',item.key,$event.checked)">
+                                        </p-inputSwitch>
+                                    </span>
+                                </div>                                
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

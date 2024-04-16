@@ -1,0 +1,865 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="left-section inspection-summery">
+    <div class="first-left-width">
+        <nav id="nav-sidebar">
+            <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{pageAccess}}"
+                (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+        </nav>
+    </div>
+</div>
+<div class="right-section inspection-summery">
+    <div [style.height.px]="innerHeight" *ngIf="loading">
+        <div class="loading-small-screen-scroll trst" style="left:50% !important">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+        </div>
+    </div>
+    <div *ngIf="!loading" class="prob-index">
+        <div class="container-fluid">
+            <div class="center-middle-width-container">
+                <div class="center-middle-width padding-common padding-common-hq">
+
+
+
+                    <div class="hq-head ng-star-inserted">
+                        <div *ngIf="!breadCrumb" class="hq-head-row-0">
+                            <span *ngIf="!isAudit" routerLink='/headquarters/home'
+                                class="hq-head-breadcrumb-text cursor">Home</span>
+                            <span *ngIf="isAudit" routerLink='/headquarters/audit'
+                                class="hq-head-breadcrumb-text cursor">Audit</span>
+                            <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+                            <span class="hq-head-breadcrumb-text cursor">Inspection Summary</span>
+                        </div>
+                        <div *ngIf="breadCrumb" class="hq-head-row-0">
+                            <span class="hq-head-breadcrumb-text">{{breadCrumb[0]}}</span>
+                            <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+                            <span class="hq-head-breadcrumb-text cursor"
+                                routerLink='../headquarters/audit'>{{breadCrumb[1]}}</span>
+                            <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+                            <span class="hq-head-breadcrumb-text cursor"
+                                routerLink='../inspection/{{inspectionDetail?.id}}'>{{breadCrumb[2]}}</span>
+                            <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+                            <span class="hq-head-breadcrumb-text cursor">Summary</span>
+                        </div>
+                        <div class="hq-head-row-1 d-flex align-items-center justify-content-between "
+                            style="padding-right: 16px;">
+                            <div class="left-heading d-flex align-items-center">
+                                <img src="assets/images/inspection-home/inspection.png" alt="" class="hq-head-img">
+                                <span class="hq-head-text">{{inspectionDetail?.title + ' (ID#
+                                    '+inspectionDetail?.id+')'}}</span>
+                            </div>
+                            <div class="right-heading">
+                                <span class="rgt-txt gray-txt">Inspection Template<a
+                                        routerLink="/template/{{currentTemplateDetail?.id}}"><span
+                                            style="cursor: pointer;"
+                                            class="me-1 pl-1 green-txt">{{currentTemplateDetail?.title}}</span>
+                                    </a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div [style.height]="'calc(100vh - '+emptyHeight+'px)'" style="padding-top: 5px;">
+                        <div class="ps" [perfectScrollbar]="sconfig">
+                            <div class="container">
+                                <div class="row mb-31">
+                                    <div class="col-sm-7 left-row pl-0 pr-3">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-10 p-0">
+                                                    <span class="heading-txt">
+                                                        <img class="" src="assets/images/inspection-home/des.png"
+                                                            width="17" height="23">
+                                                    </span>
+                                                    <span class="loc-head-text">Description of Assessment</span>
+                                                </div>
+                                                <div class="col-sm-2 d-flex justify-content-end p-0">
+                                                    <img (click)="editDescription()" title="Edit"
+                                                        class="loc-head-edit-img cursor"
+                                                        src="assets/images/hq/hq-edit-icon.png">
+
+                                                </div>
+                                            </div>
+                                            <div *ngIf="DescriptionValue" class="data-container">
+                                                <p class="mb-3 description" style="color: black;">{{DescriptionValue}}
+                                                </p>
+                                            </div>
+                                            <div style="height: 75%;"
+                                                class="d-flex align-items-center justify-content-center "
+                                                *ngIf="!DescriptionValue">
+                                                <i>
+                                                    <p class="mb-3 description">Nothing to Show</p>
+                                                </i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5 pl-3">
+                                        <div class="example-headers-align anouncement-panel" multi>
+                                            <div class="custom-panel">
+                                                <div class="ripple">
+                                                    <div class="menu-name-bar">
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-between mb-2 w-100">
+                                                            <div><span class="bg-image pr-2">
+                                                                    <img src="assets/images/announcement-new.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="menu-name pr-2">Announcements</span>
+                                                            </div>
+                                                            <div>
+                                                                <span *ngIf="!isBlank"
+                                                                    class="see-more-txt pr-1 cursor">See More</span>
+                                                                <span class="see-more-img">
+                                                                    <img src="assets/images/user-profile/view-more.png"
+                                                                        alt="">
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="announcement-box">
+                                                    <div *ngIf="!isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative mb-10">
+                                                        <span class="new-icon position-absolute"
+                                                            style="top: 0px;z-index: 2;">
+                                                            <img src="assets/images/landing-page/announcement-newold.png"
+                                                                alt="">
+                                                        </span>
+                                                        <div class="col-sm-9 ps-2">
+                                                            <div class="">
+                                                                <div class="d-flex position-relative">
+                                                                    <div class="aavtar"></div>
+                                                                    <div class="user-content">
+                                                                        <div class="user-data">
+                                                                            <p class="mb-0 user-data-heading">2023
+                                                                                inspection report</p>
+                                                                            <p class="mb-0 data-content">
+                                                                                John William, Oct 16, 2023 10:00 AM
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-sm-3 d-flex justify-content-end align-items-center count-box">
+                                                            <div class="like-count d-flex align-items-center mr-4">
+                                                                <span class="thumb-img">
+                                                                    <img height="27px" src="assets/images/thumb.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    98
+                                                                </span>
+                                                            </div>
+                                                            <div class="active-count d-flex align-items-center">
+                                                                <span class="eye-img">
+                                                                    <img height="14px"
+                                                                        src="assets/images/common/eye-active.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    189
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="!isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative mb-10">
+
+                                                        <div class="col-sm-9 ps-2">
+                                                            <div class="">
+                                                                <div class="d-flex position-relative">
+
+                                                                    <div class="aavtar-2"></div>
+                                                                    <div class="user-content">
+                                                                        <div class="user-data">
+                                                                            <p class="mb-0 user-data-heading">Caliber -
+                                                                                Repair Process Quality Asssessment</p>
+                                                                            <p
+                                                                                class="mb-0 data-content position-relative">
+                                                                                George Michael, Oct 13, 2023 1:23 PM
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-sm-3 d-flex justify-content-end align-items-center count-box">
+                                                            <div class="like-count d-flex align-items-center mr-4">
+                                                                <span class="thumb-img">
+                                                                    <img height="27px" src="assets/images/thumb.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    16
+                                                                </span>
+                                                            </div>
+                                                            <div class="active-count d-flex align-items-center">
+                                                                <span class="eye-img">
+                                                                    <img height="14px"
+                                                                        src="assets/images/common/eye-active.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    124
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="!isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative">
+
+                                                        <div class="col-sm-9 ps-2">
+                                                            <div class="">
+                                                                <div class="d-flex position-relative">
+
+                                                                    <div class="aavtar-2"></div>
+                                                                    <div class="user-content">
+                                                                        <div class="user-data">
+                                                                            <p class="mb-0 user-data-heading">
+                                                                                Certificaiton Audit Scheduled</p>
+                                                                            <p
+                                                                                class="mb-0 data-content position-relative">
+                                                                                George Michael, Sep 24, 2023 1:23 PM
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-sm-3 d-flex justify-content-end align-items-center count-box">
+                                                            <div class="like-count d-flex align-items-center mr-4">
+                                                                <span class="thumb-img">
+                                                                    <img height="27px" src="assets/images/thumb.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    16
+                                                                </span>
+                                                            </div>
+                                                            <div class="active-count d-flex align-items-center">
+                                                                <span class="eye-img">
+                                                                    <img height="14px"
+                                                                        src="assets/images/common/eye-active.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    124
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div style="height: 170px;justify-content: center;" *ngIf="isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative">
+                                                        <div class="d-flex align-items-center justify-content-center ">
+                                                            <i>
+                                                                <p style="color: #555555;" class="m-0 description">
+                                                                    Nothing to Show</p>
+                                                            </i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div class="row mb-21 second-row mr-0">
+                                    <div class="col-2 p-0" title="Customer">
+                                        <div class="rounded-card">
+                                            <div class="d-flex align-items-center">
+                                                <div class="box customer"></div>
+                                                <div class="box-description">
+                                                    <div class="box-head">
+                                                        Customer
+                                                    </div>
+                                                    <div class="box-count ass-txt"
+                                                        style="font-size: 20px;font-weight: 700;">
+                                                        {{inspectionDetail?.networkName}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 p-0" title="No. of locations">
+                                        <div class="rounded-card">
+                                            <div class="d-flex align-items-center">
+                                                <div class="box location"></div>
+                                                <div class="box-description">
+                                                    <div class="box-head ">
+                                                        No. of locations
+                                                    </div>
+                                                    <div class="box-count text-truncate ass-txt"
+                                                        style="font-size: 20px;font-weight: 700;">
+                                                        {{inspectionDetail?.locations ?
+                                                        inspectionDetail?.locations.length : 0}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 p-0" title="Frequency">
+                                        <div class="rounded-card">
+                                            <div class="d-flex align-items-center">
+                                                <div class="box frequency"></div>
+                                                <div class="box-description">
+                                                    <div class="box-head">
+                                                        Frequency
+                                                    </div>
+                                                    <div class="box-count text-truncate ass-txt"
+                                                        style="font-size: 20px;font-weight: 700;">
+                                                        {{inspectionDetail?.inspectionTime}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 p-0" title="Network size in 2022">
+                                        <div class="rounded-card">
+                                            <div class="d-flex align-items-center">
+                                                <div class="box network"></div>
+                                                <div class="box-description">
+                                                    <div class="box-head ">
+                                                        Network size in 2022
+                                                    </div>
+                                                    <div class="box-count text-truncate ass-txt"
+                                                        style="font-size: 20px;font-weight: 700;">
+                                                        {{inspectionDetail?.shopsCount}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 p-0 mr-0" title="Total time from Communication to Completion">
+                                        <div class="rounded-card">
+                                            <div class="d-flex align-items-center">
+                                                <div class="box Completion-time"></div>
+                                                <div class="box-description">
+                                                    <div class="box-head">
+                                                        Completion time
+                                                    </div>
+                                                    <div class="box-count text-truncate ass-txt"
+                                                        style="font-size: 20px;font-weight: 700;">
+                                                        {{inspectionDetail?.totalTime}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-31">
+                                    <div class="col-sm-12 pl-0">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="padding-bottom: 15px;">
+                                                <div class="customer-heading">
+                                                    <span class="heading-txt pl-5">
+                                                        <img class="loc-head-img"
+                                                            src="assets/images/inspection-home/user.png">
+                                                    </span>
+                                                    <span class="loc-head-text">Customer Contacts</span>
+                                                </div>
+                                                <span *ngIf="selectedCustomerUsers.length != 0"
+                                                    class="add-action-btn cursor d-flex align-items-center"
+                                                    (click)="assignMember('')">
+                                                    <img src="assets/images/customers/add-icon.png">
+                                                    <span>Select user</span>
+                                                </span>
+
+                                            </div>
+                                            <div class="customer-description p-3 d-flex align-items-center">
+                                                <ng-container *ngIf="selectedCustomerUsers.length != 0">
+                                                    <div *ngFor="let item of selectedCustomerUsers" class="d-flex">
+                                                        <div class="rounded-card customer-card">
+                                                            <div class="d-flex">
+                                                                <div class="small-box">
+                                                                    <img style="height: 100%;width: 100%;"
+                                                                        [src]="item?.profileImage" alt="">
+                                                                </div>
+                                                                <div class="box-description">
+                                                                    <div class="customer-desc-head text-truncate"
+                                                                        style="margin-bottom: -5px;">
+                                                                        {{item.userName}}, {{item.businessRoleStr}}
+                                                                    </div>
+                                                                    <div class="box-count d-flex align-items-center">
+                                                                        <span class="mr-2">
+                                                                            <img src="assets/images/inspection-home/mail.png"
+                                                                                alt="">
+                                                                        </span>
+                                                                        <span class="customer-add">{{item.email}}</span>
+                                                                    </div>
+                                                                    <div class="box-count d-flex align-items-center">
+                                                                        <span class="mr-2">
+                                                                            <img src="assets/images/inspection-home/phone.png"
+                                                                                alt="">
+                                                                        </span>
+                                                                        <span *ngIf="item.phoneNo"
+                                                                            class="customer-add">{{item.phoneNo}}</span>
+                                                                        <span *ngIf="!item.phoneNo"
+                                                                            class="customer-add">-</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <div *ngIf="selectedCustomerUsers.length == 0"
+                                                    class="row p-4 col-12 align-items-center justify-content-center">
+
+                                                    <span class="add-action-btn cursor d-flex align-items-center"
+                                                        (click)="assignMember('')">
+                                                        <img src="assets/images/customers/add-icon.png">
+                                                        <span>Select user</span>
+                                                    </span>
+                                                    <i class="col-12 text-center"
+                                                        style="font-size: 14px; color: #777777;">
+                                                        <p>Tap on the 'Select user' button to add Customer contacts</p>
+                                                    </i>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-31">
+                                    <div class="col-sm-12 pl-0">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="padding-bottom: 15px;">
+                                                <div class="customer-heading">
+                                                    <span class="heading-txt pl-5">
+                                                        <img class="loc-head-img"
+                                                            src="assets/images/inspection-home/user.png">
+                                                    </span>
+                                                    <span class="loc-head-text">Dekra Contacts</span>
+                                                </div>
+                                                <span *ngIf="selectedDekraUsers.length != 0 && domainId == 1"
+                                                    class="add-action-btn cursor d-flex align-items-center"
+                                                    (click)="assignDekraMember('')">
+                                                    <img src="assets/images/customers/add-icon.png">
+                                                    <span>Select user</span>
+                                                </span>
+
+                                            </div>
+                                            <div class="customer-description p-3 d-flex">
+
+                                                <ng-container *ngIf="selectedDekraUsers.length != 0">
+                                                    <div *ngFor="let item of selectedDekraUsers" class="d-flex">
+                                                        <div class="rounded-card customer-card">
+                                                            <div class="d-flex">
+                                                                <div class="small-box">
+                                                                    <img style="height: 100%;width: 100%;"
+                                                                        [src]="item?.profileImage" alt="">
+                                                                </div>
+                                                                <div class="box-description">
+                                                                    <div class="customer-desc-head text-truncate"
+                                                                        style="margin-bottom: -5px;">
+                                                                        {{item.userName}}, {{item.businessRoleStr}}
+                                                                    </div>
+                                                                    <div class="box-count d-flex align-items-center">
+                                                                        <span class="mr-2">
+                                                                            <img src="assets/images/inspection-home/mail.png"
+                                                                                alt="">
+                                                                        </span>
+                                                                        <span class="customer-add">{{item.email}}</span>
+                                                                    </div>
+                                                                    <div class="box-count d-flex align-items-center">
+                                                                        <span class="mr-2">
+                                                                            <img src="assets/images/inspection-home/phone.png"
+                                                                                alt="">
+                                                                        </span>
+                                                                        <span *ngIf="item.phoneNo"
+                                                                            class="customer-add">{{item.phoneNo}}</span>
+                                                                        <span *ngIf="!item.phoneNo"
+                                                                            class="customer-add">-</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+
+
+
+                                                <div *ngIf="selectedDekraUsers.length == 0 && domainId == 1"
+                                                    class="row p-4 col-12 align-items-center justify-content-center">
+
+                                                    <span class="add-action-btn cursor d-flex align-items-center"
+                                                        (click)="assignDekraMember('')">
+                                                        <img src="assets/images/customers/add-icon.png">
+                                                        <span>Select user</span>
+                                                    </span>
+                                                    <i class="col-12 text-center"
+                                                        style="font-size: 14px; color: #777777;">
+                                                        <p>Tap on the 'Select user' button to add Dekra contacts</p>
+                                                    </i>
+
+                                                </div>
+
+                                                <div *ngIf="selectedDekraUsers.length == 0 && domainId != 1"
+                                                    class="row p-4 col-12 align-items-center justify-content-center">
+
+                                                    <i class="col-12 text-center"
+                                                        style="font-size: 14px; color: #777777;">
+                                                        <p>Nothing to Show</p>
+                                                    </i>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-31">
+                                    <div class="col-sm-10 pl-0">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="padding-bottom: 15px;">
+                                                <div class="customer-heading">
+                                                    <span class="heading-txt pl-5">
+                                                        <img class="loc-head-img"
+                                                            src="assets/images/inspection-home/summary.png">
+                                                    </span>
+                                                    <span class="loc-head-text">Inspection Summary</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="d-flex h-100">
+                                                <div class="col-sm-4 py-4 graph-box border-right d-flex">
+                                                    <!-- <img src="assets/images/graph-2.PNG" alt="" class="m-auto"> -->
+                                                    <div id="donutChart2" style="width: 550px; height: 200px;"
+                                                        class="chart-split chart-data"></div>
+                                                </div>
+                                                <div class="col-sm-4 py-4 graph-box border-right d-flex">
+                                                    <div id="donutChart1" style="width: 550px; height: 200px;"
+                                                        class="chart-split chart-data"></div>
+                                                </div>
+                                                <div class="col-sm-4 graph-box d-flex align-items-center">
+                                                    <span class="verified-box mr-3"></span>
+                                                    <div
+                                                        class="d-flex inspection-graph flex-column mr-3 col-3 p-0 ml-0">
+                                                        <span class="fs-15">No. of Inspections</span>
+                                                        <span class="fs-30">{{inspectionDetail?.locations ?
+                                                            inspectionDetail?.locations.length : 0}}<span
+                                                                class="fs-18">/{{inspectionDetail?.shopsCount}}</span></span>
+
+                                                    </div>
+                                                    <span class="col-4 p-0">
+                                                        <circle-progress [percent]="getInsepectionPercentage()"
+                                                            [radius]="50" [outerStrokeWidth]="6" [innerStrokeWidth]="2"
+                                                            [outerStrokeColor]="'#469073'"
+                                                            [innerStrokeColor]="'#d6e6e0'" [animation]="true"
+                                                            [animationDuration]="300"
+                                                            [titleFontSize]="13"></circle-progress>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="outer-hq-container h-100 ">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="padding-bottom: 15px;">
+                                                <div class="customer-heading">
+                                                    <span class="heading-txt pl-5">
+                                                        <img class="loc-head-img" style="margin: 0px;"
+                                                            src="assets/images/inspection-home/calendar.png" width="17"
+                                                            height="18">
+                                                    </span>
+                                                    <span class="loc-head-text">Assessments from</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="p-3">
+                                                <div *ngIf="!isBlank" class="assessments mb-10">
+                                                    2022
+                                                </div>
+                                                <div *ngIf="!isBlank" class="assessments mb-10">
+                                                    2021
+                                                </div>
+                                                <div *ngIf="!isBlank" class="assessments">
+                                                    2020
+                                                </div>
+
+                                                <div *ngIf="isBlank"
+                                                    class="d-flex align-items-center justify-content-center ">
+                                                    <i>
+                                                        <p class="mb-3 description">Nothing to Show</p>
+                                                    </i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12 pl-0">
+                                        <div class="outer-hq-container"
+                                            style="border-top-left-radius: 6px;border-top-right-radius: 6px; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                                            <div class="d-flex action-tab">
+                                                <div class="tab-wrapper" (click)="changeFilter('1')"
+                                                    [ngClass]="{'active-tab':selectedFilter == '1'}">
+                                                    <span>
+                                                        <img src="assets/images/inspection-home/black-location.png"
+                                                            alt="">
+                                                    </span>
+                                                    <span class="tab-data">All Locations</span>
+                                                </div>
+
+                                                <div class="tab-wrapper" (click)="changeFilter('2')"
+                                                    [ngClass]="{'active-tab ':selectedFilter == '2'}">
+                                                    <span>
+                                                        <img src="assets/images/inspection-home/sc-head-status.png"
+                                                            alt="" width="16" height="16">
+                                                    </span>
+                                                    <span class="tab-data">Pending</span>
+                                                </div>
+
+                                                <div class="tab-wrapper" (click)="changeFilter('5')"
+                                                    [ngClass]="{'active-tab':selectedFilter == '5'}">
+                                                    <span>
+                                                        <img src="assets/images/inspection-home/in-progress.png" alt=""
+                                                            width="16" height="16">
+                                                    </span>
+                                                    <span class="tab-data">In-progress</span>
+                                                </div>
+
+                                                <div class="tab-wrapper" (click)="changeFilter('3')"
+                                                    [ngClass]="{'active-tab':selectedFilter == '3'}">
+                                                    <span>
+                                                        <img src="assets/images/inspection-home/action-active.png"
+                                                            alt="" width="16" height="16">
+                                                    </span>
+                                                    <span class="tab-data">Complete - Non compliant</span>
+                                                </div>
+
+                                                <div class="tab-wrapper" (click)="changeFilter('6')"
+                                                    [ngClass]="{'active-tab':selectedFilter == '6'}">
+                                                    <span>
+                                                        <img src="assets/images/inspection-home/action-active.png"
+                                                            alt="" width="16" height="16">
+                                                    </span>
+                                                    <span class="tab-data">Complete - Compliant</span>
+                                                </div>
+
+                                                <!-- <div class="tab-wrapper" (click)="changeFilter('4')" [ngClass]="{'active-tab':selectedFilter == '4'}">
+                                                    <span>
+                                                        <img src="assets/images/inspection-home/close.png" alt=""
+                                                            width="16" height="16">
+                                                    </span>
+                                                    <span class="tab-data">Compliant - No non-conformities</span>
+                                                </div> -->
+
+                                                <!-- <div class="tab-wrapper" (click)="changeFilter('7')" [ngClass]="{'active-tab':selectedFilter == '7'}">
+                                                    <span class="">
+                                                        <img src="assets/images/inspection-home/sc-head-status.png"
+                                                            alt="" width="16" height="16" class="pimg">
+                                                    </span>
+                                                    <span class="tab-data">Non-conformities pending</span>
+                                                </div> -->
+                                            </div>
+
+
+                                        </div>
+
+                                        <!-- RPLACED -->
+                                        <!--table-->
+                                        <div id="matrixTable"
+                                            class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs">
+                                            <p-table #table [scrollable]="true" id="file-datatable"
+                                                [columns]="grid1Columns" [value]="shopList"
+                                                Class="thread-list-table shop-list-table" [scrollable]="true"
+                                                [scrollHeight]="'calc(100vh - 300px)'">
+                                                <ng-template pTemplate="colgroup" let-columns>
+                                                    <colgroup>
+                                                        <col *ngFor="let col of columns" [style]="{width: col.width}">
+                                                    </colgroup>
+                                                </ng-template>
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <th *ngFor="let col of columns" [style]="{width: col.width}"
+                                                            class="custom-heading">
+                                                            {{col.header}}
+                                                        </th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-InspectionsList let-i="rowIndex">
+                                                    <tr routerLink="./detail/{{InspectionsList?.id}}" class="cursor">
+                                                        <td
+                                                            style="border-left: 0 !important; padding-left: 1rem !important">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <div class="d-flex flex-column">
+                                                                        <p class="mb-1 loc-heading">
+                                                                            {{InspectionsList?.name}}</p>
+                                                                        <p class="mb-0 loc-info">
+                                                                            {{InspectionsList?.address1}},{{InspectionsList?.address2}},{{InspectionsList?.zip}}
+                                                                        </p>
+                                                                        <!-- <p *ngIf="!!InspectionsList.listoflocations?.address2 && !!InspectionsList.listoflocations?.address3" class="mb-0 loc-info">{{InspectionsList.listoflocations?.address2}}, {{InspectionsList.listoflocations?.address3}}</p> -->
+                                                                        <!-- <p class="mb-0 loc-info">{{InspectionsList.listoflocations?.address3}}</p> -->
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </td>
+
+                                                        <td>
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+
+                                                                    <ul class="box-progress-ins ">
+                                                                        <li [ngClass]="'box-completed'">Notified</li>
+                                                                        <li [ngClass]="'box-completed'">Scheduled</li>
+
+                                                                        <li
+                                                                            [ngClass]="getDetailFromLocationId(InspectionsList?.id)?.created_at ? 'box-completed' :'white-box'">
+                                                                            In-process</li>
+                                                                        <li
+                                                                            [ngClass]="getDetailFromLocationId(InspectionsList?.id)?.complete_at ? 'box-completed' :'white-box'">
+                                                                            Completed</li>
+                                                                        <li
+                                                                            [ngClass]="getDetailFromLocationId(InspectionsList?.id)?.complete_at && getDetailFromLocationId(InspectionsList?.id)?.total_no > 0  ?  'box-completed non-compliant' :'white-box'">
+                                                                            Non-compliant</li>
+                                                                        <li
+                                                                            [ngClass]="getDetailFromLocationId(InspectionsList?.id)?.complete_at && getDetailFromLocationId(InspectionsList?.id)?.total_no == 0  ?  'box-completed' :'white-box'">
+                                                                            Compliant</li>
+                                                                    </ul>
+                                                                    <ul class="progress-date-ins d-flex p-0 m-0">
+                                                                        <li class="dates">Sep 10, 2023</li>
+
+                                                                        <li class="dates">Sep 25, 2023</li>
+
+                                                                        <li class="dates">
+                                                                            {{getDetailFromLocationId(InspectionsList?.id)?.created_at
+                                                                            | date:'MMM dd, yyyy'}}
+                                                                        </li>
+
+                                                                        <li class="dates">
+                                                                            {{getDetailFromLocationId(InspectionsList?.id)?.complete_at
+                                                                            | date:'MMM dd, yyyy'}}
+                                                                        </li>
+                                                                        <!-- <li class="dates">{{ InspectionsList.progress >= 5 ? 'Oct 8, 2023' : ''}}</li> -->
+                                                                        <li class="dates"></li>
+                                                                        <li class="dates"></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td>
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <div style="margin-bottom: 33px;">
+                                                                        <span
+                                                                            class="shop-id">{{InspectionsList.laststatus}}</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td>
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <div style="margin-bottom: 33px;">
+                                                                        <span
+                                                                            class="shop-id">{{InspectionsList.elapsed}}</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </ng-template>
+
+                                            </p-table>
+                                        </div>
+                                        <!-- RPLACED -->
+
+
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="addUserVisible" [baseZIndex]="100" position="right"
+    [dismissible]="false" modal="true">
+    <app-user-add *ngIf="addUserVisible" [userData]="userData" (saveUser)="onDrawerDismiss($event)"></app-user-add>
+</p-sidebar>
+
+<p-dialog class="description-popup inspection-summery" styleClass="description-popup" [(visible)]="descriptionPopup"
+    [modal]="true" [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}"
+    [draggable]="false" [showHeader]="false">
+    <div tabindex="0" id="wrapper" class="custom-modal modal-container">
+        <div class="modal-header view-modal-header d-flex align-items-center">
+            <div class="view-modal-title">
+                <h5 class="view-modal-title-text mb-0 pl-3">Description of the Assessment</h5>
+            </div>
+            <div class="action-buttons action-buttons-hq">
+                <button [disabled]="editDescriptionValue == ''" (click)="saveDescription()" pbutton="" pripple=""
+                    type="button" icon="pi pi-check" iconpos="right" label="Save"
+                    class="p-button-rounded button-save button-save-hq cursor p-button">
+                    <span class="p-button-icon p-button-icon-right pi pi-check" aria-hidden="true"></span>
+                    <span class="p-button-label">Save</span>
+                </button>
+                <span (click)="closeDescriptionPopUp()" role="button" aria-label="Close"
+                    class="cursor close-btn pr-3"><img src="assets/images/list-close.png" alt="Close"></span>
+            </div>
+        </div>
+        <div class="modal-body view-modal-body shop-modal-body">
+            <form novalidate="" class="action-form ng-untouched ng-pristine ng-valid">
+                <div class="container">
+                    <div class="row input-row pad-box">
+                        <div class="col-sm-12">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt d-flex align-items-center">
+                                    <img src="assets\images\inspection-home\description.png" alt="service" class="mr-2">
+                                    <label class="mb-0">Description of the Assessment</label>
+                                </div>
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+                            <div class="input-filed">
+                                <!-- <input type="text" class="input-bg map-input w-100 p-inputtext p-component p-filled ng-untouched ng-pristine ng-valid" placeholder="Enter Description"> -->
+                                <textarea placeholder="Enter Description" [(ngModel)]="editDescriptionValue"
+                                    class="input-bg map-input w-100 p-inputtext p-component p-filled" name="comment"
+                                    rows="10"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</p-dialog>

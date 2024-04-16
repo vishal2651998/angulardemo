@@ -1,0 +1,132 @@
+.video-call {
+  position: absolute;
+  right: 5rem;
+  top: 2rem;
+  height: 100vh;
+  z-index: 99999999;
+
+  .call-popup {
+    width: 100%;
+    max-width: 300px;
+    background-color: #fff;
+    color: #000;
+    position: relative;
+    padding: 0px;
+    border-radius: 1rem;
+
+    &.dark {
+      color: #fff;
+      background-color: #000;
+    }
+  }
+
+  &.on-call {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 30px;
+    width: 100%;
+
+    .call-popup {
+      max-width: unset;
+      position: unset;
+      border-radius: 0px;
+      background-color: #3d3f48;
+
+      #wrapper {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+
+        .user-img {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          img {
+            height: 300px;
+            width: calc(100% - 40px);
+            object-fit: cover;
+            border-radius: 10px;
+          }
+
+          .mat-icon {
+            &.mic-toggle {
+              cursor: pointer;
+              position: absolute;
+              top: 1rem;
+              left: 2rem;
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #fff;
+              background-color: #0000008a;
+            }
+
+            &.mute {
+              background-color: #ff000091;
+            }
+          }
+        }
+      }
+
+      .action-buttons {
+        height: 75px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #000000;
+        grid-area: action-buttons;
+
+        button {
+          margin: 0 10px;
+        }
+      }
+    }
+  }
+
+  .call-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 10px;
+  }
+
+  .right-reject-btn,
+  .left-reject-btn {
+    text-align: center;
+    width: 100%;
+  }
+
+  .call-btns button {
+    border: 0;
+    border-radius: 10px;
+    padding: 0.1rem;
+    width: 150px;
+  }
+}
+
+::ng-deep button {
+  &.pick-up-call {
+    background-color: green !important;
+  }
+
+  &.reject-call {
+    background-color: red !important;
+  }
+
+  &.default {
+    background-color: #404040 !important;
+  }
+}
+
+
+#startcomponent {
+  .p-card-body .p-card-content {
+    height: 100%;
+  }
+}

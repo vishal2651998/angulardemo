@@ -1,0 +1,64 @@
+<div class="modal-container custom-modal manage-modal" id="wrapper">
+    <div class="modal-header">
+        <h6 class="modal-title custom-title">Related Threads</h6>
+        <div class="actions">
+            <form class="search-form" [formGroup]="searchForm">
+                <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/search-icon.png"></a>
+                <input *ngIf="!actionFlag" type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                <input *ngIf="actionFlag" type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" disabled="true">
+                <a *ngIf="searchClose && !actionFlag" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+            </form>
+            <span (click)="close()" class="cursor close">
+                <img *ngIf="!loading" src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="!empty" id="manageTable" class="container scrollbar scrollbar-primary thin" [style.height.px]="height">
+            <div *ngIf="success" class="parent-succ-div">
+                <div class="success-msg"><span>{{successMsg}}</span></div>
+            </div>
+            <table class="manage-table split-table">
+                <thead class="manage-header">
+                    <tr class="header-row">
+                        <th colspan="2">
+                            <div class="title">
+                                <span class="cursor checkbox {{headercheckDisplay}} {{headerCheck}}" (click)="itemSelection('all', 0, 0, headerCheck)"></span>
+                                Related Threads List
+                            </div>
+                            <div class="actions">
+                                <div class="action-col cursor clear" (click)="clearSelection()" [ngClass]="{'show': (headerCheck == 'checked' || headerCheck == 'all'), 'hide': (headerCheck == 'unchecked' || loading)}">Clear All</div>
+                                <div class="action-col apply" (click)="applySelection()" [ngClass]="{'cursor active': (headerCheck == 'checked' || headerCheck == 'all'), 'inactive': (headerCheck == 'unchecked' || loading)}">Apply</div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="loading" class="manage-items">
+                    <tr>
+                        <td colspan="2">
+                            <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="!loading" class="manage-items">
+                    <tr class="item-list cursor" *ngFor="let item of listItems; let i = index;" [ngClass]="{'action': item.action != ''}">
+                        <td class="rel-td" colspan="2">
+                            <span *ngIf="item.action == ''" class="choose checkbox split" [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}" (click)="itemSelection('single', i, item.id, !item.checkFlag)"></span>
+                            <span *ngIf="item.action == ''" class="split" (click)="itemSelection('single', i, item.id, !item.checkFlag)">{{item.id}} - {{item.name}}</span>                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="empty" class="no-item-list" [style.height.px]="height">
+            <div class="item-empty-container">
+                <div class="empty-cont">
+                    <div class="text-center empty-res">
+                        <div class="empty-bg"></div>
+                        <div>{{successMsg}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

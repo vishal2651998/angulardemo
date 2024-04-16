@@ -1,0 +1,252 @@
+<div class="main-contaier business-widget">
+    <!--<p-accordion [multiple]="true"  >
+        <p-accordionTab    [selected]="true">
+            <p-header class="accordion-icon ">-->
+                <div class="container-fluid">
+                    <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head landing-padding0 landing-margin0">
+                        <div class="menu-name-bar col-9 col-lg-9 col-md-9 col-xl-9 col-sm-9 landing-padding0 landing-margin0">
+                            <div> 
+                                <span class="bg-image business-info-icon">
+                                    <img src='assets/images/profile/business-info.svg' alt='' onload='SVGInject(this)' />
+                                </span>
+                                <span class="menu-name">Business Info</span></div>
+                        </div>
+                        <div class="col-3 col-lg-3 col-md-3 col-xl-3 col-sm-3 landing-padding0 landing-margin0">
+                            <div *ngIf="businessProfileEdit && profileInfo" (click)="editBusinessInfo()" class="rightside-menu"><span class="edit-icon"></span></div>
+                            <div *ngIf="!profileInfo" class="rightside-menu"><span class="save-icon" (click)="onBusinessProfileSubmit()"></span><span type="reset" (click)="onCancelBusinessProfile()" class="cancel-icon"></span></div>
+                        </div>
+                    </div>
+                </div>
+            <!--</p-header>-->
+            <div class="search-landing-widget">
+                <div class="loading-small-screen" *ngIf="loadingrs" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+                <div class="container-fluid">
+                    <div class="nothingtoshow profile-nothingtoshow" *ngIf="profileError">
+                        <div class="no-data-contaier">
+                            <div>
+                                <img class="no-data-img" src="assets/images/landing-page/empty-recent-search.svg">
+                            </div>
+                            <div class="no-data-text">{{profileErrorMsg}}</div>
+                        </div>
+                    </div>
+                    <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0">
+                        <div class="info-div-section-scroll-to scrollbar scrollbar-primary thin">
+                            <div class="info-div" *ngIf="profileInfo && !loadingrs && !profileError">
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessName==''}">
+                                    <div class="col-left bg-img bg-img-bname" ></div>
+                                    <div class="col-right right-text" *ngIf="businessName==''">Business Name</div>
+                                    <div class="col-right right-text" *ngIf="businessName!=''">{{businessName}}</div>                                    
+                                </div>                               
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessTitle==''}">
+                                    <div class="col-left bg-img bg-img-btitle"></div>
+                                    <div class="col-right right-text" *ngIf="businessTitle==''">Business Role</div>
+                                    <div class="col-right right-text" *ngIf="businessTitle!=''">{{businessTitle}}</div>
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessEmail==''}">
+                                    <div class="col-left bg-img bg-img-email"></div>
+                                    <div class="col-right right-text" *ngIf="businessEmail==''">Email</div>
+                                    <div class="col-right right-text" *ngIf="businessEmail!=''">{{businessEmail}}</div>
+                                </div> 
+                                <div class="row-cont"  [ngClass]="{'deactiveField': businessmsTeamEmail==''}">
+                                    <div class="col-left bg-img bg-img-email"></div>
+                                    <div class="col-right right-text" *ngIf="businessmsTeamEmail==''">Microsoft Teams Login Email</div>
+                                    <div class="col-right right-text" *ngIf="businessmsTeamEmail!=''">{{businessmsTeamEmail}}</div>
+                                </div>                               
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessAddress1==''}">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div class="col-right right-text" *ngIf="businessAddress1==''">Address 1</div>
+                                    <div class="col-right right-text" *ngIf="businessAddress1!=''">{{businessAddress1}}</div>                                    
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessAddress2==''}">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div *ngIf="businessAddress2==''" class="col-right right-text">Address 2</div>
+                                    <div *ngIf="businessAddress2!=''" class="col-right right-text">{{businessAddress2}}</div>
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessCity==''}">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div *ngIf="businessCity==''" class="col-right right-text">City</div>
+                                    <div *ngIf="businessCity!=''" class="col-right right-text">{{businessCity}}</div>
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessState==''}">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div *ngIf="businessState==''" class="col-right right-text">State</div>
+                                    <div *ngIf="businessState!=''"  class="col-right right-text">{{businessState}}</div>
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessZipcode==''}">
+                                    <div class="col-left bg-img bg-img-zip"></div>
+                                    <div *ngIf="businessZipcode==''" class="col-right right-text">Zip Code</div>
+                                    <div *ngIf="businessZipcode!=''" class="col-right right-text">{{businessZipcode}}</div>
+                                </div>                                
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessLandline==''}">
+                                    <div class="col-left bg-img bg-img-phone"></div>                                                                   
+                                    <div class="col-right right-text">
+                                        <span *ngIf="businessLandline==''">Landline Number</span>                                        
+                                        <span *ngIf="ldialCode!=''">{{ldialCode}}&nbsp;&nbsp;&nbsp;</span>                                        
+                                        <span *ngIf="businessLandline!=''">{{businessLandline}}</span>
+                                    </div>
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessPhone==''}">
+                                    <div class="col-left bg-img bg-img-phone"></div>                                                                   
+                                    <div class="col-right right-text">
+                                        <span *ngIf="businessPhone==''">Mobile Number</span>                                        
+                                        <span *ngIf="idialCode!=''">{{idialCode}}&nbsp;&nbsp;&nbsp;</span>                                        
+                                        <span *ngIf="businessPhone!=''">{{businessPhone}}</span>
+                                    </div>
+                                </div>
+                                <!--<div class="row-cont">
+                                    <div class="col-left bg-img bg-img-phone" [ngClass]="{'deactiveField': businessLandline==''}"></div>
+                                    <div class="col-right right-text">                                        
+                                        <span class="deactiveField" *ngIf="businessLandline==''">555-555-5555</span>                                        
+                                        <span *ngIf="business_landline_ext!=''">{{business_landline_ext}} </span>                                        
+                                        <span *ngIf="businessLandline!=''">{{businessLandline}}</span>
+                                    </div>
+                                </div>-->
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessStoreNo==''}">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div *ngIf="businessStoreNo==''" class="col-right right-text">Store Name</div>
+                                    <div *ngIf="businessStoreNo!=''" class="col-right right-text">{{businessStoreNo}}</div>
+                                </div>
+                                <div class="row-cont" [ngClass]="{'deactiveField': businessofficeCode==''}">
+                                    <div class="col-left bg-img bg-img-bname"></div>
+                                    <div *ngIf="businessofficeCode==''" class="col-right right-text">Office Code</div>
+                                    <div *ngIf="businessofficeCode!=''" class="col-right right-text">{{businessofficeCode}}</div>
+                                </div>
+                            </div> 
+                            <div class="info-div" *ngIf="!profileInfo && !loadingrs && !profileError">
+                                <form [formGroup]="form" (ngSubmit)="onBusinessProfileSubmit()">
+                                    <div class="row-cont ">
+                                        <div class="col-left bg-img bg-img-bname"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text"  class="inputtext"  matInput placeholder="Business Name" [(ngModel)]="businessName" formControlName="businessName" maxlength="100" />                                                                                                                                                        
+                                        </div>
+                                    </div>
+                                    <div class="row-cont deactive" *ngIf="fromssoFlag">
+                                        <div class="col-left bg-img bg-img-btitle"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" readonly class="inputtext"  matInput placeholder="Title" [(ngModel)]="businessTitle" formControlName="businessTitle" maxlength="100" />                                                                                                                                                        
+                                        </div>
+                                    </div>
+
+                                    <div class="row-cont " *ngIf="!fromssoFlag">
+                                        <div class="col-left bg-img bg-img-btitle"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text"  class="inputtext"  matInput placeholder="Title" [(ngModel)]="businessTitle" formControlName="businessTitle" maxlength="100" />                                                                                                                                                        
+                                        </div>
+                                    </div>
+                                    <div class="row-cont deactive">
+                                        <div class="col-left bg-img bg-img-email"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" readonly class="inputtext"  matInput placeholder="Email" [(ngModel)]="businessEmail" formControlName="businessEmail" maxlength="200" />                                        
+                                            <div *ngIf="submitted && f.businessEmail.errors" class="profile-invalid-feedback phone-error">                                                
+                                                <div *ngIf="f.businessEmail.errors">Email is invalid</div>
+                                            </div>                                                                         
+                                        </div>                        
+                                    </div>
+                                    <div class="row-cont" >
+                                        <div class="col-left bg-img bg-img-email"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text"  class="inputtext"  matInput placeholder="Microsoft Teams Login Email" [(ngModel)]="businessmsTeamEmail" formControlName="businessmsTeamEmail" maxlength="200" />                                        
+                                            <div *ngIf="submitted && f.businessmsTeamEmail.errors" class="profile-invalid-feedback phone-error">                                                
+                                                <div *ngIf="f.businessmsTeamEmail.errors">Email is invalid</div>
+                                            </div>                                                                         
+                                        </div>                        
+                                    </div>
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-address"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="Address 1" [(ngModel)]="businessAddress1" formControlName="businessAddress1" maxlength="100" />                                                                                                                                                        
+                                        </div>  
+                                    </div>
+                                   
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-address"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="Address 2" [(ngModel)]="businessAddress2" formControlName="businessAddress2" maxlength="100" />                                                                                                                                                        
+                                        </div> 
+                                    </div>
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-address"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="City" [(ngModel)]="businessCity" formControlName="businessCity" maxlength="100" />                                                                                                                                                        
+                                        </div>  
+                                    </div>
+                                   
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-address"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="State" [(ngModel)]="businessState" formControlName="businessState" maxlength="100" />                                                                                                                                                        
+                                        </div> 
+                                    </div>
+
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-zip"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="Zip Code" [(ngModel)]="businessZipcode" formControlName="businessZipcode" maxlength="15" />  
+                                            <div *ngIf="submitted && f.businessZipcode.errors" class="profile-invalid-feedback phone-error">                                                
+                                                <div *ngIf="f.businessZipcode.errors">Zip Code is invalid</div>
+                                            </div>                                                                                                                                                       
+                                        </div> 
+                                    </div>
+
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-phone"></div>
+                                        <div class="col-right form-group ">
+                                            <app-country-phonenumber [phoneNumberData]="landlineNumberData" (isPhoneData)="getLandlineNumberData($event)"></app-country-phonenumber>                                            
+                                            <div *ngIf="!invalidNumber1" class="profile-invalid-feedback phone-error">                                                
+                                                <div>Landline number is invalid</div>
+                                            </div> 
+                                        </div>                                         
+                                    </div>
+
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-phone"></div>
+                                        <div class="col-right form-group ">
+                                            <app-country-phonenumber [phoneNumberData]="businessNumberData" (isPhoneData)="getBusinessNumberData($event)"></app-country-phonenumber> 
+                                            <!--<input type="text" appPhoneMask class="inputtext"  matInput placeholder="555-555-5555" [(ngModel)]="businessPhone" formControlName="businessPhone" maxlength="12" />-->                                                                                                                                                        
+                                            <div *ngIf="!invalidNumber" class="profile-invalid-feedback phone-error">                                                
+                                                <div>Mobile number is invalid</div>
+                                            </div>
+                                        </div>  
+                                    </div>
+
+                                    
+
+                                    <!--<div class="row-cont">
+                                        <div class="col-left bg-img bg-img-phone"></div>
+                                        <div class="col-right col-right-lt form-group">
+                                            <input type="text" appPhoneMask class="inputtext"  matInput placeholder="555-555-5555" [(ngModel)]="businessLandline" formControlName="businessLandline" maxlength="15" />                                                                                                                                                        
+                                            <div *ngIf="submitted && f.businessLandline.errors" class="profile-invalid-feedback phone-error">                                                
+                                                <div *ngIf="f.businessLandline.errors.minlength">Phone number is invalid</div>
+                                            </div> 
+                                        </div> 
+                                        <div class="col-right col-right-rt form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="Ext" [(ngModel)]="business_landline_ext" formControlName="business_landline_ext" maxlength="4" />                                                                                                                                                                                                    
+                                        </div>  
+                                    </div>-->
+    
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-address"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext"  matInput placeholder="Store Number" [(ngModel)]="businessStoreNo" formControlName="businessStoreNo" maxlength="100" />                                                                                                                                                        
+                                        </div>  
+                                    </div>
+                                   
+                                    <div class="row-cont">
+                                        <div class="col-left bg-img bg-img-bname"></div>
+                                        <div class="col-right form-group">
+                                            <input type="text" class="inputtext" matInput placeholder="Office Code" [(ngModel)]="businessofficeCode" formControlName="officeCode" maxlength="100" />                                                                                                                                                        
+                                        </div>  
+                                    </div>
+    
+                                    
+                                </form>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!--</p-accordionTab>
+    </p-accordion>-->
+</div>
+
+

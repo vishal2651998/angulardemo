@@ -1,0 +1,134 @@
+<div *ngIf="loading || (accessFrom == 'search' && searchLoading)" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading && ((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading ))" class="cust-loader esc-loader lazy-loader cust-lazy-loader {{accessFrom}}" [ngClass]="{'part-thumb-lazy-loader': thumbView, 'part-list-lazy-loader': !thumbView}"></div>
+<div *ngIf="thumbView" class="parts-thumb-view" [style.height.px]="innerHeight">
+    <div #top *ngIf="!loading && !itemEmpty" [ngClass]="{'empty': displayNoRecords, 'opacity': opacityFlag}" id="partList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+        <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row masonry-item-container parts {{accessFrom}}" [ngClass]="{'parts-empty': displayNoRecords}" [updateLayout]="updateMasonryLayout" [ordered]="true">
+            <div ngxMasonryItem class="parts-grid-col masonry-item" *ngFor="let item of sibList">
+                <p-card class="parts-card sib-card cursor" [ngClass]="{'parts-expand-card': expandFlag}" (click)="viewSib(navAction, item.id)">
+                    <div class="card-content part-card-content">
+                        <div class="parts-image card-image sib" [ngStyle]="{'background-image': 'url(' + item.sibImageDesktop + ')'}">
+                            <span>ID# {{item.id}}</span> 
+                        </div>
+                        <div class="part-cont">						
+                            <div class="card-title" title="{{item.complaintCategoryList}}">{{item.complaintCategoryList}}</div>
+                            <div class="card-subtitle">
+                                <div class="app-info">
+                                    <div class="title truncate" title="{{item.symptom}}">{{item.symptom}}</div>
+                                    <div class="info truncate" title="{{item.modelInfo}}">{{item.modelInfo}}</div>
+                                    <div class="sib-info truncate" title="{{item.ref}}">{{item.ref}}</div>
+                                    <div class="sib-info truncate" title="{{item.releaseDate}}">{{item.releaseDate}}</div>
+                                </div>
+                                <div class="parts-count hide">
+                                    <div *ngIf="item.likeCount > 0" class="parts-action parts-like">
+                                        {{item.likeCount}}
+                                        <span *ngIf="item.likeCount <= 1">Like</span>
+                                        <span *ngIf="item.likeCount > 1">Likes</span>
+                                    </div>
+                                    <div *ngIf="item.pinCount > 0" class="parts-action parts-pin">
+                                        {{item.pinCount}}
+                                        <span *ngIf="item.pinCount <= 1">Pin</span>
+                                        <span *ngIf="item.pinCount > 1">Pins</span>
+                                    </div>
+                                    <div *ngIf="item.viewCount > 0" class="parts-action parts-view">
+                                        {{item.viewCount}}
+                                        <span *ngIf="item.viewCount <= 1">View</span>
+                                        <span *ngIf="item.viewCount > 1">views</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-card>
+            </div>
+            
+        </ngx-masonry> 
+    </div>
+    <div class="thumb" *ngIf="((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading )) && (displayNoRecords || displayNoRecordsDefault)" [style.height.px]="innerHeight">
+        <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="sibUrl"></app-empty-container>
+    </div>   
+</div>
+<div *ngIf="!thumbView" class="prob-list-cont">
+    <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new" [style.height.px]="innerHeight">
+        <div *ngIf="!loading" id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table #table [columns]="sibListColumns" [scrollable]="true" [totalRecords]="sibList.length" id="file-datatable" class="file-datatable thread-list-table sib-list-table" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" [value]="sibList" [scrollHeight]="'calc(100vh - 225px)'" (scroll)="scroll($event)">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th *ngFor="let col of columns" class="{{col.columnpclass}}">    
+                            {{col.header}}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-sibList let-i="rowIndex">
+                    <tr class="cursor" id="{{sibList.id}}">
+                        <td class="w1 thl-col-1 col-sticky" (click)="viewSib(navAction, sibList.id)">
+                            <div class="p-table-col">
+                                <span class="cc" title="{{sibList.complaintCategoryList}}">{{sibList.complaintCategoryList}}</span>        
+                            </div>
+                        </td>
+                        <td class="w2 thl-col-2" (click)="viewSib(navAction, sibList.id)">
+                            <div class="p-table-col"><span class="sib-id">{{sibList.id}}</span></div>
+                        </td>
+                        <td class="w3 thl-col-3" (click)="viewSib(navAction, sibList.id)">
+                            <div class="p-table-col"><span class="symptom" title="{{sibList.symptom}}">{{sibList.symptom}}</span></div>
+                        </td>
+                        <td class="w4 thl-col-4" (click)="viewSib(navAction, sibList.id)">
+                            <div class="p-table-col"><span class="release-date" title="{{sibList.releaseDate}}">{{sibList.releaseDate}}</span></div>
+                        </td>
+                        <td class="w5 thl-col-5">
+                            <div class="p-table-col">
+                                <span class="model" [ngClass]="{'multiple-items': sibList.model == 'Multiple Models'}">
+                                    <div *ngIf="sibList.model == 'Multiple Models'" class="cursor multiple custom-pop" [matMenuTriggerFor]="sibModel">{{sibList.model}}</div>
+                                    <div title="{{sibList.model}}" *ngIf="sibList.model != 'Multiple Models'" class="model" (click)="viewSib(navAction, sibList.id)">{{sibList.model}}</div>
+                                </span>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #sibModel="matMenu" backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul *ngIf="sibList.modelList.length > 0">
+                                                <li *ngFor="let model of sibList.modelList">
+                                                    {{model}}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </div>
+                        </td>
+                        <td class="w6 thl-col-6" (click)="viewSib(navAction, sibList.id)">
+                            <div class="p-table-col"><span class="created-on">{{sibList.createdOn}}</span></div>
+                        </td>
+                        <td class="w7 thl-col-7" (click)="viewSib(navAction, sibList.id)">
+                            <div class="p-table-col"><span class="created-by text-left">{{sibList.createdBy}}</span></div>
+                        </td>
+                        <td class="w8 thl-col-8 status-col col-sticky">
+                            <div class="p-table-col">
+                                <div class="status thread-status" [style.background-color]="sibList.statusColor">
+                                    <div [ngStyle]="{'color': '#FFFFFF'}" align="center">{{sibList.status}}</div>
+                                </div> 
+                                <div id="more" class="more-icon" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();"><img src="assets/images/more-icon.png" alt="Action" /></div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul class="more-actions">
+                                                <li class="cursor active" (click)="viewSib(navAction, sibList.id)"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                                <li *ngIf="sibList.editAccess" class="cursor active" (click)="navPart('edit', sibList.id, i)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                <li *ngIf="sibList.editAccess" class="cursor active" (click)="delete(sibList.id, i)"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="list" *ngIf="displayNoRecords || displayNoRecordsDefault" [style.height.px]="innerHeight">
+                <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="sibUrl"></app-empty-container>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="itemEmpty" class="no-item-list">
+        <div class="item-empty-container">
+            <p class="item-empty-para padd-top-20">No SIB have been created.</p>
+        </div>
+    </div>
+</div>

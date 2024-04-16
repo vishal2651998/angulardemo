@@ -1,0 +1,63 @@
+<div id="header">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+  </app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+  </app-product-header>
+</div>
+<div class="prob-index">
+  <nav id="nav-sidebar">
+    <app-sidebar accessModule="{{pageAccess}}" [contentTypeId]="groupId"></app-sidebar>
+  </nav>
+  <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+    <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+      (filterAction)="applyFilter($event)" [expandFlag]="expandFlag"></app-filter>
+    <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+      (filterAction)="applyFilter($event)" ></app-filter>
+  </div>
+  <div class="dashboard-content scrollbar scrollbar-primary thin" [ngClass]="{'filter-expand': expandFlag}" *ngIf="dashboardData == null" [style.height.px]="midHeight">
+    <div class="loader filter-loader"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></div>
+  </div>
+  <div class="dashboard-content scrollbar scrollbar-primary thin" [ngClass]="{'filter-expand': expandFlag}" *ngIf="dashboardData" [style.height.px]="midHeight">
+    <div class="dash-counts" *ngIf="dashboardData.usagerMetrics">
+      <div class="row col-lg-12 col-md-12 col-sm-12">
+        <div *ngFor="let userMetrics of dashboardData.usagerMetrics"
+          class="col-lg-4 col-md-6 col-sm-12 dash-counts-col">
+          <app-count-widget [title]="userMetrics.title" [count]="userMetrics.count" [colorCode]="userMetrics.colorCode" >
+          </app-count-widget>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-charts">
+      <div class="row col-lg-12 col-md-12 col-sm-12 chart-row" *ngIf="dashboardData.totalEscalationByLevels">
+        <div class="chart-col new-chart-col" style="width: 100%; margin: 0 15px;">
+          <div class="chart-head">{{dashboardData.totalEscalationByLevels.title}}</div>
+          <div class="chart-cont">
+            <app-chart-widget [chartType]="'ComboChart'" [widgetData]="dashboardData.totalEscalationByLevels.metricsData" [options]= "usagerMetricsOption"></app-chart-widget>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-charts">
+      <div class="row col-lg-12 col-md-12 col-sm-12 chart-row" *ngIf="dashboardData.directorCurrentEscalations">
+        <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col new-chart-col" *ngFor="let currentEscalation of dashboardData.directorCurrentEscalations.metricsData">
+          <div class="chart-col new-chart-col">
+            <div class="chart-head">{{currentEscalation.value}}</div>
+            <div class="chart-cont">
+              <app-chart-widget [chartType]="'DonutChart'" [widgetData]="currentEscalation"></app-chart-widget>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dashboard-charts">
+      <div class="row col-lg-12 col-md-12 col-sm-12 chart-row" *ngIf="dashboardData.csmCurrentEscalations">
+        <div class="chart-col new-chart-col" style="width: 100%; margin: 0 15px;height: 400px;">
+          <div class="chart-head">{{dashboardData.csmCurrentEscalations.title}}</div>
+          <div class="chart-cont">
+            <app-chart-widget [chartType]="'ComboChart'" [widgetData]="dashboardData.csmCurrentEscalations.metricsData" [options]="csmCurrentEscalationsOption"></app-chart-widget>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

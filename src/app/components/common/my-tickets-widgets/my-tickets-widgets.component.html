@@ -1,0 +1,78 @@
+<div class="main-contaier setmarginBottom {{optionsval.shortName}}">    
+    <p-accordion [multiple]="true" >
+      <p-accordionTab [selected]="true">
+        <p-header class="accordion-icon ">
+          <div class="container-fluid">
+            <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+              <div class="menu-name-bar col col col-lg-6 col-md-6 col-xl-6 col-sm-12 landing-padding0">
+                <div>
+                  <span class="bg-image {{optionsval.imageClass}}">
+                    <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                  </span>
+                  <span class="menu-name">{{optionsval.placeholder}}</span>
+                  <span><i class="pi hide pi-ellipsis-v"></i></span>
+                </div>
+              </div>
+              <div class="col col col-lg-6 col-md-6 col-xl-6 col-sm-12 landing-padding0">
+                <div class="rightside-menu-header" *ngIf="!loading">
+                  <div class="select-landing-group-div" (click)="$event.stopPropagation();">
+                    <p-dropdown class="select-group-order"  appendTo="body" [options]="selectedGroupOptions" [(ngModel)]="selectedGroup" placeholder="" optionLabel="name" (onChange)="selectEvent($event);" ></p-dropdown>
+                  </div>
+                  <div class="see-more-text" *ngIf="seemore">
+                    <span>See More</span>
+                    <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                  </div>
+                  <div class="plusone60 showinline"><i class="pi pi-chevron-up"></i></div>
+                  <div class="minusone60 hide"><i class="pi pi-chevron-down"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-header>
+        <div class="landing-report-section ticket-section">
+          <div class="loading-small-screen" *ngIf="loading"><img src="assets/images/loading.svg" alt="Loader" /></div>
+          
+          <div class="" *ngIf="!loading">
+            <div class="container-fluid">
+
+              <div *ngIf="myTicketsStatus.length == 0" class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 justify-center">
+                <div class="nothingtoshow">
+                  <div class="no-data-contaier">
+                      <div>
+                        <img class="no-data-img-chart" src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                      </div>
+                      <div class="no-data-text">Nothing to show</div>
+                  </div>
+              </div>
+              </div>
+
+              <div *ngIf="myTicketsStatus.length > 0" class="my-tickets row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+                
+                <p-table [value]="myTicketsStatus" [scrollable]="true" class="widgets-table">                    
+                  <ng-template pTemplate="header" >
+                      <tr>
+                          <th class="thText tw64">Status</th>
+                          <th class="thText tw12">L1</th>
+                          <th class="thText tw12">L2</th>
+                          <th class="thText tw12">L3</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-ticketsStatus>
+                      <tr>                          
+                          <td (click)="clickTicketTD(ticketsStatus.id,'')" class="tdText tw64 text-truncate" title="{{ticketsStatus.name}}">{{ticketsStatus.name}}</td>
+                          <td (click)="clickTicketTD(ticketsStatus.id,'l1')" class="tdText tw12"><span [ngClass]="{'text_count_escalation': ticketsStatus.l1!='-'}" >{{ticketsStatus.l1}}</span></td>
+                          <td (click)="clickTicketTD(ticketsStatus.id,'l2')" class="tdText tw12"><span [ngClass]="{'text_count_escalation': ticketsStatus.l2!='-'}">{{ticketsStatus.l2}}</span></td>
+                          <td (click)="clickTicketTD(ticketsStatus.id,'l3')" class="tdText tw12"><span [ngClass]="{'text_count_escalation': ticketsStatus.l3!='-'}">{{ticketsStatus.l3}}</span></td>
+						  
+                      </tr>
+                  </ng-template>
+                </p-table>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>

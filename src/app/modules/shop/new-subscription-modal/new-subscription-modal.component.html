@@ -1,0 +1,76 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+    <p-toast></p-toast>
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">New Certification</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close" (click)="saveImages()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form  class="action-form">
+            <div class="container">
+                <div class="row input-row mt-2">
+                    <div class="col-sm-12">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt d-flex">
+                                <img src="../../../../assets/images/hq/subscriptionn.png" alt="service" width="19"
+                                    height="19" class="mr-2 new-request-icon" />
+                                <label class="mb-0">Subscription Name</label>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Enter Subscription Name" />
+                        </div>
+                        <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required">Dealer code is a required field.</span> -->
+                    </div>
+                    <div class="col-sm-6 mt-2">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt d-flex">
+                                <img src="../../../../assets/images/hq/calendar.png" alt="service" width="19"
+                                    height="19" class="mr-2 new-request-icon" />
+                                <label class="mb-0">Enrolled Date</label>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input type="date" pInputText class="input-bg map-input w-100"
+                                placeholder="Select" />
+                        </div>
+                        <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required">Dealer code is a required field.</span> -->
+                    </div>
+                    <div class="col-sm-6 mt-2">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt d-flex">
+                                <img src="../../../../assets/images/hq/calendar.png" alt="service" width="19"
+                                    height="19" class="mr-2 new-request-icon" />
+                                <label class="mb-0">Renewal Date</label>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input type="date" pInputText class="input-bg map-input w-100"
+                                placeholder="Select" />
+                        </div>
+                        <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required">Dealer code is a required field.</span> -->
+                    </div>
+                    <div class="mx-2 mt-4 d-flex">
+                        <div (click)="openAttachments()" class="border border-dark-3 rounded-pill">
+                            <p class="p-0 m-0 px-2">Attachments</p>
+                        </div>
+                        <span *ngIf="uploadedItems && uploadedItems.attachments && uploadedItems.attachments.length > 0" class="ml-1 border border-dark-3 rounded-circle px-2 text-white" style="background-color: #f99724;">{{this.uploadedItems?.attachments?.length}}</span>
+                    </div>
+                    
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

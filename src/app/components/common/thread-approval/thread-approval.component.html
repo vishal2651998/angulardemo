@@ -1,0 +1,148 @@
+<p-messages [(value)]="msgs" [enableService]="false"></p-messages>
+<div *ngIf="loading" class="documents-thumb-view" [style.height.px]="innerHeight">
+    <div class="cust-loader threads thread"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+<div *ngIf="!loading" class="table-view sf-grid-row" [style.height]="'calc(100vh - '+secHeight+'px)'">
+    <div #top class="ps sf-list" id="thread-data-container" >
+        <p-table *ngIf="!displayNoRecords" [scrollable]="true" [totalRecords]="items.length" id="file-datatable" class="file-datatable doc-file-table" [scrollHeight]="'calc(100vh - '+listHeight+'px)'" (scroll)="listScroll($event)" [value]="items">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngIf="threadApprovalFlag" class="dw0">Person submitted</th>                    
+                    <th [ngClass]="{'dw1 setLt280': threadApprovalFlag, 'dw0 setLt0': !threadApprovalFlag}" >Problem Title</th>                    
+                    <th [ngClass]="{'dw2': threadApprovalFlag, 'dw1 setLt280': !threadApprovalFlag}">Error Code</th>
+                    <th [ngClass]="{'dw3': threadApprovalFlag, 'dw2': !threadApprovalFlag}">ID</th>
+                    <th [ngClass]="{'dw4': threadApprovalFlag, 'dw3': !threadApprovalFlag}">Make</th>
+                    <th class="date" [ngClass]="{'dw5': threadApprovalFlag, 'dw4': !threadApprovalFlag}">Submit date</th>
+                    <th class="date" [ngClass]="{'dw6': threadApprovalFlag, 'dw5': !threadApprovalFlag}">Updated on</th>
+                    <th class="status" [ngClass]="{'dw7': threadApprovalFlag, 'dw6': !threadApprovalFlag}">Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-items let-i="rowIndex">
+                <tr id="{{items.threadId}}" class="cursor" [ngClass]="{'cursor-default': (!this.threadApprovalFlag && items.documentStatusId == '4') || (!this.threadApprovalFlag && items.documentStatusId == '5'),'active': items.selected}"  >
+                    <td *ngIf="threadApprovalFlag" class="dw0" (click)="t.close();threadAction(items, 'view')" title="{{items.userName}}">
+                        <div class="thread-bg thread-bg-no-margin p-table-col" >
+                            <div class="profile-container">
+                                <div class="profileimg-container no-padding">
+                                    <div class="profile-left-container list-profile-left-container profile-left-container-no-margin" >
+                                        <div class="tooltipUseDiv">  
+                                            <div class="tooltipUseDivInner listtt" (mouseenter)="getUserProfileStatus(items.userId,i);t.open();$event.stopPropagation();"></div>                                                        
+                                            <div class="tooltipLeave" (mouseleave)="t.close();" ></div>                                                        
+                                            <img tooltipClass="profile-tooltip" container="body" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="top-left" [ngbTooltip]="profileTT" class="profileImg {{items.badgeTopUser}}" [src]="items.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                        </div>
+                                        <!--
+                                        <img class="profileImg" [src]="items.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'"/>
+                                        <span class="list-availability-status availability-status availability-status{{items.availability}}"></span>
+                                        -->
+                                    </div>
+                                    <ng-template #profileTT>
+                                        <div (mouseleave)="t.close();" class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : items.profileShow } ">
+                                            <div class="table-row2">
+                                                <div class="profile-tt-row">
+                                                    <div class="profile-tt-col-lt profile-status-tt">
+                                                        <img class="" src="assets/images/thread/profile-status-{{items.availability}}.svg"/>
+                                                    </div>
+                                                    <div class="profile-tt-col-rt">                                                                        
+                                                        <p class="profile-text-tt">{{items.availabilityStatusName}}</p>      
+                                                    </div> 
+                                                </div>
+                                                <div class="line"></div>
+                                                <div class="profile-tt-row cursor-pointer" (click)="taponprofileclick(items.userId);$event.stopPropagation();">
+                                                    <div class="profile-tt-col-lt">
+                                                        <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                    </div>
+                                                    <div class="profile-tt-col-rt">                                                                        
+                                                        <p class="profile-text-tt">View Profile</p>      
+                                                    </div> 
+                                                </div>
+                                            </div>  
+                                        </div>    
+                                    </ng-template>
+                                    <div class="profile-right-container">
+                                        <div class="user-name" title="{{items.userName}}">  
+                                            {{items.userName}}
+                                        </div>                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td [ngClass]="{'dw1 setLt280': threadApprovalFlag, 'dw0 setLt0': !threadApprovalFlag}" (click)="threadAction(items, 'view')" title="{{items.threadTitle}}">
+                        <div class="doc-name-col">
+                            <span class="split-col title"><span class="wraptext app-wraptext">{{items.threadTitle}}</span></span>
+                        </div>
+                    </td>
+                    <td [ngClass]="{'dw1 setLt280': !threadApprovalFlag, 'dw2 setLt280': threadApprovalFlag}" (click)="threadAction(items, 'view')" title="Error Code">
+                        <div *ngIf="items.currentDtc" class="app-wraptext">
+                            <div class="err-code" *ngFor="let dtc of items.currentDtc; let i = index">
+                                {{dtc.code}}<span *ngIf="items.currentDtc?.length-1 != i">,&nbsp;</span>
+                            </div>
+                        </div>
+                        <div *ngIf="!items.currentDtc" class="app-wraptext"> - </div>
+                    </td>
+                    <td [ngClass]="{'dw3': threadApprovalFlag, 'dw2': !threadApprovalFlag}" (click)="threadAction(items, 'view')" title="{{items.threadId}}">
+                        <div class="app-wraptext"> #{{items.threadId}} </div>
+                    </td>
+                    <td [ngClass]="{'dw4': threadApprovalFlag, 'dw3': !threadApprovalFlag}" (click)="threadAction(items, 'view')" title="{{items.manufacturer}}">
+                        <span class="app-wraptext">
+                            <span class="wraptext">{{items.make}}<span *ngIf="items.model != ''">,&nbsp;</span></span>
+                            <span class="wraptext">{{items.model}}<span *ngIf="items.year != undefined && items.year != ''">,&nbsp;</span></span>
+                            <span class="wraptext">{{items.year}}</span>
+                        </span>
+                    </td>
+                    <td class="date" [ngClass]="{'dw5': threadApprovalFlag, 'dw4': !threadApprovalFlag}" (click)="threadAction(items, 'view')" title="{{items.submitedByDate}}">
+                        <div class="app-wraptext"> {{items.submitedByDate}} </div>
+                    </td>
+                    <td class="date" [ngClass]="{'dw6': threadApprovalFlag, 'dw5': !threadApprovalFlag}" (click)="threadAction(items, 'view')" title="{{items.updatedOnMobile}}">
+                        <div class="app-wraptext" [ngClass]="{'text-center': items.updatedOnMobile == '-'}"> {{items.updatedOnMobile}} </div>
+                    </td>
+                    <td class="status" [ngClass]="{'dw7': threadApprovalFlag, 'dw6': !threadApprovalFlag}" *ngIf="!threadApprovalFlag">
+                        <div class="status thread-status" [style.background-color]="items.documentStatusBgColorStr">
+                            <div [style.color]="items.documentStatusColorValueStr" class="sf-status" title="{{items.documentStatus}}" >{{items.documentStatus}}</div>
+                        </div>
+                        <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">
+                            <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary" >
+                            <mat-menu #menu="matMenu" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                        <li class="cursor" (click)="menuTrigger.closeMenu();threadAction(items, 'view');$event.stopPropagation();"><img src="assets/images/documents/approval-more-view.png" alt="View">&nbsp;&nbsp;<span class="app-span">View</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '4' || items.documentStatusId  == '5' || items.documentStatusId  == '6'" (click)="menuTrigger.closeMenu();threadAction(items, 'status', 'submit');$event.stopPropagation();"><img src="assets/images/documents/approval-more-submit.png" alt="Submit">&nbsp;&nbsp;<span class="app-span">Submit</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '2' || items.documentStatusId  == '3'" (click)="menuTrigger.closeMenu();threadAction(items, 'status', 'retract');$event.stopPropagation();"><img src="assets/images/documents/approval-more-retract.png" alt="Retract">&nbsp;&nbsp;<span class="app-span">Retract</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '4' || items.documentStatusId  == '5' || items.documentStatusId  == '6'" (click)="menuTrigger.closeMenu();threadAction(items, 'edit');$event.stopPropagation();"><img src="assets/images/documents/approval-more-edit.png" alt="Edit">&nbsp;&nbsp;<span class="app-span">Edit</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '4' || items.documentStatusId  == '5' || items.documentStatusId  == '6'" (click)="menuTrigger.closeMenu();threadAction(items, 'delete');$event.stopPropagation();"><img src="assets/images/documents/approval-more-delete.png" alt="Delete">&nbsp;&nbsp;<span class="app-span">Delete</span></li>
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>
+                    </td>
+                    <td class="status" [ngClass]="{'dw7': threadApprovalFlag, 'dw6': !threadApprovalFlag}" *ngIf="threadApprovalFlag">
+                        <div class="status thread-status" [style.background-color]="items.documentStatusBgColorStr">
+                            <div [style.color]="items.documentStatusColorValueStr" class="sf-status" title="{{items.documentStatus}}" >{{items.documentStatus}}</div>
+                        </div>
+                        <div [ngClass]="{'hiddenVisible': (items.documentStatusId == '4') || (items.documentStatusId == '5')}" id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu1">
+                            <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary" >
+                            <mat-menu #menu1="matMenu" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '6' || items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();threadAction(items, 'view');$event.stopPropagation();"><img src="assets/images/documents/approval-more-view.png" alt="View">&nbsp;&nbsp;<span class="app-span">View</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();threadAction(items, 'status', 'approve');$event.stopPropagation();"><img src="assets/images/documents/approval-more-approved.png" alt="Approve">&nbsp;&nbsp;<span class="app-span">Approve</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();threadAction(items, 'status', 'return');$event.stopPropagation();"><img src="assets/images/documents/approval-more-return.png" alt="Return">&nbsp;&nbsp;<span class="app-span">Return</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '6' || items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();threadAction(items, 'edit');$event.stopPropagation();"><img src="assets/images/documents/approval-more-edit.png" alt="Edit">&nbsp;&nbsp;<span class="app-span">Edit</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '6' || items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();threadAction(items, 'delete');$event.stopPropagation();"><img src="assets/images/documents/approval-more-delete.png" alt="Delete">&nbsp;&nbsp;<span class="app-span">Delete</span></li>
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <app-empty-container *ngIf="!loading && displayNoRecords" [contentTypeValue]="contentTypeValue"></app-empty-container>
+    </div>
+</div>
+<div align="center" class="thread-loading-text bottom-loading" *ngIf="lazyLoading"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>

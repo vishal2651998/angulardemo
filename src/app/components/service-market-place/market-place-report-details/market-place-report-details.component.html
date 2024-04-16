@@ -1,0 +1,1131 @@
+<div *ngIf="showLoader" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div class="market-place-reports-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div id="header" *ngIf="!msTeamAccess">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData"
+    (search)="applySearch('emit', $event)"></app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData"
+    (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-marketplace-sidebar [activeMenuItem]="'market-place/reports'"
+        accessModule="{{bodyClass}}"></app-marketplace-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec1 right-section"  *ngIf="!showLoader">
+  <div class="container-fluid">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 reports-header-sec ">
+      <div class="p-0 no-padding page-title-design display-align-center">
+        <img _width="24px" height="24px" src="assets/images/service-provider/back-arrow-new-black.png"
+          class="margin-right-8px cursor-pointer" (click)="goBack()">
+        <span style="margin-left: 13px;">Reports - Transaction ID# {{transactionId}}</span>
+        <span class="header-refunded-sec" *ngIf="priceValues?.grandRefund">
+          <span class=" p-0 pr-2 d-flex align-items-center">
+            <span>Refunded:&nbsp;</span>
+            <span style="color: #fa972d">{{priceValues?.grandRefund | currency:'USD':true:'1.2-2' }}</span>
+          </span>
+          <span class=" p-0 pr-1 d-flex align-items-center">
+            <span>on:&nbsp;</span>
+            <span style="color: #000">{{transactionData?.refundedDate | date:'MMM d, y'}}</span>
+          </span>
+          <span class=" p-0 pl-2 d-flex align-items-center cursor-pointer" (click)="getHistory()">
+            <img class="mr-1" width="15px" height="14px"
+              src="assets/images/service-provider/history-green.png" alt="" srcset="">
+            <span style="color: #469073">History</span>
+          </span>
+        </span>
+      </div>
+     <div class="d-flex align-items-center">
+      <span class="text-black ml-0">Payment Status</span>
+        <span class="payment-design default-cursor" *ngIf="transactionData?.status" [ngClass]="transactionData?.status == 'PAID' || (transactionData?.refundedDate && transactionData?.refundedBy && transactionData?.status == 'VOID')  ? '' : 'status-declined'" >
+          <img style="margin-right: 5px;" width="15px" height="15px"
+            src="assets/images/service-provider/transaction-{{transactionData?.status == 'PAID' || (transactionData?.refundedDate && transactionData?.refundedBy && transactionData?.status == 'VOID') ? 'paid' : 'declined'}}.png">
+          <span class="text-white" style="font-size: 14px;">
+            {{transactionData?.status == 'PAID' || (transactionData?.refundedDate && transactionData?.refundedBy && transactionData?.status == 'VOID') ? (!transactionData.amount || transactionData.amount == '0')? 'FREE': 'PAID' :
+            'DECLINED'}}
+          </span>
+        </span>
+        <span class="refund-button-design header-refund-border default-cursor" *ngIf="transactionData?.refundedDate && transactionData?.refundedBy">
+          <img style="margin-right: 5px;" width="15px" height="15px"
+            src="assets/images/service-provider/refund-white.png">
+          <span class="text-white" style="font-size: 14px;">REFUNDED</span>
+        </span>
+        <span *ngIf="transactionData?.amount && transactionData?.amount > 0 && priceValues?.balanceWithoutShipping > 0 && transactionData?.status == 'PAID'" class="refund-entire-order" (click)="openRefundForm(0, 'all', true)">
+          <img style="margin-right: 5px;" width="15px" height="15px"
+            src="assets/images/service-provider/black-cross.png">
+          <span class="text-black">Cancel & Refund Entire Order</span>
+        </span>
+     </div>
+    </div>
+  </div>
+  <div class="prob-new" style="display: flex; flex-wrap: wrap;">
+    <ng-container>
+      <div class="col-lg-2" style="padding-left: 24px;">
+        <div style="height: calc(100vh - 150px);" [perfectScrollbar]="sconfig"
+          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black custom-margin-gallery p-0">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-black-sidebar">
+            <ng-container *ngFor="let info of infoType; let i = index;">
+              <div *ngIf="info.isVisible" [ngClass]="SelectedInfoType == info.type ? 'select-nav-menu' : ''"
+                class="cursor-pointer custom-padding-nav-menu pr-0" (click)="getInfoData(info.type)">
+                <img style="margin-right: 10px;" *ngIf="SelectedInfoType != info.type" [src]="info.imgSrc">
+                <img style="margin-right: 10px;" *ngIf="SelectedInfoType == info.type" [src]="info.imgSrcSelected">
+                <span
+                  class="{{SelectedInfoType == info.type ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">{{info.label}}</span>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="row new-pro-cont col-lg-10 step1 mt-0" style="padding-right:30px;">
+        <div class="form-cont col-lg-12">
+          <div class=" payment-summary" *ngIf="SelectedInfoType=='paymentSummary'">
+            <!-- <ng-container *ngTemplateOutlet="displayContent; context: {content:{ heading:'Small Diesel Diagnostics',imgSrc: 'assets/images/service-provider/hands_electrical.png', data : trainingsListDetails}}"></ng-container> -->
+
+            <!-- training details start -->
+            <div *ngIf="trainingsData && trainingsData.length">
+              <ng-container *ngFor="let training of trainingsData; let ti = index;" class="row">
+                <div class="d-flex justify-content-between heading-main col-12">
+                  <span class="custom-header-white font17">
+                    Training:{{ti + 1}} ID# {{training?.trainingId}}
+                  </span>
+                  <span class="font17 d-flex justify-content-between ">
+                    <span *ngIf="training?.totalRefund && training?.totalRefund > 0 && training.paid_price != null" class="refund-button-design default-cursor">
+                      <img style="margin-right: 5px;" width="17px" height="17px"
+                        src="assets/images/service-provider/refund-white.png">
+                      <span class="text-white">REFUNDED</span>
+                    </span>
+                    <span *ngIf="(training?.remainingRefund) > 0 && transactionData?.status == 'PAID'" class="refund-button-design cancel" (click)="openRefundForm(training?.trainingId, 'training')">
+                      <img style="margin-right: 5px;" width="17px" height="17px"
+                        src="assets/images/service-provider/cancel-white.png">
+                      <span class="text-white">Cancel & Refund this Training</span>
+                    </span>
+                  </span>
+                </div>
+                <div class="">
+                  <div class="d-flex col-12" style="padding:15px 20px">
+                    <div style="margin-right: 20px;">
+                      <img [src]="training.bannerImageUrl" width="80px" height="80px" style="border-radius: 10px;cursor:pointer"
+                        onerror="this.src='assets/images/service-provider/training-blank-1.png'" (click)="redirectToInnerDetailPage(training?.trainingId, 'training')">
+                    </div>
+                    <div class="">
+                      <span class="value-label-class ">{{training?.trainingName}}
+                        <span *ngIf="training?.trainingMode == 'Seminar' || training?.trainingMode == 'Webinar'">,
+                          <span *ngIf="training?.startDate != training?.endDate">
+                            {{training?.startDate | date:'MMM dd'}} - {{training?.endDate | date:'MMM dd YYYY'}}
+                          </span>
+                          <span *ngIf="training?.startDate == training?.endDate">
+                            {{training?.endDate | date:'MMM dd YYYY'}}
+                          </span>
+                          <span *ngIf="training?.trainingMode == 'Seminar'">, {{training?.city}},
+                            {{training?.state}}</span>
+                        </span>
+                      </span>
+                      <div *ngIf="training?.bird_price != ''"
+                        class=" custom-object-pair-padding d-flex summary-details-scale justify-content-between">
+                        <div class="d-flex summary-details-text">
+                          <span class="key-label-class ">
+                            <span *ngIf="training?.bird_price == training?.bird_price_original">Early Bird </span>
+                            Discount Price
+                            <span style="color:#298363">{{training?.bird_price | currency: 'USD':true:'1.0-2'}}</span>
+                            <span style="color:#7f17ff">{{ ' -' + training?.bird_percentage + '% off'}}</span>
+                          </span>
+                        </div>
+                        <div class="d-flex">
+                          <!-- <span class="key-label-class">{{training.numberOfSeats +' x '+ (training?.bird_price |
+                            currency:
+                            'USD':true:'1.2-2')}}</span> -->
+                        </div>
+                      </div>
+                      <div class="custom-object-pair-padding  border-bottom-1px summary-details-scale ">
+                        <span class="key-label-class ">Regular Price:</span>
+                        <span class="key-label-class" style="color:#469073">
+                          {{(training?.original_price || 0) | currency: 'USD':true:'1.0-2'}}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- training participants -->
+                  <div *ngIf="training?.participantsData">
+                    <div class="d-flex align-items-center" style="background-color:#f1f1f1;padding:8px 20px">
+                      <img style="margin-right: 5px;" width="18px" height="auto"
+                        src="assets/images/service-provider/user-black.png">
+                      <span>Participants</span>
+                    </div>
+                    <div *ngFor="let participant of training?.participantsData; let ti = index;"
+                      class="d-flex participants-detail border-below">
+                      <div class="col-2 p-0">
+                        <span class="d-flex align-items-center">
+                          <img style="margin-right: 5px;" width="18px" height="18px"
+                            src="assets/images/service-provider/user.png">
+                          <span class="participants-headings">Name</span>
+                        </span>
+                        <div class="text-black participant-val " style="margin-left:23px;">
+                          {{participant.firstName ? participant.firstName + ' ' + participant.lastName : 'TBD'  }}
+                        </div>
+                      </div>
+                      <div class="col-4 p-0">
+                        <span class="d-flex align-items-center">
+                          <img style="margin-right: 5px;" width="19px" height="13px"
+                            src="assets/images/service-provider/mail-grey.png">
+                          <span class="participants-headings">Email & Phone Number</span>
+                        </span>
+                        <div class="text-black participant-val " style="margin-left:24px;">
+                          {{participant.email}} {{participant.email && participant.phoneNumber ? ', ' : ''}} {{participant.phoneNumber}} {{ participant.email && participant.phoneNumber ? '' : '-' }}
+                        </div>
+                      </div>
+                      <div class="col-6 d-flex Participants-status-row" *ngIf="transactionData?.status == 'PAID'">
+                        <span class="d-flex align-items-start pr-4">
+                          <img style="margin: 5px 5px;" width="18px" height="18px" src="assets/images/service-provider/refund-status.png">
+                          <span class="d-flex flex-column">
+                            <span class="participants-headings">Status</span>
+                            <span class="p-0">
+                              <span *ngIf="!participant.cancelled" class="participant-status-btn green-btn">Signed Up</span>
+                              <span *ngIf="participant.cancelled" class=" participant-status-btn red-btn">Canceled</span>
+                            </span>
+                          </span>
+                        </span>
+                        <!-- <div class="text-black participant-val-stat row "> -->
+                          <ng-container *ngIf="participant?.amountPaid != 0">
+                            <span class="d-flex flex-column pr-5 justify-content-center" style="min-width: 225px;">
+                              <span class="participants-headings">Paid:&nbsp;
+                                <span style="color: #0e9a4e">
+                                  {{participant?.amountPaid | currency: 'USD':true:'1.2-2'}}
+                                </span>
+                              </span>
+                              <span class="d-flex" *ngIf="participant?.totalRefund">
+                                <span class="participants-headings">Refund applied:&nbsp;</span>
+                                <span style="color: #fa972d">{{(participant?.totalRefund || 0) | currency: 'USD':true:'1.2-2'}}</span>
+                              </span>
+                            </span>
+                            <span (click)="getHistory('training',participant.id)" *ngIf="participant?.totalRefund"
+                              [class.custom-disable]="!participant?.totalRefund" class="d-flex align-items-center cursor-pointer">
+                              <img class="mr-1" width="15px" height="14px" src="assets/images/service-provider/history-green.png" alt=""
+                                srcset="">
+                              <span style="color: #469073">History</span>
+                            </span>
+                          </ng-container>
+                        <!-- </div> -->
+                      </div>
+
+                    </div>
+
+                  </div>
+                  <div class="tr-details">
+                    <span class="d-flex justify-content-between border-below custom-padding">
+                      <span>No. of Participants</span>
+                      <span>{{training?.numberOfSeats}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding" *ngIf="training?.bird_price == '' && training?.isOverRidePrice == '0' ">
+                      <span class="key-label-class ">Regular Price:</span>
+                      <span class="key-label-class" [class.text-decoration-line-through]="training?.bird_price != ''"><span
+                          *ngIf="training?.bird_price == '' && training.numberOfSeats > 0">{{training.numberOfSeats}} x
+                        </span>{{(training?.original_price || 0)
+                        | currency: 'USD':true:'1.2-2'}}
+                        <span *ngIf="training?.bird_price == '' && training.numberOfSeats > 0"> =
+                          {{(training.numberOfSeats * training?.original_price) |
+                          currency:'USD':true:'1.2-2' }}
+                        </span>
+                      </span>
+                      </span>
+                    <span *ngIf="training?.bird_price != ''  && training?.isOverRidePrice == '0' "
+                      class="d-flex justify-content-between border-below custom-padding">
+                      <div class=" summary-details-text">
+                        <span class="key-label-class "><span
+                            *ngIf="training?.bird_price == training?.bird_price_original">Early Bird
+                          </span>{{'Discount Price (' + training?.bird_percentage + '% off)'}}</span>
+                      </div>
+                      <div class="">
+                        <span class="key-label-class">{{training.numberOfSeats +' x '+ (training?.bird_price | currency:
+                          'USD':true:'1.2-2')}} = {{(training.numberOfSeats * training?.bird_price) |
+                          currency:'USD':true:'1.2-2' }}</span>
+                      </div>
+                    </span>
+                    <span *ngIf="training?.isOverRidePrice != '0' "
+                      class="d-flex justify-content-between border-below custom-padding">
+                      <div class=" summary-details-text">
+                        <span class="key-label-class "><span>Over Ride Price
+                          </span>{{'(' + training?.overRidePercent + '% off)'}}</span>
+                      </div>
+                      <div class="">
+                        <span class="key-label-class">{{training.numberOfSeats +' x '+ (training?.overRidePrice | currency:
+                          'USD':true:'1.2-2')}} = {{(training.numberOfSeats * training?.overRidePrice) |
+                          currency:'USD':true:'1.2-2' }}</span>
+                      </div>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding">
+                      <span>Tax ({{(training?.salesTaxPercent || 0)}}%)</span>
+                      <span>{{(training?.salesTax || 0) | currency:'USD':true:'1.2-2'}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between custom-padding" [class.border-below]="training?.totalRefund" >
+                      <span>Sub Total</span>
+                      <span>{{training?.actual_price | currency:'USD':true:'1.2-2'}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding" style="color:#fa972d" *ngIf="training?.totalRefund">
+                      <span>Refunded Amount</span>
+                      <span>-{{training?.totalRefund | currency:'USD':true:'1.2-2' }}</span>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding" style="color:#fa972d" *ngIf="training?.totalTaxRefunded">
+                      <span>Refunded Sales Tax ({{(training?.totalTaxRefundedPercent || 0)}}%)</span>
+                      <span>-{{training?.totalTaxRefunded | currency:'USD':true:'1.2-2' }}</span>
+                    </span>
+                    <span class="d-flex justify-content-between custom-padding" style="color:#298368" *ngIf="training?.totalRefund">
+                      <span>Balance Amount</span>
+                      <span>{{(training?.actual_price - training?.totalRefund - training?.totalTaxRefunded)  | currency:'USD':true:'1.2-2'}}</span>
+                    </span>
+                  </div>
+                </div>
+                <!-- training summery -->
+                <div *ngIf="ti == (trainingsData?.length - 1)" class="col-12 p-0 border-below border-above "
+                  style="background-color:#e5efeb;">
+                  <!-- <span class="d-flex justify-content-between border-below custom-padding tr-totals">
+                    <span>Training Sub Total</span>
+                    <span>{{this.priceValues?.trainingSubTotal | currency: 'USD':true:'1.2-2'}}</span>
+                  </span>
+                  <span class="d-flex justify-content-between border-below custom-padding tr-totals">
+                    <div class=" custom-object-pair-padding flex-start">
+                      <span class="key-label-class ">Training Sales Tax ({{(training?.salesTaxPercent || 0)}}%)</span>
+                    </div>
+                    <div class=" custom-object-pair-padding flex-end">
+                      <span class="">{{(priceValues?.trainingsalesTax || 0 ) | currency: 'USD':true:'1.2-2'}}</span>
+                    </div>
+                  </span> -->
+                  <span class="d-flex justify-content-between custom-padding tr-totals">
+                    <div class=" custom-object-pair-padding flex-start">
+                      <span class="key-label-class total-price-color">Total Training Price</span>
+                    </div>
+                    <div class=" custom-object-pair-padding flex-end">
+                      <span class="value-label-class total-price-color">{{(priceValues?.trainingTotal - (priceValues.trainingTotalRefund + priceValues.trainingRefundedSalesTax)) | currency:
+                        'USD':true:'1.2-2'}}</span>
+                    </div>
+                  </span>
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- Manual details start -->
+            <div *ngIf="trainingsData?.length && manualsData?.length  > 0" style="margin-top:20px"></div>
+
+            <div *ngIf="manualsData?.length  > 0" class="heading">
+              <ng-container *ngFor="let manual of manualsData; let mi = index;" class="row">
+                <div class="d-flex justify-content-between heading-main col-12">
+                  <span class="custom-header-white font17">
+                    Manual:{{mi + 1}} ID# {{manual?.manualId}}
+                    <span *ngIf="manual.isIncluded == 1" class="ml-2">
+                      (Included with Training)
+                    </span>
+                  </span>
+                  <span class="font17 d-flex justify-content-between " >
+                    <span *ngIf="manual?.totalRefund && manual?.totalRefund > 0 && manual.paidPrice != null" class="refund-button-design">
+                      <img style="margin-right: 5px;" width="17px" height="17px"
+                        src="assets/images/service-provider/refund-white.png">
+                      <span class="text-white">REFUNDED</span>
+                    </span>
+                    <span class="refund-button-design cancel" *ngIf="(manual?.totalPaidPrice - manual?.refundedSalesTax  - manual?.totalRefund) > 0 && transactionData?.status == 'PAID'" (click)="openRefundForm(manual?.manualId, 'manual', true, mi)">
+                      <img style="margin-right: 5px;" width="17px" height="17px"
+                        src="assets/images/service-provider/refund-white.png">
+                      <span class="text-white">Refund this Manual</span>
+                    </span>
+                  </span>
+                </div>
+                <div class="">
+                  <div class="d-flex col-12 border-below " style="padding: 15px 20px;">
+                    <div style="margin-right: 20px;">
+                      <img [src]="manual.bannerImageUrl" width="80px" height="80px" style="border-radius: 10px;cursor:pointer"
+                        onerror="this.src='assets/images/service-provider/manual-placeholder.png'" (click)="redirectToInnerDetailPage(manual?.manualId, 'manual')">
+                    </div>
+                    <div class="">
+                      <span class="value-label-class">
+                        {{manual?.manualName}}
+                      </span>
+                      <div class="custom-object-pair-padding  border-bottom-1px summary-details-scale " *ngIf="(manual?.originalPrice && manual?.originalPrice != '') && !(manual?.discountPrice && manual?.discountPrice != '0')">
+                        <span class="key-label-class green-color" style="font-weight:bold" >{{manual?.originalPrice | currency: 'USD':true:'1.0-2'}}</span>
+                      </div>
+                      <div class="custom-object-pair-padding  border-bottom-1px summary-details-scale " *ngIf="(manual?.originalPrice == '' || manual?.originalPrice == 0)">
+                        <span class="key-label-class green-color" style="font-weight:bold" >Free</span>
+                      </div>
+                      <div *ngIf="manual?.discountPrice && manual?.discountPrice != '0'" class="manual-with-discount">
+                          <span class="manual-discount">{{manual?.discountPrice | currency: 'USD':true:'1.0-2'}}</span>
+                          <span class="manual-original">{{manual?.originalPrice | currency: 'USD':true:'1.0-2'}}</span>
+                          <span class="manual-Percentage">{{manual?.discountPercentage}} % off</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="tr-details">
+                    <span class="d-flex justify-content-between border-below custom-padding">
+                      <span>Quantity</span>
+                      <span>{{manual?.numberOfManuals}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between  custom-padding border-below" *ngIf="(!manual?.discountPrice || manual?.discountPrice == '0') && manual?.isOverRidePrice == '0'">
+                      <div class="  summary-details-text">
+                        <span class="key-label-class ">
+                          <!-- <span *ngIf="manual?.discountPrice != ''">Regular</span> -->
+                          Manual Price</span>
+                      </div>
+                      <div class="col6">
+                        <span class=""
+                          [class.text-decoration-line-through]="(manual?.discountPrice && manual?.discountPrice != '0')">{{(manual?.originalPrice
+                          || 0) | currency: 'USD':true:'1.2-2' }}</span>
+                      </div>
+                    </span>
+                    <span *ngIf="(manual?.discountPrice && manual?.discountPrice != '0') && manual?.isOverRidePrice == '0' "
+                      class="d-flex justify-content-between custom-padding border-below">
+                      <div class="  summary-details-text">
+                        <span class="key-label-class">{{'Discount Price (' + manual?.discountPercentage + '% off)'}}</span>
+                      </div>
+                      <div class="col6">
+                        <span class="">{{manual?.numberOfManuals +' x '+ (manual?.discountPrice |
+                          currency:
+                          'USD':true:'1.2-2')}} = {{(manual?.numberOfManuals * manual?.discountPrice) |
+                          currency:'USD':true:'1.2-2' }}</span>
+                      </div>
+                    </span>
+                    <span *ngIf="manual?.isOverRidePrice != '0' "
+                      class="d-flex justify-content-between custom-padding border-below">
+                      <div class="  summary-details-text">
+                        <span class="key-label-class">{{'Over Ride Price (' + manual?.overRidePercent + '% off)'}}</span>
+                      </div>
+                      <div class="col6">
+                        <span class="">{{manual?.numberOfManuals +' x '+ (manual?.overRidePrice |
+                          currency:
+                          'USD':true:'1.2-2')}} = {{(manual?.numberOfManuals * manual?.overRidePrice) |
+                          currency:'USD':true:'1.2-2' }}</span>
+                      </div>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding">
+                      <span>Tax ({{(manual?.salesTaxPercent || 0)}}%)</span>
+                      <span>{{(manual?.salesTax || 0) | currency:'USD':true:'1.2-2'}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between custom-padding" [class.border-below]="manual?.totalRefund">
+                      <span>Sub Total</span>
+                      <span>{{manual?.totalPaidPrice | currency:'USD':true:'1.2-2'}}</span>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding" style="color:#fa972d" *ngIf="manual?.totalRefund">
+                      <span>Refunded Amount</span>
+                      <span>-{{manual?.totalRefund | currency:'USD':true:'1.2-2' }}</span>
+                    </span>
+                    <span class="d-flex justify-content-between border-below custom-padding" style="color:#fa972d" *ngIf="manual?.refundedSalesTax">
+                      <span>Refunded Sales Tax  ({{(manual?.refundedSalesTaxPercent || 0)}}%)</span>
+                      <span>-{{(manual?.refundedSalesTax || 0) | currency:'USD':true:'1.2-2' }}</span>
+                    </span>
+                    <span class="d-flex justify-content-between custom-padding" style="color:#298368" *ngIf="manual?.totalRefund">
+                      <span>Balance Amount</span>
+                      <span>{{(manual?.totalPaidPrice - manual?.totalRefund - manual?.refundedSalesTax)  | currency:'USD':true:'1.2-2'}}</span>
+                    </span>
+                  </div>
+                </div>
+                <!-- manual summery -->
+                <div *ngIf="mi == manualsData.length - 1" style="background-color:#e5efeb;">
+                  <!-- <div class="d-flex justify-content-between border-below custom-padding mn-totals ">
+                    <span class="key-label-class">Manual Sub Total</span>
+                    <span class="">{{this.priceValues?.manualSubTotal | currency: 'USD':true:'1.2-2'}}</span>
+                  </div> -->
+                  <div class="d-flex justify-content-between border-below custom-padding mn-totals ">
+                    <span class="key-label-class">Shipping Cost</span>
+                    <span class="">{{manual?.shippingCost | currency: 'USD':true:'1.2-2'}}</span>
+                  </div>
+                  <div class="d-flex justify-content-between border-below custom-padding mn-totals ">
+                    <span class="key-label-class">Tax on Shipping ({{transactionData.shippingTaxPercent}}%)</span>
+                    <span class="">{{transactionData.shippingTax | currency:'USD':true:'1.2-2' }}</span>
+                  </div>
+                  <!-- <div class="d-flex justify-content-between border-below custom-padding mn-totals ">
+                    <div class=" custom-object-pair-padding flex-start">
+                      <span class="key-label-class">Manual Sales Tax ({{manual?.salesTaxPercent}}%)</span>
+                    </div>
+                    <div class=" custom-object-pair-padding flex-end">
+                      <span class="">{{priceValues?.manualsalesTax | currency: 'USD':true:'1.2-2'}}</span>
+                    </div>
+                  </div> -->
+                  <div class="d-flex justify-content-between border-below custom-padding mn-totals">
+                    <div class=" custom-object-pair-padding flex-start">
+                      <span class="key-label-class total-price-color">Total Manual Price</span>
+                    </div>
+                    <div class=" custom-object-pair-padding flex-end">
+                      <span class="value-label-class total-price-color">{{(priceValues?.manualTotal - (priceValues?.manualTotalRefund + priceValues?.manualRefundedSalesTax))| currency:
+                        'USD':true:'1.2-2'}}</span>
+                    </div>
+                  </div>
+                </div>
+
+              </ng-container>
+            </div>
+            <!-- Grand total -->
+            <!--<div style="margin-top:15px" ></div>-->
+
+            <div class="grand-total">
+              <div class="d-flex justify-content-between border-below grand-total-title-padding bg-green">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class grand-total-color">Grand Total Amount</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class=" grand-total-color" *ngIf="transactionData?.amount">{{transactionData.amount - priceValues?.grandRefund |
+                    currency:
+                    'USD':true:'1.2-2'}}</span>
+                  <span class=" grand-total-color" *ngIf="!transactionData?.amount">{{0 | currency:
+                    'USD':true:'1.2-2'}}</span>
+                </div>
+              </div>
+            <ng-container *ngIf="priceValues?.totalRefund">
+              <div class="d-flex justify-content-between border-below grand-total-padding border-below grand-padding totalbg">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Total Paid Amount</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">{{(transactionData.amount || 0) | currency:'USD':true:'1.2-2' }}</span>
+                </div>
+              </div>
+
+              <div
+                class="d-flex justify-content-between border-below grand-total-padding border-below grand-padding orange-color totalbg">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Refund Applied</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">-{{priceValues?.totalRefund | currency:'USD':true:'1.2-2' }}</span>
+                </div>
+              </div>
+              <div
+                class="d-flex justify-content-between border-below grand-total-padding border-below grand-padding orange-color totalbg">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Tax Refund Applied ({{priceValues?.totalRefundedSalesTaxPercentage}}%)</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">-{{priceValues?.totalRefundedSalesTax | currency:'USD':true:'1.2-2' }}</span>
+                </div>
+              </div>
+              <div
+                class="d-flex justify-content-between border-below grand-total-padding border-below grand-padding green-color totalbg">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Total Balance Amount</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">{{transactionData.amount - priceValues?.grandRefund |
+                    currency:
+                    'USD':true:'1.2-2'}}</span>
+                </div>
+              </div>
+            </ng-container>
+            </div>
+               <!-- final total -->
+            <div class="final-total">
+              <!-- <div class="d-flex justify-content-between border-below final-total-title-padding bg-green" *ngIf="priceValues?.totalRefund != '0'">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class final-total-color">Final Total Amount</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class=" final-total-color" *ngIf="transactionData?.amount">{{transactionData?.amount |
+                    currency:
+                    'USD':true:'1.2-2'}}</span>
+                  <span class=" final-total-color" *ngIf="!transactionData?.amount">{{0 | currency:
+                    'USD':true:'1.2-2'}}</span>
+                </div>
+              </div> -->
+
+              <div class="d-flex justify-content-between border-below final-total-padding border-below grand-padding "
+                *ngIf="(transactionData.amount && (transactionData.amount != '0' || transactionData.amount != '0.00') && transactionData?.transaction_id )">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Payment Transaction ID:</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">{{transactionData?.transaction_id }}</span>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between border-below final-total-padding border-below grand-padding"
+                *ngIf="(transactionData.amount && (transactionData.amount != '0' || transactionData.amount != '0.00'))">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Payment Type</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">{{transactionData?.payment_method}}</span>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between border-below final-total-padding grand-padding ">
+                <div class="custom-object-pair-padding flex-start">
+                  <span class="key-label-class">Date</span>
+                </div>
+                <div class="custom-object-pair-padding flex-end">
+                  <span class="">{{getDateTimeFormat(transactionData?.createdOn)}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class=" register-user-info"
+            *ngIf="SelectedInfoType=='RegisterUserInfo' && participantsData && participantsData.length > 0">
+           <ng-container  *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+          </ng-container>
+            <ng-container *ngFor="let training of participantsData; let i= index">
+              <ng-container *ngTemplateOutlet="displayContent; context: {content: {heading: 'Participant', index: i+1, imgSrc: 'assets/images/service-provider/user-black.png',
+                                    data : {'First Name':training?.firstName,
+                                          'Last Name':training?.lastName,
+                                          'Email':training?.email,
+                                          'Phone Number':training?.phoneNumber} } }"></ng-container>
+            </ng-container>
+            <ng-container *ngTemplateOutlet="displayContent; context: {content: {heading: 'Company Info', imgSrc: 'assets/images/service-provider/company-black.png',
+                      data : {'Company Name':transactionData?.companyName,
+                            'Address 1':transactionData?.companyAddress1,
+                            'Address 2':transactionData?.companyAddress2,
+                            'State':transactionData?.companyState,
+                            'City':transactionData?.companyCity,
+                            'Zip':transactionData?.companyZip } } }"></ng-container>
+          </div> -->
+          <div class=""
+          *ngIf="SelectedInfoType=='primaryContact' && trainingsData && trainingsData.length > 0">
+          <ng-container  *ngFor="let info of infoType; let i = index;">
+          <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+        </ng-container>
+          <ng-container
+            *ngTemplateOutlet="userContent; context: {content:{data : transactionData}}"></ng-container>
+        </div>
+
+
+          <div class=""
+            *ngIf="SelectedInfoType=='shippingInfo' && manualsData && manualsData.length > 0">
+            <ng-container  *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+          </ng-container>
+            <ng-container
+              *ngTemplateOutlet="userContent; context: {content:{data : shippingAddressDetails}}"></ng-container>
+          </div>
+          <div class=""  *ngIf="SelectedInfoType=='CardholderInfo'">
+            <ng-container  *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+          </ng-container>
+            <ng-container
+              *ngTemplateOutlet="userContent; context: {content:{data : paymentAddressDetails}}"></ng-container>
+          </div>
+          <div class=""
+            *ngIf="SelectedInfoType=='paymentDetails' && currentUserPaymentData != ''">
+            <ng-container  *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+          </ng-container>
+            <ng-container
+              *ngTemplateOutlet="paymentContent; context: {content:{data : currentUserPaymentData}}"></ng-container>
+          </div>
+          <div class=""
+            *ngIf="SelectedInfoType=='errorDetails' && errorDetails != ''">
+            <ng-container  *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+          </ng-container>
+            <ng-container *ngTemplateOutlet="paymentContent; context: {content:{data : errorDetails}}"></ng-container>
+          </div>
+          <div class=""
+            *ngIf="SelectedInfoType=='refundDetails' && refundDetails != ''">
+            <ng-container  *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="SelectedInfoType == info.type" class="report-sec-heading">{{  info.label}}</div>
+          </ng-container>
+            <ng-container *ngTemplateOutlet="paymentContent; context: {content:{data : refundDetails}}"></ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+
+<!-- common template for data display -->
+<ng-template #userContent let-content="content" >
+<div class="user-content">
+  <div class="primary-contect">
+    <div class="d-flex align-items-center">
+      <img src="assets/images/service-provider/user-black.png" alt="" srcset="" width="18px" height="15px" >
+      <span *ngIf="SelectedInfoType=='CardholderInfo'" >Contact Details</span>
+      <span  *ngIf="SelectedInfoType=='shippingInfo' || SelectedInfoType=='primaryContact'">Primary Contact</span>
+    </div>
+  </div>
+  <div class="row mx-0 p-0 user-content-data">
+    <span class="col-3 grey-color">
+      <span class="d-flex align-items-center">
+        <img width="18px" height="18px" src="assets/images/service-provider/user.png" style="margin-right: 5px;">
+        <span>First Name</span>
+      </span>
+      <span *ngIf="SelectedInfoType !='primaryContact'" class="text-black" style="padding-left:23px">{{content.data['First Name']}}</span>
+      <span *ngIf="SelectedInfoType =='primaryContact'" class="text-black" style="padding-left:23px">{{content.data['userFirstName']}}</span>
+    </span>
+    <span class="col-3 grey-color">
+      <span class="d-flex align-items-center">
+        <img width="18px" height="18px" src="assets/images/service-provider/user.png" style="margin-right: 5px;">
+        <span>Last Name</span>
+      </span>
+      <span *ngIf="SelectedInfoType !='primaryContact'" class="text-black" style="padding-left:23px">{{content.data['Last Name']}}</span>
+      <span *ngIf="SelectedInfoType =='primaryContact'" class="text-black" style="padding-left:23px">{{content.data['userLastName']}}</span>
+
+    </span>
+    <span class="col-3 grey-color">
+      <span class="d-flex align-items-center">
+        <img width="19px" height="13px" src="assets/images/service-provider/mail-grey.png" style="margin-right: 5px;">
+        <span>Email</span>
+      </span>
+      <span *ngIf="SelectedInfoType !='primaryContact'" class="text-black" style="padding-left:24px">{{content.data['Email']}}</span>
+      <span *ngIf="SelectedInfoType =='primaryContact'" class="text-black" style="padding-left:24px">{{content.data['userEmail']}}</span>
+
+    </span>
+    <span class="col-3 grey-color">
+      <span class="d-flex align-items-center">
+        <img width="16px" height="16px" src="assets/images/service-provider/phone.png" style="margin-right: 5px;">
+        <span>Mobile Number</span>
+      </span>
+      <span *ngIf="SelectedInfoType !='primaryContact'" class="text-black" style="padding-left:21px">{{content.data['dial Code'] + ' ' + content.data['Phone Number']}}</span>
+      <span *ngIf="SelectedInfoType =='primaryContact'" class="text-black" style="padding-left:21px">{{content.data['userPhoneNumber']}}</span>
+
+    </span>
+  </div>
+  <div class="user-content-address">
+    <div class="d-flex align-items-center ">
+      <img src="assets/images/service-provider/black-location.png" alt="" srcset="" width="15px" height="21px" style="margin-right:5px">
+      <span *ngIf="SelectedInfoType=='CardholderInfo'" >Address Details</span>
+      <span  *ngIf="SelectedInfoType=='shippingInfo'">Shipping Address</span>
+      <span  *ngIf="SelectedInfoType=='primaryContact'">Primary Address</span>
+    </div>
+  </div>
+  <div>
+    <div class="d-flex user-content-address-details">
+    <img src="assets/images/service-provider/map-pin.png" alt="" srcset="" width="13px" height="18px" style="margin-right:10px">
+      <span class="d-flex flex-column">
+        <span style="color:#777777" >Address</span>
+        <span *ngIf="SelectedInfoType !='primaryContact'">{{content.data['Address 1'] + (content.data['Address 2'] ? ' ' : '') + content.data['Address 2'] + ', ' + content.data['City'] + ', ' + content.data['State'] + ' ' + content.data['Zip'] }}</span>
+        <span *ngIf="SelectedInfoType =='primaryContact'">{{content.data['companyAddress1'] + (content.data['companyAddress2'] ? ' ' : '') + content.data['companyAddress2'] + ', ' + content.data['companyCity'] + ', ' + content.data['companyState'] + ' ' + content.data['companyZip'] }}</span>
+      </span>
+    </div>
+  </div>
+</div>
+</ng-template>
+<ng-template #displayContent let-content="content">
+  <div class="details-show-div pb-2">
+    <div class="heading py-2 " *ngIf="content && content.heading">
+      <img *ngIf="content.imgSrc" class="" width="18px" [src]="content.imgSrc">
+      <span [class]="content.HeadingClass ? content.HeadingClass : 'custom-header-black'">{{content.heading}}
+        {{content?.index}}</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex border-bottom-1px summary-details-scale"
+      *ngFor="let item of content?.data | keyvalue: unsorted">
+      <div class="p-0 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 custom-object-pair-padding flex-start">
+        <span class="key-label-class">{{item?.key}}</span>
+      </div>
+      <div class="p-0 col-xl-6 col-lg-6 col-md-6 col-sm-6 col -6 custom-object-pair-padding flex-end">
+        <span class="">{{item?.value ? item?.value : '-'}}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #paymentContent let-content="content">
+  <div class="details-show-div pb-2" style="height: 100%;">
+    <div class="heading py-2 " *ngIf="content && content.heading">
+      <img *ngIf="content.imgSrc" class="" width="18px" [src]="content.imgSrc">
+      <span [class]="content.HeadingClass ? content.HeadingClass : 'custom-header-black'">{{content.heading}}
+        {{content?.index}}</span>
+    </div>
+    <ng-container *ngIf="content?.data">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex border-bottom-1px summary-details-scale"
+        *ngFor="let col of paymentCols; let i = index;">
+        <div class="p-0 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 custom-object-pair-padding flex-start">
+          <span class="key-label-class">{{paymentColNames[i]}}</span>
+        </div>
+        <div class="p-0 col-xl-6 col-lg-6 col-md-6 col-sm-6 col -6 custom-object-pair-padding flex-end">
+          <span class="">{{(content?.data[col]) ? content?.data[col] : '-'}}</span>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!content?.data">
+      <div class="no-payment-response">
+        <div class="">
+          <div class="inner-div text-center">
+            <img width="60px" height="60px" src="assets/images/service-provider/transaction-no-resp.png">
+          </div>
+          <div style="margin-top: 20px; color: #999;text-align:center">No Payment Response</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<!-- popup from right side -->
+<p-dialog [(visible)]="PopupVisible" [showHeader]="false" (onHide)="closeRefundPopup()" position="right" styleClass="refund-popup" [autoZIndex]="false" [modal]="true">
+  <div class="cancel-refund">
+    <span>
+      Cancel & Refund
+    </span>
+    <img (click)="closeRefundPopup()" style="margin-left: 5px;cursor:pointer" width="15px" height="15px"
+      src="assets/images/service-provider/close-icon-new.png">
+  </div>
+  <form [formGroup]="refundForm" class="refund-form">
+    <table class="w-100">
+      <thead>
+      </thead>
+      <tbody>
+        <!-- trainings -->
+        <ng-container formArrayName="trainings">
+          <ng-container [formGroupName]="tIndex" *ngFor="let item of getTrainings().controls, let tIndex = index">
+            <tr class="content-info">
+              <td colspan="8" class="text-white" style="height:42px;padding-left:20px">
+                {{'Training: ' + (tIndex + 1) + ' - ' + item.value.trainingId + ', ' + item.value.trainingName}}
+              </td>
+            </tr>
+            <tr class="refund-table-heading">
+              <th scope="col" width="20%" style="height:36px;padding-left:20px">Participants</th>
+              <th scope="col" width="8%">Cancel</th>
+              <th scope="col" width="13%">Amount Paid</th>
+              <th scope="col" width="10%">Refunded</th>
+              <th scope="col" width="10%">Balance</th>
+              <th scope="col" width="10%">Refund</th>
+              <th scope="col" width="10%">Refund %</th>
+              <th scope="col" width="20%">Notes</th>
+            </tr>
+            <!-- participants -->
+            <ng-container formArrayName="participants">
+              <ng-container [formGroupName]="pIndex" *ngFor="let pt of getParticipants(tIndex).controls, let pIndex = index">
+                <tr class="refund-training-participant">
+                  <td class="refund-padding">
+                    <span class="d-flex align-items-center ">
+                      <img *ngIf="(getParticipants(tIndex).controls.length - 1) != pIndex"
+                        src="assets/images/thumb_profile_image.png" alt="" srcset="" width="40px" height="40px"
+                        style="object-fit:contain">
+                      <img *ngIf="(getParticipants(tIndex).controls.length - 1) == pIndex"
+                        src="assets/images/service-provider/user-all.png" alt="" srcset="" width="40px" height="40px"
+                        style="object-fit:contain">
+                      <span class="refund-training-participant-name">
+                        {{pt.value.name}}
+                        <i>Participant</i>
+                      </span>
+                    </span>
+                  </td>
+                  <td>
+                    <input type="checkbox" (change)="refundChange('training','cancelled',tIndex, pIndex)"
+                      [checked]="getData('training', tIndex, pIndex).value.cancelled" formControlName="cancelled"
+                      class="custom-check">
+                  </td>
+                  <td>{{pt.value.amountPaid | currency: 'USD':true:'1.2-2'}}</td>
+                  <td class="orange-color">{{pt.value.refundedAmount | currency: 'USD':true:'1.2-2'}}</td>
+                  <td class="green-color">{{pt.value.balanceAmount | currency: 'USD':true:'1.2-2' }}</td>
+                  <td style="position:relative">
+                    <span class="dollar-sign">$</span>
+                    <input type="number" style="text-indent:8px" (click)="resetControl('training','refund',tIndex, pIndex)" (blur)="refundChange('training','refund',tIndex, pIndex)" formControlName="refund" name=""
+                      id="" class="number-input form-control">
+                  </td>
+                  <td>
+                    <input type="number" (click)="resetControl('training','refundPercentage',tIndex, pIndex)" (blur)="refundChange('training','refundPercentage',tIndex, pIndex)"
+                      formControlName="refundPercentage" name="" id="" class="number-input form-control">
+                  </td>
+                  <td class="notes-td">
+                    <span *ngIf="pt.value.note && pt.value.note != ''">
+                      {{pt.value.note}}
+                      <img (click)="editNote('training',pt.value.note, tIndex, pIndex)" class="notes-img"
+                        src="assets/images/service-provider/edit-black.png">
+                    </span>
+                    <span class="cursor-pointer d-flex align-items-center" *ngIf="!pt.value.note || pt.value.note == ''"
+                      (click)="editNote('training',pt.value.note, tIndex, pIndex)"><img class="green-color" width="11px"
+                        height="11px" src="assets/images/service-provider/add-plus.png" style="margin-right: 5px;">
+                      <span class="green-color">Add</span>
+                    </span>
+                  </td>
+                </tr>
+                  <td *ngIf="(getParticipants(tIndex).controls.length - 1) == pIndex && pt.value.totalSalesTax && pt.value.totalSalesTax != 0" colspan="6" class="refund-padding">
+                    <span>
+                      <img style="margin-left: 5px;" width="19px" height="18px" src="assets/images/service-provider/refund-history.png">
+                      Training Sales Tax Refund:
+                      <span class="orange-color">{{(pt.value?.refundedSalesTax || 0) | currency: 'USD':true:'1.2-2'}}
+                        ({{(pt.value?.refundedSalesTaxPercent || 0)}}%)
+                      </span>
+                    </span>
+                  </td>
+                <tr *ngIf="(getParticipants(tIndex).controls.length - 2) == pIndex"
+                  class="refund-or-strip refund-training-participant">
+                  <td colspan="8">(OR)</td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <!-- manuals -->
+        <ng-container formArrayName="manuals">
+          <ng-container [formGroupName]="mIndex" *ngFor="let item of getManuals().controls, let mIndex = index">
+            <tr class="content-info">
+              <td colspan="8" class="text-white" style="height:36px;padding-left:20px"> {{'Manual: ' + (mIndex + 1) + ' - ' +
+                item.value.manualId}}</td>
+            </tr>
+            <tr class="refund-table-heading">
+              <th scope="col" width="20%" style="height:36px;padding-left:20px">Manual</th>
+              <th scope="col" width="8%"></th>
+              <th scope="col" width="13%">Amount Paid</th>
+              <th scope="col" width="10%">Refunded</th>
+              <th scope="col" width="10%">Balance</th>
+              <th scope="col" width="10%">Refund</th>
+              <th scope="col" width="10%">Refund %</th>
+              <th scope="col" width="20%">Notes</th>
+            </tr>
+            <tr class="refund-training-participant">
+              <td class="refund-manual ">
+                <span>
+                  <img [src]="item.value.bannerImageUrl" class="manual-inner-image" width="40px" height="40px"
+                  style="object-fit:contain" onerror="this.src='assets/images/service-provider/manual-placeholder.png'" />
+                <span>{{item.value.manualName}}</span>
+                </span>
+              </td>
+              <td class="">
+                <!-- <input type="checkbox" formControlName="cancelled" class="custom-check"> -->
+              </td>
+              <td>{{item.value.amountPaid  | currency: 'USD':true:'1.2-2'}}</td>
+              <td class="orange-color">{{(item.value.refundedAmount || 0)  | currency: 'USD':true:'1.2-2'}}</td>
+              <td class="green-color">{{item.value.balanceAmount  | currency: 'USD':true:'1.2-2'}}</td>
+              <td style="position:relative">
+                <span class="dollar-sign">$</span>
+                <input type="number" style="text-indent:8px" (click)="resetControl('manual','refund',mIndex)" (blur)="refundChange('manual','refund',mIndex)" placeholder="Refund" formControlName="refund" name="" id=""
+                  class="number-input form-control">
+              </td>
+              <td>
+                <!-- {{item.value.refundPercentage}} -->
+                <input type="number" (click)="resetControl('manual','refundPercentage',mIndex)" (blur)="refundChange('manual','refundPercentage',mIndex)" placeholder="refund%" formControlName="refundPercentage"
+                  name="" id="" class="number-input form-control">
+              </td>
+              <td class="notes-td">
+                <span *ngIf="item.value.note && item.value.note != ''">
+                  {{item.value.note}}
+                  <img (click)="editNote('manual',item.value.note, mIndex)" class="notes-img"
+                    src="assets/images/service-provider/edit-black.png">
+                </span>
+                <span class="cursor-pointer d-flex align-items-center" *ngIf="!item.value.note || item.value.note == ''"
+                  (click)="editNote('manual',item.value.note, mIndex)"><img class="green-color" width="11px" height="11px"
+                    src="assets/images/service-provider/add-plus.png"
+                    style="margin-right: 5px;">
+                  <span class="green-color">Add</span>
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="item.value.totalSalesTax">
+              <td colspan="6" class="refund-padding">
+                <span>
+                  <img style="margin-left: 5px;" width="19px" height="18px" src="assets/images/service-provider/refund-history.png">
+                  Manual Sales Tax Refund:
+                  <span class="orange-color">{{(item.value.refundedSalesTax || 0) | currency: 'USD':true:'1.2-2'}}
+                    ({{(item.value.refundedSalesTaxPercent || 0)}}%)
+                  </span>
+                </span>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+    <div class="refund-popup-btn refund-padding">
+      <button class="btn confirm" (click)="processRefund()">
+        <span>PROCESS TRANSACTION</span>
+        <img style="margin-left: 5px;" width="17px" height="17px" src="assets/images/service-provider/refund-white.png">
+      </button>
+      <!-- <button class="btn close" (click)="closeRefundPopup()">
+        <span>Close</span>
+        <img style="margin-left: 5px;" width="11px" height="11px"
+          src="assets/images/service-provider/thread-windo-close.png">
+      </button> -->
+    </div>
+  </form>
+</p-dialog>
+
+<!-- notes message popup -->
+
+<p-dialog styleClass="update-user-info-popup" [(visible)]="editNotePopup" [modal]="true" [baseZIndex]="1">
+  <ng-template pTemplate="header">
+    <div
+      class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 d-flex justify-content-between align-items-center w-100 no-padding no-margin">
+      <div class="">
+        <span class="heading-style">Notes</span>
+      </div>
+      <div class="d-flex">
+        <span class="custom-buttom-design-new-2" (click)="saveEditNote()">
+          <span class="mr-2" style="line-height:1">Save</span>
+          <span class="pi pi-check" style="font-weight:600"></span>
+        </span>
+        <span class="pi pi-times d-flex align-items-center cursor-pointer" (click)="editNotePopup = false"></span>
+      </div>
+    </div>
+  </ng-template>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <div class="row no-margin">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 p-0" style="margin-top:15px;margin-bottom:15px">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 p-0 responsive-padding">
+            <div class="p-inputgroup new-design">
+              <textarea placeholder="Enter Notes" [(ngModel)]="editNoteMessage"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<!-- history popup -->
+<p-dialog *ngIf="refundedHistory" [(visible)]="historyVisible" [style]="{width: '60vw' ,height:'100vh'}" [showHeader]="false" position="right" styleClass="participant-history"  [modal]="true">
+  <div class="refund-history">
+    <span>Refund History <span *ngIf="refundedHistory.type == 'training'">- {{refundedHistory.history[0].firstName != '' ||
+        refundedHistory.history[0].lastName != '' ? refundedHistory.history[0].firstName+'
+        '+refundedHistory.history[0].lastName : 'TBD'}}</span>
+    </span>
+    <img (click)="historyVisible = false;refundedHistory = ''" style="margin-left: 5px;cursor:pointer" width="15px"
+      height="15px" src="assets/images/service-provider/close-icon-new.png">
+    </div>
+  <!-- table for individual participant history -->
+  <table *ngIf="refundedHistory.type == 'training'" class="w-100">
+    <thead>
+
+    </thead>
+    <tbody>
+      <tr class="content-info">
+        <td colspan="8" class="text-white" style="height:42px;padding-left:20px">
+          Training: 1 - ID# {{refundedHistory.history[0]?.trainingId}}, {{refundedHistory.history[0]?.trainingName}}
+        </td>
+      </tr>
+      <tr class="refund-table-heading">
+        <th scope="col" width="25%" style="height:36px;padding-left:20px">Refunded Date</th>
+        <th scope="col" width="10%">Amount Paid</th>
+        <th scope="col" width="10%">Refunded</th>
+        <th scope="col" width="10%">Balance</th>
+        <th scope="col" width="10%">Refund %</th>
+        <th scope="col" width="15%">Notes</th>
+        <th scope="col" width="20%"></th>
+      </tr>
+      <ng-container *ngFor="let item of refundedHistory.history,index as index">
+        <tr [class.refund-history-body]="refundedHistory.length - 1 != index">
+          <td class="refund-padding text-black">{{getDateTimeFormat(item.refundedOn)}}</td>
+          <td class="text-black">{{item.paid_price | currency: 'USD':true:'1.2-2'}}</td>
+          <td class="orange-color">{{item.amount | currency: 'USD':true:'1.2-2'}}</td>
+          <td class="green-color">{{item.balance_amount | currency: 'USD':true:'1.2-2'}}</td>
+          <td class="text-black">{{item.refundedSalesTaxPercent}}%</td>
+          <td class="text-black">{{item.note}}</td>
+          <td *ngIf="item.apiResult" (click)="openTransactionPopup(item,refundedHistory?.history[0]?.trainingId, refundedHistory?.history[0]?.trainingName)"  class="payment-details-link">Transaction Details</td>
+        </tr>
+      </ng-container>
+      <tr>
+        <td colspan="8" style="padding:15px 20px">
+          <span class="d-flex align-items-center" style="line-height:1">
+            <img style="margin-right: 5px;" width="19px" height="18px" src="assets/images/service-provider/refund-history.png">
+            <span style="color: #000;">Training Sales Tax Refund:
+              <span class="orange-color"> {{refundedHistory?.TotalRefundedSalesTax | currency: 'USD':true:'1.2-2'}}
+                ({{refundedHistory?.TotalRefundedSalesTaxPercent}}%)
+              </span>
+            </span>
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- table for entire refund history -->
+  <table *ngIf="refundedHistory.type == 'all'" class="w-100 entire-refund-history">
+    <thead>
+    </thead>
+    <tbody>
+      <!-- trainings -->
+        <ng-container *ngFor="let training of refundedHistory.trainingsHistory, let tIndex = index">
+          <tr class="content-info">
+            <td colspan="8" class="text-white" style="height:42px;padding-left:20px">
+              {{'Training: ' + (tIndex + 1) + ' - ID# ' + training.trainingId + ', ' + training.trainingName}}
+            </td>
+          </tr>
+          <tr class="refund-table-heading">
+            <th scope="col" width="15%" style="height:36px;padding-left:20px">Participants</th>
+            <th scope="col" width="20%">Refunded Date</th>
+            <th scope="col" width="10%">Amount Paid</th>
+            <th scope="col" width="10%">Refunded</th>
+            <th scope="col" width="10%">Balance</th>
+            <th scope="col" width="10%">Refund %</th>
+            <th scope="col" width="10%">Notes</th>
+            <th scope="col" width="20%"></th>
+
+          </tr>
+          <!-- participants -->
+            <ng-container *ngFor="let history of training.history, let hIndex = index">
+              <tr class="refund-training-participant" [class.refund-history-body]="refundedHistory.length - 1 != hIndex">
+                <td class="refund-padding">
+                  <span class="d-flex align-items-center ">
+                    <img src="assets/images/thumb_profile_image.png" alt="" srcset="" width="40px" height="40px"
+                      style="object-fit:contain;margin-right:10px">
+                    <span class="refund-training-participant-name text-black">
+                      <span>{{history.name}}</span>
+                      <i style="color:#a4abba">Participant</i>
+                    </span>
+                  </span>
+                </td>
+                <td class=" text-black">{{getDateTimeFormat(history.refundedOn)}}</td>
+                <td class="text-black">{{history.paid_price | currency: 'USD':true:'1.2-2'}}</td>
+                <td class="orange-color">{{history.amount | currency: 'USD':true:'1.2-2'}}</td>
+                <td class="green-color">{{history.balance_amount | currency: 'USD':true:'1.2-2'}}</td>
+                <td class="text-black">{{history.refundedSalesTaxPercent}}%</td>
+                <td class="text-black">{{history.note}}</td>
+                <td *ngIf="history.apiResult" (click)="openTransactionPopup(history, training.trainingId, training.trainingName)" class="payment-details-link">Transaction Details</td>
+              </tr>
+            </ng-container>
+            <tr *ngIf="training.TotalRefundedSalesTax">
+              <td colspan="8" style="padding:15px 20px">
+                <span class="d-flex align-items-center" style="line-height:1">
+                  <img style="margin-right: 5px;" width="19px" height="18px"
+                    src="assets/images/service-provider/refund-history.png">
+                  <span style="color: #000;">Training Sales Tax Refund:
+                    <span class="orange-color"> {{training?.TotalRefundedSalesTax | currency: 'USD':true:'1.2-2'}}
+                      ({{training?.TotalRefundedSalesTaxPercent}}%)
+                    </span>
+                  </span>
+                </span>
+              </td>
+            </tr>
+        </ng-container>
+      <!-- manuals -->
+        <ng-container *ngFor="let manual of refundedHistory.manualsHistory, let mIndex = index">
+          <tr class="content-info">
+            <td colspan="8" class="text-white" style="height:36px;padding-left:20px"> {{'Manual: ' + (mIndex + 1) + ' - ' +
+              manual.manualId}}</td>
+          </tr>
+          <tr class="refund-table-heading">
+            <th scope="col" width="15%" style="height:36px;padding-left:20px">Manual</th>
+            <th scope="col" width="20%">Refunded Date</th>
+            <th scope="col" width="10%">Amount Paid</th>
+            <th scope="col" width="10%">Refunded</th>
+            <th scope="col" width="10%">Balance</th>
+            <th scope="col" width="10%">Refund %</th>
+            <th scope="col" width="10%">Notes</th>
+            <th scope="col" width="20%"></th>
+          </tr>
+          <tr class="refund-training-participant refund-history-body" *ngFor="let history of manual.history, let hIndex = index">
+            <td class="refund-padding refund-manual ">
+              <span class="d-flex align-items-center">
+                <img [src]="history.bannerImageUrl" class="manual-inner-image"  onerror="this.src='assets/images/service-provider/manual-placeholder.png'" />
+              <span>{{history.manualName}}</span>
+              </span>
+            </td>
+            <td class=" text-black">{{getDateTimeFormat(history.refundedOn)}}</td>
+            <td class="text-black">{{history.paid_price | currency: 'USD':true:'1.2-2'}}</td>
+            <td class="orange-color">{{history.amount | currency: 'USD':true:'1.2-2'}}</td>
+            <td class="green-color">{{history.balance_amount | currency: 'USD':true:'1.2-2'}}</td>
+            <td class="text-black">{{history.refundedSalesTaxPercent}}%</td>
+            <td class="text-black">{{history.note}}</td>
+            <td *ngIf="history.apiResult" (click)="openTransactionPopup(history, manual.manualId, history.manualName)" class="payment-details-link">Transaction Details</td>
+          </tr>
+          <tr *ngIf="manual.TotalRefundedSalesTax">
+            <td colspan="8" class="refund-padding">
+              <span>
+                <img style="margin-left: 5px;" width="19px" height="18px" src="assets/images/service-provider/refund-history.png">
+                Manual Sales Tax Refund:
+                <span class="orange-color">{{(manual.TotalRefundedSalesTax || 0) | currency: 'USD':true:'1.2-2'}}
+                  ({{(manual.TotalRefundedSalesTaxPercent || 0)}}%)
+                </span>
+              </span>
+            </td>
+          </tr>
+        </ng-container>
+    </tbody>
+  </table>
+</p-dialog>
+
+<p-dialog *ngIf="refundTransactionPopup" styleClass="transaction-popup" [(visible)]="refundTransactionPopup" (onHide)="refundTransactionPopup = false"
+  [closable]="true" [modal]="true" [draggable]="false">
+  <ng-template pTemplate="header">
+    <div class="no-margin d-flex">
+      <div class="no-padding flex-align-center">
+        <span class="heading-style-payment">{{refundTransactionData.title}}</span>
+      </div>
+    </div>
+  </ng-template>
+  <div class="transaction-popup-content">
+    <ng-container *ngTemplateOutlet="paymentContent; context: {content:{data : refundTransactionData}}"></ng-container>
+  </div>
+</p-dialog>

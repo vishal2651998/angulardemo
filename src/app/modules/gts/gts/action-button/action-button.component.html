@@ -1,0 +1,18 @@
+<div class="d-flex justify-content-end mt-3">
+  <ng-container *ngFor="let item of items">
+    <button [disabled]="isDisabled" *ngIf="item.label.toLowerCase() != 'complete'" pButton pRipple type="button"
+      [label]="item.label" icon="pi {{item.icon}}" iconPos="right"
+      class="p-button-sm p-button-outlined p-button-rounded mr-2 {{isDisabled ? 'disabled' : item.className}}"
+      [ngClass]="{'active': (item.active)}" (click)="updateProdecureData(item, item.active)">
+    </button>
+
+    <p-button (onClick)="updateProdecureData(item, item.active)" [disabled]="isDisabled"
+      *ngIf="item.label.toLowerCase() == 'complete'" pButton class="p-button-rounded p-0"
+      styleClass="p-button-sm p-button-outlined p-button-rounded mr-2 {{ isDisabled ? 'disabled' : item.className}} {{item.active ? 'active' : ''}}">
+      <span class="mr-2 font-bold">{{item.label}}</span>
+      <img alt="logo" *ngIf="!isDisabled"
+        [src]="item.active ? 'assets/images/gts/complete-white.png' : 'assets/images/gts/complete-green.png'" />
+      <img alt="logo" *ngIf="isDisabled" src="assets/images/gts/complete-grey.png" />
+    </p-button>
+  </ng-container>
+</div>

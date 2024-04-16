@@ -1,0 +1,157 @@
+<div id="header">
+    <app-thread-detail-header [pageData]="headerData"></app-thread-detail-header>
+    <!--app-product-header [pageData]="headerData" (search)="applySearch($event)"></app-product-header-->
+</div>
+<div class="prob-index">
+    <div class="probing-content system-setting">
+        <div class="escalationv2-list-head head-row">
+            <div class="head-col-1">
+                <img class="head-img" src="assets/images/user-settings/user-settings-head.png" />
+                <span class="head-text">User Settings</span>
+            </div>
+            <div *ngIf="loading">
+                <div class="loader"><img width="60" height="60" src="assets/images/loading.svg" alt="Loader" /></div>
+            </div> 
+            <div *ngIf="!loading && !itemEmpty">
+                <div class="ts-list-lt ts-list-bottom cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                    <div class="" >
+                        <div id="filter">
+                            <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()">
+                                <div *ngIf="expandFlag">
+                                    <img src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+                                </div>
+                                <div *ngIf="!expandFlag">
+                                    <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+                                </div>
+                            </div>
+                            <div class="filter-widgets ts-list-lt-center transition" *ngIf="expandFlag">
+                                <div [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                                    <div class="ps" [perfectScrollbar]="sconfig">                            
+                                        <div class="user-row">
+                                            <div >
+                                                <div *ngFor="let menu of menuItemsData; let i=index;" class="profile-row system-settings-menu-row" [ngClass]="{ 'active' : menu.activeFlag, 'normal' : !menu.activeFlag }" (click)="navSection(i)">
+                                                    <div class="profile-row-inner ">
+                                                        <span class="pimg {{menu.imageClass}}"></span>
+                                                        <span class="uname" >{{menu.name}}</span>                                                    
+                                                    </div>                    
+                                                </div>                                                                                                                                
+                                            </div>              
+                                        </div>
+                                    </div>
+                                </div>                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ts-list-rt transition" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">        
+                    <div class="ts-list-rt-center">
+                        <div class="system-setting-container-outer">
+                            <div class="user-settings-container">
+                                <div class="user-settings-inner-container">
+
+                                    <div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+                                        <div *ngIf="rtLoading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+                                            <img src="assets/images/loading.svg" alt="Loader" />
+                                        </div>
+                                        <div *ngIf="!rtLoading" class="system-setting-container">
+                                            <div [style.height]="'calc(100vh - '+innerHeight+'px)'">
+                                                <div class="ps form-fields" [perfectScrollbar]="sconfig">                                                    
+                                                    
+                                                    <div class="section-container" *ngFor="let item of configData; let s = index;" [ngClass]="{ 'set-width-50' : item.parentId != '10' || item.parentId != '16' || item.parentId != '19', 'set-width-100' : item.parentId == '10' || item.parentId == '16' || item.parentId == '19'  }">                
+                                                        <div class="title-row" >
+                                                            <img src="assets/images/user-settings/{{item.titleIcon}}" />
+                                                            <span class="title-text">{{item.title}}</span>
+                                                            <span *ngIf="item.parentId == '10'">
+                                                                <img src="assets/images/white-info-icon.png">
+                                                                <span class="info-text">Thread notification will be received based on whether the make is turned on/off</span>
+                                                            </span>
+                                                        </div>
+                                                        <span *ngIf="item.parentId != '10'">
+                                                            <div class="content-row" *ngFor="let inneritem of item.configItems; let s = index;">
+                                                                <div class="row-item">
+                                                                    <div class="row-item-col action-text">
+                                                                        <span class="bg-img {{inneritem.class}}"></span>
+                                                                        <span class="action-cont">
+                                                                            <div class="head">{{inneritem.title}}</div>
+                                                                            <div class="desc">{{inneritem.description}}</div>
+                                                                        </span>
+                                                                    </div>
+                                                                    <!-- toggle -->
+                                                                    <div class="cursor row-item-col action-toggle" *ngIf="item.parentId != '19'">
+                                                                        <span class="toggle-col-1" *ngIf="inneritem.showPush == '1'">
+                                                                            <span class="field-label"><img style="position: relative;top:-1px;" src="assets/images/user-settings/push.png" />&nbsp;&nbsp;Push</span>
+                                                                            <span class="toggle-col toggle-option">
+                                                                                <p-inputSwitch [(ngModel)]="inneritem.pushToggleBox" (onChange)="onToggleBoxChange('pushtoggle',inneritem.id,item.parentId,$event.checked)">
+                                                                                </p-inputSwitch>
+                                                                            </span>
+                                                                        </span>
+                                                                        
+                                                                        <span class="toggle-col-2" *ngIf="inneritem.showEmail == '1'">
+                                                                            <span class="field-label"><img style="position: relative;top:-1px;" src="assets/images/user-settings/email.png" />&nbsp;&nbsp;Email</span>
+                                                                            <span class="toggle-col toggle-option" >
+                                                                                <p-inputSwitch [(ngModel)]="inneritem.emailToggleBox" (onChange)="onToggleBoxChange('emailtoggle',inneritem.id,item.parentId,$event.checked)">
+                                                                                </p-inputSwitch>
+                                                                            </span> 
+                                                                        </span>                                        
+                                                                    </div>
+                                                                    <div class="cursor row-item-col action-toggle" *ngIf="item.parentId == '19'">
+                                                                        <span class="toggle-col toggle-option cursor">
+                                                                            <img *ngIf="inneritem.pushToggleBox" (click)="onRadioChange(inneritem.id,item.parentId,false)" src="assets/images/user-settings/redio-active.png" />
+                                                                            <img *ngIf="!inneritem.pushToggleBox" (click)="onRadioChange(inneritem.id,item.parentId,true)" src="assets/images/user-settings/redio-normal.png" />
+                                                                        </span>
+                                                                    </div>
+
+                                                                </div> 
+                                                                <div class="row-border">
+                                                                    <span class="lt"></span>
+                                                                    <span class="rt"></span>
+                                                                </div>                  
+                                                            </div>
+                                                        </span>
+                                                        <span *ngIf="item.parentId == '10'">
+                                                            <div class="container-col">
+                                                                <div class="col-left" >
+                                                                    <div class="make-row-item" *ngFor="let item of configLtData; let s = index;">
+                                                                        <div class="make-row-item-col action-text">{{item.key}}</div>
+                                                                        <!-- toggle -->
+                                                                        <div class="cursor make-row-item-col action-toggle">
+                                                                            <span class="toggle-col field-label"></span>
+                                                                            <span class="toggle-col toggle-option">
+                                                                                <p-inputSwitch [(ngModel)]="item.value" (onChange)="onToggleMakeBoxChange('toggle',item.key,$event.checked)">
+                                                                                </p-inputSwitch>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div> 
+                                                                </div>
+                                                                <div class="col-center" >&nbsp;</div>
+                                                                <div class="col-right" >
+                                                                    <div class="make-row-item" *ngFor="let item of configRtData; let s = index;">
+                                                                        <div class="make-row-item-col action-text">{{item.key}}</div>
+                                                                        <!-- toggle -->
+                                                                        <div class="cursor make-row-item-col action-toggle">
+                                                                            <span class="toggle-col field-label"></span>
+                                                                            <span class="toggle-col toggle-option">
+                                                                                <p-inputSwitch [(ngModel)]="item.value" (onChange)="onToggleMakeBoxChange('toggle',item.key,$event.checked)">
+                                                                                </p-inputSwitch>
+                                                                            </span>
+                                                                        </div>                                
+                                                                    </div> 
+                                                                </div>
+                                                            </div>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                </div>
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

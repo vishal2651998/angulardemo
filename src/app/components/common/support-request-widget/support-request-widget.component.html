@@ -1,0 +1,45 @@
+<app-custom-accordion-tab [Config]="accordionConfig" class="mb-4">
+  <div class="container-fluid fluid-new">
+    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+      <div class="col col-lg-4 col-md-4 col-xl-4  col-sm-4 landing-padding0 sr-col-1">
+        <p-button [styleClass]="'custom-background custom-width'" label="NEW SUPPORT REQUEST" icon="pi pi-plus" (click)="navigateTosupportPage(1)">
+          <img src="assets/images/landing-page/support-request-chat-ic.svg" onload="SVGInject(this)" class="mr-2" />
+        </p-button>
+      </div>
+      <div class="col col-lg-4 col-md-4 col-xl-4  col-sm-4 landing-padding0 sr-col-2">
+        <p-button [styleClass]="'custom-background custom-width'" label="MY SUPPORT REQUESTS" (click)="navigateTosupportPage(2)">
+          <img src="assets/images/landing-page/support-request-my-threads.svg" onload="SVGInject(this)" class="mr-2" />
+        </p-button>
+      </div>      
+      <div class="col col-lg-4 col-md-4 col-xl-4  col-sm-4 landing-padding0 sr-col-3">
+        <p-button [styleClass]="'custom-background custom-width'" label="TECH INFO" (click)="navigateTosupportPage(3)">
+          <img src="assets/images/landing-page/tech-info-icon-green.svg" onload="SVGInject(this)" class="mr-2" />
+        </p-button>
+      </div>      
+    </div>
+  </div>
+  <div class="container-fluid fluid-new" style=" padding-top: 0;">
+    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">      
+      <div class="col col-lg-4 col-md-4 col-xl-4  col-sm-4 landing-padding0 sr-col-1">
+        <p-button [styleClass]="'custom-background custom-width'" label="MY STORE SUPPORT REQUEST" (click)="navigateTosupportPage(4)">
+          <img src="assets/images/landing-page/support-request-my-store-new.svg" onload="SVGInject(this)" class="mr-2" />
+        </p-button>
+      </div>    
+      <div *ngIf="CBADomain" class="col col-lg-4 col-md-4 col-xl-4 col-sm-4 landing-padding0 sr-col-2" [ngClass]="{ 'hide' : roleId == '3' }">
+        <p-button [styleClass]="'custom-background custom-width'" label="MY SHOP" (click)="navigateTosupportPage(5)">
+          <span class="icon-div"><img src="assets/images/landing-page/landing-shop-icon.png" class="mr-2" /></span>
+        </p-button>
+      </div>
+      <div *ngIf="CBADomain" class="col col-lg-4 col-md-4 col-xl-4 col-sm-4 landing-padding0 sr-col-2 hidden">
+        <p-button [styleClass]="'custom-background custom-width custom-faq-background'" label="FAQs" (click)="navigateTosupportPage(6)">
+          <img src="assets/images/landing-page/landing-faq-icon.svg" onload="SVGInject(this)" class="mr-2" />
+        </p-button>
+      </div>
+      <div *ngIf="CBADomain" class="col col-lg-4 col-md-4 col-xl-4 col-sm-4 landing-padding0 sr-col-2">
+        <p-button [styleClass]="'custom-background custom-width custom-faq-background'" label="FAQs" (click)="navigateTosupportPage(6)">
+          <img src="assets/images/landing-page/landing-faq-icon.svg" onload="SVGInject(this)" class="mr-2" />
+        </p-button>
+      </div>     
+    </div>
+  </div>
+</app-custom-accordion-tab>

@@ -1,0 +1,106 @@
+<div class="right-section">
+    <div class="prob-index system-setting">
+        <div class="container-fluid">
+            <div class="center-middle-width-container">
+                <div class="center-middle-width padding-common padding-common-hq">
+                    <div class="hq-head d-flex">
+                        <div>
+                            <div class="hq-head-row-0">
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+                                <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span>
+                                <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('step1')">{{headQuarterService.sublevelName}}</span>
+                            </div>
+                            <div class="hq-head-row-1">
+                                <img class="hq-head-img" src="assets/images/hq/hq-region-head-icon.png" alt="" />
+                                <span class="hq-head-text">{{headQuarterService.levelName}} - {{headQuarterService.sublevelName}}</span>
+                            </div>
+
+                        </div>
+                        <div class="ml-auto d-flex align-items-center">
+                            <div (click)="openAddShopModal()" class="m-0 add-action-btn cursor">
+                                <img src="assets/images/hq/add-icon.png">
+                                <span>New Shop</span>
+                            </div>
+                            <div class="m-0 border-0 add-action-btn cursor">
+                                <img src="assets/images/export-green-icon.png">
+                                <span>Template</span>
+                            </div>
+                            <div class="m-0 pl-0 border-0 add-action-btn cursor">
+                                <img src="assets/images/common/cdownload-icon.png">
+                                <span>Download Shops</span>
+                            </div>
+                            <div class="m-0 pl-0 border-0 add-action-btn cursor">
+                                <img src="assets/images/hq/hq-media-green-upload-icon.png">
+                                <span>Upload Shops</span>
+                            </div>
+                            <div class="bg-light rounded rounded-4 d-flex">
+                                <div (click)="changeView()" *ngIf="viewType !== 'MAP'"
+                                    class="p-2 border-right border-gray cursor">
+                                    <img src="assets/images/hq/location-primary.png">
+                                </div>
+                                <div (click)="changeView()" *ngIf="viewType == 'MAP'"
+                                    class="p-2 border-right border-gray cursor">
+                                    <img src="assets/images/hq/location-active.png">
+                                </div>
+                                <div (click)="changeView()" *ngIf="viewType !== 'LIST'" class="p-2 cursor">
+                                    <img src="assets/images/hq/list-primary.png">
+                                </div>
+                                <div (click)="changeView()" class="p-2 cursor">
+                                    <img *ngIf="viewType == 'LIST'" src="assets/images/hq/list-active.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <app-headquarter-sidebar [selectedTab]="'SHOPS'"></app-headquarter-sidebar>
+
+                    <div class="ts-list-rt transition filter-expand">
+                        <div *ngIf="loading">
+                            <div class="loading-small-screen-scroll text-center" style="left:56% !important" text align="center">
+                                <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+                            </div>
+                        </div>
+                        <div *ngIf="!loading && shopList && shopList.length < 1">
+                            <div [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'" class="shop-banner">
+                                <div class="ps banner" [perfectScrollbar]="sconfig">
+
+                                    <!--ADD SHOP MODAL -->
+
+                                    <div class="d-flex align-items-center justify-content-center flex-column">
+
+                                        <div class="rounded-circle">
+                                            <img src="assets/images/hq/hq-lt-shops-large.png">
+                                        </div>
+                                        <div>
+                                            <p class="fs-14 shop-txt">Tap on the 'Add Shop' button to add New
+                                                Shop</p>
+                                        </div>
+                                        <div (click)="openAddShopModal()" class="m-0 add-action-btn cursor">
+                                            <img src="assets/images/hq/add-icon.png">
+                                            <span>ADD SHOP</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div *ngIf="!loading && shopList && shopList.length > 0">
+                            <div [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'">
+                                <div class="ps" [perfectScrollbar]="sconfig">
+                                    <!-- HEAD QUATERS ROUTES -->
+
+                                    <app-list-shop [hqDetails]="hqDetails" [shopList]="shopList" (viewUsers)="viewUsersEmmiter($event)" (viewShop)="viewShopEmmiter($event)" (editShop)="editShopEmmiter($event)" (filterApplied)="lazyLoad($event)"
+                                        *ngIf="viewType == 'LIST'"></app-list-shop>
+                                    <app-shop-list-map *ngIf="viewType == 'MAP'"></app-shop-list-map>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,779 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light d-flex justify-content-between align-item-center">
+      <div class="d-flex align-items-center navbar-left-sec">
+        <img (click)="previousPage()" style="cursor: pointer;margin-right: 10px" width="25px" height="auto" src="assets/images/service-provider/back-arrow-new-black.png">
+        <span class="header-details">
+          <span style="margin-right:8px;">GTS</span>
+          <span style="margin-right:8px;"><i style="font-size: 12px;" class="pi pi-chevron-right"></i></span>
+          <span style="margin-right:8px;" class="cursor-pointer" (click)="breadCrumbNavigation('gtsList')">GTS (ID# {{gtsSessionId}})</span>
+          <span style="margin-right:8px;"><i style="font-size: 12px;" class="pi pi-chevron-right"></i></span>
+          <span style="margin-right:8px;" class="cursor-pointer" (click)="breadCrumbNavigation('gtsSessionList')">Sessions</span>
+          <span style="margin-right:8px;"><i style="font-size: 12px;" class="pi pi-chevron-right"></i></span>
+          <span style="margin-right:8px;">Session ID# {{gtsSummaryId}}</span>
+        </span>
+      </div>
+      <!-- <div class="navbar-left-mid" style="font-size: 20px;font-weight: bold;">
+        Session <span style="color:#469073">ID# {{gtsSummaryId}}</span>
+      </div> -->
+      <div class="right-btns-div navbar-left-right">
+        <a class="circle-btn"><img src="assets/images/gts/share.png" alt=""></a>
+      <a class="download-pdf" (click)="downloadPdf()" ><span><img src="assets/images/gts/adobe.png" alt=""></span>Download as PDF</a>
+      </div>
+    </nav>  
+</header>
+<div *ngIf="showLoader" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="loading" class="document-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div id="summaryData" *ngIf="!showLoader" class="automative-page-wrapper">
+  <section class="workflow-function-sec section-border pt-0">
+    <div class="">
+      <div class="img-desc-row d-flex">
+        <div class="img-div img-div-main"><img style="width: 130px;height: 130px;" [src]="summaryData?.gtsImg" alt=""></div>
+        <div class="content-div">
+          <h2 class="img-ttl">{{summaryData?.name}}</h2>     
+          <p class="icon-content-div">
+            <span class="icon-span"><img src="assets/images/gts/images/description-icon.png" alt=""></span>
+            <span class="icon-content">Description<i>{{summaryData?.dtcDesc ? summaryData?.dtcDesc : '-'}}</i></span>
+          </p>  
+          <p class="icon-content-div align-items-end justify-content-between icon-content-bottom">
+            <span class="left-span d-flex">
+              <span class="icon-span"><img src="assets/images/gts/images/dtc-icon.png" alt=""></span>
+              <span class="icon-content d-flex flex-column">DTC<i>{{summaryData?.dtcCode ? summaryData?.dtcCode : '-'}}</i></span>
+            </span>
+            <span class="right-span d-flex">
+              <span class="d-flex pr-4"><i class="cool-grey pr-2" style="font-style: normal;">GTS ID#</i> {{gtsSessionId}}</span>
+              <span class="d-flex"><i class="cool-grey pr-2" style="font-style: normal;">Session ID#</i> {{gtsSummaryId}}</span>
+            </span>
+          </p>              
+        </div>
+      </div>
+      <div class="row img-icon-listing-row">
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/vin-icon.png" alt=""></span>
+                <span class="icon-content">VIN<i>{{summaryData?.vinNo ? summaryData?.vinNo : '-'}}</i></span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/vehicle-icon.png" alt=""></span>
+                <span class="icon-content">Vehicle
+                  <i *ngIf="vehicle">{{vehicle?.productType}} {{vehicle?.model}} {{vehicle?.year}}</i>
+                  <i *ngIf="!vehicle">-</i>
+                </span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/odo-icon.png" alt=""></span>
+                <span class="icon-content">ODO<i>{{summaryData?.odometerNo ? summaryData?.odometerNo + 'Miles' : '-'}}</i></span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/problem-category-icon.png" alt=""></span>
+                <span class="icon-content">Problem Category<i>{{summaryData?.productCategoryName ? summaryData?.productCategoryName : '-'}}</i></span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/system-icon.png" alt=""></span>
+                <span class="icon-content">System<i>{{summaryData?.systemSelection ? summaryData?.systemSelection : '-'}}</i></span>
+              </p>  
+          </div>                                      
+      </div>
+      <div class="row img-icon-listing-row">
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/user-name-icon.png" alt=""></span>
+                <span class="icon-content">User Name<i>{{summaryData?.userName ? summaryData?.userName : '-'}}</i></span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/start-date-icon.png" alt=""></span>
+                <span class="icon-content">Start Date<i>{{summaryData?.startTimeProcess | date:"MMM dd, yyyy hh:mm a"}}</i></span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/start-date-icon.png" alt=""></span>
+                <span class="icon-content">Completed Date<i>{{summaryData?.endTimeProcess | date:"MMM dd, yyyy hh:mm a"}}</i></span>
+              </p>  
+          </div>
+          <div class="col-md-2">
+              <p class="icon-content-div">
+                <span class="icon-span"><img src="assets/images/gts/images/status-icon.png" alt=""></span>
+                <span class="icon-content">Status<button class="main-status-button" [ngStyle]="{'background-color' : summaryData?.exitStatusBgColorCode,'color' : summaryData?.exitStatusColorCode}" >{{summaryData?.exitStatusName}}</button></span>
+              </p>  
+          </div>
+                                    
+      </div>
+    </div>
+  </section>  
+
+  <section class="start-diagnostic-sec section-border" *ngFor="let data of summaryData?.summaryInfo, index as i">
+    <div class="before-page ">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">{{data.processName}}</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">{{data.parentId}}</span>
+      </div>
+      <ng-container *ngFor="let steps of data.processSteps, index as innerIndex">
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2" *ngIf="steps.name == 'Action'" ><img src="assets/images/gts/images/action-icon.png" alt="">{{steps.name}}</button>
+        <button class="main-small-button bg-yellow mr-2" *ngIf="steps.name == 'Info'"><img src="assets/images/gts/images/caution.png" alt="">{{steps.name}}</button>
+        <button class="main-small-button bg-blue mr-2" *ngIf="steps.name == 'Check'"><img src="assets/images/gts/images/eye-icon.png" alt="">{{steps.name}}</button>
+        <button class="main-small-button bg-yellow mr-2" *ngIf="steps.name == 'Options'" ><img src="assets/images/gts/images/option.png" alt="">{{steps.name}}</button>
+        <button class="main-small-button bg-yellow mr-2" *ngIf="steps.name == 'Caution'"><img src="assets/images/gts/images/caution.png" alt="">{{steps.name}}</button>
+        <span class="description-html" [innerHTML]="transformHtml(steps.description)" ></span>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">{{steps.autoId}}</span>
+      </div> 
+
+      <div class="arrow-content-div">
+        <!-- <p [innerHTML]="steps.description" ></p> -->
+        <div class="process-arrow-div">
+          <div class="left-col">
+            <div *ngIf="steps?.attachments && steps?.attachments.length > 0">
+              <div class="mb-4">
+                <app-attachment-view action="view" [hideLabel]="true" [noPadding]="true" [dynamicGid]="i"
+                  *ngIf="steps.attachments.length" [attachments]="steps?.attachments">
+                </app-attachment-view>
+              </div>
+            </div>
+            <div *ngIf="steps.userInputs && steps.userInputFields">
+              <p class="icon-content-div d-flex align-items-center">
+                <img src="assets/images/gts/images/description-icon.png" alt="">
+                <span class="pl-2 grey-text">User Provided Inputs</span>
+              </p>
+              <div *ngFor="let inputs of steps.userInputs" class="attachments-div-wrap">
+                <!-- <p *ngIf="(inputs.authorInput && inputs.userActionValue) || inputs.userAttachments.length > 0" class="icon-content-div d-flex align-items-center">
+                        <img src="assets/images/gts/images/description-icon.png" alt="">
+                        <span class="pl-2 grey-text">User Provided Inputs</span>
+                      </p> -->
+                <div *ngIf="inputs.userAttachments && inputs.userAttachments.length > 0" class="attachments-div">
+                  <p class="icon-content-div d-flex align-items-center mb-2">
+                    <!-- <img src="assets/images/gts/images/attachment.png" alt=""> -->
+                    <span>{{inputs.authorInput}}</span>
+                  </p>
+                  <div class="mb-4">
+                    <app-attachment-view action="view" [hideLabel]="true" [noPadding]="true" [dynamicGid]="'ui_'+i"
+                      *ngIf="inputs?.userAttachments.length" [attachments]="inputs?.userAttachments">
+                    </app-attachment-view>
+                  </div>
+                </div>
+                <div *ngIf="inputs.authorInput && inputs.userActionValue" class="process-arrow-div">
+                  <p class="icon-content-div d-flex align-items-center mb-0">
+                    <!-- <img src="assets/images/gts/images/attachment.png" alt=""> -->
+                    <span>{{inputs.authorInput}}</span>
+                  </p>
+                  <b class="d-block">{{inputs.userActionValue}}</b>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-between" style="margin-bottom: 15px;">
+              <div style="display: flex;align-items: center;">
+                <img *ngIf="['Complete','Yes','Confirm','OK'].includes(steps.actionStatusName)"
+                  src="assets/images/gts/green-arrow-right.png" alt="" class="arrow">
+                <img *ngIf="['Not OK','No','Skip'].includes(steps.actionStatusName)"
+                  src="assets/images/gts/grey-arrow-right.png" alt="" class="arrow">
+                <span *ngIf="steps.actionStatusName == 'Complete'" class="process-output complete"><img
+                    src="assets/images/gts/images/complete.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+                <span *ngIf="steps.actionStatusName == 'Not OK'" class="process-output not-ok"><img
+                    src="assets/images/gts/images/cross.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+                <span *ngIf="steps.actionStatusName == 'Skip'" class="process-output skip"><img
+                    src="assets/images/gts/images/skip.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+                <span *ngIf="steps.actionStatusName == 'Yes'" class="process-output complete"><img
+                    src="assets/images/gts/images/complete.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+                <span *ngIf="steps.actionStatusName == 'No'" class="process-output not-ok"><img
+                    src="assets/images/gts/images/cross.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+                <span *ngIf="steps.actionStatusName == 'Confirm'" class="process-output complete"><img
+                    src="assets/images/gts/images/complete.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+                <span *ngIf="steps.actionStatusName == 'OK'" class="process-output complete"><img
+                    src="assets/images/gts/images/ok.png" style="margin-right: 10px;">{{steps.actionStatusName}}</span>
+              </div>
+              <div class="right-col">
+                <span class="grey-text">{{steps.actionInstructionDate | date:"MMM dd, yyyy hh:mm a"}}</span>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    </div>
+  </section>
+  <section class="problem-resolved-sec">
+    <div class="">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">{{summaryData?.exitStatusName}}</h3>
+      </div>
+      <div class="">
+        <p>{{summaryData?.exitContent}}</p>
+       <!-- <div class="img-text-block d-flex">
+         <div class="img-div"><img src="assets/images/gts/images/prod-big-image.png" alt=""></div>
+         <div class="content-div">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+          <p class="grey-text">JD345636888.mp4</p>
+         </div>
+       </div> -->
+       <div class="right-col d-flex justify-content-end " style="margin-bottom: 15px;">
+        <span class="grey-text">{{summaryData?.endTimeProcess | date:"MMM dd, yyyy hh:mm a"}}</span>
+      </div>
+
+      </div>               
+    </div>
+  </section>
+
+
+  <!-- <section class="es-switch-input-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">ES SWITCH INPUT TO ECU</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">2</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">2.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Check ES Switch input to ECU. Check ECU Output to ES Relay. If output not available replace ECU and check</p>
+         <div class="process-arrow-div d-flex justify-content-between mb-4">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-ok"><img src="assets/images/gts/images/cross.png">Not OK</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>       
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">2.2</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Inspect the ES Startability and confirm that the problem is solved before delivering the vehicle</p>
+       <div class="img-text-block d-flex mb-4">
+         <div class="img-div"><img src="assets/images/gts/images/prod-big-image.png" alt=""></div>
+         <div class="content-div">
+          <p>Lorem ipsum dolor sit amet consectetur adipiscing</p>
+          <p class="grey-text">HG3353436FDHGD433547GDFGD56.jpg</p>
+         </div>
+       </div>
+       <div class="process-arrow-div d-flex justify-content-between">
+        <div class="left-col">
+            <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+            <span class="process-output complete"><img src="assets/images/gts/images/complete.png">Complete</span>
+        </div>
+        <div class="right-col">
+          <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+        </div>
+      </div>
+      </div>               
+    </div>
+  </section>
+
+
+  <section class="check-one-way-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">CHECK ONE WAY - MOTORCYCLES</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">3</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">3.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p class="mb-0">Check One Way - Motorcycles</p>
+        <ul class="mb-2">
+          <li>1) Inspect One way clutch for smooth rotation</li>
+          <li>2) Engagement in rotational direction</li>
+          <li>3) For Slippage in Reverse direction</li>
+          <li>4) If found faulty replace one way clutch</li>                              
+        </ul>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-ok"><img src="assets/images/gts/images/cross.png">Not OK</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">3.2</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <ul class="mb-2">
+          <li>1) Inspect One way clutch for smooth rotation</li>
+          <li>2) Engagement in rotational direction</li>
+          <li>3) For Slippage in Reverse direction</li>
+          <li>4) If found faulty replace one way clutch</li>                              
+        </ul>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/complete.png">Complete</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">3.2</span>
+      </div> 
+      <div class="arrow-content-div">
+        <ul class="mb-2">
+          <li>1) Inspect One way clutch for smooth rotation</li>
+          <li>2) Engagement in rotational direction</li>
+          <li>3) For Slippage in Reverse direction</li>
+          <li>4) If found faulty replace one way clutch</li>                              
+        </ul>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output skip"><img src="assets/images/gts/images/skip.png">Skip</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>                
+    </div>
+  </section>
+
+  <section class="clutch-free-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">Clutch Free Play</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>If there Clutch free play more / less (vehicle on center stand & in Cold condition)</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-ok"><img src="assets/images/gts/images/cross.png">Not OK</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4.2</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>Correct the Clutch free play Specification (Apache series 8 -13 mm)</p>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/complete.png">Complete</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>If Side stand fouling with gear shift lever while up shifting or during down shifting</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-ok"><img src="assets/images/gts/images/cross.png">Not OK</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div> 
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4.2</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>Check oil level in Engine whether any excess oil filled (Engine oil level checking procedure in Apache series when gauge oil level threaded fully in cover clutch)</p>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/complete.png">Complete</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>        
+    </div>                
+  </section>
+
+  <section class="area-concern-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">area of concern</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-yellow mr-2"><img src="assets/images/gts/images/option.png" alt="">Option</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">4.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Select area of concern</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-working"><img src="assets/images/gts/images/option-orange.png">Fuel Gauge not working</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>         
+    </div>                
+  </section>
+
+  <section class="neutral-condition-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">Neutral Condition</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">6</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">6.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Electric Start not working in Neutral Condition</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-working"><img src="assets/images/gts/images/option-orange.png">Fuel Gauge not working</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+        <div class="attachments-div-wrap">
+          <p class="icon-content-div d-flex align-items-center">
+            <img src="assets/images/gts/images/description-icon.png" alt="">
+            <span class="pl-2 grey-text">User Provided Inputs</span>
+          </p>
+          <div class="attachments-div">
+            <p class="icon-content-div d-flex align-items-center mb-2">
+              <img src="assets/images/gts/images/attachment.png" alt="">
+              <span class="pl-2">Attachments</span>
+            </p> 
+              <div class="img-text-block mb-4">
+                <div class="img-text-block-list d-flex flex-wrap border-bottom">
+                  <div class="img-div"><img src="assets/images/gts/images/prod-big-image.png" alt=""></div>
+                   <div class="content-div">
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing</p>
+                    <p class="grey-text">HG3353436FDHGD433547GDFGD56.jpg</p>
+                   </div>                 
+                 </div>
+                <div class="img-text-block-list d-flex flex-wrap border-bottom">
+                  <div class="img-div"><img src="assets/images/gts/images/prod-big-image.png" alt=""></div>
+                   <div class="content-div">
+                    <p>Lorem ipsum dolor sit amet consectetur adipiscing</p>
+                    <p class="grey-text">HG3353436FDHGD433547GDFGD56.jpg</p>
+                   </div>                 
+                 </div>
+              </div>
+              <div class="process-arrow-div">
+                    <p class="icon-content-div d-flex align-items-center mb-0">
+                      <img src="assets/images/gts/images/attachment.png" alt="">
+                      <span class="pl-2">Select color of fluid observed</span>
+                    </p>   
+                    <b class="d-block ml-2">Black</b>
+
+                    <p class="icon-content-div d-flex align-items-center mb-0 mt-2">
+                      <img src="assets/images/gts/images/attachment.png" alt="">
+                      <span class="pl-2">Voltage value 1 to 15</span>
+                    </p>  
+
+                    <b class="d-block yellow-text ml-2">12 Volts</b>                
+                    <div class="left-col mt-2">
+                        <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+                        <span class="process-output complete"><img src="assets/images/gts/images/complete.png">Complete</span>
+                    </div>
+              </div>                         
+            </div>
+        </div>
+      </div> 
+    </div>                
+  </section>
+
+  <section class="check-voltage-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">check Voltage</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">7</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">7.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Connect the scan tool and make sure VBatt is 15 volts.</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/complete.png">OK</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>     
+    </div>
+  </section>
+
+  <section class="check-if-error-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">CHECK IF THE ERROR CODE</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">8</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">8.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Check if the error code 0x154501 is displayed (UV)</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/complete.png">YES</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>     
+    </div>
+  </section>
+
+  <section class="caution-battery-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">CHECK ONE WAY - MOTORCYCLES</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">3</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-yellow mr-2"><img src="assets/images/gts/images/caution.png" alt="">Info</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">3.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <ul class="mb-2">
+          <li>1) Bringing neutral to difficult </li>
+          <li>2) Sticky gears while shifting Gears</li>
+          <li>3) Noise while shifting 1st gear</li>
+          <li>4)  Difficult shifting / Hard feel in between Gears</li>         
+          <li>4)  Difficult shifting / Hard feel in between Gears</li>   
+          <li>4)  Difficult shifting / Hard feel in between Gears</li>
+          <li>4)  Difficult shifting / Hard feel in between Gears</li>
+        </ul>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/complete.png">Confirm</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+                
+    </div>
+  </section>
+<section class="issue-observed-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">Caution about battery</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">10</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-red mr-2"><img src="assets/images/gts/images/caution.png" alt="">Caution</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">10.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>Battery can sustain damage from extreme heat or cold. You might notice the battery is warped, bulged, or distorted when you lift the hood. This is a sign of permanent damage to the battery and requires a replacement from our repair team.</p>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output next"><img src="assets/images/gts/images/next.png">NEXT</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+                
+    </div>
+</section>
+
+  <section class="error-code-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">ERROR CODE 0X154D01</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">11</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">11.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>Check if the error code 0x154D01 is displayed (HPC)</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/ok.png">Yes</span>
+          </div>          
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">11.1</span>
+      </div> 
+      <div class="arrow-content-div mb-4">
+        <p>Check if there is any terminal damage or terminal has come out at ISG machine coupler</p>
+        <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output not-ok"><img src="assets/images/gts/images/cross.png">No</span>
+          </div>
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>  
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-blue mr-2"><img src="assets/images/gts/images/eye-icon.png" alt="">Check</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">11.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Remove the ISG controller and check if there is any pin damage in the controller</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/ok.png">OK</span>
+          </div> 
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>         
+    </div>                
+  </section>
+
+  <section class="confirm-sec section-border">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">CONFIRM AND DELIVER</h3>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">12</span>
+      </div>
+      <div class="dotted-border-div">
+        <button class="main-small-button bg-black mr-2"><img src="assets/images/gts/images/action-icon.png" alt="">Action</button>
+        <span class="dashed-border-span"></span>
+        <span class="count ml-2">12.1</span>
+      </div> 
+      <div class="arrow-content-div">
+        <p>Remove the ISG controller and check if there is any pin damage in the controller</p>
+         <div class="process-arrow-div d-flex justify-content-between">
+          <div class="left-col">
+              <img src="assets/images/gts/images/arrow.png" alt="" class="arrow">
+              <span class="process-output complete"><img src="assets/images/gts/images/ok.png">YES</span>
+          </div> 
+          <div class="right-col">
+            <span class="grey-text">Jul 26, 2023 3:12 PM</span>
+          </div>
+        </div>
+      </div>         
+    </div>                
+  </section>
+
+  <section class="problem-resolved-sec">
+    <div class="container">
+      <div class="sec-ttl-div dotted-border-div">
+        <h3 class="sec-ttl mr-2">Problem Resolved</h3>
+      </div>
+      <div class="arrow-content-div">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc porttitor feugiat velit. Ut lacus nibh, fringilla vitae dapibus quis, euismod 
+        id nunc. Mauris ultrices est nulla, sed tristique nibh dictum nec. Suspendisse mollis sed sapien ut iaculis. Aliquam eget leo commodo 
+        sapien egestas egestas. Pellentesque venenatis ornare nulla.</p>
+       <div class="img-text-block d-flex">
+         <div class="img-div"><img src="assets/images/gts/images/prod-big-image.png" alt=""></div>
+         <div class="content-div">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+          <p class="grey-text">JD345636888.mp4</p>
+         </div>
+       </div>
+
+      </div>               
+    </div>
+  </section> -->
+
+</div>
+
+<!--------automative-page-wrapper end----->
+
+<!-- <footer>
+  <div class="container">
+    <div class="row justify-content-between">
+    <div class="copyright-txt">© Collabtic 2022. All rights reserved.   |  <span class="green-txt"> Support</span>  |   <span class="green-txt">Terms & Conditions</span>  |   <span class="green-txt">Privacy Policy</span>
+    </div>
+    <div class="social-icons">
+      <ul>
+        <li><i class="fa fa-twitter" aria-hidden="true"></i></li>
+        <li><i class="fa fa-facebook-f"></i></li>
+      </ul>
+    </div>
+   </div>
+  </div>
+</footer> -->

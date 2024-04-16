@@ -1,0 +1,242 @@
+<div id="sidebar" class="{{accessModule}}" [ngClass]="{'active': expandFlag}">
+    <div class="nav-sidebar {{accessModule}}">
+        <!--div class="nav-action" [ngClass]="{ 'collapse-arrow': expandFlag }" (click)="expandAction()">
+            <img src="{{dashImgPath}}expand-arrow.png" alt="{{this.arrowText}}" />
+        </div-->
+
+        <ng-template #sideMenu></ng-template>
+        <div *ngIf="dashSidebar" class="nav-icons">
+            <div *ngIf="!expandFlag">
+                <ul *ngIf="!expandFlag">
+                    <li class="side-li {{ (summaryFlag) ? 'active': 'normal'}}" (click)="navigatePage('mis/dashboard')">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{summaryText}}" placement="right" triggers="hover">
+                            <span class="summary-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                    <li *ngIf="platformId!='1'" class="side-li {{ (usageTypeFlag) ? 'active': 'normal'}}" (click)="navigatePage('mis/dashboard/dealer-usage')">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{usageTypeText}}" placement="right" triggers="hover">
+                            <span class="usage-type-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                    <!--escalations-->
+                    <li *ngIf="platformId!='1'" class="side-li {{ (escalationFlag) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{escalationText}}" placement="right" triggers="hover" (click)="navigatePage('mis/dashboard/escalations')">
+                            <span class="escalation-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                    <!--threads-->
+                    <li class="side-li {{ (threadFlag) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{threadText}}" placement="right" triggers="hover" (click)="navigatePage('mis/dashboard/threads')">
+                            <span class="thread-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                  <!-- leaderboard -->
+                  <li *ngIf="platformId=='1'" class="side-li {{ (leaderboardFlag) ? 'active': 'normal'}}">
+                    <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu"
+                      popoverTitle="{{leaderBoardtext}}" placement="right" triggers="hover"
+                      (click)="navigatePage('mis/dashboard/leaderboard')">
+                      <span class="leaderboard-icon bg-image dash-bg-image"></span>
+                    </a>
+                  </li>                 
+                    <!--gts-->
+                    <li *ngIf="platformId!='1'" class="side-li {{ (gtsFlag) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{gtsText}}" placement="right" triggers="hover" (click)="navigatePage('mis/dashboard/gts')">
+                            <span class="gts-icon-dash bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                    <!--service-probing-->
+                    <li *ngIf="platformId!='1'" class="side-li {{ (svcProFlag) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{svcProText}}" placement="right" triggers="hover" (click)="navigatePage('mis/dashboard/service-probing')">
+                            <span class="svc-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                    <li *ngIf="platformId!='1'" class="side-li {{ (eventFlag) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{eventMetricsText}}" placement="right" triggers="hover" (click)="navigatePage('mis/dashboard/events')">
+                            <span class="event-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                    <li class="side-li {{ (userActivityFlag) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu"
+                            popoverTitle="{{userActivitytext}}" placement="right" triggers="hover"
+                            (click)="navigatePage('mis/dashboard/user-activity')">
+                            <span class="user-activities-icon bg-image dash-bg-image"></span>
+                        </a>
+                    </li>
+                     <!-- tech supoort metrics -->
+                  <li *ngIf="platformId=='1'" class="side-li {{ (techsupoortmetricsFlag) ? 'active': 'normal'}}">
+                    <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu"
+                      popoverTitle="{{techSupporttext}}" placement="right" triggers="hover"
+                      (click)="navigatePage('mis/dashboard/techsupport-metrics')">
+                      <span class="techsupport-metrics-icon bg-image dash-bg-image"></span>
+                    </a>
+                  </li>
+
+                   <!-- tech supoort metrics -->
+                   <li *ngIf="platformId=='1'" class="side-li {{ (manufactureChartFlag) ? 'active': 'normal'}}">
+                    <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu"
+                      popoverTitle="{{manufactureText}}" placement="right" triggers="hover"
+                      (click)="navigatePage('mis/dashboard/manufacture-chart')">
+                      <span class="{{manufacturemenuicon}} bg-image dash-bg-image"></span>
+                    </a>
+                  </li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div *ngIf="escDashSidebar" class="nav-icons">
+            <div *ngIf="!expandFlag">
+                <ul>
+                    <li *ngFor="let submenu of menuListloaded" class="side-li {{ (submenu.slug == 'dashboard') ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover" (click)="navigatePageUrl(submenu)">
+                            <span class="{{submenu.submenuimageClass}} "><img src="assets/images/dashboard/{{submenu.urlPath}}"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div *ngIf="probingListSidebar && !landingListSidebar" class="nav-icons">
+            <div *ngIf="!expandFlag">
+                <ul  *ngFor="let submenu of menuListloaded">
+                    <li class="side-li {{ (submenu.activeClass == 1) ? 'active': 'normal'}}">
+                        <a class="side-li-a cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover" (click)="navigatePage(submenu.urlPath)">
+                            <span class="{{submenu.submenuimageClass}} bg-image prob-bg-image"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div *ngIf="dispatchListSidebar" class="nav-icons">
+            <div *ngIf="!expandFlag">
+                <ul  *ngFor="let submenu of dispatchMenu">
+                    <li class="side-li side-menu {{ (submenu.activeClass == 1) ? 'active': 'normal'}}" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover">
+                        <a [ngClass]="{'active': submenu.activeClass == 1}" class="side-li-a side-li-a{{submenu.id}} w-100 cursor" (click)="sectionNav(submenu)">
+                            <span class="dispatch bg menu-bg {{submenu.submenuimageClass}}">
+                                <img [ngClass]="{'disable-sidebar': submenu.disableContentType}" data-id="{{submenu.slug}}-normal" id="{{submenu.slug}}" class="{{submenu.slug}}-normal side-menu menuListicon{{submenu.id}}" 
+                                [src]="submenu.activeClass == 1 || submenu.hover ? submenu.urlActivePath : submenu.urlPath"
+                                (mouseover)="submenu.hover = true"
+                                (mouseout)="submenu.hover = false">
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div *ngIf="repairorderListSidebar" class="nav-icons">
+            <div *ngIf="!expandFlag">
+                <ul  *ngFor="let submenu of repairorderMenu">
+                    <li class="side-li side-menu {{ (submenu.activeClass == 1) ? 'active': 'normal'}}" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover">
+                        <a [ngClass]="{'active': submenu.activeClass == 1}" class="side-li-a side-li-a{{submenu.id}} w-100 cursor" (click)="sectionNav(submenu)">
+                            <span class="dispatch bg menu-bg {{submenu.submenuimageClass}}">
+                                <img [ngClass]="{'disable-sidebar': submenu.disableContentType}" data-id="{{submenu.slug}}-normal" id="{{submenu.slug}}" class="{{submenu.slug}}-normal side-menu menuListicon{{submenu.id}}" 
+                                [src]="submenu.activeClass == 1 || submenu.hover ? submenu.urlActivePath : submenu.urlPath"
+                                (mouseover)="submenu.hover = true"
+                                (mouseout)="submenu.hover = false">
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div *ngIf="dekraSidebar" class="nav-icons">
+            <div *ngIf="!expandFlag">
+                <ul  *ngFor="let submenu of dekraMenu">
+                    <li class="side-li side-menu {{ (submenu.activeClass == 1) ? 'active': 'normal'}}" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover">
+                        <a [ngClass]="{'active': submenu.activeClass == 1}" class="side-li-a side-li-a{{submenu.id}} w-100 cursor" (click)="sectionNav(submenu)">
+                            <span class="dispatch bg menu-bg {{submenu.submenuimageClass}}">
+                                <img [ngClass]="{'disable-sidebar': submenu.disableContentType}" data-id="{{submenu.slug}}-normal" id="{{submenu.slug}}" class="{{submenu.slug}}-normal side-menu menuListicon{{submenu.id}}" 
+                                [src]="submenu.activeClass == 1 || submenu.hover ? submenu.urlActivePath : submenu.urlPath"
+                                (mouseover)="submenu.hover = true"
+                                (mouseout)="submenu.hover = false">
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div *ngIf="landingListSidebar" class="nav-icons landingpage-nav-icons">
+            <div *ngIf="!expandFlag && sideMenu">
+                <ul id="side-menu">
+                    <!--li *ngFor="let submenu of menuListloaded" class="side-li {{ (submenu.slug == accessModule) ? 'active': 'normal'}}">
+                        <a (mouseenter)="checkforaction(submenu)" (mouseleave)="checkforactionleave(submenu)" class="side-li-a side-li-a{{submenu.id}}  cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover" (click)="navigatePageUrl(submenu)">
+                            <span class="bg {{submenu.submenuimageClass}} ">
+                                <img *ngIf="submenu.slug == accessModule"   class="menuListicon{{submenu.id}}" src="assets/images/landing-page/side-menu/{{submenu.urlActivePath}}">
+                                <img *ngIf="submenu.slug != accessModule" [ngClass]="{ 'disable-sidebar': submenu.disableContentType }"   class="menuListicon{{submenu.id}} " src="assets/images/landing-page/side-menu/{{submenu.urlPath}}">
+                            </span>
+                        </a>
+                    </li-->
+
+                    <li *ngFor="let submenu of menuListloaded" id="{{submenu.slug}}-menu" class="side-li side-menu {{submenu.slug}}" [ngClass]="{'active': submenu.activeClass == 1}">
+                        <!-- (mouseenter)="checkforaction(submenu)" (mouseleave)="checkforactionleave(submenu)" -->
+                        <a *ngIf="(submenu.name == 'Home' || !submenu.helpContentFlagStatus || !tooltipFlag)" [ngClass]="{'active': submenu.activeClass == 1}" class="side-li-a side-li-a{{submenu.id}} w-100 cursor" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="sideMenu" popoverTitle="{{submenu.name}}" placement="right" triggers="hover" (click)="navigatePageUrl(submenu)">
+                            <span class="bg menu-bg {{submenu.submenuimageClass}}">
+                                <!-- <img [ngClass]="{'hide': submenu.activeClass == 0}" data-id="{{submenu.slug}}-active" id="{{submenu.slug}}" class="side-menu menuListicon{{submenu.id}} {{submenu.slug}}-active" src="assets/images/landing-page/side-menu/{{submenu.urlActivePath}}"> -->
+                                <img [ngClass]="{'disable-sidebar': submenu.disableContentType}" data-id="{{submenu.slug}}-normal" id="{{submenu.slug}}" class="{{submenu.slug}}-normal side-menu menuListicon{{submenu.id}}" src="assets/images/landing-page/side-menu/{{submenu.urlPath}}" onload="SVGInject(this)">
+                            </span>
+                        </a>
+                        <a *ngIf="(submenu.name != 'Home' && submenu.helpContentFlagStatus) && ( submenu.helpContentIconName != 'articles' && submenu.helpContentIconName != 'media' && submenu.helpContentIconName != 'parts' )" class="side-li-a side-li-a{{submenu.id}}  cursor">
+                            <span class="bg menu-bg {{submenu.submenuimageClass}}">
+                                <!-- <img *ngIf="submenu.slug == pageData.menu" class="side-menu menuListicon{{submenu.id}}" src="assets/images/landing-page/side-menu/{{submenu.urlActivePath}}"> -->
+                                <img *ngIf="submenu.slug != pageData.menu" [ngClass]="{ 'disable-sidebar': submenu.disableContentType }"  class="side-menu menuListicon{{submenu.id}} " src="assets/images/landing-page/side-menu/{{submenu.urlPath}}" onload="SVGInject(this)"> 
+                            </span>
+                        </a>
+                        <a *ngIf="(submenu.name != 'Home' && submenu.helpContentFlagStatus) && ( submenu.helpContentIconName == 'articles' || submenu.helpContentIconName == 'media' || submenu.helpContentIconName == 'parts' ) " class="side-li-a side-li-a{{submenu.id}}  cursor">
+                            <span class="bg menu-bg {{submenu.submenuimageClass}}">
+                                <!-- <img *ngIf="submenu.slug == pageData.menu" class="side-menu menuListicon{{submenu.id}}" src="assets/images/landing-page/side-menu/{{submenu.urlActivePath}}"> -->
+                                <img *ngIf="submenu.slug != pageData.menu" [ngClass]="{ 'disable-sidebar': submenu.disableContentType }"  class="side-menu menuListicon{{submenu.id}} " src="assets/images/landing-page/side-menu/{{submenu.urlPath}}" onload="SVGInject(this)">
+                            </span>
+                        </a>
+
+                        <!-- dn't delete Tooltip Scenario Start -->
+                        <a *ngIf="(submenu.name != 'Home' && submenu.helpContentFlagStatus) && ( submenu.helpContentIconName != 'articles' && submenu.helpContentIconName != 'media' && submenu.helpContentIconName != 'parts' )" class="hackClass sideMenu side-li-a side-li-a{{submenu.id}}  cursor" tooltipClass="help-content-tooltip sidebartt" container="body" [ngbTooltip]="helpContent" [autoClose]="true" triggers="click" (click)="$event.stopPropagation();" [attr.id]="submenu.helpContentIconName" placement="right-top">
+                            <span class="bg menu-bg {{submenu.submenuimageClass}}"></span>
+                        </a>
+                        <a *ngIf="(submenu.name != 'Home' && submenu.helpContentFlagStatus) && ( submenu.helpContentIconName == 'articles' || submenu.helpContentIconName == 'media' || submenu.helpContentIconName == 'parts' ) " class="hackClass sideMenu side-li-a side-li-a{{submenu.id}}  cursor" tooltipClass="help-content-tooltip sidebartt tt{{submenu.helpContentIconName}}" container="body" [ngbTooltip]="helpContent" [autoClose]="true" triggers="click" (click)="$event.stopPropagation();" [attr.id]="submenu.helpContentIconName" placement="right-bottom">
+                            <span class="bg menu-bg {{submenu.submenuimageClass}}"></span>
+                        </a>
+                        <!-- dn't delete Tooltip Scenario End -->
+
+                        <ng-template #helpContent>
+                            <!--<app-helpcontent-tooltip></app-helpcontent-tooltip>-->
+                            <div class="tt-helpcontent-container">
+                                <div class="tt-bg-image {{submenu.helpContentIconName}}"></div>
+                                <div class="tt-title">
+                                    <div class="lt-img {{submenu.helpContentIconName}}"></div>
+                                    <div class="rt-text">{{submenu.helpContentTitle}}</div>
+                                </div>
+                                <div class="tt-desp">{{submenu.helpContentContent}}</div>
+                                <div class="tt-div tt-next-div" (click)="nextTooltip(submenu.helpContentId,submenu.helpContentIconName)"><span class="button-div button-next-div" ><span class="text">NEXT&nbsp;</span><img src="assets/images/common/next-tt.png" alt="next" /></span></div>
+                                <div class="tt-div tt-skip-div" (click)="skipTooltip(submenu.helpContentId,submenu.helpContentIconName)"><span class="button-div button-skip-div"><span class="text">SKIP&nbsp;</span><img src="assets/images/common/skip-tt.png" alt="skip" /></span></div>
+                            </div>
+                        </ng-template>
+                    </li>
+
+                    <li *ngFor="let ma of moreiconArray" id="{{ma.slug}}-menu" class="side-li side-menu {{ma.slug}}" [ngClass]="{'active': ma.activeClass == 1}">
+                        <!-- more option -->
+                                                
+                        <a *ngIf="(ma.name == 'more')" [ngClass]="{'active': ma.activeClass == 1}" class="side-li-a side-li-a{{ma.id}} w-100 cursor" tooltipClass="sidebarmore-tooltip" triggers="click" [autoClose]="true" placement="right-bottom" [ngbTooltip]="sidebarMore" container="body" (click)="$event.stopPropagation();">
+                            <span class="bg menu-bg {{ma.submenuimageClass}}">
+                                <img [ngClass]="{'disable-sidebar': ma.disableContentType}" data-id="{{ma.slug}}-normal" id="{{ma.slug}}" class="{{ma.slug}}-normal side-menu menuListicon{{ma.id}}" src="assets/images/landing-page/side-menu/{{ma.urlPath}}" onload="SVGInject(this)">
+                            </span>
+                        </a>
+                        <!-- more option -->                       
+
+                        <ng-template #sidebarMore>
+                            <div class="tooltip-sb-new"  *ngFor="let mlmore of menuListloadedMore" (click)="navigatePageUrl(mlmore)">
+                            <span class="w-img more-{{mlmore.morename}}-img"><img src="assets/images/landing-page/side-menu/more-{{mlmore.urlPath}}" onload="SVGInject(this)"></span>
+                            <span class="w-text">{{mlmore.name}}</span>
+                            </div>
+                        </ng-template>
+                      
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

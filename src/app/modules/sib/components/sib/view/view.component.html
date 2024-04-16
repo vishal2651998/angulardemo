@@ -1,0 +1,112 @@
+<div id="header">
+    <div id="header">
+        <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+    </div>
+</div>
+<div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading" class="container-fluid part-view">    
+    <div class="row col-lg-12 col-md-12 col-sm-12 part-view-cont" [style.height.px]="innerHeight">
+        <div class="col-lg-9 col-md-7 col-sm-12 part-info ps" [perfectScrollbar]="sconfig">
+            <div class="row col-lg-12 part-det">
+                <div class="col-lg-5 det-col">
+                    <div class="part-image sib-image {{bgClass}}" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}">
+                        <span>ID #{{sibId}}</span>
+                    </div>
+                </div>
+                <div class="col-lg-7 det-col">
+                    <div class="base-info">
+                        <div class="name sib-title" title="{{compCatg}}">{{compCatg}}</div>
+                    </div>
+                    <div class="sib-info-row">
+                        <div class="sib-col" *ngIf="ref!=''" [ngClass]="{'col-row': sibInfoCount == 1}">
+                            <div class="inner-row">
+                                <span class="sib-col-lt ref"></span>
+                                <span class="sib-col-rt">
+                                    <p class="sib-col-head">SIB Ref#</p>
+                                    <p class="sib-col-cont">{{ref}}</p>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="sib-col" *ngIf="releaseDate!=''" [ngClass]="{'col-row': sibInfoCount == 1}">
+                            <div class="inner-row">
+                                <span class="sib-col-lt release-date"></span>
+                                <span class="sib-col-rt">
+                                    <p class="sib-col-head">Release Date</p>
+                                    <p class="sib-col-cont">{{releaseDate}}</p>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="sib-col" *ngIf="symptom!=''" [ngClass]="{'col-row': sibInfoCount == 1}">
+                            <div class="inner-row">
+                                <span class="sib-col-lt symptom"></span>
+                                <span class="sib-col-rt">
+                                    <p class="sib-col-head">Symptom</p>
+                                    <p class="sib-col-cont truncate tri-line" title="{{symptom}}">{{symptom}}</p>            
+                                </span>
+                            </div>
+                        </div>
+                        <div class="sib-col" *ngIf="system!=''" [ngClass]="{'col-row': sibInfoCount == 1}">
+                            <div class="inner-row">
+                                <span class="sib-col-lt system"></span>
+                                <span class="sib-col-rt">
+                                    <p class="sib-col-head">System</p>
+                                    <p class="sib-col-cont truncate tri-line" title="{{system}}">{{system}}</p>
+                                </span>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+
+            <div class="cutoff-info">
+                <!-- Cutoff Frame Info -->
+                <app-sib-application [accordionList]="accordionList" [applicationList]="sibActionList"></app-sib-application>
+            </div>
+
+            <div class="reference-info">
+                <mat-accordion [multi]="true" #accordion="matAccordion">
+                    <mat-expansion-panel class="{{panel.class}}"
+                    [disabled]="panel.isDisabled"
+                    [expanded]="panel.isExpanded"
+                    [hideToggle]="false"
+                    (opened)="beforeParentPanelOpened(panel, emptyList)"
+                    (closed)="beforeParentPanelClosed(panel, emptyList)"
+                    (afterCollapse)="afterPanelClosed()"
+                    (afterExpand)="afterPanelOpened()"
+                    *ngFor="let panel of referenceAccordion"
+                    #mapanel="matExpansionPanel">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                            <b>{{panel.title}}</b>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                  
+                        <!-- System Information -->
+                        <div *ngIf="panel.id == 'system'" class="app-accord">
+                            <app-system-info-view [systemInfo]="systemInfo"></app-system-info-view>
+                        </div>
+
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+
+            <div class="share">
+                <div class="share-social" *ngIf="likeCount > 0 || pinCount > 0 || viewCount > 0">
+                    <div class="social-col" *ngIf="likeCount > 0">{{likeCount}} <span>Like</span> <span *ngIf="likeCount > 1">s</span></div>
+                    <div class="social-col" *ngIf="pinCount > 0">{{pinCount}} <span>Pin</span> <span *ngIf="pinCount > 1">s</span></div>
+                    <div class="social-col" *ngIf="viewCount > 0">{{viewCount}} <span>View</span> <span *ngIf="viewCount > 1">s</span></div>
+                </div>
+                <div class="share-social-icons">
+                    <div class="icon-col like" [ngClass]="{'cursor': !disableLikeFlag}" align="left">
+                        <img [ngClass]="{'disable': disableLikeFlag}" src="{{assetPartPath}}{{likeImg}}" alt="Like" (click)="socialAction('like', likeStatus)" />
+                    </div>
+                    <div class="icon-col pin cursor" align="center"><img src="{{assetPartPath}}{{pinImg}}" alt="Pin" (click)="socialAction('pin', pinStatus)" /></div>
+                    <div class="icon-col share hide" align="right"><img src="{{assetPartPath}}share-normal.png" alt="Share" /></div>
+                </div>
+            </div>            
+        </div>
+        <div class="col-lg-3 col-md-5 col-sm-12 similar-part">
+            <app-domain-members></app-domain-members>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,38 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="d-flex">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" accessModule="all-networks"
+                    (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="right-section">
+        <div class="prob-index system-setting">
+            <div class="container-fluid">
+                <div class="center-middle-width-container">
+                    <div class="center-middle-width padding-common padding-common-hq">
+
+                        <div class="d-flex align-items-center justify-content-between w-100" *ngIf="!locationToolsFlag">
+                            <div class=" hq-head" style="padding:10px 0 0 0;">
+                                <div class="hq-head-row-1 d-flex align-items-center" style="height: 50px;">
+                                    <div class="d-flex align-items-center">
+                                        <img style="vertical-align: top;position: relative;" class="hq-head-img"
+                                            src="../../../../assets/images/hq/all-network-head-default.png" alt="" width="24" height="22" />                                       
+                                        <span class="hq-head-text" style="vertical-align: top;">All Networks</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="width: 100%; display: block;">
+                            <app-all-networks-list *ngIf="toolsListFlag" [toolsPageData]="toolsPageData"  (toolsIndexListComponentRef)="toolsListPageRef = $event" (toolsCallback)="toolsIndexListPageCallback($event)"></app-all-networks-list>                        
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

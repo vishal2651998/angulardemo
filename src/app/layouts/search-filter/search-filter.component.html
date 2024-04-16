@@ -1,0 +1,96 @@
+<div class="search-div filter-search-div" [ngClass]="{ 'search-filter search-btn': searchClose || searchTick, 'search-bg': searchBgFlag}">
+    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+        <span class="auto-complete-search">
+            <a *ngIf="!searchTick && !searchClose" class="search-icon">
+              <img alt="Search" src="{{ assetPath }}/search-ic-header.svg" onload="SVGInject(this)" />
+            </a>
+            <p-autoComplete
+                  #autocomplete
+                  [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey"
+                  [suggestions]="acResults"
+                  (completeMethod)="acSearch($event)"
+                  (onClear)="clearSearchValue()"
+                  (input)="onSearchChange($event.target.value)"
+                  (keydown.enter)="autocomplete.hide();onSearchSubmit($event)"
+                  [forceSelection]=false
+                  [minLength]="1"
+                  [group]="true"
+                  [placeholder]="searchPlacehoder"
+                  [panelStyleClass]="access"
+                  [ngClass]="{'val-input': searchVal.length > 0}"
+                >
+                <ng-template let-group pTemplate="group">
+                    <div class="search-content" (click)="goToDetailPage(group, group.id, group.type,group.domainId)">
+                        <span class="content-text">
+                            <span class="content-type type-{{group.type}}"></span>
+                            <span *ngIf="group.term !=''" class="">{{group.term}}, </span>
+                            <span *ngIf="group.type == 4 && group.partNumber !='' "  class="">{{group.partNumber}}, </span>
+                            <span *ngIf="group.type == 4 && group.partName !='' "  class="">{{group.partName}}, </span>
+                            <span class="">ID# {{group.id}}</span>
+                            <span *ngIf="group.make !='' && group.make != 'General Make'"  class="">, {{group.make}}</span>
+                            <span *ngIf="group.make =='' "  class=""></span>
+                            <span *ngIf="group.model !='' && group.model != 'General Model'"  class="">, {{group.model}}</span>
+                            <span *ngIf="group.model =='' "  class=""></span>
+                        </span>
+                    </div>
+                </ng-template>
+            </p-autoComplete>
+            <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()">
+                <img alt="Search Close" src="{{assetPath}}/close-icon.svg" onload="SVGInject(this)" /></a>
+            <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()">
+            <img alt="Search" src="{{assetPath}}/search-ic-header.svg" onload="SVGInject(this)" /></a>          
+        </span>
+    </form>    
+</div>
+<div *ngIf="pageData.pageName == 'search'" class="contList">
+    <ul class="text-left">
+        <li class="cont-item active">
+            <div class="item-info" *ngIf="fixesCount > 0">
+                <div class="icon" [ngClass]="{'hide': fixesCount >= 0}"></div>
+                <div class="item-col item-count text-center">
+                    <span *ngIf="fixesCount < 100" class="count">{{fixesCount}}</span>
+                    <span *ngIf="fixesCount >= 100" class="count">99+</span>
+                </div>
+                <div class="item-col item-text">Fixes</div>
+            </div>
+        </li>
+    </ul>
+</div>    
+<div class="search-filters">
+    <div class="oem-filter inline">
+        <p-dropdown [options]="oemList" [(ngModel)]="oemVal" placeholder="OEM" [ngClass]="{'active': oemVal != ''}" 
+            [virtualScroll]="false" [filter]="true" optionLabel="name" resetFilterOnHide="true" optionValue="name" [disabled]="oemDisable" (onChange)="onChange('oem', $event.value)">
+        </p-dropdown>
+    </div>
+    <div class="make-filter inline">
+        <p-dropdown [options]="makeList" [(ngModel)]="makeVal" placeholder="Make" [ngClass]="{'active': makeVal != ''}" 
+            [virtualScroll]="false" [filter]="true" optionLabel="name" resetFilterOnHide="true" optionValue="name" [disabled]="makeDisable" (onChange)="onChange('make', $event.value)">
+        </p-dropdown>
+    </div>
+    <div class="model-filter inline">
+        <p-dropdown [options]="modelList" [(ngModel)]="modelVal" placeholder="Model" [ngClass]="{'active': modelVal != ''}" 
+            [virtualScroll]="false" [filter]="true" optionLabel="name" resetFilterOnHide="true" optionValue="name" [disabled]="modelDisable" (onChange)="onChange('model', $event.value)">
+        </p-dropdown>
+    </div>
+    <div class="year-filter inline">
+        <p-dropdown [options]="yearList" [(ngModel)]="yearVal" placeholder="Year" [ngClass]="{'active': yearVal != ''}" 
+            [virtualScroll]="false" [filter]="true" optionLabel="name" resetFilterOnHide="true" optionValue="name" [disabled]="yearDisable" (onChange)="onChange('year', $event.value)">
+        </p-dropdown>
+    </div>
+    <div class="year-range-filter inline">
+        <p-dropdown [options]="yearRangeList" [(ngModel)]="yearRangeVal" placeholder="Year Range" [ngClass]="{'active': yearRangeVal != ''}" 
+            [virtualScroll]="false" [filter]="true" optionLabel="name"  resetFilterOnHide="true" optionValue="id" [disabled]="yearRangeDisable" (onChange)="onChange('year-range', $event.value)">
+        </p-dropdown>
+    </div>
+    <!--div class="engine-filter inline">
+        <p-dropdown [options]="engineSizeList" [(ngModel)]="engineSizeVal" placeholder="Engine Size" [ngClass]="{'mvisible': engineSizeVal != ''}" 
+            [virtualScroll]="false" [filter]="true" optionLabel="name"  resetFilterOnHide="true" optionValue="name" [disabled]="engineSizeDisable" >
+        </p-dropdown>
+    </div-->
+    <div class="clear-filter inline cursor" *ngIf="clearFlag" (click)="onChange('clear', clearFlag);">
+        <span>Clear Filter</span>
+    </div>
+    <div class="pin-filter inline cursor {{access}}" [ngClass]="{'active': pinFlag}" (click)="onChange('pin', pinFlag);">
+        <span>My Pins</span>
+    </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="prob-header d-flex align-items-center justify-content-between flex-wrap ">
+  <div class="head-row head-brand col-lg-9 col-md-9 paddingRt0 paddingLt0 manage-modal">
+    <div title="Home page" class="head-col logo businessLogo landing-display-inline col-lg-3 col-md-3"
+      style="max-width: 300px;">
+      <img *ngIf="domainId == 1" (click)="taponlogo()" src="{{ platformLogo }}" alt="Logo" class="b-logo cursor "><span title="Edit Logo"
+        class=" hide logoediticon logoedit "><img src="assets/images/profile/sname-edit-icon.png"></span>
+        <img *ngIf="domainId != 1" (click)="taponlogo()" [src]="logoUrl" alt="Logo" class="b-logo cursor "><span title="Edit Logo"
+        class=" hide logoediticon logoedit "><img src="assets/images/profile/sname-edit-icon.png"></span>
+    </div>
+    <div class="head-col head-col-3 text-right landing-display-inline col-lg-3 col-md-3 ">
+      <div class="head-col-6 col-lg-12 col-md-12 col-lg-12 px-0">
+        <div
+          class="head-col head-col-4 col-lg-2 col-md-2 col-lg-2 paddingRt0 paddingLt0 new-home-menu custom-padding-header">
+          <!--<span (click)="menu.toggle($event)" class="home-new-button">NEW</span>-->
+          <p-menubar *ngIf="!user?.data || !user?.data?.shopId" appendTo="body" [model]="menuItems" title="Create New">
+            <img id="logo" src="assets/images/new-menu.png">
+          </p-menubar> 
+          <!--<p-menu appendTo="body"  #menu [model]="menuItems" [popup]="true"></p-menu>-->
+        </div>
+        <div class="head-col head-col-5 search-col col-lg-10 col-md-10 px-0">
+          <span class="search-div">
+            <form>
+              <span>
+                <a  class="search-icon">
+                  <img src="assets/images/search-ic-header.svg" alt="" onload="SVGInject(this)">
+                </a>
+                <input type="text"  class="form-control search-control" id="searchKey"  maxlength="50"
+               placeholder="Search Location (Type name, location code, city, state)" />
+              </span>
+            </form>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-12 head-row head-prof col-lg-3 col-md-3 new-menu-rt ">
+    <div class="head-col search-col"></div>
+
+    <div title="{{ apiUrl.userName }}" *ngIf="profileFlag" class="head-col text-center profile"
+      [ngbTooltip]="tipContent" tooltipClass="header-tooltip-content">
+      <span class="head-profile-img">
+        <img class="head-pimg" [src]="apiUrl.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+      </span>
+      <span class="prof-name">{{apiUrl.userName}}</span>
+    </div>
+    <ng-template #tipContent>
+      <div class="tooltip-content">
+        <ul>
+          <li *ngIf="!this.user.data || !this.user.data.shopId">
+            <a (click)="navigateToProfile()" class="logout d-flex align-items-center">
+              <span class="pro_image">
+                <!-- <i class="pi pi-cog" style="font-size:18px" ></i> -->
+                <img style="height: 17px;" src="assets/images/user_profile_pro_icon.png" alt="">
+              </span>
+              <span class="pro_text">Profile</span>
+            </a>
+          </li>
+          <li *ngIf="!this.user.data || !this.user.data.shopId">
+            <a (click)="navigateToSystemSettings()" class="logout d-flex align-items-center">
+              <span class="pro_image">
+                <!-- <i class="pi pi-cog" style="font-size:18px" ></i> -->
+                <img style="height: 17px;" src="assets/images/system-settings-icon.png" alt="">
+              </span>
+              <span class="pro_text">System Settings</span>
+            </a>
+          </li>
+          <li *ngIf="!this.user.data || !this.user.data.shopId">
+            <a (click)=openNewPasswordPopup() class="logout d-flex align-items-center">
+              <span class="pro_image">
+                <!-- <i class="pi pi-cog" style="font-size:18px" ></i> -->
+                <img style="height: 17px;" src="assets/images/change_password_pro_icon.png" alt="">
+              </span>
+              <span class="pro_text">Change Password</span>
+            </a>
+          </li>
+          <li>
+            <a (click)="logout()" class="logout">
+              <span class="pro_image">
+                <img src="assets/images/logout_pro_icon.png" />
+              </span>
+              <span class="pro_text">Logout</span>
+            </a>
+          </li>
+         
+        </ul>
+      </div>
+    </ng-template>
+  </div>
+</div>

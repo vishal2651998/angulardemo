@@ -1,0 +1,29 @@
+<div *ngIf="loading" class="login-loader text-center"><img src="assets/images/filter/filter-loading.svg" alt="Loader" width="100" height="100" /></div>    
+<div class="main-container" [ngClass] ="{ 'setDivopacity': loading }">   
+    <div class="mcont-col-1"> 
+        <div class="mcont-col-1">
+            <div class="header-logo" ><span [style.background-image]="'url(' + headerLogo + ')'"></span></div>
+            <div class="mcont-inner-div">
+                <div class="mcont-inner-col">
+                    <div class="verify-div" *ngIf="!loading && verifiedOKFlag">
+                        <img class="verify-img" src="assets/images/login/verified-success.png">   
+                        <p class="verify-text">{{ responseMsg }} </p>                                        
+                        <div class="verify-ok-btn-div" (click)="verifiedOK()"><span class="ok-text">OK</span></div>                         
+                    </div>  
+                    <div class="verify-div" *ngIf="!loading && !verifiedOKFlag">
+                        <img class="verify-img" src="assets/images/login/verification-failed.png">   
+                        <p class="verify-text1">Verification Failed</p>   
+                        <p class="verify-text">This verification link is either invalid or has expired.</p>                                      
+                        <div class="verify-ok-btn-div" (click)="notVerified()"><span class="ok-text">CONTINUE</span></div>                         
+                    </div>                   
+                </div>            
+            </div>
+            <app-auth-footer></app-auth-footer>
+        </div>
+    </div>
+    <div class="mcont-col-2" [style.height.px]="innerHeight">
+        <app-auth-right-panel class="business-bg" ></app-auth-right-panel>
+    </div>     
+</div>  
+
+

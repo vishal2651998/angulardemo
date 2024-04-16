@@ -1,0 +1,135 @@
+<div [style.height.px]="innerHeight" class="sidebar h-100" id="gts-sidebar" [ngClass]="{'gts-scrollbar': isScrollbar}">
+  <p-card [style]="{borderRadius:'10px'}" styleClass="mb-3">
+    <ng-template pTemplate="header"></ng-template>
+    <ng-template pTemplate="content">
+      <div class="img">
+        <img [src]="imgURL" class="img img-fluid" alt="">
+      </div>
+      <div class="d-flex align-items-start">
+        <img src="./assets/images/gts/gts-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            GTS Procedure Title
+          </p>
+          <p class="font-weight-bold">
+            {{pageData.name}}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex align-items-start" *ngIf="!isPrinting">
+        <img src="./assets/images/gts/barcode-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            VIN
+          </p>
+          <p class="font-weight-bold">
+            {{gtsApi.apiData.frameNo}}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex align-items-start"
+        *ngIf="isPrinting[0].type == 'Printing & Imaging' && gtsApi.serialNumber.length > 0">
+        <img src="./assets/images/gts/barcode-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            Serial No#.
+          </p>
+          <p class="font-weight-bold">
+            {{gtsApi.serialNumber}}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex align-items-start" *ngIf="pageData.dtcCode || pageData.dtcDesc">
+        <img src="./assets/images/gts/dtc-code.png" class="mr-2" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            DTC Code & Description
+          </p>
+          <p class="font-weight-bold">
+            <span class="text-danger">{{pageData.dtcCode}}</span>
+            {{pageData.dtcDesc}}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex align-items-start" *ngIf="pageData.additionalInfo">
+        <img src="./assets/images/gts/info-red.png" class="mr-2" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            Additional Information
+          </p>
+          <p class="font-weight-bold">
+            {{ pageData.additionalInfo }}
+          </p>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+
+  <p-card [style]="{borderRadius:'10px'}" styleClass="mb-3" *ngIf="vehicleDetail.length">
+    <ng-template pTemplate="content">
+      <p-accordion collapseIcon="pi pi-fw pi-angle-down" expandIcon="pi pi-fw pi-angle-up">
+        <p-accordionTab [header]="vd.productType" *ngFor="let vd of vehicleDetail">
+          <ng-template pTemplate="content">
+            <div class="tags mt-2">
+              <p-chip [label]="tag" *ngFor="let tag of vd.model"></p-chip>
+            </div>
+          </ng-template>
+        </p-accordionTab>
+      </p-accordion>
+    </ng-template>
+  </p-card>
+
+  <p-card [style]="{borderRadius:'10px'}" styleClass="mb-3">
+    <ng-template pTemplate="content">
+      <div class="d-flex align-items-start">
+        <img src="./assets/images/gts/problem-category-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            Problem Category
+          </p>
+          <p class="font-weight-bold">
+            {{pageData.productCategoryName}}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex align-items-start">
+        <img src="./assets/images/gts/system-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            System
+          </p>
+          <p class="font-weight-bold">
+            {{pageData.systemSelection}}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex align-items-start" *ngIf="tags.length">
+        <img src="./assets/images/gts/tag-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            Tags
+          </p>
+          <div class="tags mt-2">
+            <p-chip [label]="tag" *ngFor="let tag of tags"></p-chip>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+
+  <p-card [style]="{borderRadius:'10px'}" styleClass="mb-3" *ngIf="pageData.workstreams && pageData.workstreams.length">
+    <ng-template pTemplate="content">
+      <div class="d-flex align-items-start">
+        <img src="./assets/images/gts/workstream-red.png" class="mr-2 mt-1" />
+        <div class="desc">
+          <p class="d-flex align-items-center title m-0 font-roboto" [ngStyle]="{fontSize:'14px', color:'#93989d'}">
+            Workstreams
+          </p>
+          <div class="tags mt-2">
+            <p-chip [label]="workstream.name" *ngFor="let workstream of pageData.workstreams"></p-chip>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-card>
+</div>

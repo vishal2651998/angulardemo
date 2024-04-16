@@ -1,0 +1,97 @@
+<div id="marketplace-landing-container">
+    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+        <div id="marketplace-header" class="marketplace-header settings-padding">
+            <app-marketplace-header></app-marketplace-header>       
+        </div>
+
+        <div id="marketplace-middle" class="marketplace-middle">
+
+            <div *ngIf="loading">
+                <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+            </div>
+            <div *ngIf="!loading">
+                <div >
+                    <div >
+
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin banner-setting-padding">
+                            <div class="col-md-12 col-sm-12 col-12 no-padding" [ngClass]="{ 'col-xl-9 col-lg-9 ' : !mobileBrowser, 'col-xl-12 col-lg-12 ' : mobileBrowser }">
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                                    <div class="banner-container banner-bg">                        
+                                        <div class="banner-content vertical-center">
+                                                <h6>Opportunity for Every Technician</h6>
+                                                <p>Welcome to the Collabtic Marketplace. The industry's first of it's kind marketplace 
+                                                    where you can access, buy, sell and deliver knowledge & services.</p>
+                                            
+                                        </div>                                              
+                                    </div>                    
+                                </div>
+                            </div>
+                            <div *ngIf="!mobileBrowser" class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12 no-padding" >
+                                <app-marketplace-systemactivity></app-marketplace-systemactivity> 
+                            </div>
+                        </div>
+
+                        <div class="settings-padding">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                                <div class="section-title">Select from following sections</div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding section-row">
+                                
+                                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 no-margin no-padding section-col">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding section-item item1">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding sec-head">Training</div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding sec-btn cursor-pointer" (click)="navigatePage('training')">
+                                            <span>View</span>
+                                            <img src="assets/images/common/mp-view-section2.png" />
+                                        </div>
+                                        <div class="sec-img text-right"><img src="assets/images/common/training-sec-view.png" /></div>                                        
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 no-margin no-padding section-col">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding section-item item2">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding sec-head">Knowledgebase</div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding comming-soon-text">Coming Soon..</div>
+                                        <div class="sec-img text-right"><img src="assets/images/common/knowledgebase.png" /></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 no-margin no-padding section-col">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding section-item item3">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding sec-head">Mobile Diagnostics</div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding comming-soon-text">Coming Soon..</div>
+                                        <div class="sec-img text-right"><img src="assets/images/common/mobile-diagnostics.png" /></div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 no-margin no-padding section-col">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding section-item item4">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding sec-head">On-Demand Support</div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding comming-soon-text">Coming Soon..</div>
+                                        <div class="sec-img text-right"><img src="assets/images/common/on-demand-support.png" /></div>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                                <div class="section-title section-title-2">Recent Training added</div>
+                            </div>
+                            <div id="marketplace-widgets" class="marketplace-widgets" [ngClass]="{ 'marketplace-widgets-mobile' : mobileBrowser }" >
+                                <app-registered-trainings-widgets [fromPage]="fromPageName" [mobileBrowser]="mobileBrowser"></app-registered-trainings-widgets>
+                            </div>  
+                        </div> 
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div id="marketplace-footer" class="marketplace-footer settings-padding">
+            <app-marketplace-footer></app-marketplace-footer>       
+        </div>
+
+    </div>
+</div>
+
+
+
+
+

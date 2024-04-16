@@ -1,0 +1,95 @@
+<div class="main-contaier {{optionsval.shortName}}">
+    <p-accordion [multiple]="true" (onClose)="onTabClose3($event)" (onOpen)="onTabOpen3($event)">
+      <p-accordionTab [selected]="true">
+        <p-header class="accordion-icon ">
+          <div class="container-fluid">
+            <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+              <div class="menu-name-bar col col col-lg-9  col-md-9 col-xl-9 col-sm-8 landing-padding0">
+                <div>
+                  <span class="bg-image {{optionsval.imageClass}}">
+                    <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                  </span>
+                  <span class="menu-name">{{optionsval.placeholder}}</span>
+                  <span><i class="pi hide pi-ellipsis-v"></i></span>
+                </div>
+              </div>
+              <div class="col col col-lg-3  col-md-3 col-xl-3 col-sm-4 landing-padding0">
+                <div class="rightside-menu-header">
+                  <div class="see-more-text" *ngIf="moreTechInfo">
+                    <span>See More</span>
+                    <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                  </div>
+                  <div class="plusone30 showinline"><i class="pi pi-chevron-up"></i></div>
+                  <div class="minusone30 hide"><i class="pi pi-chevron-down"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-header>
+        <div id="recentView" class="recentviewed-listing-widget">
+          <div class="loading-small-screen" *ngIf="loadingTechInfo">
+            <img src="assets/images/loading.svg" alt="Loader" />
+          </div>
+          <div class="padding10">
+            <div class="container-fluid">
+              <div class="nothingtoshow" *ngIf="norecentViews">
+                <div class="no-data-contaier">
+                  <div>
+                    <img class="no-data-img" src="assets/images/landing-page/empty-recent-views.svg">
+                  </div>
+                  <div class="no-data-text">{{norecentviewsText}}</div>
+                </div>
+              </div>
+              <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+                <div (click)="recentViewClick($event,recentViews.typeId,recentViews.threadId)"
+                  class="recentview-content cursor col col-lg-4  col-md-4 col-xl-4 col-sm-12"
+                  *ngFor="let recentViews of landingrecentViews; let rcvx = index" [@anim]="recentViews.state">
+                  <div class="recentview-left-container">
+                    <div class="container-fluid">
+                      <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+                        <div class="col col-lg-1 col-md-1 col-xl-1 col-sm-1 landing-padding0 left-alignment"
+                          [ngStyle]="{'background-color': recentViews.textBgColor}">
+                          <div class="writing-mode-text ">
+                            {{recentViews.contentType}}
+                          </div>
+                        </div>
+                        <div class="col col-lg-11 col-md-11  col-xl-11 col-sm-11 landing-padding0">
+                          <div class="container-fluid">
+                            <div class="row col-lg-12 col-md-12 col-sm-12 esc-body landing-padding0 landing-margin0">
+                              <div class="esc-banner col col-lg-auto col-md-auto ol-xl-auto l-sm-auto landing-padding0">
+                                <img class="esc-img-baneer" [ngClass]="{'active-banner': recentViews.isDefault!=1}"
+                                  src="{{recentViews.bannerImg}}">
+                              </div>
+                              <div class="text-overflow col col-lg-9 col-md-9 col-xl-9 col-sm-9">
+                                <div *ngIf="recentViews.title" class="esc-thread-title">
+                                  {{recentViews.title}}</div>
+                                <div *ngIf="recentViews.partNo" class="esc-thread-title">
+                                  Part #{{recentViews.partNo}}</div>
+                                <div class="makemodelcontent">
+                                  <span class="esc-make">{{recentViews.make}}</span>
+                                  <i *ngIf="recentViews.model !=''" style="font-size: 13px;vertical-align: text-top;"
+                                    class="pi pi-chevron-right">
+                                  </i>
+                                  <span *ngIf="recentViews.model !=''" class="esc-model">{{recentViews.model}}</span>
+                                </div>
+                                <div class="esc-date-id">
+                                  <div class="col-30-row landing-padding0 esc-threadID">
+                                    ID# {{recentViews.threadId}}</div>
+                                  <div title="{{recentViews.createdOn}}" class="col-70-row text-right esc-date">
+                                    {{recentViews.createdOn}}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>

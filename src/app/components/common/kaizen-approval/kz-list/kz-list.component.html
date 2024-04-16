@@ -1,0 +1,113 @@
+<p-messages [(value)]="msgs1" [enableService]="false"></p-messages>
+<div class="table-view" [style.height]="'calc(100vh - '+secHeight+'px)'"> 
+    <div #top class="ps" id="announcementList" style="border-radius: 6px;background-color: #ffffff;">
+        <p-table [scrollable]="true" [totalRecords]="items.length" id="file-datatable" class="file-datatable doc-file-table" [scrollHeight]="'calc(100vh - '+listHeight+'px)'" (scroll)="scroll($event)" [value]="items" sortMode="multiple">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th *ngIf="myKaizen == '0'" class="dw0">Person submitted</th>                    
+                    <th class="dw1" [ngClass] = "{ 'setLt280' : myKaizen == '0' , 'setLt0' : myKaizen == '1' }" >Name</th>                    
+                    <th class="dw2" >Model</th>
+                    <th class="dw3">Submit date</th>
+                    <th class="dw4">Updated on</th>
+                    <th class="dw5">ID</th>
+                    <th class="dw6">Status</th>
+                    <!--th>Status</th-->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-items>
+                <tr id="{{items.resourceID}}" class="cursor {{items.styleName}}" [ngClass]="{ 'cursor-default' : (myKaizen == '0' && items.documentStatusId == '4') || (myKaizen == '0' && items.documentStatusId == '5'),'active': items.selected }"  >
+                    <td *ngIf="myKaizen == '0'" class="dw0" (click)="actionClick(items, 'view')" title="{{items.submitedByUserName}}">
+                        <div class="thread-bg thread-bg-no-margin p-table-col">
+                            <div class="profile-container">
+                                <div class="profileimg-container no-padding">
+                                    <div class="profile-left-container list-profile-left-container profile-left-container-no-margin" >
+                                        <img class="profileImg" [src]="items.submitedByProfileImage" onerror="this.src='assets/images/thumb_profile_image.png'"/>
+                                        <span class="list-availability-status availability-status availability-status{{items.submitedByAvailability}}"></span>
+                                    </div>
+                                    <div class="profile-right-container">
+                                        <div class="user-name" title="{{items.createdBy}}">  
+                                            {{items.createdBy}}
+                                        </div>                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="dw1" [ngClass] = "{ 'setLt280' : myKaizen == '0', 'setLt0' : myKaizen == '1' }" (click)="actionClick(items, 'view')" title="{{items.title}}">
+                        <div class="app-wraptext title">                            
+                            <span *ngIf="items.title!=''" class="wraptext">{{items.title}}</span>
+                            <span *ngIf="items.title==''" class="wraptext">-</span>
+                        </div>
+                    </td>
+                    <td class="dw2" (click)="actionClick(items, 'view')" title="{{items.model}}">
+                        <span class="app-wraptext">
+                            <span *ngIf="items.model!=''" class="wraptext">{{items.model}}</span>
+                            <span *ngIf="items.model==''" class="wraptext">-</span>
+                        </span>                        
+                    </td>                    
+                    <td class="dw3" (click)="actionClick(items, 'view')" title="{{items.submitedByDate}}">
+                        <div class="app-wraptext"> {{items.submitedByDate}} </div>
+                    </td>
+                    <td class="dw4" (click)="actionClick(items, 'view')" title="{{items.updatedOn}}">
+                        <div class="app-wraptext"> {{items.updatedOn}} </div>
+                    </td> 
+                    <td class="dw5" (click)="actionClick(items, 'view')">{{items.resourceID}}</td>                    
+                    <td class="dw6" *ngIf="myKaizen == '1'">
+                        
+                            <div class="status thread-status" [style.background-color]="items.documentStatusBgColor">
+                                <div [style.color]="items.documentStatusColorValue" title="{{items.documentStatus}}" >{{items.documentStatus}}</div>
+                            </div>
+                            
+
+                            <div [ngClass]="{ 'hiddenVisible' : ( items.moreOption == 0 ) }" id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">
+                                <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                                <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                            </div>
+                            <mat-toolbar color="primary" >
+                                <mat-menu #menu="matMenu" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="cursor" (click)="menuTrigger.closeMenu();actionClick(items, 'view');$event.stopPropagation();"><img src="assets/images/documents/approval-more-view.png" alt="View">&nbsp;&nbsp;<span class="app-span">View</span></li>
+                                            <li class="cursor" *ngIf="items.documentStatusId  == '4' || items.documentStatusId  == '5' || items.documentStatusId  == '6'"  (click)="menuTrigger.closeMenu();actionStatus(items, 'submit');$event.stopPropagation();"><img src="assets/images/documents/approval-more-submit.png" alt="{{approveText}}">&nbsp;&nbsp;<span class="app-span">{{approveText}}</span></li>
+                                            <li class="cursor" *ngIf="items.documentStatusId  == '2' || items.documentStatusId  == '3'" (click)="menuTrigger.closeMenu();actionStatus(items, 'retract');$event.stopPropagation();"><img src="assets/images/documents/approval-more-retract.png" alt="Retract">&nbsp;&nbsp;<span class="app-span">Retract</span></li>
+                                            <li class="cursor" *ngIf="items.documentStatusId  == '4' || items.documentStatusId  == '5' || items.documentStatusId  == '6'" (click)="menuTrigger.closeMenu();actionClick(items, 'edit');$event.stopPropagation();"><img src="assets/images/documents/approval-more-edit.png" alt="Edit">&nbsp;&nbsp;<span class="app-span">Edit</span></li>
+                                            <li class="cursor" *ngIf="items.documentStatusId  == '4' || items.documentStatusId  == '5' || items.documentStatusId  == '6'" (click)="menuTrigger.closeMenu();actionClick(items, 'delete');$event.stopPropagation();"><img src="assets/images/documents/approval-more-delete.png" alt="Delete">&nbsp;&nbsp;<span class="app-span">Delete</span></li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>
+                        
+                    </td>
+
+                    <td class="dw6" *ngIf="myKaizen == '0'">
+                        
+                        <div class="status thread-status" [style.background-color]="items.documentStatusBgColor">
+                            <div [style.color]="items.documentStatusColorValue" title="{{items.documentStatus}}" >{{items.documentStatus}}</div>
+                        </div>
+                        <div [ngClass]="{ 'hiddenVisible' : ( items.moreOption == 0 ) || (items.documentStatusId == '4') || (items.documentStatusId == '5') }" id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu1">
+                            <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary" >
+                            <mat-menu #menu1="matMenu" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '6' || items.documentStatusId  == '3' || items.documentStatusId  == '2' || items.documentStatusId  == '1'" (click)="menuTrigger.closeMenu();actionClick(items, 'view');$event.stopPropagation();"><img src="assets/images/documents/approval-more-view.png" alt="View">&nbsp;&nbsp;<span class="app-span">View</span></li>
+                                        <!--li class="cursor" *ngIf="items.documentStatus != '3' " (click)="menuTrigger.closeMenu();actionStatus(items, 'inprogress');$event.stopPropafgation();"><img src="assets/images/documents/approval-more-inprocess.png" alt="In-progress">&nbsp;&nbsp;<span class="app-span">In-progress</span></li-->
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();actionStatus(items, 'approve');$event.stopPropagation();"><img src="assets/images/documents/approval-more-approved.png" alt="{{approveText}}">&nbsp;&nbsp;<span class="app-span">{{approveText}}</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();actionStatus(items, 'return');$event.stopPropagation();"><img src="assets/images/documents/approval-more-return.png" alt="{{returnText}}">&nbsp;&nbsp;<span class="app-span">{{returnText}}</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '6' || items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();actionClick(items, 'edit');$event.stopPropagation();"><img src="assets/images/documents/approval-more-edit.png" alt="Edit">&nbsp;&nbsp;<span class="app-span">Edit</span></li>
+                                        <li class="cursor" *ngIf="items.documentStatusId  == '6' || items.documentStatusId  == '3' || items.documentStatusId  == '2'" (click)="menuTrigger.closeMenu();actionClick(items, 'delete');$event.stopPropagation();"><img src="assets/images/documents/approval-more-delete.png" alt="Delete">&nbsp;&nbsp;<span class="app-span">Delete</span></li>
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>
+
+                        
+                    
+                </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

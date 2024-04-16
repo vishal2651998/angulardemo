@@ -1,0 +1,106 @@
+<div class="cursor media-collapse-arrow" (click)="toggleInfo(infoFlag, 'info')">
+    <img src="assets/images/landing-page/side-panel-arrow.png" alt="collapse" />
+</div>
+<div *ngIf="submitDocLoading && !infoLoading" class="edit-media-loader text-center"><img src="assets/images/loading.svg" alt="Loader" />sad</div>
+<div class="media-detail info-page" [ngClass]="{'mloader': infoLoading, 'disable': submitDocLoading}">
+    <div *ngIf="infoLoading" class="edit-media-loader text-center"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!infoLoading">
+        <div class="info-head" [ngClass]="{'action-head': actionFlag}">
+            <div class="info-head-row">
+                <span class="info-col info-col-1"><span title="{{title}}">{{title}}</span></span>
+                <span *ngIf="editFlag" class="info-col info-col-2 cursor" title="Edit" (click)="docAction()"><img src="assets/images/media/manager/media-edit.png" alt="Edit"/></span>
+                <!--span class="info-col info-col-3 cursor text-right hide" title="Close" (click)="toggleInfo(mediaInfoFlag)"><img src="assets/images/media/manager/media-close.png" alt="Close"/></span-->
+            </div>
+            <div *ngIf="!actionFlag">
+                <div class="info-cont" [style.height]="'calc(100vh - '+innerInfoHeight+'px)'">
+                    <div id="step" class="inner-cont-scroll ps" [perfectScrollbar]="sconfig">
+                        <div id="banner-info">
+                            <div class="media-banner doc-banner {{linkClass}} {{bannerClass}}" [ngClass]="{'default-banner': defaultBanner}" [ngStyle]="{'background-image': 'url('+bannerImg+')'}">
+                                <span class="doc-id">ID# {{docId}}</span>
+                            </div>
+                            <div class="desc" *ngIf="desc != ''">
+                                <div class="doc-label">Description</div>
+                                <div class="doc-desc empty" *ngIf="descLength == 0">NA</div>
+                                <div class="doc-desc" *ngIf="descLength > 0" [innerHtml]="desc" [ngClass]="{'truncate': descToggle}"></div>
+                                <span *ngIf="descLength > 90" class="desc-toggle cursor text-right" (click)="toggleDesc(descToggle)">{{descToggleText}}</span>
+                            </div>
+                        </div>
+                        <div class="user-info" *ngIf="mfgVal != '' || makeVal != '' || modelVal || yearVal || tagVal">
+                            <div class="user-row mfg edit-user-row" *ngIf="mfgVal != '' && platformId == '1'">  
+                                <span class="info-row-1">Manufacturer</span>
+                                <span class="info-row-2">
+                                    <div class="selected-items scrollbar scrollbar-primary thin">
+                                        <div class="tag-text make-tag-text edit-tag-text">
+                                            <span>{{mfgVal}}</span>                                   
+                                        </div>
+                                    </div>
+                                </span>                    
+                            </div>
+                            <div class="user-row make edit-user-row" *ngIf="makeVal != ''">  
+                                <span class="info-row-1">Make</span>
+                                <span class="info-row-2">
+                                    <div class="selected-items scrollbar scrollbar-primary thin">
+                                        <div class="tag-text make-tag-text edit-tag-text">
+                                            <span>{{makeVal}}</span>                                   
+                                        </div>
+                                    </div>
+                                </span>                    
+                            </div>
+                            <div class="user-row model edit-user-row" *ngIf="modelVal.length > 0">
+                                <span class="info-row-1">Model</span>
+                                <span class="info-row-2">
+                                    <div class="selected-items scrollbar scrollbar-primary thin">
+                                        <div *ngFor="let item of modelVal;" class="tag-text model-tag-text edit-tag-text">
+                                            <span>{{item}}</span>                                
+                                        </div>
+                                    </div>
+                                </span>                    
+                            </div>
+                            <div class="user-row year edit-user-row" *ngIf="yearVal.length > 0">
+                                <span class="info-row-1">Year</span>
+                                <span class="info-row-2" >
+                                    <div class="selected-items scrollbar scrollbar-primary thin">
+                                        <div *ngFor="let item of yearVal;" class="tag-text year-tag-text edit-tag-text">
+                                            <span>{{item}}</span>
+                                        </div>
+                                    </div>
+                                </span>                    
+                            </div>
+                            <div class="user-row tag edit-user-row" *ngIf="tagVal && tagVal.length > 0">
+                                <span class="info-row-1">Tag<span *ngIf="tagVal.length > 1">s</span></span>
+                                <span class="info-row-2">
+                                    <div class="selected-items scrollbar scrollbar-primary thin">
+                                        <div *ngFor="let item of tagVal;" class="tag-text edit-tag-text">
+                                            <span>{{item.name}}</span>                                
+                                        </div>
+                                    </div>
+                                </span>                    
+                            </div>
+                        </div>
+                        <div class="info-attachments">
+                            <app-attachment-view [loading]="infoLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                        </div>
+                        <div class="action-info">
+                            <ul>
+                                <li class="like cursor" [ngClass]="{'active': likeStatus > 0, 'disable': !likeFlag}" (click)="socialActions('like', likeStatus)">
+                                    <span *ngIf="likeCount == 0">-</span>
+                                    <span *ngIf="likeCount > 0">{{likeCount}}</span>
+                                </li>
+                                <li class="pin cursor" [ngClass]="{'active': pinStatus > 0}" (click)="socialActions('pin', pinStatus)">
+                                    <span *ngIf="pinCount == 0">-</span>
+                                    <span *ngIf="pinCount > 0">{{pinCount}}</span>
+                                </li>
+                                <li class="view">
+                                    <span *ngIf="viewCount == 0">-</span>
+                                    <span *ngIf="viewCount > 0">{{viewCount}}</span>
+                                </li>
+                                <li class="share"></li>
+                            </ul>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="view-detail text-center cursor-pointer" (click)="viewMore()" >View More Details</div>
+            </div>
+        </div>
+    </div>
+</div>

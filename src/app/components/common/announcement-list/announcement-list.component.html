@@ -1,0 +1,138 @@
+<div *ngIf="loading" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-thumb-lazy-loader {{accessFrom}}" [ngClass]="{'part-thumb-lazy-loader': thumbView, 'part-list-lazy-loader': !thumbView}"></div>   
+
+<div *ngIf="!itemEmpty">
+    <div *ngIf="thumbView" [style.height.px]="innerHeight" class="documents-grid-row" [ngClass]="{'documents-grid-row-opacity1': !loading, 'documents-grid-row-opacity0': loading}">
+        <div #top class="ps" [perfectScrollbar]="sconfig" id="announcementList" (scroll)="onScroll($event)">           
+            <div class="announce-card-container">
+                <ngx-masonry [options]="{ gutter: 10 }" class="masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true" >
+                <div ngxMasonryItem  data-masonry='{ "columnWidth": 270, "itemSelector": ".grid-item" }' class="masonry-item announce-card" *ngFor="let item of announceList" (click)="navUrl($event,viewTxt,item.resourceID,item.readStatus)">
+                    <div *ngIf="item.showAccess" class=" ann-card-outer">
+                        <div class="announce-in-card cursor">
+                            <div class="head-card">
+                                <span *ngIf="item.readStatus == 0" class="list-new-ann-tag"><span class="list-bg tile-view"></span></span>  
+                                <span class="tcell tcell1"><img class="ptimg" [src]="item.profileImage"/></span>
+                                <span class="ptavailability-status-cont"><span class="availability-status pavailability-status availability-status{{item.availability}}"></span></span>
+                                <span class="tcell tcell2 ptext">
+                                    <span class="uname" >{{item.contributerName}}</span>
+                                    <span class="utitle" >{{item.userTitle}}</span>
+                                </span>
+                                <span class="tcell tcell3 pdate">{{item.cretedOn}}</span>
+                            </div>
+                            <div class="middle-card">
+                                <div class="thread-img">
+                                    <img class="ptimg" src="assets/images/announcement/announcement-tile-img.png"/>
+                                </div>
+                                <div class="thread-title">
+                                    <div class="title-text" >{{item.title}}</div>
+                                </div>
+                                <div class="tag-div">
+                                    <span *ngIf="item.urgencyLevelText"  class="ann-urgent-tile">
+                                        <img src="assets/images/landing-page/announcement-urgent.png">
+                                    </span>
+                                    <!--<span class="workstream-db w-tile" *ngFor="let Workstreamssingle of item.WorkstreamsTileList; let wnm = index">
+                                    {{Workstreamssingle.name}}
+                                    </span>-->
+                                    <span *ngIf="item.WorkstreamsList.length>0" class="workstream-db w-tile" >{{item.WorkstreamsList}}</span>                                                
+                                </div>
+                            </div>
+                            <div class="bottom-card">
+                                <div class="btable">
+                                    <span class="btcell">                                        
+                                        <span class="tv-count-icon"><img src="assets/images/landing-page/landing-like-icon.png"></span>
+                                        <span class="tv-count-text">{{item.likeCount}}</span>
+                                        <span class="tv-count-icon"><img src="assets/images/landing-page/landing-view-icon.png"></span>
+                                        <span class="tv-count-text">{{item.viewCount}}</span>
+                                    </span>
+                                    <span *ngIf="announceType == 'dashboard' && !item.disableAccess" class="btcell" (click)="removeArchiveAccouncement(item.resourceID);$event.stopPropagation();">
+                                        <span class="rarchive-icon"><img src="assets/images/announcement/remove-archive.png"></span>
+                                        <span class="rarchive-text">Remove & Archive</span>
+                                    </span>
+                                    <span *ngIf="announceType == 'dashboard' && item.disableAccess" class="btcell setOpacity3" (click)="$event.stopPropagation();">
+                                        <span class="rarchive-icon"><img src="assets/images/announcement/remove-archive.png"></span>
+                                        <span class="rarchive-text">Remove & Archive</span>
+                                    </span>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                </ngx-masonry>                     
+            </div>               
+        </div>                   
+    </div>
+    <div *ngIf="!thumbView" [style.height.px]="innerHeight" class="documents-grid-row documents-grid-row-new" [ngClass]="{'documents-grid-row-opacity1': !loading, 'documents-grid-row-opacity0': loading}">                 
+        <div #top class="ps" [perfectScrollbar]="sconfig" id="announcementList" (scroll)="onScroll($event)">
+            <div class="announcement-list-view">
+                <p-table [scrollable]="true" [totalRecords]="announceList.length" id="file-datatable" [styleClass]="'ann-table user-dashboard-scroll thin'" class="file-datatable" [value]="announceList" sortMode="multiple">
+                    <ng-template pTemplate="header">
+                        <tr *ngIf="!loading">
+                            <th class="w1">Posted by <p-sortIcon field="code"></p-sortIcon></th>
+                            <th class="w2">Title <p-sortIcon field="code"></p-sortIcon></th>
+                            <th class="w3">Views <p-sortIcon field="code"></p-sortIcon></th>
+                            <th class="w4">Likes <p-sortIcon field="code"></p-sortIcon></th>
+                            <th class="w5">Created On <p-sortIcon field="code"></p-sortIcon></th>
+                            <th class="w6">Workstream <p-sortIcon field="code"></p-sortIcon></th> 
+                            <th class="w7">Expiration Date <p-sortIcon field="code"></p-sortIcon></th>                                
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-announceList>
+                        <tr *ngIf="announceList.showAccess" class="cursor">
+                            <td class="w1" (click)="navUrl($event,viewTxt,announceList.resourceID,announceList.readStatus)">  
+                                <span *ngIf="announceList.readStatus == 0" class="list-new-ann-tag"><span class="list-bg"></span></span>                                 
+                                <span class="split-col profileImg-lt">                                       
+                                    <img class="profileImg" [src]="announceList.profileImage"/>
+                                    <span class="availability-status-cont"><span class="availability-status availability-status{{announceList.availability}}"></span></span>
+                                </span>
+                                <span class="split-col profileImg-rt">
+                                    <span class="uname">{{announceList.contributerName}}</span>
+                                    <span class="utitle">{{announceList.userTitle}}</span>
+                                </span>                                   
+                            </td>                                
+                            <td class="w2 atitle" (click)="navUrl($event,viewTxt,announceList.resourceID,announceList.readStatus)">{{announceList.title}}</td>
+                            <td class="w3">
+                                <span class="split-col"><img src="assets/images/landing-page/landing-view-icon.png"></span>
+                                <span class="split-col count-text">{{announceList.viewCount}}</span>
+                            </td>
+                            <td class="w4" (click)="navUrl($event,viewTxt,announceList.resourceID,announceList.readStatus)">
+                                <span class="split-col"><img src="assets/images/landing-page/landing-like-icon.png"></span>
+                                <span class="split-col count-text">{{announceList.likeCount}}</span>
+                            </td>
+                            <td class="w5" (click)="navUrl($event,viewTxt,announceList.resourceID,announceList.readStatus)">{{announceList.cretedOn}}</td>
+                            <td class="w6">
+                                <span *ngIf="announceList.WorkstreamsList.length>0" class="workstream-db" >{{announceList.WorkstreamsList}}</span>
+                                <span *ngIf="announceList.WorkstreamsList.length == 0" >-</span>
+                            </td>
+                            <td class="w7">
+                                <span *ngIf="announceList.expDate != 'Invalid date'" class="ex-date">{{announceList.expDate}}</span>
+                                <span *ngIf="announceList.expDate == 'Invalid date'" class="ex-date">-</span>
+                                <span *ngIf="announceType == 'dashboard' && !announceList.disableAccess" id="more" class="more-icon" [ngClass]="{'active': announceList.activeMore}" tooltipClass="announcement-more-tooltip" (click)="$event.stopPropagation();" triggers="click" [autoClose]="true" placement="bottom" [ngbTooltip]="annMore" ><img src="assets/images/more-icon.png" alt="Action" /></span>
+
+                                <ng-template #annMore>
+                                    <div class="announcement-more-tooltip-content">
+                                        <ul class="more-actions">
+                                            <li class="cursor active" (click)="navUrl($event,viewTxt,announceList.resourceID,announceList.readStatus)"><span class="w-img"><img src="assets/images/view.png" alt="View"></span><span class="w-text">View</span></li>
+                                            <li class="cursor active" (click)="navUrl($event,editTxt,announceList.resourceID,announceList.readStatus)"><span class="w-img"><img src="assets/images/edit.png" alt="Edit"></span><span class="w-text">Edit</span></li>                                                            
+                                            <li *ngIf="!announceList.disableAccess" class="cursor active" (click)="removeArchiveAccouncement(announceList.resourceID);"><span class="w-img"><img src="assets/images/delete.png" alt="Remove & Archive" /></span><span class="w-text">Remove &amp; Archive</span></li>
+                                            <li *ngIf="announceList.disableAccess" class="setOpacity3" ><span class="w-img"><img src="assets/images/delete.png" alt="Remove & Archive" /></span><span class="w-text">Remove &amp; Archive</span></li>
+                                        </ul> 
+                                    </div>
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>   
+            </div>
+        </div> 
+    </div>            
+</div>
+<div *ngIf="itemEmpty" class="documents-grid-row no-item-list" [style.height.px]="innerHeight">
+    <div class="no-data-contaier">
+        <div>
+            <img class="no-data-img" src="assets/images/landing-page/empty-announcement.svg">
+        </div>
+        <div class="no-data-text">{{noannounceText}}</div>
+    </div>
+</div>
+
+

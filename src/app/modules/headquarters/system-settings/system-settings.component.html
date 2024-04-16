@@ -1,0 +1,137 @@
+<div id="header">
+    <app-header #headerRef [pageData]="headerData"></app-header>
+</div>
+
+<div class="d-flex">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" accessModule="headquarters" (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="right-section">
+        <div class="prob-index system-setting">
+            <div class="container-fluid">
+                <div class="center-middle-width-container">
+                    <div class="center-middle-width padding-common padding-common-hq">
+                        <div  class="hq-head d-flex">
+                            <div>
+                                <div class="hq-head-row-0">
+                                    <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+                                    <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                    <span class="hq-head-breadcrumb-text cursor">System Settings</span> 
+                                </div>
+                                <div class="hq-head-row-1">
+                                    <img  class="hq-head-img" src="assets/images/landing-page/system-settings.png" alt="" />
+                                    <span class="hq-head-text">System Settings</span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <app-system-settings-sidebar (onSidebarSelect)="sideBarSelect($event)" [selectedTab]="'banner-settings'"></app-system-settings-sidebar>                        
+                            <div  [style.height]="'calc(100vh - '+leftEmptyHeight+'px)'"  class="ts-list-rt transition filter-expand">                        
+                                <div style="height: 100%;" *ngIf="activeView == 'banner-settings'">
+                                    <div style="height: 100%;">
+                                        <div style="background-color: #888888;padding: 10px;border-radius: 10px 10px 0px 0px;color: white;display: flex;align-items: center;">
+                                            <img style="margin-right: 7px;" class="hq-head-breadcrumb-img" src="assets/images/landing-page/banner-set.png" alt="" />
+                                            <span>Home Page Banner</span>
+                                            <img style="margin-right: 7px;margin-left: 28px;" class="hq-head-breadcrumb-img" src="assets/images/landing-page/info-white.png" alt="" />
+                                            <span>The Uploaded images will shown as carousel slider</span>
+                                        </div>
+                                        <div style="background-color: white;border-radius: 0px 0px 10px 10px;height: calc(100% - 44px);padding: 10px;overflow: auto;">
+                                            <ng-container *ngFor="let banner of bannerList;let i = index">
+                                                <div *ngIf="banner.image" class="d-flex">
+                                                    <div class="col-5 car-hover" style="padding: 30px;">
+                                                        <div  class="d-flex justify-content-between" style="margin-bottom: 10px;">
+                                                            <span style="font-weight: 700;">Image {{i + 1}}</span> <span><span style="color: #9b9a9a;">Banner image fit:</span> <span style="font-weight: 700;margin-left: 10px;"> <p-checkbox id="bannerfit_checkbox1"
+                                                                [(ngModel)]="banner.fillOption" (onChange)="fillLogo(banner.id,$event)"    
+                                                                [binary]="true" inputId="binary" label=""></p-checkbox> Fill</span></span> 
+                                                        </div>
+                                                        <div style="position: relative;width: 100%;height: 141px;">
+                                                            <img [ngStyle]="{'object-fit':banner.fillOption ? 'fill' : 'none'}" style="border-radius: 10px;width:100%;height: 100%;" [src]="banner.image" alt="">
+                                                            <button (click)="uploadLogo(banner.id)" class="btn-dark" style="border-radius: 50%;position: absolute;top: 10%;left: 83%;padding-bottom: 4px;">
+                                                                <img src="../../../../assets/images/edit-2-copy.png" alt="">
+                                                            </button>
+                                                            <button (click)="deleteLogo(banner.id)" class="btn-dark" style="border-radius: 50%;position: absolute;top: 10%;left: 90%;padding-bottom: 4px;">
+                                                                <img src="../../../../assets/images/delete-btn-image.png" alt="">
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div style="padding: 30px;" class="d-flex align-items-center justify-content-start">
+                                                        <div>
+                                                            <div style="color: #777777;">
+                                                               Required Banner Size: 710X250px       
+                                                            </div>
+                                                            <div style="color: #777777;">
+                                                               Supported file types: .jpg, .png
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="!banner.image" class="d-flex" style="padding-top: 25px;padding-bottom: 25px;">
+                                                    <div class="col-5 car-hover1" style="">
+                                                        <div  class="d-flex justify-content-between" style="margin-bottom: 10px;">
+                                                            <span style="font-weight: 700;">Image {{i + 1}}</span> <span><span style="color: #9b9a9a;">Banner image fit:</span> <span style="font-weight: 700;margin-left: 10px;"> <p-checkbox id="bannerfit_checkbox1"
+                                                                [(ngModel)]="banner.fillOption"    
+                                                                [binary]="true" inputId="binary" label=""></p-checkbox> Fill</span></span> 
+                                                        </div>
+                                                        <div (click)="uploadLogo()" style="width: 100%;
+                                                        height: 141px;
+                                                        margin: 13px 27px 13px 1px;
+                                                        padding: 30px 118px 29px;
+                                                        border-radius: 10px;
+                                                        text-align: center;
+                                                        cursor: pointer;
+                                                        align-items: center;
+                                                        border: solid 1px #eaeaea;
+                                                        background-color: #fbfbfb;" >
+                                                    <div>
+                                                        <img style="margin-bottom: 5px;" src="assets/images/landing-page/blank-bg.png">
+                                                        <p style="color: #9b9a9a;">Upload Background Image</p>
+                                                    </div>
+                                                    <!-- <button (click)="uploadLogo()" class="btn-dark" style="border-radius: 50%;position: absolute;top: 10%;left: 90%;padding-bottom: 4px;">
+                                                        <img src="../../../../assets/images/edit-2-copy.png" alt="">
+                                                    </button> -->
+                                                    <!-- <button class="btn-dark" style="border-radius: 50%;position: absolute;top: 10%;left: 90%;padding-bottom: 4px;">
+                                                        <img src="../../../../assets/images/delete-btn-image.png" alt="">
+                                                    </button> -->
+                                                    </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center justify-content-start">
+                                                        <div>
+                                                            <div style="color: #777777;">
+                                                               Required Banner Size: 710X250px       
+                                                            </div>
+                                                            <div style="color: #777777;">
+                                                               Supported file types: .jpg, .png
+                                                            </div>
+                                                        </div>
+                                                    </div>
+    
+                                                </div>
+                                              
+                                            </ng-container>
+                                         
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+

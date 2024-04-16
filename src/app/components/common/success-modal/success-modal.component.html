@@ -1,0 +1,10 @@
+<div [ngClass]="{'success-msg': statusFlag, 'error-msg': !statusFlag}">
+    <div class="custom-modal modal-container" id="wrapper">
+        <div class="modal-body">
+            <div class="container">
+                <div class="text-center" [ngClass]="{'tick-icon': statusFlag, 'error-icon': !statusFlag}"></div>
+                <div class="conf-txt text-center success-content" [innerHTML]="successMessage"></div>
+            </div>
+        </div>
+    </div>
+</div>

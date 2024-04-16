@@ -1,0 +1,357 @@
+<div id="header">
+    <!--<app-product-header [pageData]="headerData"></app-product-header>-->
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>  
+</div>
+
+<div class="prob-new">
+    <div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont" [ngClass]="{'col-lg-8 step1': step1Action }">
+
+        <div class="form-cont" [ngClass]="{'col-lg-12': step1Action}">
+            <form class="form-horizontal" [formGroup]="knowledgeArticleForm" (ngSubmit)="onSubmit()">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="teamSystem" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>
+                        <!-- <button *ngIf="step1Action && !step2Action" class="btn next">Next <img
+                                src="assets/images/parts/next-icon.png" /></button> -->
+                        <!-- <div *ngIf="step1Action && step2Action && saveDraftFlag" class="btn next save"
+                            (click)="submitAction('save')">Save <img src="assets/images/parts/save-draft.png" /></div> -->
+                        <div *ngIf="step1Action" [ngClass]="{'disabled':!knowledgeArticleForm.valid}" class="btn next publish disable" (click)="submitAction('publish')">
+                            {{saveText}} <img src="assets/images/parts/publish.png" />
+                        </div>
+                    </div>
+                </div>
+            
+                <div [style.height.px]="innerHeight">
+                    <div id="step" #step class="ps form-fields" [perfectScrollbar]="sconfig">
+
+                        <div class="form-items">
+                            <div *ngIf="step1Action">
+
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <div class="banner-fit text-right">
+                                            <span class="banner-label">Banner image fit:</span>
+                                            <p-checkbox id="bannerfit_checkbox" formControlName="bannerFit" [binary]="true" inputId="binary" label="Fill"></p-checkbox>
+                                        </div>
+                                        <span *ngIf="imgURL == null" class="prob-upload ka-upload">
+                                            <a (click)="updateLogo()" class="browse-button"></a>
+                                            <span class="upload-txt">Upload Banner Image</span>
+                                        </span>
+                                        <span *ngIf="imgURL != null" class="prob-upload upload-bg knw-banner"
+                                            [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}" [ngClass]="{'cover': knowledgeArticleForm.value.bannerFit, 'contain': !knowledgeArticleForm.value.bannerFit}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile()" class="action-btn delete-upload"></a>
+                                                <a (click)="updateLogo()" class="action-btn edit-upload"></a>
+                                            </div>
+                                        </span>
+                                        <div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}</div>
+                                    </div>
+                                    <!-- <div class="form-col field-col">
+                                        <div class="prob-form-control part-form-control split-control">
+                                            <span class="required">Required</span>
+                                            <input matInput placeholder="Part Number" (blur)="processChange($event)"
+                                                formControlName="partNumber" [(ngModel)]="partNumber"
+                                                [ngClass]="{ 'is-invalid': step1Submitted && f.partNumber.errors }"
+                                                maxlength="{{nameMaxLen}}">
+
+                                            <div *ngIf="!validatePartNo" class="field-err" style="width: 100%;
+                                    margin-top: 0.25rem;
+                                    font-size: 80%;
+                                    color: #dc3545;
+                                ">{{validatePartMsg}}</div>
+
+
+                                            <div *ngIf="step1Submitted && f.partNumber.errors" class="invalid-feedback">
+                                                <div class="field-err" *ngIf="f.partNumber.errors.required">Part Number
+                                                    is required</div>
+                                            </div>
+                                        </div>
+                                        <div class="prob-form-control part-form-control split-control end-control">
+                                            <span class="required">Required</span>
+                                            <input matInput placeholder="Part Name" formControlName="partName"
+                                                [(ngModel)]="partName"
+                                                [ngClass]="{ 'is-invalid': step1Submitted && f.partName.errors }"
+                                                maxlength="{{maxLen}}">
+                                            <div *ngIf="step1Submitted && f.partName.errors" class="invalid-feedback">
+                                                <div class="field-err" *ngIf="f.partName.errors.required">Part Name is
+                                                    required</div>
+                                            </div>
+                                        </div>
+                                        <div class="prob-form-control cust-comp-control">
+                                            <textarea matInput placeholder="Part Description" formControlName="partDesc"
+                                                [(ngModel)]="partDesc" maxlength="{{descMaxLen}}"></textarea>
+                                        </div>
+                                    </div> -->
+                                </div>
+                                <div class="row part-row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <div class="prob-form-row">
+                                            <div class="prob-form-control part-form-control ws-form-control">
+                                                <span class="required">Required</span>
+                                                <app-sec-workstreams [filteredWorkstreams]="filteredWorkstreamIds"
+                                                    [workstreams]="workstreamItems"
+                                                    [showRecentSelection]="false"
+                                                    (selectedWorkstreams)="selectedWorkstreams($event)">
+                                                </app-sec-workstreams>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf=" step1Submitted && !workstreamValid">Select workstream
+                                                </mat-error>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="prob-form-row">
+                                    <div class="app-info">Select Product or Enter Title</div>
+                                    <div *ngIf="!prodTypeFlag">
+                                        <!--span class="text-right required">Required</span-->
+                                        <div *ngIf="industryType.id == 2" class="prob-form-control prod-control cust-select gts-sel app-type">
+                                            <mat-icon class="material-icon mfg-icon"></mat-icon>
+                                            <select #mfgSelect [ngClass]="{'default': defMfgVal == ''}" formControlName="mfgVal"
+                                                [(ngModel)]="defMfgVal"
+                                                (change)="fieldChange(0, 'defMfg', mfgSelect.value)">
+                                                <optgroup>
+                                                    <option value="" disabled>Select Manufacturer</option>
+                                                    <option *ngFor="let pt of mfgItems" [value]="pt.id"
+                                                        class="{{pt.name | lowercase}}">
+                                                        {{ pt.name }}
+                                                    </option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+                                        <div *ngIf="industryType.id != 2" class="prob-form-control prod-control cust-select gts-sel app-type">
+                                            <mat-icon class="material-icon prod-type-icon"></mat-icon>
+                                            <select #probTypeSelect formControlName="prodTypeVal"
+                                                [(ngModel)]="defProdType"
+                                                (change)="fieldChange(0, 'defProdType', probTypeSelect.value)">
+                                                <optgroup>
+                                                    <option value="" disabled>Select Make</option>
+                                                    <option *ngFor="let pt of prodTypes" [value]="pt.id"
+                                                        class="{{pt.name | lowercase}}">
+                                                        {{ pt.name }}
+                                                    </option>
+                                                </optgroup>
+                                            </select>
+                                            <!--div *ngIf="step1Submitted && f.prodTypeVal.errors" class="invalid-feedback">
+                                                <div *ngIf="f.prodTypeVal.errors.required">Please select make</div>
+                                            </div-->
+                                        </div>
+                                    </div>
+                                    <div *ngIf="prodTypeFlag" class="vehicle-form">
+                                        <span class="text-right required">Required</span>
+                                        <div *ngFor="let app of a.controls; let i = index">
+                                            <div [formGroup]="app">
+                                                <div class="row col-lg-12 vehicle-row">
+                                                    <div class="col-md-6 col-lg-3" *ngIf="industryType.id == 2">
+                                                        <div class="prob-form-control prod-control">
+                                                            <mat-form-field>
+                                                                <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                    placeholder="Select Manufacturer"
+                                                                    class="single-selection"
+                                                                    [(ngModel)]="appFormInfo[i].manufacturer"
+                                                                    formControlName="manufacturer"
+                                                                    (selectionChange)="fieldChange(i, 'mfg', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of mfgItems"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>                                                                
+                                                            </mat-form-field>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !appFormInfo[i].mfgValid">
+                                                                Select manufaturer</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div *ngIf="industryType.id == 2" class="prob-form-control prod-control">
+                                                            <mat-form-field>
+                                                                <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                    [ngClass]="{'load-control': appFormInfo[i].modelLoading}"
+                                                                    placeholder="Select Make"
+                                                                    class="single-selection"
+                                                                    [(ngModel)]="appFormInfo[i].genericProductName"
+                                                                    formControlName="genericProductName"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of appFormInfo[i].makeList"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                        </div>
+                                                        <div *ngIf="industryType.id != 2" class="prob-form-control prod-control">
+                                                            <mat-form-field>
+                                                                <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                    *ngIf="i == 0" placeholder="Select Make"
+                                                                    class="single-selection"
+                                                                    [(ngModel)]="appFormInfo[i].genericProductName"
+                                                                    formControlName="genericProductName"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of prodTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                                <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                    *ngIf="i > 0" placeholder="Select Make"
+                                                                    class="single-selection"
+                                                                    [(ngModel)]="appFormInfo[i].genericProductName"
+                                                                    formControlName="genericProductName"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of appProdTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !appFormInfo[i].prodTypeValid">
+                                                                Select product type</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6" [ngClass]="{'col-lg-5': industryType.id != 2, 'col-lg-3': industryType.id == 2}">
+                                                        <div class="prob-form-control custom-form-control" [ngClass]="{'load-control': appFormInfo[i].modelLoading}">
+                                                            <div *ngIf="appFormInfo[i].modelLoading"
+                                                                class="cursor def-select select-model">
+                                                                <div class="tag-col tag-text disable">
+                                                                    Select Model <img
+                                                                        src="assets/images/dropdown_downarrow.png">
+                                                                </div>
+                                                            </div>
+                                                            <app-models *ngIf="!appFormInfo[i].modelLoading"
+                                                                [splitIcon]="splitIcon"
+                                                                [filteredModels]="appFormInfo[i].models"
+                                                                [models]="appFormInfo[i].modelList"
+                                                                (selectedModels)="selectedModels(i, $event)">
+                                                            </app-models>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !appFormInfo[i].modelValid">
+                                                                Select model</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6" [ngClass]="{'col-lg-4': industryType.id != 2, 'col-lg-3': industryType.id == 2}">
+                                                        <div class="prob-form-control custom-form-control">
+                                                            <app-years [splitIcon]="splitIcon"
+                                                                [filteredYears]="appFormInfo[i].years" [years]="years"
+                                                                (selectedYears)="selectedYears(i, $event)"></app-years>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !appFormInfo[i].yearValid">
+                                                                Select year</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="vehicle-row-actions">
+                                                        <div *ngIf="appFormInfo[i].actionFlag && appFormInfo[i].addFlag"
+                                                            class="action-icon add-icon"
+                                                            (click)="addAppFields(actionInit, i+1, '')"
+                                                            title="Add Applications"></div>
+                                                        <div class="action-icon remove-icon"
+                                                            (click)="removeAppFields(i)" title="Remove Appliction">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="prob-form-control cust-comp-control">
+                                    <div class="def-select select-tags">
+                                        <div class="field-col text-col alt-text">
+                                            <div class="field-label label-bg item-label">Title</div>
+                                            <textarea placeholder="Title(Max 100)"
+                                                formControlName="knowledgeArticleTitle"
+                                                [ngModel]="knowledgeArticleTitle" maxlength="100"
+                                                autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <div class="prob-form-control cust-comp-control"
+                                    style="margin-top:1rem;margin-bottom: 2rem;">
+                                    <div><span><img src="assets/images/create_KA_title.png"
+                                                style="width:18px;height:17px;"></span>
+                                               <span class="KA_desc">Title</span>
+                                               <span class="KA_required">Required</span></div>
+                                    <input matInput class="KA_input_text" placeholder="Title"
+                                        formControlName="knowledgeArticleTitle" name="knowledgeArticleTitle" [ngModel]="knowledgeArticleTitle"
+                                        maxlength="100" autocomplete="off">
+                                        <mat-error class="invalid-feedback page-error-text KA_error_msg"
+                                        *ngIf="knowledgeArticleFormControl.knowledgeArticleTitle.errors?.required && knowledgeArticleFormControl.knowledgeArticleTitle.dirty">Title is required
+                                    </mat-error>
+                             
+                                </div>
+                                <div class="prob-form-control cust-comp-control"
+                                    style="margin-top:1rem;margin-bottom: 2rem;">
+                                    <div><span><img src="assets/images/knowledge_article_description.png"></span><span
+                                            class="KA_desc">Description</span>
+                                            <span class="KA_required">Required</span></div>
+                                    <ckeditor [editor]="Editor" [config]="configCke"
+                                        formControlName="knowledgeArticleDescription"
+                                        [(ngModel)]="knowledgeArticleDescription"></ckeditor>
+                                        <mat-error class="invalid-feedback page-error-text KA_error_msg"
+                                        *ngIf="knowledgeArticleFormControl.knowledgeArticleDescription.errors?.required && knowledgeArticleFormControl.knowledgeArticleDescription.dirty">Description is required
+                                    </mat-error>
+                                </div>
+                                <div class="row">
+                                    <div class="prob-form-control cust-comp-control col-md-6" *ngIf="collabticDomain">
+                                        <div class="cursor def-select select-tags" (click)="manageList('category')">
+                                            <div class="tag-col cat-bg"></div>
+                                            <div class="tag-col tag-text" [ngClass]="{'disable': filteredCats?.length == 0}">
+                                                Select Category <img src="assets/images/dropdown_downarrow.png">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="filteredCats?.length > 0" class="selected-items">
+                                            <div *ngFor="let item of filteredCats; let t=index" class="tag-text">
+                                                <span>{{item}}</span>
+                                                <i class="material-icons tag-close"
+                                                    (click)="disableCatgSelection(t)">close</i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                
+                                    <div class="prob-form-control cust-comp-control col-md-6" [ngClass]="{ 'col-md-12' : !collabticDomain } " >
+                                        <div class="cursor def-select select-tags" (click)="manageList('tag')">
+                                            <div class="tag-col tag-bg"></div>
+                                            <div class="tag-col tag-text" [ngClass]="{'disable': filteredTags?.length == 0}">
+                                                Select Tags <img src="assets/images/dropdown_downarrow.png">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                                            <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                                                <span>{{item}}</span>
+                                                <i class="material-icons tag-close"
+                                                    (click)="disableTagSelection(t)">close</i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="prob-form-row attachment-row ">
+                                    <app-file-attachment *ngIf="partUpload" class="attachment-file"
+                                        [action]="manageAction" [apiData]="partApiData" [attachmentItems]="attachmentItems"
+                                        (uploadedItems)="attachments($event)">
+                                    </app-file-attachment>
+                                    <app-attachment-view *ngIf="attachmentFlag" [action]="EditAttachmentAction" [access]="pageAccess" [attachments]="attachmentItems"
+                                        (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

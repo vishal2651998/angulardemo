@@ -1,0 +1,79 @@
+<div class="prob-header header-class-domain flex-align-justify-center col-12 no-padding" style="z-index: 10;">
+    <div class="flex-align-justify-center" style="width: 97%;">
+        <div class="form-view-class flex-align-justify-center margin-right-40px cursor-pointer" (click)="showForm()">
+            <img class="margin-right-10px" width="40px" height="40px" src="{{!showViewChanges ? 'assets/images/service-provider/form-view-orange.png' : 'assets/images/service-provider/form-view.png'}}" />
+            <span [ngClass]="!showViewChanges ? 'color-orange' : ''"  class="form-view-text">Form View</span>
+        </div>
+        <div class="web-view-class flex-align-justify-center margin-right-40px cursor-pointer" (click)="showResponsive('web')">
+            <img class="margin-right-10px" width="40px" height="40px" src="{{showViewChanges && !isMobileView ? 'assets/images/service-provider/web-view-orange.png' : 'assets/images/service-provider/web-view.png'}}" />
+            <span [ngClass]="showViewChanges && !isMobileView ? 'color-orange' : ''" class="form-view-text">Web View</span>
+        </div>
+        <div class="mobile-view-class flex-align-justify-center cursor-pointer" (click)="showResponsive('mobile')">
+            <img [ngClass]="showViewChanges && isMobileView ? 'color-orange' : ''" class="margin-right-10px" width="40px" height="40px" src="{{showViewChanges && isMobileView ? 'assets/images/service-provider/mobile-view-orange.png' : 'assets/images/service-provider/mobile-view.png'}}" />
+            <span [ngClass]="showViewChanges && isMobileView ? 'color-orange' : ''" class="form-view-text">Mobile View</span>
+        </div>
+    </div>
+    <div style="width: 3%;" *ngIf="showViewChanges">
+        <a title="Close" (click)="showForm()">
+            <img src="assets/images/thread-detail/thread-window-close.svg" alt="Close" onload="SVGInject(this)">
+        </a>
+    </div>
+</div>
+<div *ngIf="!showViewChanges" class="prob-new">
+    <div class="row new-pro-cont col-lg-8 step1">
+        <div class="form-cont col-lg-12" style="height: 60vh !important; overflow: hidden;">
+            <form class="form-horizontal" [formGroup]="domainForm" (ngSubmit)="onSubmit()">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        Company Banner
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>
+                        <div [ngClass]="{'disabled':!domainForm.valid}" class="btn next publish disable" (click)="submitAction('publish')">
+                            {{saveText}} <img src="assets/images/service-provider/save.png" />
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+                    <div *ngIf="!loading" id="step" #step class="ps form-fields" [perfectScrollbar]="sconfig">
+                        <div class="form-items" style="margin-bottom: 70px;">
+                            <div>
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <div class="banner-fit text-right">
+                                            <span class="banner-label">Banner image fit:</span>
+                                            <p-checkbox id="bannerfit_checkbox" formControlName="bannerFit" [(ngModel)]="bannerFit" [binary]="true" inputId="binary" label="Fill"></p-checkbox>
+                                        </div>
+                                        <div class="field-label item-label custom-field-margin-padding-new banner-new-bg">Background Image</div>
+                                        <span *ngIf="imgURL == null" class="prob-upload ka-upload">
+                                            <a (click)="updateLogo()" class="browse-button"></a>
+                                            <span class="upload-txt">Upload Banner Image</span>
+                                        </span>
+                                        <span *ngIf="imgURL != null" class="prob-upload upload-bg knw-banner"
+                                            [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}" [ngClass]="{'cover': domainForm.value.bannerFit, 'contain': !domainForm.value.bannerFit}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile()" class="action-btn delete-upload"></a>
+                                                <a (click)="updateLogo()" class="action-btn edit-upload"></a>
+                                            </div>
+                                        </span>
+                                        <div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div *ngIf="showViewChanges" [ngClass]="isMobileView ? 'width-426px col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 no-padding margin-0-auto' : 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin'">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin">
+        <img *ngIf="imgURL" [ngStyle]="{'height': isMobileView ? '170px' : '230px', 'width':'100%'}" src="{{imgURL}}" />
+        <img *ngIf="!imgURL" [ngStyle]="{'height': isMobileView ? '170px' : '230px', 'width':'100%'}" src="assets/images/service-provider/inner-detail.jpg" />
+    </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="hq-head justify-content-between align-items-center d-flex">
+    <div class="" [ngClass]="{ 'visible' : opacityFlag }">
+        <div *ngIf="!user?.data || !user?.data?.shopId" class="hq-head-row-0">
+            <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="level && subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span>
+            <img *ngIf="level && subLevel" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="level && subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('Region')">{{headQuarterService.sublevelName}}</span>
+            <span *ngIf="!level && !subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('allShops')">All Shops</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span (click)="backToList()" class="hq-head-breadcrumb-text cursor">{{headQuarterService.currentShopName}}</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="!toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text cursor"  (click)="backToList()">Tools & Equipment</span>
+            <span *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text cursor"  (click)="toolsListPageRef?.backToTools()">Tools & Equipment</span>
+            <img *ngIf="addProductFinal" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="addProductFinal" class="hq-head-breadcrumb-text cursor"  (click)="backToAddTools()">Add Tools & Equipment</span>
+            <img *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+            <span *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag" class="hq-head-breadcrumb-text cursor" (click)="toolsListPageRef?.toolsLocationListPageRef?.back('historyback')">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData?.vendorInfo?.name}} - {{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.loc}} Locations</span>
+            
+            <img *ngIf="toolsListPageRef?.locationToolsFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+            <span *ngIf="toolsListPageRef?.locationToolsFlag" class="hq-head-breadcrumb-text">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData?.vendorInfo?.name}}</span>
+
+            <img *ngIf="(toolsListPageRef?.selectedProduct && addProductFinal && productHistoryCom?.selectedTool && productHistoryCom?.selectedTool?.id)" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+            <span *ngIf="(toolsListPageRef?.selectedProduct && addProductFinal  && productHistoryCom?.selectedTool && productHistoryCom?.selectedTool?.id)" class="hq-head-breadcrumb-text">Enter Equipment Purchase Details</span>
+
+            <img *ngIf=" (toolsListPageRef?.selectedProduct && productHistoryFlag && toolsListPageRef.toolsLocationPageData)" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+            <span *ngIf="(toolsListPageRef?.selectedProduct && productHistoryFlag && toolsListPageRef.toolsLocationPageData)" class="hq-head-breadcrumb-text">Equipment Purchase Details</span>
+        </div>
+        <div *ngIf="user?.data && user?.data?.shopId" class="hq-head-row-0">
+            <span  (click)="backToList()" class="hq-head-breadcrumb-text">Tools & Equipment</span>
+            <img *ngIf="addProductFinal"  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="addProductFinal"   (click)="backToAddTools()" class="hq-head-breadcrumb-text">Add Tools & Equipment</span>
+            <img *ngIf="(toolsListPageRef?.selectedProduct && addProductFinal && productHistoryCom?.selectedTool && productHistoryCom?.selectedTool?.id)" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+            <span *ngIf="(toolsListPageRef?.selectedProduct && addProductFinal  && productHistoryCom?.selectedTool && productHistoryCom?.selectedTool?.id)" class="hq-head-breadcrumb-text">Enter Equipment Purchase Details</span>
+
+            <img *ngIf=" (toolsListPageRef?.selectedProduct && productHistoryFlag && toolsListPageRef.toolsLocationPageData)" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+            <span *ngIf="(toolsListPageRef?.selectedProduct && productHistoryFlag && toolsListPageRef.toolsLocationPageData)" class="hq-head-breadcrumb-text">Equipment Purchase Details</span>
+        </div>
+        <div *ngIf="(!user?.data || !user?.data?.shopId) && !addProductFinal" class="hq-head-row-1">
+            <img class="hq-head-img" src="../../../../assets/images/shop/shop-icon.png" alt="" />
+            <span class="hq-head-text">{{headQuarterService.currentShopName}} (ID #{{headQuarterService.currentShopId}})</span>
+        </div>
+
+        <div *ngIf="user?.data && user?.data?.shopId && !addProductFinal && !productHistoryFlag" class="hq-head-row-1">
+            <img class="hq-head-img" src="../../../../assets/images/hq/tool-head-default.png" alt="" />
+            <span (click)="backToList()" class="hq-head-text">Tools & Equipment</span>
+           
+        </div>
+
+    </div>
+
+    <div *ngIf="!toolsListPageRef?.productDetailsFlag && !toolsListPageRef?.locationToolsFlag">
+        <!-- <div (click)="addTools()" class="m-0 add-action-btn">
+            <img src="assets/images/hq/add-icon.png">
+            <span>New Tool/Equipment to Network</span>
+        </div> -->
+        <div *ngIf="!addProductFinal && !productHistoryFlag" (click)="selectProduct({})" class="m-0 add-action-btn">
+            <img src="assets/images/hq/add-icon.png">
+            <span>Add Tool & Equipment to Shop</span>
+        </div>
+        <!-- <div class="m-0 border-0 add-action-btn">
+            <img src="assets/images/export-green-icon.png">
+            <span>Template</span>
+        </div> -->
+        <!-- <div class="m-0 pl-0 border-0 add-action-btn">
+            <img src="assets/images/common/cdownload-icon.png">
+            <span>Download Tools & equipment</span>
+        </div>
+        <div class="m-0 pl-0 border-0 add-action-btn">
+            <img src="assets/images/hq/hq-media-green-upload-icon.png">
+            <span>Upload Tools & equipment</span>
+        </div> -->
+    </div>
+
+    <span *ngIf="toolsListPageRef?.locationToolsFlag || toolsListPageRef?.productDetailsFlag" (click)="addProduct()" class="add-action-btn cursor">
+        <img src="assets/images/customers/add-icon.png">
+        <span >Add Tools & Equipment to Shop</span>
+    </span>
+</div>
+<div class="d-flex">
+    <app-shop-details-sidebar *ngIf="(!user?.data || !user?.data?.shopId) && !addProductFinal && !productHistoryFlag" [selectedTab]="'TOOLS'"></app-shop-details-sidebar>
+    <div *ngIf="!productHistoryFlag && !addProductFinal" class="ts-list-rt transition filter-expand" [ngClass]="{'col-12 pl-0':user.data && user.data.shopId}">
+        <app-tools-list  *ngIf="toolsListFlag" (viewProduct)="viewProductHistory($event.loc,$event.tool)" (selectProduct)="selectProduct($event)" [toolsPageData]="toolsPageData"  (toolsIndexListComponentRef)="toolsListPageRef = $event" (toolsCallback)="toolsIndexListPageCallback($event)"></app-tools-list>
+    </div>
+    <div class="col-12" *ngIf=" productHistoryFlag">
+        <div style="width: 100%; display: block;">
+            <app-product-history *ngIf="productHistoryFlag" [selectedLocation] = selectedLocation [selectedTool]="selectedTool"  [toolsData]="toolsData" [toolsLocationPageData]="toolsListPageRef.toolsLocationPageData" (historyPageCallback)="historyPageCallback($event)"></app-product-history>
+        </div>
+    </div>
+
+    <div class="col-12"  *ngIf=" addProductFinal">
+        <div style="width: 100%; display: block;">
+            <app-product-history #productHistoryCom *ngIf="addProductFinal" [selectedShop]="selectedShop" [selectedLocation] = selectedLocation [selectedTool]="selectedTool" [addProductFinal]="addProductFinal"  [toolsData]="toolsData" [toolsLocationPageData]="toolsListPageRef.toolsLocationPageData" (historyPageCallback)="historyPageCallback($event)"></app-product-history>
+        </div>
+    </div>
+</div>

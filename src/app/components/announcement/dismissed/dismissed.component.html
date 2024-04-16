@@ -1,0 +1,23 @@
+<div id="header" >
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="prob-index">
+    <div class="part-list-head">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt announce-img">{{title}}</span>
+        </div>       
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div>
+    <div class="probing-content cbt-content part-content acc-content" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="announcement-container">            
+            <app-announcement-user-view *ngIf="!filterLoading" [announcementData]="announcementData"></app-announcement-user-view>
+        </div>
+    </div>
+    <div class="cust-right-panel acc-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div>
+</div>

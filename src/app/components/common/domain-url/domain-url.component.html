@@ -1,0 +1,60 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">
+    <div *ngIf="!loading" class="login-loader text-center"><img src="assets/images/loading.svg" alt="Loader" /></div>    
+    <div *ngIf="loading">
+    <div class="modal-header"> 
+        <div class="setwidthhead"></div>
+        <img  class="close-icon" aria-label="Close" (click)="activeModal.dismiss('Cross click')" src="assets/images/login/popup-close.png" />
+    </div>
+    <div class="modal-body">        
+        <div class="reset-password" *ngIf="!domainSuccess">
+            <form [formGroup]="domainForm" (ngSubmit)="checkEmail()">
+                <h6 class="head-text text-center">No problem, let's figure out the URL...</h6>        
+                <div class="center-cont">
+                    <div class="input-group" [ngClass]="{ 'active': emailInputFlag, 'error': (submitted && f.email.errors || serverError) }">
+                        <div class="input-group-prepend email-img normal" [ngClass]="{ 'active': emailInputFlag, 'setOpacity3' : loading1 }"></div>
+                        <input autofocus #myInput1 tabindex="1" type="text" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading1 }" matInput placeholder="Enter your account Email" formControlName="email" maxlength="40" (keyup)="onKeypress(1,$event)"/>                                                                    
+                        <div *ngIf="!loading1" tabindex="2" (click)="checkEmail()" class="input-group-postpend-arrow"  [ngClass]="{ 'active': !(f.email.errors) }" ></div> 
+                        <div *ngIf="loading1" tabindex="2" class="input-group-postpend-arrow loading-img" ></div>                           
+                    </div>                     
+                    <div *ngIf="serverError" class="login-invalid-feedback">
+                        <img src="assets/images/login/error-img.png" /> <span>{{serverErrorMsg}}</span>
+                    </div> 
+                </div>
+            </form>
+        </div>  
+
+        <div class="domain-url-container" *ngIf="domainSuccess && URLFound">
+            <div class="list-div-head">
+                <h6 class="head-text text-center greenColor">Found it!</h6>
+                <span class="small-text1 text-center">Tap the URL to continue</span>                
+            </div>
+            <div class="domaincontenturl">
+            <div class="list-div-cont" *ngFor="let domainData of domainDataVal ">
+                <div  class="url-row" (click)="successOK(domainData.subDomain)">
+                    <span class="url-col1 url-col">
+                        <span class="domain-img rounded-circle" [ngStyle]="{'background-image': 'url('+domainData.businessLogo+')'}"></span>
+                    </span>
+                    <span class="url-col2 url-col">
+                        <span class="small-text2">Your company domain URL is</span>
+                        <span class="url-name">{{domainData.subDomain}}.collabtic.com</span>
+                    </span>
+                    <span class="url-col3 url-col">
+                        <span class="arrow-img"><img src="assets/images/login/right-arrow.png" /></span>
+                    </span>
+                </div>               
+            </div>  
+            </div>                   
+        </div>   
+        
+        <div class="domain-url-container no-list-div text-center" *ngIf="domainSuccess && !URLFound">            
+            <img src="assets/images/login/url-not-found.png">   
+            <p class="small-text4">We could not find your account in Collabtic</p>
+            <p class="small-text5">Redirecting you to Sign up Page</p>
+            <div (click)="noAccount()" class="ok-btn-div"><span>OK</span></div>
+        </div>  
+
+    </div>
+</div>
+</div>
+
+

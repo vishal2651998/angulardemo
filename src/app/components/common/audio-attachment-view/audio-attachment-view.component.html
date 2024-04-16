@@ -1,0 +1,26 @@
+<!-- View Attachments -->
+<div [attr.id]="'audioGallery_'+dynamicGid" class="audio-description {{action}} cursor">
+    <div id="lg-{{i}}" class="attachment-row {{a.type}} lg-{{a.flagId}}" *ngFor="let a of attachments; let i = index;"
+            [attr.data-responsive]="a.thumbFilePath"
+            [attr.data-sub-html]="a.galleryCaption"
+            [attr.data-html]="a.galleryId"
+            [attr.data-poster]="a.posterImg"
+            [attr.data-src]="a.fileImg"
+            [attr.data-download-url]="a.downloadUrl"
+            [attr.data-iframe] = "a.iframe"
+            >
+        <!-- Hidden audio div -->
+        <div *ngIf="a.flagId == 7" class="hide" [attr.id]="a.galleryHidden">
+            <audio id="audio" class="lg-video-object lg-html5" controls>
+                <source [src]="a.audioUrl" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        <div class="audio-col bg-col"></div>
+        <div class="audio-col txt-col">
+            <div class="audio-row-1">{{a.galleryCaption}}</div>
+            <div class="audio-row-2">{{a.fileDuration}} <span *ngIf="action == 'new' || action == 'edit'">Seconds</span></div>
+        </div>
+        <span *ngIf="action != 'view'" class="remove cursor" (click)="delete(i);$event.stopPropagation();"><i class="pi pi-times"></i></span>
+    </div>
+</div>

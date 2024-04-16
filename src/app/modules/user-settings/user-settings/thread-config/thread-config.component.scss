@@ -1,0 +1,148 @@
+.section-container {
+    background-color: #fff;
+    border: solid 1px #ddd;
+    border-radius: 16px;
+    height: 100%;
+    overflow: hidden;
+    .title-row {
+      background-color: #f3f3f6;
+      border-bottom: solid 1px #ddd;
+      border-radius: 16px 16px 0px 0px;        
+      padding:10px 0px 10px 10px;
+      .title-text{
+          font-size: 18px;
+          font-family: 'Roboto-Medium';
+          color: #000000;
+          padding: 0 15px 0 10px;
+          vertical-align: middle;
+      }
+    }
+    .content-row {        
+        .row-border{
+          width: 100%;
+          display: block;
+          height: 1px;
+          .lt{
+            display: inline-block;
+            width: 65px;
+          }
+          .rt{
+            display: inline-block;
+            width: calc(100% - 65px);
+            border-bottom: solid 1px #ececec;
+          }
+        }
+        &:last-child{
+          .row-border{
+            .rt{
+              border-bottom: solid 0px #ececec;
+            }
+          }
+        }
+        padding: 12px 0 12px 12px;
+        .row-item {
+            display: table;
+            width: 100%;
+            .row-item-col {
+                display: table-cell;
+                &.action-text {
+                    .bg-img {
+                        background-color: #ffffff;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        border: solid 1px #469073;
+                        border-radius: 8px;
+                        display: inline-block;
+                        margin-right: 15px;
+                        height: 50px;
+                        width: 50px;
+                        vertical-align: middle;
+                        &.new-thread {
+                            background-image: url('../../../../../assets/images/user-settings/new-thread.png');
+                        }
+                        &.thread-activity {
+                            background-image: url('../../../../../assets/images/user-settings/thread-activity.png');
+                        }
+                        &.log-off {
+                            background-image: url('../../../../../assets/images/user-settings/log-off.png');
+                        }
+                    }
+                    .action-cont {
+                      color: #777777;
+                      display: inline-block;
+                      font-family: 'Roboto-Regular';
+                      font-size: 15px;
+                      vertical-align: middle;
+                      .head {
+                        color: #000000;
+                        font-family: 'Roboto-Medium';
+                        font-size: 16px;
+                      }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.action-toggle {   
+     text-align: right;
+    .toggle-col {
+      display: inline-block;
+      vertical-align: middle;
+      top: 0;
+      right: 12px;
+      &.field-label {
+        color: #4373b3;
+        display: none;
+      }
+  
+      &.toggle-option {
+        position: relative;
+  
+        p-inputswitch::ng-deep .p-inputswitch {
+            height: 28px;
+            position: relative;
+            top: 3px;
+            width: 52px;
+            
+  
+          .p-inputswitch-slider {
+            box-shadow: none;
+  
+            &:before {
+                width: 21px;
+                height: 21px;
+                margin-top: -11px;
+                left: 4px;
+            }
+  
+            &:after {
+              color: #ffffff;
+              content: "";
+              font-size: 12px;
+              position: absolute;
+              left: 25px;
+              top: 3px;
+            }
+          }
+  
+          &.p-inputswitch-checked {
+            .p-inputswitch-slider {
+              background: #469073;
+  
+              &:before {
+                transform: translateX(1rem);
+                left: 12px;
+              }
+  
+              &:after {
+                content: "";
+                left: 10px;
+              }
+            }
+          }
+        }
+      }
+    }
+}

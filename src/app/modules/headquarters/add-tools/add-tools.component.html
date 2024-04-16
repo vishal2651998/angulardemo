@@ -1,0 +1,743 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">New Tool/Equipment to Network</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button pButton pRipple type="button" [disabled] = "loading" (click)="submitForm()" icon="pi pi-check" iconPos="right" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close"
+                (click)="activeModal.dismiss()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form [formGroup]="productForm" class="action-form">
+            <div class="container">
+                <div class="row mb-27">
+                    <div class="col-sm-12">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt mb-12">
+                                <img src="assets/images/hq/image-disable.png" alt=""
+                                    class="icons-size mr-1 new-request-icon" width="17" height="17"
+                                    style="min-width: 17px; min-height: 17px;width: 23px; height: 17px;" />
+                                <label class="mb-0">Upload multiple product images/videos for carousel</label>
+                            </div>
+                        </div>
+                        <div class="image-filed d-flex">
+                            <ng-container *ngFor="let image of savedImages;index as i">
+                                <div class="image-box position-relative">
+                                    <img *ngIf="image?.thumbFilePath" class="upper-image-div-new" [src]="image?.thumbFilePath">
+                                    <img *ngIf="!image?.thumbFilePath &&  image?.binaryfile?.objectURL?.changingThisBreaksApplicationSecurity" class="upper-image-div-new" [src]=" getImage(image?.binaryfile?.objectURL?.changingThisBreaksApplicationSecurity)">
+
+                                    <div class="action-box position-absolute d-flex align-items-center">
+                                        <!-- <span (click)="uploadLogo(i)" class="edit action"></span> -->
+                                        <span (click)="deleteImage(i)" class="delete action"></span>
+                                    </div>
+                                </div>
+                            </ng-container>
+
+                            <div (click)="uploadLogo()" class="image-upload d-flex align-items-center justify-content-center flex-column">
+                                <img src="assets/images/hq/image-active.png" alt=""
+                                    style="margin-bottom: 12px;">
+                                <label class="add mb-0">Add</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row input-row mb-25">
+
+                    <div class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['vendorId'] && !!productForm?.controls['vendorId'].errors && !!productForm?.controls['vendorId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/vendor-name.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                    style="min-width: 17px; min-height: 19px;" />
+                                <label class="mb-0">Vendor Name</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+
+                        <div class="input-filed">
+                            <p-dropdown (click)="manageList('10')" formControlName="vendorId" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                               [options]="[{id:vendorSelectedId,name:vendorSelectedName}]" [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select Vendor Name" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3" [ngClass]="submitClicked && !!productForm && !!productForm.controls && !!productForm.controls['modelId'] && !!productForm.controls['modelId'].errors && !!productForm.controls['modelId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/product-model.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="22" height="22"
+                                    style="min-width: 22px; min-height: 22px;" />
+                                <label class="mb-0">Product Model</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+
+                        <div class="input-filed">
+                            <p-dropdown formControlName="modelId" [options]="[{id:productModelSelectedId,name:productModelSelectedName}]" class="p-dropdown-servicetype no-dropdown" (click)="manageList('11')" [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select Product Model" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3" [ngClass]="submitClicked && !!productForm && !!productForm.controls && !!productForm.controls['productNameId'] && !!productForm.controls['productNameId'].errors && !!productForm.controls['productNameId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/product-name.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="17" height="17"
+                                    style="min-width: 17px; min-height: 17px;" />
+                                <label class="mb-0">Product Name</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="input-filed">
+                            <p-dropdown [options]="[{id:productNameSelectedId,name:productNameSelectedName}]" formControlName="productNameId" (click)="manageList('12')" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select Product Name" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img style="width: 24px;height:18px;" src="assets/images/hq/department.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="24" height="18"
+                                    style="min-width: 24px; min-height: 18px;" />
+                                <label class="mb-0">Department</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="input-filed">
+                            <p-dropdown [options]="[{id:departmentSelectedId,name:departmentSelectedName}]" (click)="manageList('17')" formControlName="departmentId" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select Department" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row input-row mb-25">
+                    <div class="col-sm-3" [ngClass]="submitClicked && !!productForm.controls && !!productForm.controls['brandId'] && !!productForm.controls['brandId'].errors && !!productForm.controls['brandId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/brand.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="22" height="19"
+                                    style="min-width: 22px; min-height: 21px;" />
+                                <label class="mb-0">Brand</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="input-filed">
+                            <p-dropdown formControlName="brandId" [options]="[{id:brandSelectedId,name:brandSelectedName}]" (click)="manageList('13')" class="p-dropdown-servicetype no-dropdown " [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                            <!-- <input formControlName="brandId" type="text" readonly="true" (click)="manageList('13')"
+                                pInputText class="input-bg map-input w-100" placeholder="Select Brand" /> -->
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/category.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="19" height="18"
+                                    style="min-width: 19px; min-height: 18px;" />
+                                <label class="mb-0">Category</label>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <p-dropdown formControlName="categoryId" [options]="[{id:categorySelectedId,name:categorySelectedName}]" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                            (click)="manageList('14')" [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                            <!-- <input formControlName="categoryId" type="text" readonly="true" (click)="manageList('14')"
+                                pInputText class="input-bg map-input w-100" placeholder="Select Category" /> -->
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/type.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                    style="min-width: 19px; min-height: 19px;" />
+                                <label class="mb-0">Type</label>
+                            </div>
+
+
+                        </div>
+
+                        <div class="input-filed">
+                            <p-dropdown [options]="[{id:typeSelectedId,name:typeSelectedName}]" formControlName="toolTypeId" (click)="manageList('15')" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                            <!-- <input formControlName="toolTypeId" type="text" readonly="true" (click)="manageList('15')"
+                                pInputText class="input-bg map-input w-100" placeholder="Select Type" /> -->
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/manufacture.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="20" height="20"
+                                    style="min-width: 20px; min-height: 20px;" />
+                                <label class="mb-0">Manufacturer</label>
+                            </div>
+
+
+                        </div>
+
+                        <div class="input-filed">
+                            <p-dropdown [options]="[{id:manufacturerSelectedId,name:manufacturerSelectedName}]" formControlName="mfgId" class="p-dropdown-servicetype no-dropdown" [filter]="true" (click)="manageList('16')"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select" optionLabel="name" optionValue="id">
+                            </p-dropdown>
+                            <!-- <input formControlName="mfgId" type="text" readonly="true" (click)="manageList('16')"
+                                pInputText class="input-bg map-input w-100" placeholder="Select Manufacturer" /> -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <div class="row input-row mb-25 ">
+                    <div  class="col-sm-3">
+                        <p-checkbox class="certification" formControlName="certification" [binary]="true"
+                        label="&nbsp;&nbsp;Certification"></p-checkbox>
+                    </div>
+                </div> -->
+
+                <div class="row input-row mb-25">
+                    <div class="col-sm-12">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/notes.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                    style="min-width: 19px; min-height: 19px;" />
+                                <label class="mb-0">Description</label>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <textarea formControlName="description" placeholder="Description" rows="4"
+                                class="input-bg"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="parts-section mb-36">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/parts.png" alt="" width="23" height="23"
+                                style="min-width: 23px; min-height: 23px;">
+                        </span>
+                        <span class="fw-medium fs-18 ml-3">
+                           Specifications
+                        </span>
+                    </div>
+                    <ng-container formArrayName="specsInfo">
+                        <div *ngFor="let specForm of specsInfo.controls; index as i" class="row input-row mb-25">
+                            <ng-container [formGroup]="specForm">
+                                <div class="col-sm-4">
+                                    <div *ngIf="i == 0" class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                                style="min-width: 19px; min-height: 19px;" />
+                                            <label class="mb-0">Spec Label</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <!-- <input formControlName="label" type="text" pInputText class="input-bg  w-100"
+                                            placeholder="Spec Label" /> -->
+                                        <p-dropdown [ngClass]="!this.productForm?.get('specsInfo')?.value.controls[i]?.controls['labelId']?.value && (this.productForm?.get('specsInfo')?.value.controls[i]?.controls['value']?.value || this.productForm?.get('specsInfo')?.value.controls[i]?.controls['unitId']?.value) && submitClicked? 'invalid-input': ''" (click)="manageList('27',i)" formControlName="labelId" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                                        [options]="specLabel" [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                            placeholder="Select Label" optionLabel="name" optionValue="id">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div  *ngIf="i == 0" class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                                style="min-width: 19px; min-height: 19px;" />
+                                            <label class="mb-0">Value</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <input [ngClass]="!this.productForm?.get('specsInfo')?.value.controls[i]?.controls['value']?.value && (this.productForm?.get('specsInfo')?.value.controls[i]?.controls['unitId']?.value || this.productForm?.get('specsInfo')?.value.controls[i]?.controls['labelId']?.value) && submitClicked? 'invalid-input': ''" formControlName="value" type="text" pInputText class="input-bg  w-100"
+                                            placeholder="Value" />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-3 pr-1">
+                                    <div  *ngIf="i == 0" class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="24" height="17"
+                                                style="min-width: 24px; min-height: 17px;" />
+                                            <label class="mb-0">Unit</label>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <!-- <p-dropdown [options]="[{id:this.dekraNetworkId,name:this.networkName}]" formControlName="unit" class="p-dropdown-servicetype"
+                                            [filter]="true"
+                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                            placeholder="Unit" optionLabel="name" optionValue="id">
+                                        </p-dropdown> -->
+                                        <p-dropdown [ngClass]="!this.productForm?.get('specsInfo')?.value.controls[i]?.controls['unitId']?.value && (this.productForm?.get('specsInfo')?.value.controls[i]?.controls['value']?.value || this.productForm?.get('specsInfo')?.value.controls[i]?.controls['labelId']?.value) && submitClicked? 'invalid-input': ''"  (click)="manageList('28',i)" formControlName="unitId" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                                        [options]="unitOptions" [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                            placeholder="Select Unit" optionLabel="name" optionValue="id">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1 pl-2 d-flex align-items-center">
+                                    <div class="input-shop"></div>
+                                    <div class="input-filed" [ngStyle]="{'margin-top': i == 0 ? '30px' :'0px;'}">
+                                        <span class="field-action d-flex">
+                                            <img *ngIf="(i + 1) == specsInfo.length" (click)="addSpecForm()"
+                                                src="assets/images/inspection-home/add.png" alt="" role="button"
+                                                width="21" height="21" style="min-width: 21px; min-height: 21px;">
+                                            <img *ngIf="specsInfo.length > 1" (click)="removeSpecForm(i)"
+                                                src="assets/images/inspection-home/minus.png" alt="" width="20"
+                                                height="20" style="min-width: 20; min-height: 20;" role="button">
+                                        </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </section>
+
+                <section class="parts-section mb-36">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/parts.png" alt="" width="23" height="23"
+                                style="min-width: 23px; min-height: 23px;">
+                        </span>
+                        <span class="fw-medium fs-18 ml-3">
+                            OE Certification and OE Model
+                        </span>
+                    </div>
+                    <ng-container formArrayName="oemInfo">
+                        <div *ngFor="let oemForm of oemInfo.controls; index as i" class="row input-row mb-25">
+                            <ng-container [formGroup]="oemForm">
+                                <div class="col-sm-4">
+                                    <div *ngIf="i == 0" class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                                style="min-width: 19px; min-height: 19px;" />
+                                            <label class="mb-0">OEM</label>
+                                        </div>
+                                    </div>
+                                    <div class="input-filed">
+                                        <p-dropdown (click)="manageList('20',i)" formControlName="oemId" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                                        [options]="oemOptions" [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                            placeholder="Select OEM" optionLabel="name" optionValue="id">
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4 pr-1">
+                                    <div  *ngIf="i == 0" class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="24" height="17"
+                                                style="min-width: 24px; min-height: 17px;" />
+                                            <label class="mb-0">Model</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <p-dropdown formControlName="modelId" class="p-dropdown-servicetype" [filter]="true"
+                                        [options]="modelOptions1(i)" [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                            placeholder="Select Model" optionLabel="name" optionValue="id">
+                                            <ng-template let-country pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                    <div (click)="modelChange(i)" *ngIf="!country.id" style="color: green;">Alternate Model</div>
+                                                    <div *ngIf="country.id" >{{ country.name }}</div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="col-sm-1 pl-2 d-flex align-items-center">
+                                    <div class="input-shop"></div>
+                                    <div class="input-filed" [ngStyle]="{'margin-top': i == 0 ? '30px' :'0px;'}">
+                                        <span class="field-action d-flex">
+                                            <img *ngIf="(i + 1) == oemInfo.length" (click)="addOemForm()"
+                                                src="assets/images/inspection-home/add.png" alt="" role="button"
+                                                width="21" height="21" style="min-width: 21px; min-height: 21px;">
+                                            <img *ngIf="oemInfo.length > 1" (click)="removeOemForm(i)"
+                                                src="assets/images/inspection-home/minus.png" alt="" width="20"
+                                                height="20" style="min-width: 20; min-height: 20;" role="button">
+                                        </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </section>
+
+                <section class="parts-section mb-36">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/parts.png" alt="" width="23" height="23"
+                                style="min-width: 23px; min-height: 23px;">
+                        </span>
+                        <span class="fw-medium fs-18 ml-3">
+                            Links
+                        </span>
+                    </div>
+                    <ng-container formArrayName="linksInfo">
+                        <div *ngFor="let linkForm of linksInfo.controls; index as i" class="row input-row mb-25">
+                            <ng-container [formGroup]="linkForm">
+                                <div class="col-sm-8">
+                                    <div  *ngIf="i == 0" class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                                style="min-width: 19px; min-height: 19px;" />
+                                            <label class="mb-0">Link</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <input formControlName="linkName" type="text" pInputText class="input-bg  w-100"
+                                            placeholder="Link" />
+                                    </div>
+                                </div>
+                                <div class="col-sm-1 pl-2 d-flex align-items-center">
+                                    <div class="input-shop"></div>
+                                    <div class="input-filed" [ngStyle]="{'margin-top': i == 0 ? '30px' :'0px;'}">
+                                        <span class="field-action d-flex">
+                                            <img *ngIf="(i + 1) == linksInfo.length" (click)="addLinkForm()"
+                                                src="assets/images/inspection-home/add.png" alt="" role="button"
+                                                width="21" height="21" style="min-width: 21px; min-height: 21px;">
+                                            <img *ngIf="linksInfo.length > 1" (click)="removeLinkForm(i)"
+                                                src="assets/images/inspection-home/minus.png" alt="" width="20"
+                                                height="20" style="min-width: 20; min-height: 20;" role="button">
+                                        </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </section>
+
+                <!-- <section class="parts-section mb-36">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/parts.png" alt="" width="23" height="23"
+                                style="min-width: 23px; min-height: 23px;">
+                        </span>
+                        <span class="fw-medium fs-18 ml-3">
+                            Part Number
+                        </span>
+                    </div>
+                    <ng-container formArrayName="partsInfo">
+                        <div *ngFor="let partForm of partsInfo.controls; index as i" class="row input-row mb-25">
+                            <ng-container [formGroup]="partForm">
+                                <div class="col-sm-2">
+                                    <div class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                                style="min-width: 19px; min-height: 19px;" />
+                                            <label class="mb-0">Part Number</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <input formControlName="partId" type="text" pInputText class="input-bg  w-100"
+                                            placeholder="Part Number" />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2">
+                                    <div class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-part.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="19" height="19"
+                                                style="min-width: 19px; min-height: 19px;" />
+                                            <label class="mb-0">Part Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <input formControlName="partName" type="text" pInputText class="input-bg  w-100"
+                                            placeholder="Part Name" />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-5">
+                                    <div class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/frame.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                                style="min-width: 17px; min-height: 20px;" />
+                                            <label class="mb-0">Notes</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <input formControlName="partNotes" type="text" pInputText
+                                            class="input-bg  w-100" placeholder="Notes" />
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-2 pr-1">
+                                    <div class="input-shop d-flex align-items-center justify-content-between">
+                                        <div class="label-txt">
+                                            <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                class="icons-size mr-2 new-request-icon" width="24" height="17"
+                                                style="min-width: 24px; min-height: 17px;" />
+                                            <label class="mb-0">Network</label>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="input-filed">
+                                        <p-dropdown [options]="[{id:this.dekraNetworkId,name:this.networkName}]" formControlName="partNetworkId" class="p-dropdown-servicetype"
+                                            [filter]="true"
+                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                            placeholder="Select" optionLabel="name" optionValue="id">
+                                        </p-dropdown>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-1 pl-2 d-flex align-items-center">
+                                    <div class="input-shop"></div>
+                                    <div class="input-filed" style="margin-top: 30px;">
+                                        <span class="field-action d-flex">
+                                            <img *ngIf="(i + 1) == partsInfo.length" (click)="addPartForm()"
+                                                src="assets/images/inspection-home/add.png" alt="" role="button"
+                                                width="21" height="21" style="min-width: 21px; min-height: 21px;">
+                                            <img *ngIf="partsInfo.length > 1" (click)="removePartForm(i)"
+                                                src="assets/images/inspection-home/minus.png" alt="" width="20"
+                                                height="20" style="min-width: 20; min-height: 20;" role="button">
+                                        </span>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+                </section> -->
+
+                <!-- <section class="parts-section mb-36">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/cart.png" alt="" width="21" height="21"
+                                style="min-width: 21px; min-height: 21px;">
+                        </span>
+                        <span class="fw-medium fs-18 ml-3">
+                            Where to buy
+                        </span>
+                    </div>
+
+                    <div class="row input-row">
+                        <div class="col-sm-2">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/distrubuter.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="23" height="17"
+                                        style="min-width: 23px; min-height: 17px;" />
+                                    <label class="mb-0">Distributor Name</label>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName = "distribtorName" type="text" pInputText class="input-bg  w-100" placeholder="Distributor Name" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/website.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                        style="min-width: 17px; min-height: 19px;" />
+                                    <label class="mb-0">Website</label>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName = "distribtorwebsite" type="text" pInputText class="input-bg  w-100" placeholder="Website" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/frame.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                        style="min-width: 17px; min-height: 20px;" />
+                                    <label class="mb-0">Notes</label>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="distribtorNotes" type="text" pInputText class="input-bg  w-100" placeholder="Notes" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/rating.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="20" height="17"
+                                        style="min-width: 20px; min-height: 17px;" />
+                                    <label class="mb-0">Rating</label>
+                                </div>
+
+
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown formControlName="distributorRating" [options]="ratingOptions" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+
+                            </div>
+                        </div>
+                    </div>
+                </section> -->
+
+                <!-- <section class="parts-section mb-36">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/company.png" alt="" width="22" height="18"
+                                style="min-width: 22px; min-height: 18px;">
+                        </span>
+                        <span class="fw-medium fs-18 ml-3">
+                            Service Company
+                        </span>
+                    </div>
+
+                    <div class="row input-row">
+                        <div class="col-sm-2">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/distrubuter.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="23" height="17"
+                                        style="min-width: 23px; min-height: 17px;" />
+                                    <label class="mb-0">Company Name</label>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="serviceCompanyName" type="text" pInputText class="input-bg  w-100" placeholder="Company Name" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/website.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                        style="min-width: 17px; min-height: 19px;" />
+                                    <label class="mb-0">Website</label>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="servicewebsite" type="text" pInputText class="input-bg  w-100" placeholder="Website" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/frame.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                        style="min-width: 17px; min-height: 20px;" />
+                                    <label class="mb-0">Notes</label>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="serviceNotes" type="text" pInputText class="input-bg  w-100" placeholder="Notes" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/rating.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" width="20" height="17"
+                                        style="min-width: 20px; min-height: 17px;" />
+                                    <label class="mb-0">Rating</label>
+                                </div>
+
+
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown formControlName="serviceRating" [options]="ratingOptions" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+
+                            </div>
+                            <div class="attachment-row d-none" *ngIf="postUploadActionTrue" [ngClass]="{'reference-info-hide': postUploadActionTrue }" >
+                                <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                            </div>
+                        </div>
+                    </div>
+                </section> -->
+            </div>
+        </form>
+    </div>
+</div>
+<div class="attachment-row d-none" *ngIf="postUploadActionTrue" [ngClass]="{'reference-info-hide': postUploadActionTrue }" >
+    <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+</div>
+<div *ngIf="toastMessage" class="custom-successdiv">
+    <span>{{toastMessage}}</span>
+</div>

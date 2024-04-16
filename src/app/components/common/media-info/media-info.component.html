@@ -1,0 +1,268 @@
+<div class="cursor media-collapse-arrow" (click)="toggleInfo(mediaInfoFlag)">
+    <img src="assets/images/landing-page/side-panel-arrow.png" alt="collapse" />
+</div>
+<div *ngIf="submitMediaLoading && !infoLoading" class="edit-media-loader text-center"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div class="media-detail info-page" [ngClass]="{'mloader': infoLoading, 'disable': submitMediaLoading}">
+    <div *ngIf="infoLoading" class="edit-media-loader text-center"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!infoLoading">
+        <div class="info-head" [ngClass]="{'action-head': actionFlag}">
+            <div class="info-head-row">
+                <span class="info-col info-col-1"><span title="{{viewCaption}}">{{viewCaption}}</span></span>
+                <span *ngIf="!actionFlag && disableEditIcon" class="info-col info-col-2 cursor" title="Edit" (click)="mediaAction(!actionFlag)"><img src="assets/images/media/manager/media-edit.png" alt="Edit"/></span>
+                <span class="info-col info-col-3 cursor text-right hide" title="Close" (click)="toggleInfo(mediaInfoFlag)"><img src="assets/images/media/manager/media-close.png" alt="Close"/></span>
+            </div>           
+        </div>
+        <div *ngIf="!actionFlag">
+            <div class="info-cont" [style.height.px]="innerMediaHeight">
+                <div class="inner-cont-scroll ps" [perfectScrollbar]="sconfig">
+                    <div *ngIf="flagId == 1" id="info-gallery">
+                        <div class="cursor" [attr.data-responsive]="mediaImg" [attr.data-sub-html]="caption" [attr.data-src]="filePath">
+                            <div class="media-banner" [ngStyle]="{'background-image': 'url('+mediaImg+')'}">
+                                <img class="hide" src="{{mediaImg}}" />
+                            </div>
+                        </div>
+                        <span class="copy-text margin-image" (click)="copyLink()"><img src="assets/images/copy-img-icon.png">&nbsp;&nbsp;Copy Link</span>          
+                    </div>
+                    
+                    <div *ngIf="flagId == 6 && linkType == 'link'">
+                        <div [attr.data-responsive]="mediaImg" [attr.data-sub-html]="caption" [attr.data-src]="mediaImg">
+                            <div  class="media-banner link-banner {{linkClass}}" [ngStyle]="{'background-image': 'url('+mediaImg+')'}">
+                                <img class="hide" src="{{mediaImg}}" />
+                            </div>                    
+                        </div>
+                        <div class="media-url" [innerHtml]="linkUrl"></div>
+                        <span class="copy-text margin-link" (click)="copyLink()"><img src="assets/images/copy-img-icon.png">&nbsp;&nbsp;Copy Link</span>
+                    </div>
+
+                    <div *ngIf="flagId == 6 && linkType != 'link'" class="media-banner video-banner">                        
+                        <iframe id="myframe" width="220" height="140" frameborder="0" allowfullscreen=""></iframe>
+                        <span class="copy-text margin-iframe" (click)="copyLink()"><img src="assets/images/copy-img-icon.png">&nbsp;&nbsp;Copy Link</span>   
+                    </div>
+
+                    <div *ngIf="flagId == 2" class="media-banner video-banner">
+                        <video width="220" height="140" controls poster="{{mediaImg}}">
+                        <source src="{{fileSrc}}mp4" type="video/mp4">
+                        <source src="{{fileSrc}}ogg" type="video/ogg">
+                        Your browser does not support the video tag.
+                        </video>
+                     </div>
+
+                    <span *ngIf="flagId == 2" class="copy-text margin-video" (click)="copyLink()"><img src="assets/images/copy-img-icon.png">&nbsp;&nbsp;Copy Link</span>
+                    
+                    
+                    <div *ngIf="flagId == 3" class="media-banner audio-banner">
+                        <video width="220" height="140" controls poster="assets/images/media/audio-thumb.png">
+                        <source src="{{fileSrc}}mp3" type="audio/mpeg">
+                        <source src="{{fileSrc}}ogg" type="audio/ogg">
+                        Your browser does not support the video tag.
+                        </video>
+                        
+                    </div>
+
+                    <span *ngIf="flagId == 3" class="copy-text margin-audio" (click)="copyLink()"><img src="assets/images/copy-img-icon.png">&nbsp;&nbsp;Copy Link</span>
+                    
+                    <!--<div *ngIf="!actionFlag && description != ''" class="media-desc">{{description}}</div>-->
+                    <div class="user-info" *ngIf="editMakeVal != '' || editModelVal.length > 0 || editYearVal.length > 0 || editTagVal.length > 0">
+                        <div class="user-row make edit-user-row" *ngIf="editMakeVal != ''">  
+                            <span class="info-row-1">Make</span>
+                            <span class="info-row-2">
+                                <div class="selected-items scrollbar scrollbar-primary thin">
+                                    <div class="tag-text make-tag-text edit-tag-text">
+                                        <span>{{editMakeVal}}</span>                                   
+                                    </div>
+                                </div>
+                            </span>                    
+                        </div>
+                        <div class="user-row model edit-user-row" *ngIf="editModelVal.length > 0">
+                            <span class="info-row-1">Model</span>
+                            <span class="info-row-2">
+                                <div class="selected-items scrollbar scrollbar-primary thin">
+                                    <div *ngFor="let item of editModelVal;" class="tag-text model-tag-text edit-tag-text">
+                                        <span>{{item}}</span>                                
+                                    </div>
+                                </div>
+                            </span>                    
+                        </div>
+                        <div class="user-row year edit-user-row" *ngIf="editYearVal.length > 0">
+                            <span class="info-row-1">Year</span>
+                            <span class="info-row-2" >
+                                <div class="selected-items scrollbar scrollbar-primary thin">
+                                    <div *ngFor="let item of editYearVal;" class="tag-text year-tag-text edit-tag-text">
+                                        <span>{{item}}</span>                                
+                                    </div>
+                                </div>
+                            </span>                    
+                        </div>
+                        <div class="user-row tag edit-user-row" *ngIf="editTagVal.length > 0">
+                            <span class="info-row-1">Tag<span *ngIf="editTagVal.length > 1">s</span></span>
+                            <span class="info-row-2">
+                                <div class="selected-items scrollbar scrollbar-primary thin">
+                                    <div *ngFor="let item of editTagVal;" class="tag-text edit-tag-text">
+                                        <span>{{item}}</span>                                
+                                    </div>
+                                </div>
+                            </span>                    
+                        </div>
+                    </div>                   
+                    <div *ngIf="mediaRelatedFlag" class="rel-info">
+                        <div class="info-row {{c.className}}" [ngClass]="{'hide': !c.flag}" *ngFor="let c of contentTypes">
+                            <span class="info-col-1">{{linkWithTxt}}</span>
+                            <span class="info-col-2" title="{{c.count}} {{c.name}}">{{c.count}} {{c.name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="user-info">
+                        <div class="user-row user-row-sm edit-user-row "><span class="upload-by-user-img" [style.background-image]="'url(' + uploadedUserImg + ')'"></span><div><span class="info-row-1">Uploaded By</span><span class="info-row-2">{{uploadedBy}}</span></div></div>
+                        <div class="user-row date edit-user-row" style="padding-bottom: 10px !important;"><span class="info-row-1">Uploaded On</span><span class="info-row-2">{{uploadedOn}}</span></div>
+                    </div>
+                    <div class="user-info" *ngIf="sameDateFlag">
+                        <div class="user-row user-row-sm edit-user-row"><span class="upload-by-user-img" [style.background-image]="'url(' + modifiedUserImg + ')'"></span><div><span class="info-row-1">Modified By</span><span class="info-row-2">{{modifiedBy}}</span></div></div>                
+                        <!--div class="user-row uploaded-by"><span class="info-row-1">Modified By</span><span class="info-row-2">{{modifiedBy}}</span></div-->
+                        <div class="user-row date edit-user-row" style="padding-bottom: 10px !important;"><span class="info-row-1">Modified On</span><span class="info-row-2">{{modifiedOn}}</span></div>
+                    </div>
+                    <div class="action-info">
+                        <ul>
+                            <li class="pin cursor" [ngStyle]="{'background-image': 'url('+pinImg+')'}" (click)="socialAction('pin', pinStatus)">{{pinCountVal}}</li>
+                            <li class="view">{{viewCountVal}}</li>
+                        </ul>
+                    </div>
+                    <div *ngIf="mediaInfo.accessType == 2 && deleteFlag" class="delete text-center">
+                        <span class="delete-btn cursor" (click)="deleteMedia(mediaId)">Delete</span>
+                    </div>                    
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="actionFlag" class="media-form">
+            <form [formGroup]="mediaForm">
+                <div class="custom-modal" [style.height.px]="innerMediaHeight">
+                    <div class="inner-cont-scroll ps " [perfectScrollbar]="sconfig">
+                        <div class="media-height">
+                            <div *ngIf="flagId == 1" id="info-gallery-form" style="border:none">
+                                <div class="cursor" [attr.data-responsive]="mediaImg" [attr.data-sub-html]="caption" [attr.data-src]="filePath">
+                                    <div class="media-banner" [ngStyle]="{'background-image': 'url('+mediaImg+')'}">
+                                        <img class="hide" src="{{mediaImg}}" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div *ngIf="flagId == 6 && linkType == 'link'">
+                                <div [attr.data-responsive]="mediaImg" [attr.data-sub-html]="caption" [attr.data-src]="mediaImg">
+                                    <div  class="media-banner link-banner link-banner-form {{linkClass}}" [ngStyle]="{'background-image': 'url('+mediaImg+')'}">
+                                        <img class="hide" src="{{mediaImg}}" />
+                                    </div>                    
+                                </div>
+                                <div *ngIf="!actionFlag" class="media-url" [innerHtml]="linkUrl"></div>
+                            </div>
+
+                            <div *ngIf="flagId == 6 && linkType != 'link'" class="media-banner video-banner">                        
+                                <iframe id="myframe" width="220" height="128" frameborder="0" allowfullscreen=""></iframe>   
+                            </div>
+
+                            <div *ngIf="flagId == 2" class="media-banner video-banner">
+                                <video width="220" height="140" id="player" controls poster="{{mediaImg}}">
+                                <source src="{{fileSrc}}mp4" type="video/mp4">
+                                <source src="{{fileSrc}}ogg" type="video/ogg">
+                                Your browser does not support the video tag.
+                                </video>
+                            </div>
+                            
+                            <div *ngIf="flagId == 3" class="media-banner audio-banner">
+                                <video width="220" height="140" controls poster="assets/images/media/audio-thumb.png">
+                                <source src="{{fileSrc}}mp3" type="audio/mpeg">
+                                <source src="{{fileSrc}}ogg" type="audio/ogg">
+                                Your browser does not support the video tag.
+                                </video>
+                            </div>            
+                            <!--<div *ngIf="!actionFlag && description != ''" class="media-desc">{{description}}</div>-->
+
+                            <div *ngIf="flagId == 6" class="prob-form-control cust-comp-control add-link-box" (click)="editLink()">
+                                <div class="link-form-row input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text pi pi-link add-link-icon"></span>
+                                    </div>
+                                    <input type="text" class="form-control add-link-input" readonly matInput placeholder="Enter Link" [(ngModel)]="link" formControlName="link" maxlength="100"  />
+                                </div>                   
+                            </div>
+                            <div class="edit-div">
+                                <div  *ngIf="flagId == 6" class="prob-form-control cust-comp-control" >
+                                    <textarea class="form-control media-form-control textarea textarea-bg" readonly placeholder="Enter Caption" [(ngModel)]="caption" formControlName="caption" maxlength="{{maxLen}}" (click)="editLink()"></textarea>
+                                    <span class="text-count text-right text-right-setPB">{{mediaForm.value.caption.length}}/{{maxLen}}</span>
+                                </div>
+
+                                <div  *ngIf="flagId != 6" class="prob-form-control cust-comp-control">
+                                    <textarea class="form-control media-form-control textarea" placeholder="Enter Caption" [(ngModel)]="caption" formControlName="caption" maxlength="{{maxLen}}" (keyup)="onEnterCaption($event)"></textarea>
+                                    <span class="text-count text-right text-right-setPB">{{mediaForm.value.caption.length}}/{{maxLen}}</span>
+                                </div>
+
+                                <!--<div class="prob-form-control cust-comp-control">
+                                    <textarea class="form-control media-form-control" placeholder="Enter Description" [(ngModel)]="description" formControlName="description" maxlength="{{maxLen}}" [ngClass]="{ 'is-invalid': mediaSubmitted && f.description.errors }"></textarea>
+                                    <span class="text-count text-right" style="padding: 0;">{{mediaForm.value.description.length}}/{{maxLen}}</span>
+                                </div>
+                                -->
+                            
+                                <div class="filter-field filter-select make-select">
+                                    <div class="cust-select gts-sel prob-catg">
+                                        <mat-icon class="material-icon media-material-icon make-icon"></mat-icon>
+                                        <mat-form-field class="custom-mat-sel media-mat-sel prob-catg-sel">
+                                            <mat-select placeholder="Select Make" [(value)]="make" (selectionChange)="selectChange('make', $event.value)" disableOptionCentering>
+                                                <mat-option>
+                                                    <ngx-mat-select-search ngModel (ngModelChange)="filterSearchOptions('make', $event)" [formControl]="makeInputFilter" 
+                                                        placeholderLabel="Select Make" 
+                                                        noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                </mat-option>
+                                                <mat-option *ngFor="let m of filteredMakes" [value]="m">
+                                                {{ m }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div *ngIf="make != ''" class="selected-items scrollbar scrollbar-primary thin">
+                                        <div class="tag-text make-tag-text tag-no-close">
+                                            <span>{{make}}</span>
+                                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="filter-field filter-select model-select">
+                                    <div *ngIf="modelLoading" class="filter-loading">
+                                        <div class="loader edit-model-loader model-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </div>
+                                    <app-models *ngIf="!modelLoading" [splitIcon]="splitIcon" [filteredModels]="filteredModels" [models]="models" (selectedModels)="selectedModels($event)"></app-models>
+                                </div>
+
+                                <div class="filter-field filter-select year-select">
+                                    <app-years [splitIcon]="splitIcon" [filteredYears]="filteredYears" [years]="years" (selectedYears)="selectedYears($event)"></app-years>
+                                </div>
+
+                                <div class="prob-form-control cust-comp-control">
+                                    <div class="cursor def-select select-tags" (click)="manageList('tag')">
+                                        <div class="tag-col tag-bg media-tag-bg"></div>
+                                        <div class="tag-col tag-text media-tag-text">
+                                            Select Tags <img src="assets/images/dropdown_downarrow.png">
+                                        </div>
+                                    </div>
+                                    <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                                        <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                                            <span>{{item}}</span>
+                                            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media-form-action" [ngClass]="{'bottomFixed' : heightCheck , 'buttonShow' : buttonVisible }">
+                                <div style="margin-left: 0;" class="btn save deactive" disabled *ngIf="saveMediaFlag">Save <span class="sdraft"><img src="assets/images/parts/save-draft.png" /></span></div>
+                                <div style="margin-left: 0;" class="btn save" (click)="mediaSubmit()" *ngIf="!saveMediaFlag" >Save <span class="sdraft"><img src="assets/images/parts/save-draft.png" /></span></div>
+                                <div class="btn cancel" (click)="mediaAction(!actionFlag)">Cancel <span class="scancel"><img src="assets/images/parts/cancel-icon.png" /></span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+            </form>
+        </div>        
+    </div>
+</div>
+<p-dialog [(visible)]="copiedModal" [modal]="true" [draggable]="false" [resizable]="true" class="copied-modal">
+    <div class="text-center copied-txt">Copied</div>
+  </p-dialog>

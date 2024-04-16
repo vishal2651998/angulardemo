@@ -1,0 +1,361 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div class="loading-small-screen-scroll trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div *ngIf="lazyLoading && !listLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{accessFrom}}"></div>
+<div *ngIf="!loading && !customerDetailView" class="audit-header row col-lg-12">
+    <div class="ah-col ah-col-1" [ngClass]="{'col-lg-3': view == 1}">
+        <div class="text-thread-title" [ngClass]="{'back': view == 2}">
+            <span *ngIf="view == 1" class="head-icon">
+                <img src="assets/images/common/customer-head-icon.png" />
+            </span>
+            <span *ngIf="view == 2" class="head-icon cursor" (click)="viewInfo()">
+                <img src="{{backImage}}" />
+            </span>
+            <span style="vertical-align:middle">{{headTitle}}</span>
+        </div>
+    </div>
+    <div *ngIf="view == 1" class="col-lg-9 ah-col ah-col-2 text-right">
+        <!--div class="ahr-col new-button">New Customer</div>
+        <div class="ahr-col template">Template</div>
+        <div class="ahr-col download">Download Customers</div>
+        <div class="ahr-col prob-head-col p-table-col upload">
+            <span class="action-dtc upload hide">Upload Customers (xls)</span>
+            <div class="upload-col attachment-file media-attachment-file files customer-attachment upload cursor">
+                <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                    [chooseLabel]="chooseLable"
+                    [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                    accept=".xls,.xlsx"
+                    (onSelect)="onUpload('customer', $event)" 
+                    >
+                </p-fileUpload>
+            </div>                    
+        </div-->
+        
+        <div class="ahr-col list-map text-right cursor">                      
+            <span (click)="shopView('map')" [ngClass]="{'active' : !listView}" class="map"></span>
+            <span (click)="shopView('list')" [ngClass]="{ 'active' : listView}" class="list"></span>
+        </div>
+    </div>
+</div>
+
+<div [style.height.px]="innerHeight" *ngIf="listLoading">
+    <div class="loading-small-screen-scroll trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+
+<div *ngIf="!loading && !listLoading && !customerDetailView  && view == 1 && listView" [ngClass]="{'documents-grid-row documents-grid-row-new audit-shop-list-container': view == 1}" [style.height.px]="innerHeight">
+    <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'parts-empty-table': displayNoRecords}">
+        <p-table #table [columns]="customerListColumns" id="file-datatable" class="file-datatable cthread-list-table shop-list-table"
+        [scrollable]="true" [totalRecords]="customerListData.length" [ngClass]="{'hide': displayNoRecords}" 
+            [value]="customerListData" [scrollHeight]="'calc(100vh - '+cscrollHeight+'px)'" (scroll)="scroll($event)">
+            <ng-template pTemplate="header" let-columns>
+                <tr *ngIf="!displayNoRecords">
+                    <th *ngFor="let col of columns" class="{{col.columnpclass}}" [ngClass]="{ 'stock-header' : col.field == 'auditChecks' || col.field == 'auditStatus'}">  
+                        <span *ngIf="col.field != 'auditChecks' && col.field != 'auditStatus'">{{col.header}}</span>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-customerListData let-i="rowIndex">
+                <tr *ngIf="pageAccess == 'customers'" class="cursor" id="{{customerListData.name}}" (click)="viewInfo(customerListData)">
+                    <td class="w1 cthl-col-1 thl-col-1 col-sticky">
+                        <div class="p-table-col"><span class="">{{customerListData.id}}</span></div>
+                    </td>
+                    <td class="w2 cthl-col-2 thl-col-2">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.name}}"><span class="">{{customerListData.name}}</span></div>        
+                        </div>                            
+                    </td>
+                    <td class="w3 cthl-col-3 thl-col-3">
+                        <div class="p-table-col"><span class="" title="{{customerListData.email}}">{{customerListData.email}}</span></div>
+                    </td>
+                    <td class="w4 cthl-col-4 thl-col-4">
+                        <div class="p-table-col"><span class="" title="{{customerListData.city}}">{{customerListData.city}}</span></div>
+                    </td>
+                    <td class="w5 cthl-col-5 thl-col-5">
+                        <div class="p-table-col"><span class="" title="{{customerListData.state}}">{{customerListData.state}}</span></div>
+                    </td>
+                    <td (click)="customerListData.ticketCount ? viewInfo(customerListData): false;" class="w6 cthl-col-6 thl-col-6">
+                        <div class="p-table-col" [ngClass]="{'cursor action-link': customerListData.ticketCount > 0}">
+                            <span *ngIf="customerListData.ticketCount > 0" title="{{customerListData.ticketCount}}">{{customerListData.ticketCount}}</span>
+                            <span *ngIf="customerListData.ticketCount == 0">-</span>
+                        </div>
+                    </td>
+                    <td (click)="customerListData.techCount ? viewInfo(customerListData): false;" class="w7 cthl-col-7 thl-col-7">
+                        <div class="p-table-col" [ngClass]="{'cursor action-link': customerListData.techCount > 0}">
+                            <span *ngIf="customerListData.techCount > 0" title="{{customerListData.techCount}}">{{customerListData.techCount}}</span>
+                            <span *ngIf="customerListData.techCount == 0">-</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr *ngIf="pageAccess == 'market-place-quiz'" class="cursor" id="{{customerListData.id}}" (click)="viewInfo(customerListData)">
+                    <td class="w1 cthl-col-1 thl-col-1 col-sticky">
+                        <div class="p-table-col"><span class="">{{customerListData.id}}</span></div>
+                    </td>
+                    <td class="w2 cthl-col-2 thl-col-2">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.paymentCompanyName}}"><span class="">{{customerListData.paymentCompanyName}}</span></div>        
+                        </div>                            
+                    </td>
+                    
+                    <td class="w3 cthl-col-3 thl-col-3">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.payment_city}}"><span class="">{{customerListData.payment_city}}</span></div>        
+                        </div>                            
+                    </td>
+                    <td class="w3 cthl-col-3 thl-col-3">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.payment_state}}"><span class="">{{customerListData.payment_state}}</span></div>        
+                        </div>                            
+                    </td>
+                    <td class="w3 cthl-col-3 thl-col-3">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.payment_zip}}"><span class="">{{customerListData.payment_zip}}</span></div>        
+                        </div>                            
+                    </td>
+                    <td class="w3 cthl-col-3 thl-col-3">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.payment_phoneNumber}}"><span class="">{{customerListData.payment_phoneNumber}}</span></div>        
+                        </div>                            
+                    </td>
+                    <td class="w7 cthl-col-7 thl-col-7">
+                        <div class="p-table-col">
+                            <div class="p-table-col" title="{{customerListData.payment_email}}"><span class="">{{customerListData.payment_email}}</span></div>        
+                        </div>                            
+                    </td>
+                    <td class="w8 cth-col thl-col-8">
+                        <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary">
+                            <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();openDetailView(customerListData.id);$event.stopPropagation();"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();editRepairOrderModal(customerListData.id);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                        
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>                                 
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <div *ngIf="displayNoRecords" class="emplty-container" [style.height.px]="'calc(100vh - 185px)'">            
+            <div class="empty-cont text-center">
+                <div class="parts-thumb-view no-item-list-new ">
+                    <div class="itm-empty-container" style="left: 50%;">
+                        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                        <p class="item-empty-para empty-res padd-top-20">No result found</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="!loading && view > 1" class="dashboard" [ngClass]="{'dash-ro': roFlag}">
+    <div *ngIf="summaryFlag" [perfectScrollbar]="sconfig">
+        <div class="dashboard-top row col-12">
+            <div class="db-col col-lg-8 col-md-6">
+                <div class="contact">
+                    <div class="dbl-col contact-info">
+                        <div class="dbl-row">
+                            <div class="dbl-row-col">
+                                <div class="bg map-icon"></div>
+                            </div>
+                            <div class="dbl-row-col info">
+                                <div class="info-head">{{customerDetail.name}}</div>
+                                <div class="adddress truncate">
+                                    <span *ngIf="customerDetail.address1">{{customerDetail.address1}}</span>
+                                    <span *ngIf="customerDetail.address2">, {{customerDetail.address2}}</span>
+                                    <span *ngIf="customerDetail.city">, {{customerDetail.city}}</span>
+                                    <span *ngIf="customerDetail.state">, {{customerDetail.state}}</span>
+                                    <span *ngIf="customerDetail.zip">, {{customerDetail.zip}}</span>
+                                </div>
+                                <div class="econtact">
+                                    <div *ngIf="customerDetail.email" class="cbg mail truncate" title="{{customerDetail.email}}">{{customerDetail.email}}</div>
+                                    <div *ngIf="customerDetail.phone" class="cbg phone truncate" title="{{customerDetail.phone}}">{{customerDetail.phone}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dbl-col map-info">
+                        <div class="mapouter">
+                            <div class="gmap-canvas" *ngIf="loadAddress">
+                                <iframe width="100%" height="150px" id="gmap_canvas" [src]="googleMapInfo" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="db-col col-lg-4 col-md-6 count">
+                <div class="dbr-row thread-count">
+                    <span class="dbr-col type-icon thread"></span>
+                    <span class="dbr-col type-count">
+                        <div class="head">No. of Tickets</div>
+                        <div class="item-count">{{customerDetail.threadCount}}</div>
+                    </span>
+                </div>
+                <div class="dbr-row tech-count">
+                    <span class="dbr-col type-icon tech"></span>
+                    <span class="dbr-col type-count">
+                        <div class="head">No. of Techs</div>
+                        <div class="item-count">{{customerDetail.techCount}}</div>
+                    </span>
+                </div>
+                <!--div class="dbr-row active-tech-count">
+                    <span class="dbr-col type-icon tech"></span>
+                    <span class="dbr-col type-count">
+                        <div class="head">Active Techs Today</div>
+                        <div class="item-count">{{customerDetail.techCount}}</div>
+                    </span>
+                </div-->
+            </div>
+        </div>
+        <div class="dashboard-middle col-lg-12">
+            <div class="dbm-row business">
+                <div class="dbm-head">Business Contacts</div>                
+                <div class="dbm-body">
+                    <div class="row col-12" *ngIf="customerDetail.contactData?.length > 0">
+                        <div class="dbm-col col-3" *ngFor="let contact of customerDetail.contactData">
+                            <div class="dbmc-row">
+                                <div class="dbmcr-col">
+                                    <div class="icon"></div>
+                                </div>
+                                <div class="dbmcr-col cont">
+                                    <div class="info-head">{{contact.firstName}} {{contact.lastName}}</div>
+                                    <div class="econtact">
+                                        <div *ngIf="contact.email" class="cbg mail truncate" title="{{contact.email}}">{{contact.email}}</div>
+                                        <div *ngIf="contact.phoneNumber" class="cbg phone truncate" title="{{contact.phoneNumber}}">{{contact.phoneNumber}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="customerDetail.contactData?.length == 0" class="empty text-center">
+                        <i>Nothing to show</i>
+                    </div>
+                </div>
+            </div>
+            <div class="dbm-row customer-notes">
+                
+                <div class="notes-head">
+                    <div class="lt">
+                        <div class="dbm-head notes-icon">Customer Notes</div>
+                    </div>
+                    <div class="rt" *ngIf="customerNotesFlag">
+                        <!--div class="rt-cont">
+                            <img src="assets/images/customers/notes-date-icon.png"/>
+                            <span class="rt-cont-label">&nbsp;&nbsp;Last modified on:&nbsp;</span> 
+                            <span class="rt-cont-text">{{notesUpdatedOnDate}}</span>  
+                        </div>
+                        <div class="rt-cont">
+                            <img src="assets/images/customers/notes-user-icon.png"/>
+                            <span class="rt-cont-label">&nbsp;&nbsp;Last modified by:&nbsp;</span> 
+                            <span class="rt-cont-text">{{notesUpdatedByName}}</span> 
+                        </div-->
+                        <div class="rt-cont">
+                            <img src="assets/images/customers/notes-date-icon.png"/>
+                            <span class="rt-cont-label">&nbsp;&nbsp;Last modified:&nbsp;</span> 
+                            <span class="rt-cont-text">{{notesUpdatedOnDate}}&nbsp;by&nbsp;{{notesUpdatedByName}}</span>  
+                        </div>
+                        <div class="rt-cont">
+                            <span class="add-action-btn" (click)="updateNotes('edit')">
+                                <img src="assets/images/customers/edit-icon.png"/>
+                                <span>Edit Notes</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dbm-body">
+                    <div *ngIf="customerNotesFlag" class="row col-12 pad0 mar0" >
+                        <div class="cnotes" [innerHTML]="contentDisplay"></div>
+                    </div>
+                    <div *ngIf="!customerNotesFlag" class="cnotes-empty text-center">
+                        <span class="empty-text">Customer notes to be shown here</span>
+                        <span class="add-action-btn" (click)="updateNotes('new')">
+                            <img src="assets/images/customers/add-icon.png"/>
+                            <span>Add Notes</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dbm-row technicians">
+                <div class="dbm-head">Technicians</div>
+                <div class="dbm-body">
+                    <div *ngIf="customerDetail.techList?.length == 0" class="empty text-center">
+                        <i>Nothing to show</i>
+                    </div>
+                    <div *ngIf="customerDetail.techList?.length > 0">
+                        <p-table [value]="techList" [scrollable]="true" [scrollHeight]="pTableHeight"  class="customer-tech-table"
+                        [paginator]="customerDetail.techPagination" [rows]="customerDetail.techLimit">
+                            <ng-template pTemplate="header" >
+                                <tr>
+                                    <th class="thText tw64 col-sticky">Technician</th>
+                                    <th class="thText tw18 col-sticky">System Status</th>
+                                    <th class="thText tw18 col-sticky">Email</th>
+                                    <th class="thText tw18 col-sticky">Phone</th>
+                                    <th class="thText tw18 col-sticky">No. of Tickets</th>                          
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-techListArr>
+                                <tr class="cursor" (click)="taponprofileclick(techListArr.techId)">
+                                    <td class="tdText tw64">
+                                        <span class="profile-img">
+                                            <span class="pimg">
+                                                <img [src]="techListArr.profileImg" onerror="this.src='assets/images/thumb_profile_image.png'" class="profileImg" >
+                                            </span>
+                                        </span>
+                                        <span class="profile-text">
+                                            <span class="name-text text-truncate" title="{{techListArr.userName}}">{{techListArr.userName}}</span>
+                                            <span class="sub-text text-truncate" title="{{techListArr.title}}">{{techListArr.title}}</span>
+                                        </span>
+                                    </td>
+                                    <td class="tdText tw18"><span class="srstatus srstatus{{techListArr.availability}}"></span><span></span>{{techListArr.availStatus}}</td>
+                                    <td class="tdText tw18"><span class="readstatusImg readstatusImg{{techListArr.email}}"></span>{{techListArr.email}}</td>
+                                    <td class="tdText tw18"><span class="srstatus srstatus{{techListArr.phone}}"></span><span></span>{{techListArr.phone}}</td>
+                                    <td class="tdText tw18"><span class="count text-center">{{techListArr.ticketCount}}</span></td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div *ngIf="roFlag" class="dashboard-repair-order row col-12">
+        <app-repair-order-list [access]="access" [cshopId]="customerId" [repairOrderData]="repairOrderItems"
+            (roListComponentRef)="roListPageRef = $event" (roListPageCallback)="roListPageCallback($event)"></app-repair-order-list>
+    </div>
+</div>
+
+<div class="map-list-cont" [ngClass]="{ 'hide' : view != 1 || listView || itemEmpty || !showMap }" >
+    <div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': mapHeight}" ></div>
+</div>
+
+<p-dialog [(visible)]="notesModalFlag" [modal]="true" [draggable]="false" [resizable]="false"
+    class="notes-modal">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Customer Notes</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SAVE"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': notesValid}" (click)="saveNotes()"></button>
+
+        </div>
+    </ng-template>
+        <div class="">
+            <div class="popup-head notes-gray-icon">Customer Notes</div>
+            <ckeditor [editor]="Editor" [config]="configCke" container="body"
+                (change)="changeNotes($event)" 
+                [(ngModel)]="customerEditor"></ckeditor>
+
+        </div>
+
+   
+    </p-dialog>

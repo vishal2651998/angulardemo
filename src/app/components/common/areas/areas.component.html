@@ -1,0 +1,29 @@
+<div *ngIf="areaLoading" class="areas">
+    <mat-form-field class="custom-mat-sel prob-catg-sel">
+        <mat-select #selectopt (openedChange)="openedChange($event)" placeholder="Select Areas" [formControl]="areaFormControl" [(ngModel)]="dbSelectedArea" disableOptionCentering>
+            <div class="select-container" *ngIf="areaLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" placeholder="Search Area" aria-label="Search Area" matInput [formControl]="areaSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(areaFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="selectopt.close()"><img src="assets/images/dashboard/close.png" alt="close" /></div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of areaFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+    <div *ngIf="dbSelectedArea != '' && dbSelectedArea != 'Select Areas'" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+        <div class="tag-text">
+            <span>{{dbSelectedArea}}</span>
+            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+        </div>
+    </div>
+</div>

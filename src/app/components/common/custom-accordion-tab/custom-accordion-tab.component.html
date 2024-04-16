@@ -1,0 +1,41 @@
+<div class="main-contaier" [ngClass]="Config.wrapperClass">
+  <p-accordion [multiple]="Config.multiple" (onClose)="onTabClose($event)" (onOpen)="onTabOpen($event)">
+    <p-accordionTab [selected]="Config.isFirstSelected">
+      <p-header class="accordion-icon">
+        <ng-container *ngIf="headerTemplate">
+          <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </ng-container>
+        <ng-container *ngIf="!headerTemplate">
+          <div class="container-fluid">
+            <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+              <div class="menu-name-bar col col col-lg-9  col-md-9 col-xl-9 col-sm-8 landing-padding0">
+                <div>
+                  <span class="bg-image" [ngClass]="Config.imageClass">
+                    <img src="assets/images/landing-page/{{Config.imageUrl}}" alt="" onload="SVGInject(this)">
+                  </span>
+                  <span class="menu-name">{{Config.title}}</span>
+                  <!-- <span><i class="pi hide pi-ellipsis-v"></i></span> -->
+                  <ng-container *ngIf="headerPreWidgetsTemplate">
+                    <ng-container *ngTemplateOutlet="headerPreWidgetsTemplate"></ng-container>
+                  </ng-container>
+                </div>
+              </div>
+              <div class="col col col-lg-3  col-md-3 col-xl-3 col-sm-4 landing-padding0">
+                <div class="rightside-menu-header d-flex align-items-center justify-content-end">
+                  <ng-container *ngIf="headerPostWidgetsTemplate">
+                    <ng-container *ngTemplateOutlet="headerPostWidgetsTemplate"></ng-container>
+                  </ng-container>
+                  <div class="expand-icon ml-2"><i class="pi pi-chevron-up"></i></div>
+                  <div class="collapse-icon ml-2"><i class="pi pi-chevron-down"></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </p-header>
+      <div class="custom-rounded bg-white">
+        <ng-content #name></ng-content>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>

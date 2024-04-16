@@ -1,0 +1,1117 @@
+<div class="market-place-settings-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div id="header" *ngIf="!msTeamAccess">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData"></app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData"></app-product-header>
+</div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-marketplace-sidebar [activeMenuItem]="'market-place/settings'" accessModule="{{bodyClass}}"></app-marketplace-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec1 right-section">
+  <div class="container-fluid">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding-left: 8px; padding-top: 8px;">
+      <div class="flex-align-center">
+        <div class="ellipse">
+          <img width="10px" height="10px" src="assets/images/service-provider/filter-icon.png" />
+        </div>
+        <img src="assets/images/service-provider/settings-title.png" class="training-marketplace-head">
+        <span class="marketplace-text-design">Settings</span>
+      </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+            <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 center-middle-width-container">
+                <div class="center-middle-width ">
+                    <div class="clear"></div>
+                    <div class="row cbt-content part-content part-content-threads-new">
+                      <!-- left bar started -->
+                      <div class="col-lg-2" style="padding-left: 24px;">
+                        <div style="height: calc(100vh - 120px); padding-top:17px !important;" [perfectScrollbar]="sconfig"
+                          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black p-0">
+                          <div *ngFor="let setting of defaultSettingTypes; let i = index;"
+                            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+                            <div [ngClass]="selectedSettingType == setting.type ? 'select-nav-menu' : ''"
+                              class="d-flex justify-content-between align-items-center cursor-pointer custom-padding-nav-menu"
+                              (click)="selectedSettingType = setting.type">
+                              <div class="d-flex" style="width:90%;">
+                                <img style="object-fit: contain;margin: 1px 5px 0px 2px;" width="17px" height="17px"
+                                  src="{{selectedSettingType == setting.type ? setting.imgSrcSelected : setting.imgSrc}}">
+                                <span
+                                  class="text-truncate {{selectedSettingType == setting.type ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}"
+                                  style="width:85%" data-toggle="tooltip" data-placement="top"
+                                  title="{{setting.label  | titlecase}}">{{setting.label
+                                  | titlecase}} </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- right side started -->
+                      <div class="col col-10 main-right-sec landing-page thread-page-container card-parent-design-new"
+                        >
+                        <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading"><img src="assets/images/loading.svg"
+                            alt="Loader" /></div>
+                        <!-- zoom-settings -->
+                        <div *ngIf="selectedSettingType == 'zoom'" >
+                          <form [formGroup]="zoomSettings">
+                          <div class="zoom-setting-div-section">
+                          <div class="zoom-setting-div-section-header">
+                            <img style="margin-right: 10px;" width="22px" height="14px"
+                              src="assets/images/service-provider/zoom-settings-white.png" />
+                            <span class="zoom-setting-heading-text-style"> Zoom Settings</span>
+                          </div>
+                          <div class="zoom-setting-div-section-body">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img width="19px" height="18px" style="margin-right: 10px!important"
+                                  src="assets/images/service-provider/auto-record-option.png" />
+                                <span class="zoom-setting-sub-heading-text-style">Auto Record Webinar</span>
+                              </div>
+                              <div class="toggleStatus">
+                                <p-inputSwitch (onChange)="updateZoomConfiguration()"  formControlName="auto_recording" styleClass="toggle-required-design"
+                                  name="recording-option" ></p-inputSwitch>
+                              </div>
+                            </div>
+                            <div style="padding-left: 29px!important; width: 508px !important;">
+                              <span class="zoom-setting-text-style">If selected Yes, webinar recording will automatically start when the
+                                webinar starts. The host can turn off the recording at any time.</span>
+                            </div>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img class="object-fit-contain" width="19px" height="19px" style="margin-right: 10px!important"
+                                  src="assets/images/service-provider/zoom-setting-qa.png" />
+                                <span class="zoom-setting-sub-heading-text-style">Q&A</span>
+                              </div>
+                              <div class="toggleStatus">
+                                <p-inputSwitch (onChange)="updateZoomConfiguration()" formControlName="question_and_answer" styleClass="toggle-required-design"></p-inputSwitch>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <div class="seprator"></div>
+                            </div>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img class="object-fit-contain" width="19px" height="19px" style="margin-right: 10px!important"
+                                  src="assets/images/service-provider/zoom-setting-practice-session.png" />
+                                <span class="zoom-setting-sub-heading-text-style">Practice Session</span>
+                              </div>
+                              <div class="toggleStatus">
+                                <p-inputSwitch (onChange)="updateZoomConfiguration()" formControlName="practice_session" styleClass="toggle-required-design"
+                                  ></p-inputSwitch>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <div class="seprator"></div>
+                            </div>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img width="21px" height="16px" style="margin-right: 11px!important; margin-left: 3px!important;"
+                                  src="assets/images/service-provider/email-settings.png" />
+                                <span class="zoom-setting-sub-heading-text-style light">Zoom Email</span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <span class="zoom-setting-text-style" *ngIf="zoomEmail">{{zoomEmail}}</span>
+                              <span class="zoom-setting-text-style" style="color: #999999" *ngIf="!zoomEmail">No zoom email added</span>
+                            </div>
+                            <span class="edit-email-settings">
+                              <img class="edit-button" (click)="enableEditSettings('zoomEmail')"
+                                src="assets/images/service-provider/edit-black.png">
+                            </span>
+                          </div>
+                        </div>
+                        <!-- <div class="zoom-setting-div-section">
+                          <div class="zoom-setting-div-section-header">
+                            <img style="margin-right: 10px;" width="17px" height="17px"
+                              src="assets/images/service-provider/webinar-zoom-setting.png" />
+                            <span class="zoom-setting-heading-text-style"> Webinar Session Branding Settings</span>
+                          </div>
+                          <div class="zoom-setting-div-section-body">
+                            <div class="d-flex justify-content-between">
+                              <div class="d-flex flex-column">
+                                <div class="flex-align-center">
+                                  <img width="21px" height="15px" style="margin-right: 10px!important"
+                                    src="assets/images/service-provider/user-in-frame.png" />
+                                  <span class="zoom-setting-sub-heading-text-style">Virtual Background</span>
+                                </div>
+                                <div style="padding-left: 29px!important;max-width:571px">
+                                  <span class="zoom-setting-text-style">
+                                    The Virtual Background feature allows user to display an image or video as background during a Zoom meeting
+                                  </span>
+                                </div>
+                                <div style="padding-left: 29px!important;">
+                                  <span >
+                                    Background Specification
+                                  </span>
+                                </div>
+                                <div style="padding-left: 29px!important;">
+                                  <span class="d-flex align-items-center zoom-setting-text-style virtual-width">
+                                    <i class="pi pi-angle-right" style="line-height:1.5"></i> 24-bit PNG or JPG/JPEG image format
+                                  </span>
+                                </div>
+                                <div style="padding-left: 29px!important;">
+                                  <span class="d-flex align-items-center zoom-setting-text-style virtual-width">
+                                    <i class="pi pi-angle-right" style="line-height:1.5"></i> Minimum resolution of 1280 by 720 pixels
+                                  </span>
+                                </div>
+                              </div>
+                        
+                              <div class="toggleStatus">
+                                <p-inputSwitch (onChange)="updateZoomConfiguration()" formControlName="virtual_background"  styleClass="toggle-required-design"
+                                  name="recording-option" ></p-inputSwitch>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <div class="seprator-new"></div>
+                            </div>
+                          </div>
+                          <div class="zoom-setting-div-section-body">
+                            <div *ngIf="!zoomBackground" class="zoom-background-image-div" style="margin:8px 0px" (click)="uploadLogo()">
+                              <img width="138px" height="93px" style="margin-top:25px" src="assets/images/service-provider/zoom-background-image.png" />
+                              <span class="d-flex align-items-center" style="padding:20px 0px; cursor:pointer">
+                                <img width="14px" height="14px" src="assets/images/service-provider/webinar-zoom-setting-green.png" />
+                                <span style="color:#469073;margin-left:5px">Upload Background Image</span>
+                              </span>
+                            </div>
+                            <div *ngIf="zoomBackground" class="zoom-background-image-div" style="margin:8px 0px">
+                              <img [src]="zoomBackground" style="height:100%; object-fit: cover;" alt="background-image" />
+                              <div class="upload-actions">
+                                  <a (click)="deleteLogo()" class="action-btn delete-upload">
+                                    <img src="assets/images/probing/new/delete-upload.png">
+                                  </a>
+                                  <a (click)="uploadLogo()" class="action-btn edit-upload">
+                                    <img src="assets/images/probing/new/edit-upload.png">
+                                  </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div> -->
+                          <div class="zoom-setting-div-section" > <!-- style="margin-top:-110px" -->
+                            <div class="zoom-setting-div-section-header">
+                              <img style="margin-right: 10px;" width="20px" height="20px"
+                                src="assets/images/service-provider/access-settings.png" />
+                              <span class="zoom-setting-heading-text-style"> Access Settings</span>
+                            </div>
+                            <div class="zoom-setting-div-section-body">
+                              <div class="flex-space-between">
+                                <div class="d-flex flex-column">
+                                  <div class="flex-align-center">
+                                    <img width="21px" height="17px" style="margin-right: 10px!important"
+                                      src="assets/images/service-provider/multiple-devices.png" />
+                                    <span class="zoom-setting-sub-heading-text-style">Multiple Devices</span>
+                                  </div>
+                                  <div style="padding-left: 29px!important;">
+                                    <span class="zoom-setting-text-style virtual-width">Allow participant to join from multiple devices in parallel</span>
+                                  </div>
+                                </div>
+                          
+                                <div class="toggleStatus">
+                                  <p-inputSwitch (onChange)="updateZoomConfiguration()" formControlName="multiple_device"  styleClass="toggle-required-design"
+                                    name="recording-option" ></p-inputSwitch>
+                                </div>
+                              </div>
+                              <div style="padding-left: 35px!important;">
+                                <div class="seprator-new"></div>
+                              </div>
+                            </div>
+                            <div class="zoom-setting-div-section-body">
+                              <div class="flex-space-between">
+                                <div class="d-flex flex-column ">
+                                  <div class="flex-align-center">
+                                    <img width="20px" height="18px" style="margin-right: 10px!important"
+                                      src="assets/images/service-provider/user-approved.png" />
+                                    <span class="zoom-setting-sub-heading-text-style">Approval Type</span>
+                                  </div>
+                                  <div style="padding-left: 29px!important;">
+                                    <span class="zoom-setting-text-style virtual-width">Host approve when a participant joins the webinar</span>
+                                  </div>
+                                </div>
+                                <div class="toggleStatus">
+                                  <p-inputSwitch (onChange)="updateZoomConfiguration()" formControlName="approval_type"  styleClass="toggle-required-design"
+                                    name="recording-option" ></p-inputSwitch>
+                                </div>
+                              </div>
+                              <!-- <div style="padding-left: 35px!important;">
+                                <div class="seprator-new"></div>
+                              </div> -->
+                            </div>
+                            <!-- <div class="zoom-setting-div-section-body">
+                              <div class="flex-space-between">
+                                <div class="d-flex flex-column">
+                                  <div class="flex-align-center">
+                                    <img width="20px" height="16px" style="margin-right: 10px!important"
+                                      src="assets/images/service-provider/hosts.png" />
+                                    <span class="zoom-setting-sub-heading-text-style">Alternative Hosts</span>
+                                    <span class="zoom-setting-sub-heading-text-style add-users font-setting" (click)="toggleAlternateHostlist()" >
+                                      <img width="13px" src="assets/images/service-provider/add-plus.png" alt="">
+                                      Add Host
+                                    </span>
+                                  </div>
+                                  <div style="padding-left: 29px!important;">
+                                    <span class="zoom-setting-text-style virtual-width">Add an alternative host to the webinar</span>
+                                  </div>
+                          
+                                </div>
+                                <div class="toggleStatus">
+                                  <p-inputSwitch formControlName="alternative_host" (onChange)="updateZoomConfiguration()" styleClass="toggle-required-design"
+                                    name="recording-option"></p-inputSwitch>
+                                </div>
+                              </div>
+                              <div style="margin-left:30px">
+                              <span class="user-emails d-flex align-items-center" *ngFor="let user of zoomSettings.value.hostInformation">
+                                {{user.email}}
+                                <span class="pl-2 pi pi-times cursor-pointer" style="font-size: 13px;" (click)="removeHost(user)" ></span>
+                              </span>
+                            </div>
+                            </div> -->
+                          </div>
+                          </form>
+                      </div>
+
+                        <!-- email notification settings-->
+                        <ng-container *ngIf="selectedSettingType == 'email'">
+                        <form [formGroup]="emailNotificationsForm">
+                            <!--payment receipt notification  -->
+                            <div formArrayName="settings">
+                              <div class="zoom-setting-div-section custom-position" [formGroupName]="settingIndex"
+                                *ngFor="let setting of emailNotificationsType().controls; let settingIndex = index;">
+                                <!-- {{setting.value | json}} -->
+                                <div class="zoom-setting-div-section-header">
+                                  <img style="margin-right: 15px;" width="{{setting?.value?.type == 'manual' ? 15: 20}}" [height]="setting?.value?.type == 'manual' ? 18 : 16"
+                                    src="assets/images/service-provider/{{setting?.value?.type == 'webinar' ? 'webinar-white' :
+                                     ['seminar','handsOnSeminar'].includes(setting?.value?.type) ? 'seminar-white' : 'manual-white'}}.png" />
+                                  <span class="zoom-setting-heading-text-style text-capitalize">{{getSplitLabel(setting?.value?.type)}}</span>
+                                  <span *ngIf="setting?.value?.type != 'webinar'" (click)="copyFromMaster(settingIndex)" class="master-button"
+                                    data-toggle="tooltip" data-placement="top" title="Copy settings from master">Copy from Master</span>
+                                </div>
+                                <!-- payment types -->
+                                <div formArrayName="settings">
+                                  <div [formGroupName]="subIndex" *ngFor="let paymentType of getSettingType(settingIndex).controls; let subIndex = index">
+                                    <div class="d-flex flex-align-center" style="padding-left: 15px;padding-bottom: 5px;">
+                                      <img class="zoom-setting-div-section-img"
+                                        src="assets/images/service-provider/{{paymentType?.value?.paymentType == 'paymentSuccessful' ? 'paid-green':
+                                                                           paymentType?.value?.paymentType == 'paymentFailed' ?  'cancel-red' : 'refund'}}.png">
+                                      <span class="text-capitalize"
+                                        style="margin-left: 15px;font-size: 16px;font-weight: 600;">{{getSplitLabel(paymentType?.value?.paymentType)}}</span>
+                                      <span class="d-flex cursor-pointer">
+                                        <img class="zoom-setting-div-section-img" style="margin-left: 20px;"
+                                        src="assets/images/service-provider/template-green.png" alt="">
+                                      <span style="color:#469073;margin-left:4px" (click)="openPaymentTemplate(paymentType?.value?.paymentType)" >Tap to see template</span>
+                                      </span>
+                                    </div>
+
+                                   <div style="padding-left: 50px; padding-right:24px">
+                                    <div class="zoom-setting-div-section-body email-settings px-0">
+                                      <div class="flex-space-between">
+                                        <div class="flex-align-center">
+                                          <img class="object-fit-contain" width="19px" height="19px" style="margin-right: 10px!important"
+                                            src="assets/images/service-provider/cart-grey.png" />
+                                          <span class="zoom-setting-sub-heading-text-style font-setting">Buyer</span>
+                                        </div>
+                                        <div class="toggleStatus">
+                                          <p-inputSwitch (onChange)="updateNotificationSettings(settingIndex)" styleClass="toggle-required-design"
+                                          formControlName="buyer"></p-inputSwitch>
+                                        </div>
+                                      </div>
+                                      <div style="margin-right:-25px;">
+                                        <div class="seprator"></div>
+                                      </div>
+                                    </div>
+                                    <div class="zoom-setting-div-section-body email-settings px-0">
+                                      <div class="flex-space-between">
+                                        <div class="flex-align-center">
+                                          <img class="object-fit-contain" width="19px" height="19px" style="margin-right: 10px!important"
+                                            src="assets/images/service-provider/email-support-grey.png" />
+                                          <span class="zoom-setting-sub-heading-text-style font-setting">Support Email Mentioned</span>
+                                        </div>
+                                        <div class="toggleStatus">
+                                          <p-inputSwitch (onChange)="updateNotificationSettings(settingIndex)" styleClass="toggle-required-design"
+                                          formControlName="supportEmailMention"></p-inputSwitch>
+                                        </div>
+                                      </div>
+                                      <div style="margin-right:-25px;">
+                                        <div class="seprator"></div>
+                                      </div>
+                                    </div>
+                                    <div class="zoom-setting-div-section-body email-settings px-0">
+                                      <div class="flex-space-between">
+                                        <div class="flex-align-center">
+                                          <img class="object-fit-contain" width="19px" height="19px"
+                                            style="margin-right: 10px!important; margin-left: 3px!important;"
+                                            src="assets/images/service-provider/sales-person-grey.png" />
+                                          <span class="zoom-setting-sub-heading-text-style font-setting">Sales Person Mentioned</span>
+                                        </div>
+                                        <div class="toggleStatus">
+                                          <p-inputSwitch (onChange)="updateNotificationSettings(settingIndex)" styleClass="toggle-required-design"
+                                          formControlName="salesPersonMention"></p-inputSwitch>
+                                        </div>
+                                      </div>
+                                      <div style="margin-right:-25px;">
+                                        <div class="seprator"></div>
+                                      </div>
+                                    </div>
+                                    <div class="zoom-setting-div-section-body email-set<p-inputSwitchtings px-0">
+                                      <div class="flex-space-between">
+                                        <div class="flex-align-center">
+                                          <img class="object-fit-contain" width="19px" height="19px"
+                                            style="margin-right: 10px!important; margin-left: 3px!important;"
+                                            src="assets/images/service-provider/register-user-grey.png" />
+                                          <span class="zoom-setting-sub-heading-text-style font-setting">Other Users:</span>
+                                          <span class="zoom-setting-sub-heading-text-style add-users font-setting" (click)="toggleInformedUsers(settingIndex, subIndex)" >
+                                            <img width="13px" src="assets/images/service-provider/add-plus.png" alt="">
+                                            Add Users
+                                          </span>
+                                        </div>
+                                        <div class="toggleStatus">
+                                          <p-inputSwitch [disabled]="getInformedUsers(settingIndex, subIndex)?.length == 0" (onChange)="updateNotificationSettings(settingIndex)" styleClass="toggle-required-design"
+                                          formControlName="otherUsers"></p-inputSwitch>
+                                        </div>
+                                      </div>
+                                      <ng-container *ngIf="getInformedUsers(settingIndex, subIndex)?.length > 0">
+                                        <span class="user-emails d-flex align-items-center" *ngFor="let user of getInformedUsers(settingIndex, subIndex)">
+                                          {{user.email ? user.email : 'No email specified'}}
+                                          <span class="pl-2 pi pi-times cursor-pointer" (click)="removeUser(user, settingIndex, subIndex)" style="font-size: 13px;"></span>
+                                        </span>
+                                      </ng-container>
+                                    </div>
+                                   </div>
+                                   <hr *ngIf="subIndex != getSettingType(settingIndex).controls.length - 1" class="mt-0">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          <!-- </ng-container> -->
+                        </form>
+                        </ng-container>
+
+                        <!-- marchant account settings -->
+                        <div *ngIf="selectedSettingType == 'merchant'" class="zoom-setting-div-section">
+                          <div class="zoom-setting-div-section-header">
+                            <img style="margin-right: 10px;" width="21px" height="21px"
+                              src="assets/images/service-provider/user-settings-white.png" />
+                            <span class="zoom-setting-heading-text-style" style="padding-top: 4px;">Merchant Account Settings</span>
+                            <span class="edit-email-settings">
+                              <img class="edit-button" src="assets/images/service-provider/edit.png">
+                            </span>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <span style="margin-right: 10px!important;width:22px">
+                                  <img width="19px" height="19px"
+                                  src="assets/images/service-provider/hash-icon.png" />
+                                </span>
+                                <span class="zoom-setting-sub-heading-text-style light">Merchant Id: <span
+                                    class="payment-keys">{{merchantId}}</span></span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <div class="seprator"></div>
+                            </div>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <span style="margin-right: 10px!important;width:22px">
+                                  <img width="19px" height="19px" style="margin-right: 10px!important"
+                                  src="assets/images/service-provider/hash-icon.png" />
+                                </span>
+                                <span class="zoom-setting-sub-heading-text-style light">Terminal Id: <span
+                                    class="payment-keys">{{terminalId}}</span></span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <div class="seprator"></div>
+                            </div>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img width="22px" height="16px" style="margin-right: 10px!important;"
+                                  src="assets/images/service-provider/payment-provider-icon.png" />
+                                <span class="zoom-setting-sub-heading-text-style light">Payment Provider: <img height="27px" width="97px"
+                                    src="assets/images/service-provider/payment-provider.png"></span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                            </div>
+                          </div>
+                        </div>
+
+                        <ng-container *ngIf="selectedSettingType == 'general'">
+
+                        <!--Return Check Settings  -->
+                        <div class="zoom-setting-div-section">
+                          <div class="zoom-setting-div-section-header">
+                            <img style="margin-right: 10px;" width="20px" height="16px"
+                              src="assets/images/service-provider/return-check-white.png" />
+                            <span class="zoom-setting-heading-text-style">Return Check Settings</span>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <span style="width: 23px;margin-right: 10px!important;text-align: center;" >
+                                  <i class="pi pi-map-marker" style="font-size:20px;line-height:1.4"></i>
+                                </span>
+                                <!-- <img width="19px" height="22px" style="margin-right: 15px!important"
+                                  src="assets/images/service-provider/black-location.png" /> -->
+                                <span class="zoom-setting-sub-heading-text-style light">Check payment address</span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <span class="zoom-setting-text-style" *ngIf="address">{{address}}</span>
+                              <span class="zoom-setting-text-style" style="color: #999999" *ngIf="!address">No check payment address
+                                added</span>
+                              <div class="seprator"></div>
+                            </div>
+                            <span class="edit-email-settings">
+                              <img class="edit-button" (click)="enableEditSettings('address')"
+                                src="assets/images/service-provider/edit-black.png">
+                            </span>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img width="24px" height="17px" style="margin-right: 10px!important"
+                                  src="assets/images/service-provider/bounced.png" />
+                                <span class="zoom-setting-sub-heading-text-style light">Bounced check fee</span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <span class="zoom-setting-text-style" *ngIf="bounceFee && bounceFee != '0'">${{bounceFee}}</span>
+                              <span class="zoom-setting-text-style" style="color: #999999" *ngIf="!bounceFee || bounceFee == '0'">No bounced
+                                check fee added</span>
+                              <!-- <div class="seprator"></div> -->
+                            </div>
+                            <span class="edit-email-settings">
+                              <img class="edit-button" (click)="enableEditSettings('bounceFee')"
+                                src="assets/images/service-provider/edit-black.png">
+                            </span>
+                          </div>
+
+                        </div>
+
+                        <!-- shipping cost settings -->
+                        <div class="zoom-setting-div-section">
+                          <div class="zoom-setting-div-section-header">
+                            <img style="margin-right: 10px;" width="21px" height="21px"
+                              src="assets/images/service-provider/dollar-outline-white.png" />
+                            <span class="zoom-setting-heading-text-style">Default Shipping Cost Settings</span>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img width="19px" height="22px" style="margin-right: 15px!important; object-fit:contain"
+                                  src="assets/images/service-provider/default-shipping.png" />
+                                <span class="zoom-setting-sub-heading-text-style light">Default Shipping Cost</span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <span class="zoom-setting-text-style" *ngIf="shippingCost">${{shippingCost}}</span>
+                              <span class="zoom-setting-text-style" style="color: #999999" *ngIf="!shippingCost">Enter a valid Default
+                                Shipping Cost
+                              </span>
+                              <!-- <div class="seprator"></div> -->
+                            </div>
+                            <span class="edit-email-settings">
+                              <img class="edit-button" (click)="enableEditSettings('shippingCost')"
+                                src="assets/images/service-provider/edit-black.png">
+                            </span>
+                          </div>
+                        </div>
+
+                        <!-- text message -->
+                        <div class="zoom-setting-div-section clearfix">
+                          <div class="zoom-setting-div-section-header">
+                            <img style="margin-right: 10px;" width="21px" height="21px"
+                              src="assets/images/service-provider/text-message-white.png" />
+                            <span class="zoom-setting-heading-text-style">Text Messages</span>
+                          </div>
+                          <div class="zoom-setting-div-section-body email-settings">
+                            <div class="flex-space-between">
+                              <div class="flex-align-center">
+                                <img width="19px" height="22px" style="margin-right: 15px!important; object-fit:contain"
+                                  src="assets/images/service-provider/text-message-icon.png" />
+                                <span class="zoom-setting-sub-heading-text-style" style="color: #999999;">Help text for participant mobile
+                                  number during training purchase</span>
+                              </div>
+                            </div>
+                            <div style="padding-left: 35px!important;">
+                              <span class="zoom-setting-text-style">{{textMessageData}}</span>
+                              <div *ngIf="!textMessageData" class="py-2"></div>
+                            </div>
+                            <span class="edit-email-settings">
+                              <img class="edit-button" (click)="enableEditSettings('textMessage')"
+                                src="assets/images/service-provider/edit-black.png">
+                            </span>
+                          </div>
+                        </div>
+
+                      </ng-container>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- (removeSalesPerson)="removeUser($event)"  -->
+<app-popup *ngIf="editInformedUsers" access="market-place" title="Select Users"
+  buttonTitle="save" [isUpdate]="true" (sendUserData)="getUsers($event)"
+  (closeUserPopup)="editInformedUsers = false"
+  [currentUser]="user" [selectedSalesPersonId]="usersSelectedIds"
+  [salesPersonsList]="usersList" [isMultipleSalesPerson]="true" [isSales]="true"></app-popup>
+<p-dialog styleClass="update-user-info-popup" [(visible)]="editSettings" [modal]="true">
+    <ng-template pTemplate="header">
+      <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin row">
+        <div class="col-11 col-xl-11 col-lg-11 col-md-11 col-sm-11 no-padding flex-align-center">
+          <!-- <span class="heading-style">Check payment address & Bounced check fee</span> -->
+          <span *ngIf="editSettingsType == 'shippingCost'" class="heading-style">Default Shipping Cost Settings</span>
+          <span *ngIf="editSettingsType == 'zoomEmail'" class="heading-style">Zoom Email Settings</span>
+          <span *ngIf="editSettingsType == 'address'" class="heading-style">Check Payment Address Settings</span>
+          <span *ngIf="editSettingsType == 'bounceFee'" class="heading-style">Bounce Fee Settings</span>
+          <span *ngIf="editSettingsType == 'textMessage'" class="heading-style">Text Messages</span>
+        </div>
+        <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 no-padding flex-end">
+          <button style="background: transparent; border: none; box-shadow: none; color: #fff;" (click)="editSettings = false" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+        </div>
+      </div>
+    </ng-template>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <form [formGroup]="emailSettings" *ngIf="editSettingsType == 'address' ">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin" style="padding-top: 15px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                  <input type="text" pInputText placeholder="Address 1" formControlName="address1">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="f.address1.errors?.required && emailSettingsSubmitted">
+                Address 1 is required
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                  <input type="text" pInputText placeholder="Address 2" formControlName="address2">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                  <p-dropdown class="width-100-perc" name="countryValue" styleClass="width-100-perc custom-dropdown-design-company-new-2 dropdown-panel-change" [options]="countryDropDownOptions" [(ngModel)]="countryValue" formControlName="country" placeholder="Country" optionLabel="name" optionValue="id" (onChange)="getStatesDropdownData($event.value);"></p-dropdown>
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="f.country.errors?.required && emailSettingsSubmitted">
+                Country is required
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                  <p-dropdown class="width-100-perc" [filter]="true" name="stateValue" [(ngModel)]="stateValue" styleClass="width-100-perc custom-dropdown-design-company-new-2 dropdown-panel-change" formControlName="state" [options]="stateDropDownOptions" placeholder="State" optionLabel="name" optionValue="id"></p-dropdown>
+                </div>
+                <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="f.state.errors?.required && emailSettingsSubmitted">
+                  State is required
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                  <input type="text" pInputText placeholder="City" formControlName="city">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="f.city.errors?.required && emailSettingsSubmitted">
+                City is required
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                  <input type="text" pInputText placeholder="Zip Code" formControlName="zipCode">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="f.zipCode.errors?.required && emailSettingsSubmitted">
+                Zip code is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form [formGroup]="bounceFeeSettings" *ngIf="editSettingsType == 'bounceFee' ">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="20px" height="20px"
+                      src="assets/images/service-provider/dollar-grey.png"></span>
+                  <input type="text" pInputText placeholder="Bounce Fee" formControlName="bounceFee">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="bounceFeeControl.bounceFee.errors?.required && bounceFeeSettingsSubmitted">
+                Bounce fee is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form [formGroup]="zoomEmailSettings" *ngIf="editSettingsType == 'zoomEmail' ">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+            <div class="row no-margin">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                  <div class="p-inputgroup new-design">
+                    <span class="p-inputgroup-addon"><img width="22px" height="15px"
+                        src="assets/images/service-provider/mail-grey.png"></span>
+                    <input type="text" pInputText placeholder="Zoom Email" formControlName="zoomEmail">
+                  </div>
+                </div>
+                <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                  *ngIf="zoomControl.zoomEmail.errors && zoomEmailSettingsSubmitted">
+                  <span *ngIf="zoomControl.zoomEmail.errors?.required">Zoom email is required</span>
+                  <span *ngIf="zoomControl.zoomEmail.errors?.email">Please enter a valid email</span>
+                </div>
+              </div>
+            </div>
+          </div>
+      </form>
+      <form [formGroup]="shippingCostSettings" *ngIf="editSettingsType == 'shippingCost' ">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="20px" height="20px"
+                      src="assets/images/service-provider/dollar-grey.png"></span>
+                  <input type="number" class="number-input" min="0" pInputText placeholder="Default Shipping Cost"
+                    formControlName="shippingCost">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingControl.shippingCost.errors && shippingCostSettingsSubmitted">
+                <span *ngIf="shippingControl.shippingCost.errors?.required">Default Shipping Cost is required</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form [formGroup]="tooltipMessage" *ngIf="editSettingsType == 'textMessage' ">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="21px" height="20px"
+                      src="assets/images/service-provider/text-message-icon.png"></span>
+                  <input type="text" class="number-input" pInputText placeholder="Text Message"
+                    formControlName="textMessageTooltip">
+                </div>
+              </div>
+              <!-- <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingControl.shippingCost.errors && shippingCostSettingsSubmitted">
+                <span *ngIf="shippingControl.shippingCost.errors?.required">Default Shipping Cost is required</span>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-24px margin-bottom-5px responsive-padding">
+        <div class="row no-margin">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 flex-start margin-top-5px margin-bottom-5px no-padding">
+            <button class="custom-buttom-design-new-2" pButton type="button" label="Save" (click)="saveEmailSettings(editSettingsType);" icon="pi pi-check" iconPos="right"></button>
+            <button class="custom-buttom-design-new" (click)="editSettings = false;" pButton type="button" label="Cancel" icon="pi pi-times" iconPos="right"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+</p-dialog>
+
+<p-dialog styleClass="payment-template-popup" [(visible)]="paymentTemplate" [modal]="true" [showHeader]="false">
+  <div class="participant-mobile-head">
+    <i class="pi pi-times py-2 hide-participant-popup cursor-pointer" style="margin-right: -15px;" (click)="paymentTemplate = false;paymentTemplateType = ''"></i>
+</div>
+  <div>
+    <div class="email-container" style="background: url('./images/template-bg.jpg');background-size: auto;">
+      <table align="center" bgcolor="#fff" border="0" cellpadding="0" cellspacing="0"   width="100%">
+        <tbody>
+          <tr>
+            <td align="center" style="border-top-left-radius: 3px;border-top-right-radius: 3px;" valign="top">
+              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tbody>
+                  <tr *ngIf="domainId == 71">
+                    <td align="center"
+                      style="text-align: center;border-bottom: 1px solid #d3d1d1;border-top: 14px solid #1f74db;padding: 7px 15px ;"
+                      valign="top"><img src="assets/images/service-provider/images/footer-logo.png"
+                        style="background-color: #262433;"></td>
+                  </tr>
+                  <tr *ngIf="domainId == 1">
+                    <td align="center"
+                      valign="top"><img src="assets/images/service-provider/images/collabtic-email-header.png"
+                        style="width:100%"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table align="center" border="0" cellpadding="0" cellspacing="0" 
+        style="background: #fff;font-family:Arial,Helvetica,sans-serif;padding-right: 16px;padding-left: 16px;"
+        width="100%">
+        <tbody>
+          <tr>
+            <td align="center"  valign="top">
+              <!--welcome sec-->
+              <table *ngIf="paymentTemplateType == 'paymentRefund'" border="0" cellpadding="0" cellspacing="0" style="padding: 0 14px;" width="100%">
+                <tbody>
+                  <tr>
+                    <td style="padding-top: 15px;"><span
+                        style="font-size: 17px;color: #333333;font-family: Roboto;font-weight: 500;">Your refund for <span style=" color: #ff0000;">$20</span> has been processed</span></td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top: 15px;"><span
+                        style="font-size: 17px;color: #333333;font-family: Roboto;font-weight: 500;">This refund is for
+                        the following training:</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <!-- successful trainsaction header-->
+              <table *ngIf="paymentTemplateType == 'paymentSuccessful'" border="0" cellpadding="0" cellspacing="0" style="padding: 0 14px;" width="100%">
+                <tbody>
+                    <tr>
+                        <td style="padding-top: 15px;"><span style="font-size: 17px;color: #333333;">Thank you for your purchase.</span></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: 7px;"><span style="font-size: 17px;color: #333333;">Here is your payment receipt and the training details.</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- payment failed -->
+              <table *ngIf="paymentTemplateType == 'paymentFailed'" border="0" cellpadding="0" cellspacing="0" style="padding: 0 14px;" width="100%">
+                <tbody>
+                    <tr>
+                        <td style="padding-top: 15px;text-align:center"><span style="font-size: 17px;color: #ff0000;">Payment Transaction Failed</span></td>
+                    </tr>
+                </tbody>
+            </table><br>
+              <!--client info table-->
+              <table border="0" cellpadding="0" cellspacing="0"
+                style="margin:0;font-size:14px;color:#333333;padding: 12px;border: 0px solid #c4cdda;background: #f3f3f3;border-radius: 14px;border-bottom: 1px dashed #d4d4d4;"
+                width="100%">
+                <tbody>
+                  <tr>
+                    <td colspan="2" style="padding-bottom: 2px;padding-left: 15px;padding-top: 2px;"><b
+                        style="font-size: 15px;color: #000000;">Training 1:</b></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td style="width:78px;padding:9px 10px;padding-left:15px">
+                      <div style="width: 75px;height: 75px;"><img alt=""
+                          src="assets/images/service-provider/training-blank-1.png"
+                          style="width:100%;border-radius: 4px;height: 100%;object-fit:cover"></div>
+                    </td>
+                    <td><span
+                        style="display:block;line-height:25px;font-size: 20px;font-weight: 600;color: #000;padding-bottom: 4px;">Hands-On
+                        Electrical Techniques</span><span
+                        style="display:block;line-height: 16px;font-size: 12px;color: #231f20;padding-bottom: 3px;">ID#
+                        345, Training Mode: Seminar</span><span
+                        style="display:block;line-height: 16px;font-size: 12px;color: #231f20;">Tyler, Texas, May 31 - Jun
+                        01, 2023</span></td>
+                  </tr>
+                </tbody>
+              </table><!--client info table-->
+              <table border="0" cellpadding="0" cellspacing="0"
+                style="margin:0;font-size:14px;color:#333333;border: 0px solid #c4cdda;background: #f1f2f3;padding: 0 26px;border-radius: 14px;"
+                width="100%">
+                <tbody >
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      Number of participants</td>
+                    <td height="20"
+                      style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      2</td>
+                  </tr>
+                  <tr >
+                    <td colspan="2" height="20"
+                      style="font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;vertical-align: middle;">
+                      <span style="display: flex;align-items: center;"><img
+                          src="assets/images/service-provider/images/user-img.png">
+                          <span class="ml-2" style="line-height:2">John Doe, john.doe@gmail.com, +1(234) 325-4546</span>
+                        </span>
+                          
+                    </td>
+                  </tr>
+                  <tr >
+                    <td colspan="2" height="20"
+                      style="font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;vertical-align: middle;">
+                      <span style="display: flex;align-items: center;"><img
+                          src="assets/images/service-provider/images/user-img.png">
+                          <span class="ml-2" style="line-height: 2;">Cris Jordon</span>
+                        </span>
+                        </td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      Early Bird Discount Price</td>
+                    <td height="20"
+                      style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      2 x $90.00 = $180.00</td>
+                  </tr>
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      Tax (6.00%)</td>
+                    <td height="20"
+                      style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 5px 15px ;">
+                      $10.80</td>
+                  </tr>
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      Sub Total</td>
+                    <td height="20"
+                      style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 5px 15px ;">
+                      $190.80</td>
+                  </tr>
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #ff0000;border-bottom: 1px solid #dddddd;padding: 7px 15px ;">
+                      Total</td>
+                    <td height="20"
+                      style="width: 55%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #ff0000;border-bottom: 1px solid #dddddd;padding: 5px 15px ;">
+                      $190.80</td>
+                  </tr>
+                  <tr *ngIf="paymentTemplateType == 'paymentRefund'">
+                    <td height="20"
+                      style="width: 45%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #ff0000;border-bottom: 1px solid #dddddd;padding: 7px 15px ;font-weight: 600;">
+                      Total Refunded Amount</td>
+                    <td height="20"
+                      style="width: 55%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #ff0000;border-bottom: 1px solid #dddddd;padding: 5px 15px ;font-weight: 600;">
+                      -$20.00</td>
+                  </tr>
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;padding: 7px 15px ;">
+                      Balance Ammount</td>
+                    <td height="20" *ngIf="paymentTemplateType == 'paymentRefund'"
+                      style="width: 55%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;padding: 5px 15px ;">
+                      $170.80</td>
+                    <td height="20" *ngIf="paymentTemplateType != 'paymentRefund'"
+                      style="width: 55%;font-size: 16px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;padding: 5px 15px ;">
+                      $190.80</td>
+                  </tr>
+                </tbody>
+              </table><br>
+              <!--client info table-->
+              <table border="0" cellpadding="0" cellspacing="0"
+                style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color: #ffffff;border: 0px solid #c4cdda;background: #e5f1ff;border-radius: 10px;background-color: #1f74db;padding: 0 26px;"
+                width="100%">
+                <tbody>
+                  <tr>
+                    <td height="20"
+                      style="width: 50%;font-size: 16px;font-weight: bold;line-height: 1.88;letter-spacing: normal;text-align: left;color: #ffffff;padding: 9px 15px ;">
+                      Grand Total Amount</td>
+                    <td height="20" *ngIf="paymentTemplateType == 'paymentRefund'"
+                      style="width: 50%;font-size: 16px;font-weight: bold;line-height: 1.88;letter-spacing: normal;text-align: right;color: #ffffff;padding: 9px 15px ;">
+                      $170.80</td>
+                    <td height="20" *ngIf="paymentTemplateType != 'paymentRefund'"
+                      style="width: 50%;font-size: 16px;font-weight: bold;line-height: 1.88;letter-spacing: normal;text-align: right;color: #ffffff;padding: 9px 15px ;">
+                      $190.80</td>
+                  </tr>
+                </tbody>
+              </table><br>
+              <!-- payment failed total -->
+              <table *ngIf="paymentTemplateType == 'paymentFailed'" border="0" cellpadding="0" cellspacing="0"
+                style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color: #ffffff;border: 0px solid #c4cdda;background: #e5f1ff;border-radius: 10px;background-color: #ff0000;padding: 0 26px;"
+                width="100%">
+                <tbody>
+                  <tr>
+                    <td height="20"
+                      style="width: 50%;font-size: 16px;font-weight: bold;line-height: 1.88;letter-spacing: normal;text-align: left;color: #ffffff;padding: 9px 15px ;">
+                      Payment Status</td>
+                    <td height="20"
+                      style="width: 50%;font-size: 16px;font-weight: bold;line-height: 1.88;letter-spacing: normal;text-align: right;color: #ffffff;padding: 9px 15px ;">
+                      Failed</td>
+                  </tr>
+                </tbody>
+              </table><br *ngIf="paymentTemplateType == 'paymentFailed'">
+              <!--client info table-->
+              <table *ngIf="paymentTemplateType == 'paymentRefund'"  border="0" cellpadding="0" cellspacing="0"
+                style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333333;border: 0px solid #c4cdda;background: #f3f3f3;padding: 0 26px;border-radius: 12px;"
+                width="100%">
+                <tbody >
+                  <tr>
+                    <td height="20"
+                      style="font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;padding: 7px 15px ;border-bottom: 1px solid #dddddd;">
+                      <p style=" margin: 0; color: #555555;padding-top: 7px;">Paid for your purchase using Credit, it may
+                        take up to 5-7 business days for your bank to credit the refund amount to your account.</p>
+                      <p style=" margin: 0; padding-top: 6px; color: #555555;">Thank you for choosing Collabtic
+                        Marketplace.</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td height="20"
+                      style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;padding: 15px 15px;">
+                      <p style=" margin: 0; color: #555555;">Please contact us if you have any question:</p><a
+                        style=" margin: 0; padding-top: 6px; color: #443da4;">support@collabtic.com</a>
+                      <p style="margin: 0; padding-top: 12px;color: #555555;line-height: 19px;">Note: this e-mail was sent
+                        from a notification-only e-mail address that cannot accept incoming e-mail.Please do not reply to
+                        this message.</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br *ngIf="paymentTemplateType == 'paymentRefund'" >
+            </td>
+          </tr>
+        </tbody>
+      </table><!---footer=-->
+      <!-- CardHolder Details -->
+      <table border="0" cellpadding="0" cellspacing="0" style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#333333;border: 0px solid #c4cdda;background: #f1f2f3;padding: 0 26px;border-radius: 18px;" width="100%">
+        <tbody >
+            <tr>
+                <td colspan="2" height="20" style="width: 85%;min-width:85%;height:20px;font-size: 14px;font-stretch: normal;font-style: normal;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;padding: 8px 15px ;;font-weight: 500;"><span style=" font-size: 16px; font-weight: bold; padding-top: 10px; display: block;">Credit Card Transacrtion Details</span></td>
+            </tr>
+            <tr>
+                <td height="20" style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;;">Amount Charged</td>
+                <td height="20" style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;;">$190.80</td>
+            </tr>
+            <tr>
+                <td height="20" style="width: 45%;font-size: 14px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;;">Name on Card</td>
+                <td height="20" style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 5px 15px ;;">Daniel Carter</td>
+            </tr>
+            <tr>
+                <td height="20" style="width: 45%;height:20px;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;;">Card Number</td>
+                <td height="20" style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 5px 15px ;;">#### #### #### 3547</td>
+            </tr>
+            <tr>
+                <td height="20" style="width: 45%;font-size: 14px;line-height: 1.88;text-align: left;color: #231f20;border-bottom: 1px solid #dddddd;padding: 7px 15px ;;">Transaction ID</td>
+                <td height="20" style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;border-bottom: 1px solid #dddddd;padding: 5px 15px ;;">4567567</td>
+            </tr>
+            <tr>
+                <td height="20" style="width: 45%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: left;color: #231f20;padding: 7px 15px ;;">Address</td>
+                <td height="20" style="width: 55%;font-size: 14px;line-height: 1.88;letter-spacing: normal;text-align: right;color: #231f20;padding: 5px 15px ;;">2217 Connector Dr Dallas, TX 75220 United States</td>
+            </tr>
+        </tbody>
+    </table>
+      <table *ngIf="domainId == 71" align="center" border="0" cellpadding="0" cellspacing="0"  style=" background: #fff;" width="100%">
+        <tbody>
+          <tr>
+            <td style="padding:9px 10px;text-align: center;">
+              <div class="footer-img" ><img alt="" src="assets/images/service-provider/images/footer-logo.png"
+                  style="width: 115px;border-radius: 4px;height: 100%;object-fit:cover"></div>
+            </td>
+          </tr>
+          <tr>
+            <td
+              style="padding: 3px 10px 5px 10px;text-align: center;letter-spacing: normal;font-family: Roboto;font-size: 13px;color: #000;">
+              Automotive Training Group</td>
+          </tr>
+          <tr>
+            <td style="padding: 2px 10px;text-align: center;color: #7c7984;font-family: Roboto;font-size: 13px;">San
+              Diego, CA</td>
+          </tr>
+          <tr>
+            <td
+              style="padding: 12px 10px;text-align: center;color: #3e7afd;font-size: 14px;font-family: Roboto;font-weight: 500;">
+              <span
+                style=" display: inline-block; border-right: 2px solid #686868; padding-right: 8px; margin-right: 7px; line-height: 11px;">atgtraining.collabtic.com</span><span>support@atgtraining.com</span>
+            </td>
+          </tr>
+          <tr>
+            <td align="center"
+              style="padding: 12px;font-family:Arial,Helvetica,sans-serif;padding-right: 10px;padding-left: 10px;border-top: 1px solid #e6e6e6;"
+              valign="top">
+              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td style="padding: 5px 10px;text-align: center;font-size: 14px;font-family: Roboto;"><span
+                        style=" display: inline-block; padding-right: 8px; margin-right: 7px; line-height: 11px;">Marketplace
+                        by Collabtic</span><span style=" padding-right: 5px;">Visit</span><span
+                        style=" color: #3e7afd;">support@atgtraining.com</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table *ngIf="domainId == 1" align="center" border="0" cellpadding="0" cellspacing="0"  style=" background: #fff;" width="100%">
+        <tbody>
+          <tr>
+            <td style="padding:9px 10px;text-align: center;">
+              <div class="footer-img" ><img alt="" src="assets/images/login/collabtic-logo-blacktext.png"
+                  style="width: 115px;border-radius: 4px;height: 100%;object-fit:cover"></div>
+            </td>
+          </tr>
+          <tr>
+            <td
+              style="padding: 3px 10px 5px 10px;text-align: center;letter-spacing: normal;font-family: Roboto;font-size: 13px;color: #000;">
+              COLLABTIC</td>
+          </tr>
+          <tr>
+            <td style="padding: 2px 10px;text-align: center;color: #7c7984;font-family: Roboto;font-size: 13px;">Rochester Hills, Michigan</td>
+          </tr>
+          <tr>
+            <td
+              style="padding: 12px 10px;text-align: center;color: #3e7afd;font-size: 14px;font-family: Roboto;font-weight: 500;">
+              <span
+                style=" display: inline-block; border-right: 2px solid #686868; padding-right: 8px; margin-right: 7px; line-height: 11px;">collabtic.collabtic.com</span><span>support@collabtic.com</span>
+            </td>
+          </tr>
+          <tr>
+            <td align="center"
+              style="padding: 12px;font-family:Arial,Helvetica,sans-serif;padding-right: 10px;padding-left: 10px;border-top: 1px solid #e6e6e6;"
+              valign="top">
+              <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td style="padding: 5px 10px;text-align: center;font-size: 14px;font-family: Roboto;"><span
+                        style=" display: inline-block; padding-right: 8px; margin-right: 7px; line-height: 11px;">Marketplace
+                        by Collabtic</span><span style=" padding-right: 5px;">Visit</span><span
+                        style=" color: #3e7afd;">marketplace.collabtic.com</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</p-dialog>

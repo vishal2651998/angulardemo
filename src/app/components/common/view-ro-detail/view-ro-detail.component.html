@@ -1,0 +1,61 @@
+
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">    
+    <div class="modal-header view-modal-header">
+        <div class="view-modal-title">
+            <!--<img src="assets/images/training-popup-header-icon.png" >-->
+            <span class="view-modal-title-text text-center">{{title}}</span>            
+        </div>
+        <div class="view-modal-actions">
+            <div *ngIf="repairOrderApproveFlag" class="read-ann-div" (click)="threadHeaderAction('approve')"><span class="read-ann-text"> Approve&nbsp;&nbsp;<span style="position: relative;top: 1px;" class="p-button-icon p-button-icon-right pi pi-check" aria-hidden="true"></span></span></div>
+            <div class="view-more-actions cursor" title="More" tooltipClass="post-submit-tooltip more-tooltip more-tooltip-new" triggers="click" [autoClose]="true"
+                placement="bottom-right" [ngbTooltip]="more">
+                <img src='assets/images/detail-view-more-icon.png' alt=''/><span></span>
+            </div>
+                <ng-template #more>
+                <div class="thread-owner-reply cursor" *ngIf="repairOrderEditFlag" (click)="threadHeaderAction('edit')">                  
+                    <div class="label-tt-cont moreDiv">
+                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/edit.png"></span>
+                    <span class="label-tt-cont-rt moreDivRt">
+                        <p class="more-cont">Edit</p>
+                    </span>
+                    </div>
+                </div>
+                <div class="thread-owner-reply cursor" *ngIf="repairOrderDeleteFlag" (click)="threadHeaderAction('delete')">                  
+                    <div class="label-tt-cont moreDiv">
+                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/delete.png"></span>
+                    <span class="label-tt-cont-rt moreDivRt">
+                        <p class="more-cont">Delete</p>
+                    </span>
+                    </div>
+                </div>
+                <div class="thread-owner-reply cursor" (click)="threadHeaderAction('copylink')">                  
+                    <div class="label-tt-cont moreDiv">
+                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/detail-view-copy-icon.png" ></span>
+                    <span class="label-tt-cont-rt moreDivRt">
+                        <p class="more-cont">Copy Link</p>
+                    </span>
+                    </div>
+                </div> 
+                </ng-template>
+            <span class="cursor close-btn" (click)="closeModal()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body view-modal-body">
+        <div [style.height.px]="innerHeight">           
+            <div class="thread-post-hover" [style.height.px]="innerHeight">
+                <div class="ps thread-post" [perfectScrollbar]="sconfig">
+                    <div class="thread-detail-section">
+                        <div class="repair-order-detail-info">
+                            <app-repair-order-detail-view [roID]="roID" [newPage]="newPage" (closeEventEmit)="popupClose($event)"></app-repair-order-detail-view>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+</div>
+<p-dialog [(visible)]="copiedModal" [modal]="true" [draggable]="false" [resizable]="true" class="copied-modal">
+    <div class="text-center copied-txt">Link Copied</div>
+  </p-dialog>

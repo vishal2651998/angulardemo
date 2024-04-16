@@ -1,0 +1,90 @@
+<div class="prob-form-info base-info" [ngClass]="{'hide': d.items.length == 0 || (d.items.length == 1 && d.items[0] == null)}" *ngFor="let d of dynamicValues; let i=index;">
+    <div *ngFor="let f of d.items">
+        <div *ngIf="f">
+            <div *ngIf="f.fieldName != 'BannerImageFit' && f.fieldName != 'startDate' && f.fieldName != 'endDate' && f.fieldName != 'startTime' && f.fieldName != 'endTime' && f.fieldName != 'timeZone' && !f.fieldName.includes('inPerson') && ((f.fieldName == 'zoomEmail' && trainingMode == 'Webinar') || f.fieldName != 'zoomEmail')" class="base-info-row {{f.fieldName}}">
+                <div *ngIf="((collabticDomain && f.fieldName == 'ThreadCategory' && f.formValue[0] == 7) || ((industryType.id < 2 || industryType.id > 2) && (f.fieldName == 'make' || (platform == 2 && f.fieldName == 'SelectProductType'))) || (industryType.id == 2 && f.fieldName == 'repairOrder' && roFlag) || (industryType.id == 2 && f.fieldName == 'vinNo' && !roFlag && !vinScanToolFlag)  || (industryType.id == 2 && f.fieldName == 'make' && vinScanToolFlag) || (platform == 2 && f.fieldName == 'bannerImage'))" class="banner-img">
+                    <div *ngIf="banner == ''" class="banner-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                    <span class="{{industryType.class}}" [ngClass]="{'default': defaultBanner, 'opt-banner': f.fieldName == 'bannerImage' && !defaultBanner}" [ngStyle]="{'background-image': 'url(' + banner + ')'}"></span>
+                </div>
+                <div *ngIf="f.fieldName == 'bannerImage' && type == 'market-place'" class="custom-image-class-market-place">
+                    <img *ngIf="marketPlaceimgUrl" style="border-radius: 5px; width: 100%; height: 148px;" src="{{marketPlaceimgUrl}}" />
+                    <img *ngIf="!marketPlaceimgUrl" style="border-radius: 5px; width: 100%; height: 148px;" src="assets/images/service-provider/training-blank-1.png" />
+                </div>
+                <div *ngIf="f.fieldName == 'bannerImage' && type == 'manual'" style="margin: 10px;" class="custom-image-class-market-place">
+                    <img *ngIf="marketPlaceimgUrl" style="width: 117px; height: 100%; max-height: 153px;" src="{{marketPlaceimgUrl}}" />
+                    <div *ngIf="!marketPlaceimgUrl">
+                      <img style="max-height: 153px;" src="assets/images/service-provider/manual-placeholder.png" /></div>
+                </div>
+                <div *ngIf="f.fieldName != 'bannerImage'" class="base-info-col icon-col {{f.fieldName}}-icon {{industryType.class}}" [ngClass]="{'share': (f.fieldName == 'threadType' && f.formValue == 'share')}"></div>
+                <div *ngIf="f.fieldName != 'bannerImage'" class="base-info-col cust-comp-cont">
+                    <span class="label" *ngIf="f.placeholder && f.placeholder != 'Enter VIN' && f.placeholder != 'Select Workstream' && f.placeholder != 'Training Name'">{{f.placeholder}}</span>
+                    <span class="label" *ngIf="f.placeholder == 'Enter VIN'">VIN</span>
+                    <span class="label" *ngIf="f.placeholder == 'Select Workstream'">Workstreams</span>
+                    <span class="label" *ngIf="f.placeholder == 'Training Name'">Training Title</span>
+                    <span class="label" *ngIf="f.fieldName == 'forTrainingOnly'">Sale Condition</span>
+                    <span class="value title {{f.fieldName}}" *ngIf="!f.isArray">
+                        <span title="{{f.fieldName != 'dayTimeData' ? f.selectedVal : ''}}" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" *ngIf="f.fieldName != 'price' && f.fieldName != 'expiryDateBirdPrice' && f.fieldName != 'birdPrice' && f.fieldName != 'manualDiscountPrice' && f.fieldName !='discountPrice' && f.fieldName != 'discountPercentage' && f.fieldName != 'birdPercentage' && f.fieldName != 'recordedVideoLink' && f.fieldName != 'forTrainingOnly' && f.fieldName != 'manualPurchase'" [innerHtml]="f.selectedVal"></span>
+                        <span title="$ {{f.selectedVal}}" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" *ngIf="f.fieldName == 'price' && f.selectedVal != '0' && f.selectedVal">${{f.selectedVal}}</span>
+                        <span title="$ {{f.selectedVal}}" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" *ngIf="(f.fieldName == 'birdPrice' || f.fieldName == 'manualDiscountPrice' || f.fieldName == 'discountPrice') && f.selectedVal != '0' && f.selectedVal">${{f.selectedVal}}</span>
+                        <span title="{{f.selectedVal}} %" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" *ngIf="(f.fieldName == 'birdPercentage' || f.fieldName == 'discountPercentage') && f.selectedVal != '0' && f.selectedVal">{{f.selectedVal}}%</span>
+                        <span title="Free" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" *ngIf="f.fieldName == 'price' && (f.selectedVal == '0' || !f.selectedVal)">Free</span>
+                        <span title="{{this.getDateFormat(f.selectedVal)}}" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" *ngIf="f.fieldName == 'expiryDateBirdPrice'">{{this.getDateFormat(f.selectedVal)}}</span>
+                        <span title="{{f.selectedval}}" *ngIf="f.fieldName == 'forTrainingOnly'">{{f.selectedVal == 0 ? 'Can be offered with training or sold independently'
+                            : 'Must be offered with a training. Not available for sale independently.'}}</span>
+                        <span title="{{f.selectedval}}" *ngIf="f.fieldName == 'manualPurchase'" class="label">{{f.selectedVal == 1 ? 'Optional Purchase'
+                            : 'Included with training (no shipping)'}}</span>
+                        <span class="show-link-design" (click)="openLink(f.selectedVal)" title="{{f.selectedVal}}" *ngIf="f.fieldName == 'recordedVideoLink'">{{f.selectedVal}}</span>
+                        <span class="ro-link" *ngIf="f.fieldName == 'repairOrder' && f.selectedVal != ''">
+                            <a class="ro-link" href="{{f.roDetails.ro_url}}" title="Link to RO#" target="_blank"><span><i class="pi pi-link"></i></span>Link to RO#</a>
+                        </span>
+                        <div *ngIf="f.selectedVal == '' && f.fieldName != 'forTrainingOnly'" [innerHtml]="emptyCont"></div>
+                        <div *ngIf="f.fieldName == 'vinNoScanTool' && f.vinDetails?.length > 0" class="vin-info">
+                            {{f.vinDetails[0].make}} <i class="pi pi-chevron-right"></i>
+                            {{f.vinDetails[0].model}} <i class="pi pi-chevron-right"></i>
+                            {{f.vinDetails[0].year}}
+                        </div>
+                    </span>
+                    <span class="value title" *ngIf="f.isArray">
+                        <div class="dynmic-selected-items" *ngIf="f.selectedVal.length > 0 && f.selectedVal != ''">
+                            <div class="selected-items">
+                                <div *ngFor="let item of f.selectedVal; let t=index" class="truncate dv-tag-text tag-text tag-view-txt {{f.fieldName}}-tag-text {{f.newClassName}}">
+                                    <span title="{{item}}">{{item}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="f.selectedVal.length == 0" [innerHtml]="emptyCont"></div>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p-accordion class="dynamic-val" *ngIf="d.optFields.length > 0" (onOpen)="onToggle(d)" (onClose)="onToggle(d)">
+        <p-accordionTab header="{{d.toggleTxt}} {{optionTxt}}">
+            <div *ngFor="let f of d.optFields">
+                <div *ngIf="f">
+                    <div class="base-info-row {{f.fieldName}}">
+                        <div class="base-info-col icon-col {{f.fieldName}}-icon {{industryType.class}}" [ngClass]="{'hide': f.fieldName == 'miles'}"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label" [ngClass]="{'hide': f.fieldName == 'miles'}">{{f.placeholder}}</span>
+                            <span class="value title {{f.fieldName}}" *ngIf="!f.isArray || (f.fieldName != 'miles' && f.isArray)">
+                                <span [innerHtml]="f.selectedVal"></span>
+                                <div *ngIf="f.selectedVal == ''" [innerHtml]="emptyCont"></div>
+                            </span>
+                            <span class="value title" *ngIf="f.fieldName != 'miles' && f.isArray">
+                                <div class="dynmic-selected-items" *ngIf="f.selectedVal.length > 0">
+                                    <div class="selected-items">
+                                        <div *ngFor="let item of f.selectedVal; let t=index" class="tag-text tag-view-txt {{f.fieldName}}-tag-text">
+                                            <span>{{item}}</span>
+                                        </div>
+                                        <div *ngIf="f.selectedVal.length == 0" [innerHtml]="emptyCont"></div>
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p-accordionTab>
+    </p-accordion>
+</div>

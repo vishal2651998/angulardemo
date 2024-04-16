@@ -1,0 +1,39 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">{{action}} {{title}}</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor" (click)="save()"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close" (click)="dismiss()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form class="action-form">
+            <div class="container">
+                <div class="row input-row pad-box">
+                    <div class="col-sm-12" [ngClass]="isSaved && nameValue==='' ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt d-flex align-items-center">
+                                <img src="assets\images\user-profile\{{fieldName}}.png" alt="service" class="mr-2">
+                                <label class="mb-0">{{fieldTitle}}</label>
+                            </div>
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input type="text" [(ngModel)]="nameValue" pInputText class="w-100 pinputboxborder"
+                                placeholder="Enter {{fieldTitle}}" />
+                        </div>
+                        <div *ngIf="serverError" class="up-err-text">{{serverErrorMsg}}</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

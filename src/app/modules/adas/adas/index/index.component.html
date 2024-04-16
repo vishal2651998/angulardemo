@@ -1,0 +1,28 @@
+<div id="header">
+    <app-product-header [pageData]="headerData" (productHeaderComponentRef)="productHeaderRef = $event" (callback)="headerCallback($event)" ></app-product-header>
+</div>
+<div *ngIf="!pageLoading" class="prob-index">
+    <div class="part-list-head">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt">
+                <span class="parts-head-ic">
+                    <img src="assets/images/adas/adas-head-icon.svg" height="53" onload="SVGInject(this)">
+                </span>
+                {{headTitle}}
+            </span>
+        </div>
+        <div *ngIf="fileView" class="prob-head-col head-col-2 text-right">
+            <span *ngIf="!adasPageRef.loading" class="action-col pin-col cursor hide" class="{{pinClass}}"
+                (click)="pinnedList()"></span>
+            <span *ngIf="!adasPageRef.loading" class="action-col thumb-col cursor"
+                [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView}"
+                title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType()"></span>
+        </div>
+    </div>
+    <!--div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" (callback)="filterCallback($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div-->
+    <div class="probing-content cbt-content part-content part-content-new adas-content-new" [ngClass]="{'filter-expand': expandFlag}">
+        <app-adas-list [accessFrom]="pageData" (adasCallback)="adasCallback($event)"></app-adas-list>        
+    </div>
+</div>

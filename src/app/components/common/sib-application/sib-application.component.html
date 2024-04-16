@@ -1,0 +1,88 @@
+<mat-accordion [multi]="true" #accordion="matAccordion">
+    <mat-expansion-panel class="{{panel.class}}"
+    [disabled]="panel.isDisabled"
+    [expanded]="panel.isExpanded"
+    [hideToggle]="false"
+    (opened)="beforeParentPanelOpened(panel, applicationList)"
+    (closed)="beforeParentPanelClosed(panel, applicationList)"
+    (afterCollapse)="afterPanelClosed()"
+    (afterExpand)="afterPanelOpened()"
+    *ngFor="let panel of accordionList"
+    #mapanel="matExpansionPanel">
+        <mat-expansion-panel-header *ngIf="panel.id == 'app-info'">
+            <mat-panel-title>
+            <b>{{panel.title}}</b>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="app-accord sib-action-list">
+            <div class="sib-actions" *ngFor="let sib of applicationList; let si = index;">
+                <div class="sib-action-title">SIB Check {{si+1}}</div>
+                <div class="sib-action-items">
+                    <mat-accordion [multi]="true" #accordion="matAccordion">
+                        <mat-expansion-panel class="{{app.class}}"
+                        [disabled]="app.isDisabled"
+                        [expanded]="app.isExpanded"
+                        [hideToggle]="false"
+                        (opened)="beforePanelOpened(app)"
+                        (closed)="beforePanelClosed(app)"
+                        (afterCollapse)="afterPanelClosed()"
+                        (afterExpand)="afterPanelOpened()"            
+                        *ngFor="let app of sib.frameNumbers"
+                        #mapanel="matExpansionPanel">
+                            <mat-expansion-panel-header class="mat-expansion-panel-header {{app.title | lowercase}}">
+                                <mat-panel-title>
+                                    <div class="app-info">
+                                        <span class="title text-uppercase">{{app.title}}</span>
+                                    </div>
+                                </mat-panel-title>
+                            </mat-expansion-panel-header>
+                            <div class="sib-frame-items">
+                                <div class="frame-col" *ngFor="let item of app.appData">
+                                    <div class="inner-row">
+                                        <div class="item-col frame-col-1 {{item.class}}"></div>
+                                        <div class="item-col frame-col-2">
+                                            <div class="label">{{item.label}}</div>
+                                            <div class="cont" [ngClass]="{'text-uppercase': item.label != 'Model'}">{{item.value}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                    
+                    <div class="description">
+                        <div class="sib-frame-items sib-desc">
+                            <div class="frame-col col-row">
+                                <div class="inner-row">
+                                    <div class="item-col frame-col-1 desc"></div>
+                                    <div class="item-col frame-col-2">
+                                        <div class="label">Description of the Steps</div>
+                                        <div class="cont top-space" [ngClass]="{'empty': sib.content == '-'}" [innerHTML]="sib.content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tag Lists-->
+                    <app-tag-view *ngIf="!loadFlag" [isKnowledgeArticle]="flag" [tagItems]="sib.tagItems"></app-tag-view>
+
+                    <!-- Parts List-->
+                    <div class="tag-info parts-info">
+                        <div class="tags">
+                            <span class="list-txt tag-txt part-txt">Parts</span>
+                            <span *ngIf="sib.partItems.length == 0" class="no-tag" [innerHtml]="emptyCont"></span>
+                            <div *ngIf="sib.partItems.length > 0">
+                                <span class="tag-list" *ngFor="let item of sib.partItems" [innerHtml]="item"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attachment List-->
+                    <app-attachment-view *ngIf="!loadFlag" [loading]="loadFlag" [action]="action" [dynamicGid]="'0'+sib.id" [access]="access" [attachments]="sib.uploadContents"></app-attachment-view>
+                </div>
+            </div>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

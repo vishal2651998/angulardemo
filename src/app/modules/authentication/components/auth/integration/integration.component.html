@@ -1,0 +1,55 @@
+<div *ngIf="loading" class="login-loader text-center"><img src="assets/images/filter/filter-loading.svg" alt="Loader" width="100" height="100" /></div>    
+<div class="main-container" [style.height.px]="innerHeight">     
+    <div *ngIf="!loading" class="mcont-col-1">        
+        <div class="mcont-inner-div">  
+            <div class="mcont-inner-col"  *ngIf="!knowledgeBoydForum && !CBAForum && !repairifySSOForum">
+                <div class="inte-container">
+                    <img class="cteam" src="assets/images/login/collabtic-team-logo.png" alt="Loader" width="178" height="48" />
+                    <img class="picon" src="assets/images/login/plus-icon.png" alt="Loader" width="23" height="23" class="plus-icon" />
+                    <img class="mteam" src="assets/images/login/microsoft-teams-logo.png" alt="Loader" width="219" height="61" />
+                    <div class="inte-text">Microsoft Teams integration with Collabtic</div>
+                    <div class="action-button action-button-inte" *ngIf="!loginDisplay"><button class="btn-text btn-text-inte" (click)="login()">LOGIN</button></div>
+                </div>
+                
+            </div>
+            <div class="mcont-inner-col"  *ngIf="knowledgeBoydForum">
+                <div class="inte-container">
+                    <!--<img class="cteam" src="assets/images/login/collabtic-team-logo.png" alt="Loader" width="178" height="48" />-->
+                    
+                    <img class="mteam" src="assets/images/login/logo-boyd.png" alt="Loader"  />
+                    <div class="inte-text">Single Sign On integration with Collabtic</div>
+                    <div class="action-button action-button-inte" ><button class="btn-text btn-text-inte" (click)="loginBoyd()">LOGIN</button></div>
+                </div>
+                
+            </div>
+
+            <div class="mcont-inner-col"  *ngIf="repairifySSOForum">
+                <div class="inte-container">
+                    <!--<img class="cteam" src="assets/images/login/collabtic-team-logo.png" alt="Loader" width="178" height="48" />-->
+                    
+                    <img class="mteam" src="https://forum.collabtic.com/img/repairify-logo.png" alt="Loader"  />
+                    <div class="inte-text">Single Sign On integration with Collabtic</div>
+                    <div class="action-button action-button-inte" ><button class="btn-text btn-text-inte" (click)="loginRepairifySSO()">LOGIN</button></div>
+                </div>
+                
+            </div>
+            
+            <div class="mcont-inner-col"  *ngIf="CBAForum">
+                <div class="inte-container">
+                    <!--<img class="cteam" src="assets/images/login/collabtic-team-logo.png" alt="Loader" width="178" height="48" />-->
+                    
+                    <img class="mteam" src="assets/images/cba-logo.png" alt="Loader"  />
+                    <div class="inte-text">Single Sign On integration with Collabtic</div>
+                    <div class="action-button action-button-inte" ><button class="btn-text btn-text-inte" (click)="loginBoyd()">LOGIN</button></div>
+                </div>
+                
+            </div>
+        </div>
+        <app-auth-footer></app-auth-footer>
+    </div>
+    <div *ngIf="!loading" class="mcont-col-2" [style.height.px]="innerHeight">
+        <app-auth-right-panel class="integration-bg"></app-auth-right-panel>
+    </div>      
+</div>
+
+

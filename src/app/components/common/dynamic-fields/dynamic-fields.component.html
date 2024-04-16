@@ -1,0 +1,1179 @@
+<div *ngIf="!actionField" class="row">
+    <ng-container *ngFor="let tf of apiFormFields; let c = index;">
+        <div class="col-md-5 training-manual-display" *ngIf="pageInfo.access == 'market-place' && tf.fieldName == 'manualPurchase' && trainingManual">
+          <div class="box-style"> 
+            <div class="manual-image">
+                <img style="max-height: 135px;" src="{{trainingManual.bannerImageUrl ? trainingManual.bannerImageUrl : 'assets/images/service-provider/manual-placeholder.png'}}" />
+            </div>
+            <div class="manual-details">
+               <div class="training-manual-content">
+                    <span (click)="removeLinkedManualEmit()" class="close-btn"><img src="assets/images/service-provider/manual-close.png" alt="close"></span>
+                    <h4 class="ttl">{{trainingManual.manualName}}</h4>
+                    <p class="sku-text"><img src="assets/images/service-provider/sku.png"><span class="sku">SKU: {{trainingManual.sku}}</span></p>
+                    <p class="price-text">
+                        <span>{{(trainingManual.discountPrice && trainingManual.discountPrice != '0') ? "$"+trainingManual.discountPrice : ((trainingManual.price && trainingManual.price != '0') ? "$"+trainingManual.price : "Free")}} </span>
+                        <span *ngIf="trainingManual.discountPrice && trainingManual.discountPrice != '0'" class="strike-text"> ${{trainingManual.price}} </span>
+                        <span *ngIf="trainingManual.discountPrice && trainingManual.discountPrice != '0'" class="per-discount"> {{trainingManual.discountPercentage}}% off  </span>
+                    </p>
+               </div> 
+            </div>
+           </div>
+        </div>
+
+        <!-- <div class="field-item maxParticipants col-md-4" *ngIf="pageInfo.access == 'market-place' && tf.apiFieldKey == 'email' && selectedTrainingMode == 'Webinar'">
+            <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding">Zoom Email</div>
+            <div class="cursor dynamic-form-control split-bg-col" title="Zoom Email">
+                <div class="field-col bg-col email-bg email-bg"></div>
+                <div class="field-col text-col alt-text">
+                    <input matInput disabled placeholder="Zoom Email" value="{{zoomEmail}}">
+                </div>
+            </div>
+        </div> -->
+        <div class="field-item {{pageInfo.access == 'market-place' && (tf.apiFieldKey == 'email' || tf.apiFieldKey == 'maxParticipants') && selectedTrainingMode == 'Webinar' ? 'col-md-4': tf.fieldClass}} {{tf.fieldName}}" 
+        [ngClass]="{'hide': ((apiFormFields[1]?.selectedVal == '2' && tf.apiFieldKey == 'manualDiscountPrice') || tf.fieldName == 'errorCode' && !apiFormFields[c-1].selection || (CBADomain && tf.hiddenFlag) || (pageInfo.access == 'market-place' && (((tf.fieldName == 'manualDiscountPrice' || tf.fieldName == 'manualPurchase' ) && (!trainingManual || !(trainingManual?.price && trainingManual?.price != '0'))) ))) || (pageInfo.access == 'market-place' && tf.apiFieldKey == 'zoomEmail' && selectedTrainingMode != 'Webinar'), 'tvs': tvsDomain}" [formGroup]="webForm">
+            <div *ngIf="tf.cellArray.length > 0" class="row"> <!--  [ngClass]="{'row': tf.fieldType != 'frame-input'}" -->
+                <div [ngClass]="{'col-md-7': tc.fieldType == 'input', 'col-md-5 joined-row': tc.fieldType == 'dropdown', 'label-col': tc.fieldType == 'label' || tc.fieldType == 'label-dropdown'}"
+                    *ngFor="let tc of tf.cellArray; let a = index;">
+                    <div *ngIf="tc.displayFlag" [ngSwitch]="tc.fieldType">
+                        <div *ngIf="tc.isMandatary" class="required-text {{tf.fieldName}}" [ngClass]="{'hide': tc.fieldType == 'label' || tc.fieldType == 'label-dropdown', 'top-0': tc.isLabel}">{{requiredTxt}}</div>
+                        <!-- Input Field -->
+                        <div *ngSwitchCase="'input'">
+                            <div class="field-label {{tc.fieldName}} {{tc.fieldClass}} item-label" *ngIf="tc.isLabel"> {{tc.title}}</div>
+                            <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!tc.isLabel ? tc.title : ''}}" [ngClass]="{'focused': tc.selectedValues != ''}">
+                                <div class="field-col bg-col {{tc.fieldName}}-bg {{tc.fieldClass}}-bg {{industryType.class}}"></div>
+                                <div class="field-col text-col alt-text">
+                                    <label class="hide" for="integeronly">Integer Only</label>
+                                    <!--p-inputNumber inputId="integeronly" formControlName="{{tc.apiFieldKey}}" placeholder="{{tc.placeholder}}" 
+                                        [(ngModel)]="tc.selectedValues" maxlength="{{tc.maxLength}}"
+                                        (ngModelChange)="onChange(tc.fieldType, tc.fieldName, c, $event, a)">
+                                    </p-inputNumber-->
+                                    <!--<input *ngIf="industryType.id == 1" matInput type="number" placeholder="{{tc.placeholder}}"
+                                    formControlName="{{tc.apiFieldKey}}" [ngModel]="tc.selectedValues"
+                                    autocomplete="off" min="0" maxlength="{{tc.maxLength}}"
+                                    (ngModelChange)="onChange(tc.fieldType, tc.fieldName, c, $event, a)">
+                                    <input *ngIf="industryType.id > 1" matInput type="text" placeholder="{{tc.placeholder}}"
+                                        formControlName="{{tc.apiFieldKey}}" [ngModel]="tc.selectedValues"
+                                        autocomplete="off" min="0" maxlength="{{tc.maxLength}}"
+                                        (keypress)="restrictNumeric(tc.fieldType, tc.fieldName, c, $event, a)"
+                                        (ngModelChange)="onChange(tc.fieldType, tc.fieldName, c, $event, a)">-->
+                                        <input matInput type="text" placeholder="{{tc.placeholder}}"
+                                        formControlName="{{tc.apiFieldKey}}" [ngModel]="tc.selectedValues"
+                                        autocomplete="off" min="0" maxlength="{{tc.maxLength}}"
+                                        (keypress)="restrictNumeric(tc.fieldType, tc.fieldName, c, $event, a)"
+                                        (ngModelChange)="onChange(tc.fieldType, tc.fieldName, c, $event, a)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngSwitchCase="'input-with-count'">
+                            <div>
+                                <div class="field-label {{tc.fieldName}} {{tc.fieldClass}} item-label" *ngIf="tc.isLabel">{{tc.title}}</div>
+                                <div>
+                                    {{pendingInputText}}
+                                </div>
+                            </div>
+                            <div class="cursor dynamic-form-control split-bg-col {{tc.fieldName}}" title="{{!tc.isLabel ? tc.title : ''}}" [ngClass]="{'focused': tc.selectedValues != ''}">
+                                <div class="field-col bg-col {{tc.fieldName}}-bg {{tc.fieldClass}}-bg"></div>
+                                <div class="field-col text-col alt-text">
+                                    <input matInput class="{{tc.fieldClass}}" [ngClass]="{'readonly': !tc.saveFlag}" placeholder="{{tc.placeholder}}"
+                                        formControlName="{{tc.apiFieldKey}}" [(ngModel)]="tc.selectedValues"
+                                        maxlength="{{tc.maxLength}}" autocomplete="off"
+                                        [readonly]= "!tc.editFlag"
+                                        (ngModelChange)="onChange(tc.fieldType, tc.fieldName, c, $event, -1); valueChange(tc.selectedValues)">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Dropdown Field -->
+                        <div *ngSwitchCase="'dropdown'">
+                            <div class="field-label {{tc.fieldName}} item-label custom-field-margin-padding" *ngIf="tc.isLabel">{{tc.title}}</div>
+                            <div class="custom-drop-down single" title="{{!tc.isLabel ? tc.title : ''}}" [ngClass]="{'focused': tc.selectedValues.length > 0}">
+                                <!-- Single Selection -->
+                                <div class="single-select">
+                                    <p-dropdown appendTo="body" [style]="{'width':'100%'}" class="drop-col dropdown join-col"
+                                        [options]="tc.itemValues" formControlName="{{tc.apiFieldKey}}"
+                                        [(ngModel)]="tc.selectedValues" placeholder="{{tc.placeholder}}" autoWidth="true"
+                                        filter="true" optionLabel="name" optionValue="id" resetFilterOnHide="true"
+                                        [disabled]="tc.disabled"
+                                        (onChange)="onChange(tc.fieldType, tc.fieldName, c, $event.value, a)"></p-dropdown>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="webForm.controls[tc.apiFieldKey].errors" class="invalid-feedback"
+                        [ngClass]="{'invalid-field': step1Submitted && !tc.valid}">
+                        <div id="valid-error" class="field-err" *ngIf="webForm.controls[tc.apiFieldKey].errors.required">{{tc.isReqiredText}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="tf.cellArray.length == 0 && tf.displayFlag" [ngSwitch]="tf.fieldType">
+                <div *ngIf="tf.isMandatary" class="required-text {{tf.fieldName}}" [ngClass]="{'hide': (CBADomain || collabticDomain) && tf.hiddenFlag, 'top-0': tf.isLabel}">{{requiredTxt}}</div>
+                <!-- Banner Image -->
+                <div *ngSwitchCase="'banner'">
+                    <div class="form-col upload-col">
+                        <span *ngIf="imgURL == null || defaultBanner" class="banner-upload">
+                            <a (click)="updateLogo(tf, c)" class="browse-button"></a>
+                            <span class="upload-txt">Upload Banner Image</span>
+                        </span>
+                        <span *ngIf="imgURL != null && !defaultBanner" class="banner-upload upload-bg"
+                            [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}" [ngClass]="{'cover': webForm.controls['bannerImageFit']?.value, 'contain': !webForm.controls['bannerImageFit']?.value}">
+                            <div class="upload-actions">
+                                <a (click)="deleteUploadedFile()" class="action-btn delete-upload"></a>
+                                <a (click)="updateLogo(tf, c)" class="action-btn edit-upload"></a>
+                            </div>
+                        </span>
+                        <div id="valid-error" class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                            {{invalidFileErr}}</div>
+                    </div>
+                </div>
+
+                <div  *ngSwitchCase="'banner-fit'" class="banner-fit text-right">
+                    <span class="banner-label">Banner image fit:</span>
+                    <p-checkbox id="bannerfit_checkbox" formControlName="{{tf.apiFieldKey}}"
+                        [(ngModel)]="tf.selectedValues" [binary]="true" inputId="binary"
+                        label="Fill"></p-checkbox>
+                </div>
+
+                <!-- Chip Input Field -->
+                <div *ngSwitchCase="'chip-input'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="cursor dynamic-form-control split-bg-col {{tf.fieldName}}" title="{{!tf.isLabel ? tf.title : ''}}" [ngClass]="{'focused': tf.selectedValues != ''}">
+                        <p-chips [allowDuplicate]="false" class="p-chips-text" [addOnBlur]="true" formControlName="{{tf.apiFieldKey}}" 
+                            [(ngModel)]="tf.selectedValues" [placeholder]="tf.placeholder"
+                            (onRemove)="removedEmail(tf, tf.fieldType, tf.fieldName, c, $event, -1)" (onAdd)="addedEmail(tf, tf.fieldType, tf.fieldName, c, $event, -1)"></p-chips>                    
+                    </div>
+                    <div class="error-div" *ngIf="serverError">
+                        <span class="error-msg">{{serverErrorMsg}}</span>
+                    </div>
+                </div>
+
+                <!-- Input Field -->
+                <div *ngSwitchCase="'input'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{(pageInfo.access == 'market-place' && tf.apiFieldKey == 'email' && (selectedTrainingMode == 'Webinar' || selectedTrainingMode == 'Seminar') ? 'Support ':'')+tf.title}}</div>
+                    <div class="cursor dynamic-form-control split-bg-col {{tf.fieldName}}" title="{{!tf.isLabel ? tf.title : ''}}" [ngClass]="{'focused': tf.selectedValues != ''}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg {{tf.fieldClass}}-bg"></div>
+                        <div class="field-col text-col alt-text">
+                            <input *ngIf="tf.apiFieldKey == 'price' || tf.apiFieldKey == 'maxParticipants' || tf.apiFieldKey == 'birdPrice' || tf.apiFieldKey == 'birdPercentage' || tf.apiFieldKey == 'discountPrice' || tf.apiFieldKey == 'discountPercentage' || tf.apiFieldKey == 'manualDiscountPrice' || tf.apiFieldKey == 'manualId' || tf.apiFieldKey == 'salesPerson'" matInput class="{{tf.fieldClass}}" placeholder="{{tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" (keypress)="keyPressNumbers($event)" [ngModel]="(tf.apiFieldKey == 'birdPrice' || tf.apiFieldKey == 'discountPrice') ? birdValue : ((tf.apiFieldKey == 'birdPercentage' || tf.apiFieldKey == 'discountPercentage') ? birdPercentage : (tf.apiFieldKey == 'manualDiscountPrice' ? manualDiscountPrice : (tf.apiFieldKey == 'manualId' ? manualName : (tf.apiFieldKey == 'salesPerson' ? salesPersonNames : tf.selectedValues))))" maxlength="{{tf.maxLength}}" autocomplete="off" (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1)" (blur)="onBlur(tf.fieldName, $event?.target?.value)" (focus)="onFocus(tf.fieldName, $event?.target?.value, $event)" [readonly]=" (apiFormFields[1]?.selectedVal == '2' && tf.apiFieldKey == 'manualDiscountPrice') || (tf.apiFieldKey == 'price' && duplicateMarketPlace)">
+                            <input *ngIf="tf.apiFieldKey != 'price' && tf.apiFieldKey != 'maxParticipants' && tf.apiFieldKey != 'birdPrice' && tf.apiFieldKey != 'birdPercentage' && tf.apiFieldKey != 'discountPrice' && tf.apiFieldKey != 'discountPercentage' && tf.apiFieldKey != 'manualDiscountPrice' && tf.apiFieldKey != 'manualId' && tf.apiFieldKey != 'salesPerson'" matInput class="{{tf.fieldClass}}" placeholder="{{(pageInfo.access == 'market-place' && tf.apiFieldKey == 'email' && selectedTrainingMode == 'Webinar' ? 'Support ':'')+tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" [ngModel]="tf.selectedValues" maxlength="{{tf.maxLength}}" autocomplete="off" (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1)">
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'input-with-count'">
+                    <div class="display-flex">
+                        <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                        <div class="count-text-style" [ngClass]="!tf.isMandatary ? 'custom-padding-for-count' : ''">
+                            {{pendingInputText}}{{tf.maxLength}}
+                        </div>
+                    </div>
+                    <div class="cursor dynamic-form-control split-bg-col {{tf.fieldName}}" [ngClass]="{'focused': tf.selectedValues != ''}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg {{tf.fieldClass}}-bg"></div>
+                        <div class="field-col text-col alt-text">
+                            <input matInput *ngIf="!(['manualName', 'trainingName', 'sku'].includes(tf.fieldName))" class="{{tf.fieldClass}}" [ngClass]="{'readonly': (!tf.saveFlag)}" placeholder="{{tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues" maxlength="{{tf.maxLength}}" autocomplete="off" (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1);" (keyup)="valueChange(tf.selectedValues)" (blur)="onBlur(tf.fieldName, $event?.target?.value)" (focus)="onFocus(tf.fieldName, $event?.target?.value, $event)">
+                            <p-autoComplete class="custom-prime-autocomplete" *ngIf=" (['trainingName', 'sku'].includes(tf.fieldName)) && tf.title.includes('Training')" [placeholder]="tf.placeholder"
+                                [formControlName]="tf.apiFieldKey" [(ngModel)]="tf.selectedValues" [dropdown]="true" [disabled]="duplicateMarketPlace"
+                                [suggestions]="tf.fieldName == 'sku' ? filterdTrainingsSku : filterdTrainingsName " [maxlength]="tf.maxLength" (completeMethod)="completeTrainingsMethod($event, tf.fieldName);" (onShow)="openDropdownEvent('close')" (onHide)="openDropdownEvent('open')" (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1);">
+                            </p-autoComplete>
+                            <p-autoComplete class="custom-prime-autocomplete" *ngIf="['manualName', 'sku'].includes(tf.fieldName) && !tf.title.includes('Training')" [placeholder]="tf.placeholder"
+                                [formControlName]="tf.apiFieldKey" [(ngModel)]="tf.selectedValues" [dropdown]="true"
+                                [suggestions]="tf.fieldName == 'sku' ? filterdManualsSku : filterdManualsName " [maxlength]="tf.maxLength" (completeMethod)="completeManualsMethod($event, tf.fieldName);" (onShow)="openDropdownEvent('close')" (onHide)="openDropdownEvent('open')" (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1);">
+                            </p-autoComplete>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIN Input Field -->
+                <div *ngSwitchCase="'vin-input'">
+                    <div *ngIf="tf.loading" class="dash-loader cust-loader field-loader"><img
+                        src="assets/images/loading.svg" alt="Loader" /></div>
+                    <div class="cursor dynamic-form-control split-bg-col {{tf.fieldName}}" [ngClass]="{'focused': tf.selectedValues.length == 17}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg {{tf.fieldClass}}-bg"></div>
+                        <div class="field-col text-col alt-text">
+                            <input matInput class="{{tf.fieldClass}}" placeholder="{{tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues" maxlength="{{tf.maxLength}}" autocomplete="off" [readonly]="tf.disabled" (input)="onChange(tf.fieldType, tf.fieldName, c, $event.target.value, -1)" />
+                                <span *ngIf="tf.decodeConcept == 1" [ngClass]="{'cba-vin': CBADomain, 'active': tf.selectedValues.length == 17}" (click)="tf.selectedValues.length == 17 ? onChange(tf.fieldType, tf.fieldName, c, tf.selectedValues, -1, 'vin-api') : false;" class="vin-action text-right"></span>
+                        </div>
+                    </div>
+                    <div class="recent-vin cursor {{tf.fieldClass}}" title="Tap here to see recently used VINs or VINs scanned with your app for faster VIN entry" [ngClass]="{'disabled': tf.disabled}" (click)="manageSelection(tf)">Recent VINs</div>
+                </div>
+
+                <!-- VIN Scantool Input Field -->
+                <div *ngSwitchCase="'vin-scantool-input'">
+                    <div *ngIf="tf.loading" class="dash-loader cust-loader field-loader"><img
+                        src="assets/images/loading.svg" alt="Loader" /></div>
+                    <div class="cursor dynamic-form-control split-bg-col {{tf.fieldName}}" [ngClass]="{'focused': tf.selectedValues.length == 17}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg {{tf.fieldClass}}-bg"></div>
+                        <div class="field-col text-col alt-text">
+                            <input matInput class="{{tf.fieldClass}}" placeholder="{{tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues" maxlength="{{tf.maxLength}}" autocomplete="off" [readonly]="tf.disabled" (input)="onChange(tf.fieldType, tf.fieldName, c, $event.target.value, -1)" />
+                            <span *ngIf="tf.decodeConcept == 1" [ngClass]="{'cba-vin': CBADomain, 'active': tf.selectedValues.length == 17}" (click)="tf.selectedValues.length == 17 ? onChange(tf.fieldType, tf.fieldName, c, tf.selectedValues, -1, 'vin-api') : false;" class="vin-action text-right"></span>
+                        </div>
+                    </div>
+                    <div class="recent-vin cursor {{tf.fieldClass}}" title="Tap here to see recently used VINs or VINs scanned with your app for faster VIN entry" [ngClass]="{'disabled': tf.disabled}" (click)="manageSelection(tf)">Recent VINs</div>
+                    <div *ngIf="tf.vinDetails?.length > 0" class="vin-info">
+                        {{tf.vinDetails[0].make}} <i class="pi pi-chevron-right"></i>
+                        {{tf.vinDetails[0].model}} <i class="pi pi-chevron-right"></i>
+                        {{tf.vinDetails[0].year}}
+                    </div>
+                </div>
+
+                <!-- RO Input Field -->
+                <div *ngSwitchCase="'ro-input'">
+                    <div class="cursor dynamic-form-control split-bg-col {{tf.fieldName}}" [ngClass]="{'focused': tf.selectedValues.length >= 3 || tf.selectedValues.length == 6}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg {{tf.fieldClass}}-bg"></div>
+                        <div class="field-col text-col alt-text">
+                            <input matInput class="{{tf.fieldClass}}" placeholder="{{tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues" maxlength="{{tf.maxLength}}" autocomplete="off" [readonly]="tf.disabled" 
+                                (input)="onChange(tf.fieldType, tf.fieldName, c, $event.target.value, -1)" />
+                            <span *ngIf="tf.decodeConcept == 1" [ngClass]="{'cba-vin': CBADomain, 'active': tf.selectedValues.length >= 3 || tf.selectedValues.length == 20}" (click)="tf.selectedValues.length >= 3 || tf.selectedValues.length == 6 ? onChange(tf.fieldType, tf.fieldName, c, tf.selectedValues, -1, 'ro-api') : false;" class="vin-action text-right"></span>
+                        </div>
+                    </div>
+                
+                    <div class="ro-link" *ngIf="tf.selectedValues.length >= 3 && tf.roDetails.length != 0 && tf.selectedValues == tf.roDetails.repair_order_number"><a class="ro-link" href="{{tf.roDetails.ro_url}}" title="Link to RO#" target="_blank"><span><i class="pi pi-link"></i></span>Link to RO#</a> <a *ngIf="tf.roDetails.dviPdfUrl" class="ro-link ro-dvi-link" href="{{tf.roDetails.dviPdfUrl}}" title="Link to RO#" target="_blank"><span><i class="pi pi-link"></i></span>Link to DVI</a></div>
+                </div>
+
+                <!-- Input Box Field -->
+                <div *ngSwitchCase="'inputbox'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="cursor dynamic-form-control" title="{{!tf.isLabel ? tf.title : ''}}" [ngClass]="{'focused': tf.selectedValues != ''}">
+                        <div class="field-col text-col alt-text">
+                            <input matInput class="input-box" placeholder="{{tf.placeholder}}"
+                                formControlName="{{tf.apiFieldKey}}" [ngModel]="tf.selectedValues"
+                                maxlength="{{tf.maxLength}}" autocomplete="off"
+                                (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dropdown Field -->
+                <div *ngSwitchCase="'dropdown'" [ngClass]="{'hide': (CBADomain && tf.hiddenFlag) || ((CBADomain || collabticDomain) && tf.squareBoxType == 1) }">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="custom-drop-down {{tf.selection}}" title="{{!tf.isLabel ? tf.title : ''}}"
+                        [ngClass]="{'empty': pageInfo.access == 'documents' && tf.itemValues.length == 0 && tf.fieldName == 'make'}">
+                        <!-- Single Selection -->
+                        <div *ngIf="tf.loading" class="dash-loader cust-loader field-loader"><img
+                                src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                        <div class="single-select" *ngIf="tf.selection == 'single'">
+                            <div class="drop-col split-col">
+                                <span class="split-icon {{tf.fieldName}}-bg"></span>
+                            </div>
+                            <p-dropdown appendTo="body" [style]="{'width':'100%'}" class="drop-col dropdown"
+                                [options]="tf.itemValues" formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues"
+                                placeholder="{{tf.placeholder}}" autoWidth="true" filter="true" optionLabel="name"
+                                optionValue="id" resetFilterOnHide="true" [disabled]="tf.disabled || (tf.apiFieldKey == 'trainingMode' && duplicateMarketPlace )" [virtualScroll]="true"
+                                [ngClass]="{'enable': tf.selectedValues != '', 'hidden-placeholder': tf.selectedVal?.length > 0}"
+                                (onChange)="onChange(tf.fieldType, tf.fieldName, c, $event.value, -1)"></p-dropdown>   
+                        </div>
+                        
+                        <!-- Multiple Selection -->
+                        <div *ngIf="tf.selection == 'multiple'">
+                            <div class="multi-select" [ngClass]="{'empty': tf.selectedVal.length == 0}">
+                                <div class="drop-col split-col">
+                                    <span class="split-icon {{tf.fieldName}}-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="tf.fieldName == 'policies' ? policies : tf.itemValues"
+                                    formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.fieldName == 'policies' ? selectedPolicies : tf.selectedIds"
+                                    [selectedItemsLabel]="tf.placeholder" placeholder="{{tf.placeholder}}"
+                                    autoWidth="true" filter="true" resetFilterOnHide="true" optionLabel="name" optionId="id" 
+                                    filterPlaceHolder="Search {{tf.placeholder}}" [disabled]="tf.disabled"
+                                    (onChange)="selectedItems(tf.fieldName, $event.value)">
+                                    <ng-template let-tf.fieldName pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of tf.selectedVal; let i = index;">{{item}}<span
+                                                *ngIf="tf.selectedVal.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="tf.selectedVal.length == 0">{{tf.placeholder}}</span>
+                                    </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="tf.selectedValues.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of tf.selectedValues; let t=index" class="tag-text ws-tag-text">
+                                        <span>{{item}}</span>
+                                        <u *ngIf="tf.fieldName == 'policies'" class="policy-tag-preview cursor-pointer" (click)="previewPolicy(t)" >Preview</u>
+                                        <i *ngIf="!tf.disabled" class="material-icons tag-close"
+                                            (click)="disableTagSelection(tf.fieldName, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dynmic-selected-items" *ngIf="tf.selection == 'single' && (tf.fieldName == 'make' || tf.fieldName == 'manufacturer' || tf.fieldName == 'SelectProductType' || (tf.fieldName == 'year' && tf.selectedVal != 0) ) && (tf.selectedVal != '')">
+                    <div class="selected-items ws-selected-items">
+                        <div class="tag-text ws-tag-text">
+                            <span>{{tf.selectedVal}}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dynmic-selected-items" *ngIf=" tf.fieldName == 'workstreams' && tf.squareBoxType == 0 && tf.selection == 'single' && tf.selectedValues != ''">
+                    <div class="selected-items ws-selected-items">
+                        <div *ngFor="let item of tf.selectedIds; let t=index" class="tag-text ws-tag-text">
+                            <span>{{item.name}}</span>
+                        </div>
+                    </div>
+                </div> 
+
+                <div *ngIf="(CBADomain || collabticDomain) && tf.squareBoxType == 1">
+                    <!-- box workstream, thread category -->
+                    <div *ngSwitchCase="'dropdown'" [ngClass]="{'hide': CBADomain && tf.hiddenFlag }">
+                        <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                        <div class="{{tf.selection}}" title="{{!tf.isLabel ? tf.title : ''}}"
+                            [ngClass]="{'empty': pageInfo.access == 'documents' && tf.itemValues.length == 0 && tf.fieldName == 'make'}">
+                            <!-- Selection -->
+                            <div *ngIf="tf.loading" class="dash-loader cust-loader field-loader"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                            <div class="single-select">
+                                <div class="cursor text-center field-box square-box" [ngClass]="{'setOpacity5': (CBADomain || collabticDomain) && item.disabled, 'enabled': !item.disabled, 'active': item.id == tf.selectedValues, 'ws-square-box': tf.fieldName == 'workstreams' , 'tc-square-box': tf.fieldName != 'workstreams' }"
+                                *ngFor="let item of tf.itemValues;" title="{{CBADomain && item.disabled ? 'Request type cannot be changed after posting the thread' : ''}}"
+                                (click)="onChange(tf.fieldType, tf.fieldName, c, item.id, -1)">
+                                    <div *ngIf="item.toolTiptitle != undefined && item.toolTiptitle != ''" class="item-row square-row">
+                                        <div class="item-col ws-col {{item.imageClass}}"></div>
+                                        <div class="item-col">
+                                            <span class="title">{{item.name}}</span>
+                                            <span class="info">{{item.toolTipInfo}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="item.toolTiptitle == undefined || item.toolTiptitle == ''" class="item-row square-row" >
+                                        <div class="item-col {{item.imageClass }}"></div>
+                                        <div class="item-col">
+                                            <span class="title">{{item.name}}</span>
+                                            <span class="info">{{item.toolTipInfo}}</span>
+                                        </div>
+                                    </div>                                
+                                </div>
+                            </div> 
+                            <div *ngIf="CBADomain && tf.fieldName == 'workstreams'" class="hide">
+                                <div *ngFor="let item of tf.itemValues;">
+                                    <div class="info-icon-div" *ngIf="item.id == tf.selectedValues">
+                                        <img src="assets/images/parts/info-icon-orange.png">
+                                        <span class="info-icon-text">
+                                            <!--span class="bold">Speciality Repair</span-->
+                                            <span class="normal">{{item.toolTipInfo}}</span>
+                                        </span>
+                                    </div> 
+                                </div>
+                            </div>                                               
+                        </div>
+                    </div> 
+                </div>             
+
+                <!-- Custom Popup Field -->
+                <div *ngSwitchCase="'popup'" class="cursor custom-drop-down popup" title="{{tf.title}}">
+                    <!-- Singl Selection -->
+                    <div *ngIf="tf.selection == 'single'">
+                        <div class=" {{tf.selection}}" (click)="manageSelection(tf)">
+                            <div *ngIf="tf.loading" class="dash-loader cust-loader field-loader"><img
+                                    src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                            <div class="single-select" [ngClass]="{'empty': tf.disabled && tf.selectedVal.length == 0}"
+                                *ngIf="tf.selection == 'single'">
+                                <div class="drop-col split-col">
+                                    <span class="split-icon {{tf.fieldName}}-bg {{industryType.class}}"></span>
+                                </div>
+                                <p-dropdown class="drop-col dropdown" [options]="tf.itemValues"
+                                    formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues"
+                                    placeholder="{{tf.placeholder}}" autoWidth="true" filter="true"
+                                    optionLabel="name" optionValue="id" resetFilterOnHide="true" [disabled]="true"
+                                    [ngClass]="{'hidden-placeholder': tf.selectedVal.length > 0}"
+                                    (onChange)="onChange(tf.fieldType, tf.fieldName, c, $event.value, -1)"></p-dropdown>
+                            </div>
+                        </div>
+                        <div class="dynmic-selected-items" *ngIf="tf.selectedValues != ''">
+                            <div class="selected-items ws-selected-items">
+                                <div *ngIf="tf.fieldName != 'model'" class="tag-text ws-tag-text">
+                                    <span>{{tf.selectedValues}}</span>
+                                    <i *ngIf="!tf.disabled" class="material-icons tag-close"
+                                        (click)="disableTagSelection(tf.fieldName, tf.selectedValues, 0);">close</i>
+                                </div>
+                                <div *ngIf="tf.fieldName == 'model'" class="tag-text ws-tag-text">
+                                    <span>{{tf.selectedVal}}</span>
+                                    <i *ngIf="!tf.disabled" class="material-icons tag-close"
+                                        (click)="disableTagSelection(tf.fieldName, tf.selectedVal, 0);">close</i>
+                                </div>                        
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Multiple Selection -->
+                    <div *ngIf="tf.selection == 'multiple'"
+                        [ngClass]="{'hide': tf.fieldName == 'errorCode' && !apiFormFields[c-1].selection}">
+                        <div class="multi-select" [ngClass]="{'empty': tf.disabled}" (click)="manageSelection(tf)">
+                            <div class="drop-col split-col">
+                                <span class="split-icon {{tf.fieldName}}-bg {{tf.fieldClass}}-bg {{industryType.class}}"></span>
+                            </div>
+                            <p-multiSelect #multi class="drop-col dropdown" [ngClass]="{'hidden-placeholder': tf.selectedVal.length > 0}" [options]="tf.itemValues"
+                                formControlName="{{tf.apiFieldKey}}" [selectedItemsLabel]="tf.placeholder"
+                                placeholder="{{tf.placeholder}}" autoWidth="true" filter="true" resetFilterOnHide="true"
+                                optionLabel="name" optionId="id" filterPlaceHolder="Search {{tf.placeholder}}" [disabled]="true">
+                                <ng-template let-tf.fieldName pTemplate="selectedItems">
+                                    <ng-container *ngFor="let item of tf.selectedVal; let i = index;">{{item}}<span
+                                            *ngIf="tf.selectedVal.length > i+1">, </span>
+                                    </ng-container>
+                                    <span [ngClass]="{'p-placeholder': tf.selectedVal.length == 0}" *ngIf="tf.selectedVal.length == 0">{{tf.placeholder}}</span>
+                                </ng-template>
+                            </p-multiSelect>
+                        </div> <span *ngIf="tf.fieldName == 'tags'"></span>
+                        <div class="dynmic-selected-items" *ngIf="tf.selectedValues.length > 0">
+                            <div class="selected-items ws-selected-items">
+                                <div *ngFor="let item of tf.selectedValues; let t=index" class="tag-text ws-tag-text">
+                                    <span>{{item}}</span>
+                                    <i *ngIf="!tf.disabled" class="material-icons tag-close"
+                                        (click)="disableTagSelection(tf.fieldName, item, t);">close</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thread Type Select -->
+                <div *ngSwitchCase="'ThreadTypeSelect'" class="row">
+                    <div class="cursor field-box rect-box {{item.itemClass}}"
+                        [ngClass]="{'cba': CBADomain,'active': item.isActive, 'deactive': item.active == 0, 'hide': item.hiddenFlag}"
+                        *ngFor="let item of tf.itemValues;"
+                        (click)="onChange(tf.fieldType, tf.fieldName, c, item.apiValue, -1)">
+                        <div class="item-row">
+                            <div class="item-col {{item.apiValue}}"></div>
+                            <div class="item-col">
+                                <div class="title">{{item.name}}</div>
+                                <div class="desc">{{item.description}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Type Select -->
+                <div *ngSwitchCase="'helpTypeCollectionCell'">
+                    <div class="cursor text-center field-box square-box enabled" [ngClass]="{'active': item.isActive}"
+                        *ngFor="let item of tf.itemValues;"
+                        (click)="onChange(tf.fieldType, tf.fieldName, c, item.apiValue, -1)">
+                        <div *ngIf="item.toolTiptitle != undefined && item.toolTiptitle != ''" class="item-row" title="{{item.toolTiptitle}}" >
+                            <div class="item-col {{item.name | lowercase }}"></div>
+                            <div class="item-col">{{item.name}}</div>
+                        </div>
+                        <div *ngIf="item.toolTiptitle == undefined || item.toolTiptitle == ''" class="item-row" >
+                            <div class="item-col {{item.name | lowercase }}"></div>
+                            <div class="item-col">{{item.name}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'selectbox'">
+                    <div class="cursor text-center field-box square-box" [ngClass]="{'active': item.isActive}"
+                        *ngFor="let item of tf.itemValues;"
+                        (click)="onChange(tf.fieldType, tf.fieldName, c, item.apiValue, -1)">
+                        <div *ngIf="item.toolTiptitle != undefined && item.toolTiptitle != ''" class="item-row" title="{{item.toolTiptitle}}" >
+                            <div class="item-col {{item.name | lowercase }}"></div>
+                            <div class="item-col">{{item.name}}</div>
+                        </div>
+                        <div *ngIf="item.toolTiptitle == undefined || item.toolTiptitle == ''" class="item-row" >
+                            <div class="item-col {{item.name | lowercase }}"></div>
+                            <div class="item-col">{{item.name}}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toggle -->
+                <div *ngSwitchCase="'toggle'" class="row">
+                    <div class="cursor field-box toggle-box {{tf.fieldClass}}"
+                        [ngClass]="{'active': tf.selection, 'inactive': !tf.selection}">
+                        <span class="toggle-col field-label {{industryType.slug}}">{{tf.title}}</span>
+                        <span class="toggle-col toggle-option">
+                            <p-inputSwitch formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selection"
+                                (onChange)="onChange(tf.fieldType, tf.fieldName, c, $event.checked, -1)"></p-inputSwitch>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Text Area -->
+                <div *ngSwitchCase="'textarea'">
+                    <div class="dynamic-form-control">
+                        <div class="field-col text-col alt-text">
+                            <div class="field-label {{tf.fieldName}} {{tf.fieldClass}}"
+                                [ngClass]="{'label-bg': tf.iconSupport, 'item-label': tf.isLabel}" *ngIf="tf.isLabel">
+                                {{tf.title}}                            
+                            </div>
+                            <div *ngIf="tf.languageOptionForDesc == 1" class="lang-row">
+                                <div class="field-label item-label lang-split-col {{tf.fieldName}} {{tf.fieldClass}}">
+                                    {{tf.title}}
+                                </div>
+                                <div class="language-col lang-split-col">
+                                    <div class="item-col lable-col">Language</div>
+                                    <div class="item-col option-col">
+                                        <p-dropdown appendTo="body" [style]="{'width':'100%'}" [ngClass]="{'enable': tf.selectedLang != ''}" 
+                                        class="drop-col dropdown" [options]="tf.langItemValues" 
+                                        formControlName="lang-{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedLang"
+                                        placeholder="Language" autoWidth="true" filter="true" optionLabel="name"
+                                        optionValue="id" resetFilterOnHide="true" [disabled]="true" [virtualScroll]="true"
+                                        ></p-dropdown>
+                                    </div>
+                                </div>
+                            </div>
+                            <textarea *ngIf="tf.isEditor == 0" placeholder="{{tf.placeholder}}"
+                                formControlName="{{tf.apiFieldKey}}" [ngModel]="tf.selectedValues"
+                                maxlength="{{tf.maxLength}}" autocomplete="off"
+                                (ngModelChange)="onChange(tf.fieldType, tf.fieldName, c, $event, -1)"></textarea>
+
+                            <p-editor *ngIf="tf.isEditor == 1 && tf.isRichEditor == 0" formControlName="{{tf.apiFieldKey}}"
+                                [(ngModel)]="tf.selectedValues" placeholder="{{tf.placeholder}}"
+                                (onTextChange)="onChange(tf.fieldType, tf.fieldName, c, $event.htmlValue, -1)"
+                                [style]="{'height': '180px'}">
+                                <ng-template pTemplate="header">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold" aria-label="Bold"></button>
+                                        <button class="ql-italic" aria-label="Italic"></button>
+                                        <button class="ql-underline" aria-label="Underline"></button>
+
+                                        <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                            <option *ngFor="let c of textColorValues" value="{{c.color}}"
+                                                label="{{c.color}}"></option>
+                                        </select>
+                                        <button class="ql-list" value="ordered"></button>
+                                        <button class="ql-list" value="bullet"></button>
+                                        <select title="Text Alignment" class="ql-align">
+                                            <option selected>Gauche</option>
+                                            <option value="center" label="Center"></option>
+                                            <option value="right" label="Right"></option>
+                                            <option value="justify" label="Justify"></option>
+                                        </select>
+
+                                        <button aria-label="Link" class="ql-link"></button>
+                                        <button aria-label="Image" class="ql-image"></button>
+                                        <button aria-label="Code Block" class="ql-code-block"></button>
+                                    </span>
+                                </ng-template>
+                            </p-editor>
+                            <p-progressBar *ngIf="tf.isEditor == 1 && tf.isRichEditor == 1 && editorProgressUpload==1" [style]="{'height': '6px','width':'300px','text-align':'center','margin':'10px'}" mode="indeterminate"></p-progressBar>
+                            <ckeditor [editor]="Editor" [config]="configCke"  (drop)="dropEvent($event,tf)"
+                            *ngIf="tf.isEditor == 1 && tf.isRichEditor == 1" formControlName="{{tf.apiFieldKey}}"
+                            [ngModel]="tf.selectedValues" 
+                            (change)="onChange(tf.fieldType, tf.fieldName, c, tf.apiFieldKey, -1, tf.isRichEditor)"
+                            ></ckeditor>
+
+                            <div *ngIf="tf.minLength > 0" class="text-count">
+                                <span class="current-count">{{tf.selectedValues.length}}</span>
+                                <span *ngIf="tf.selectedValues.length < 100">/{{tf.minLength}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'audioFile'">
+                    <div class="dynamic-form-control">
+                        <div class="field-col text-col alt-text">
+                            <div class="field-label {{tf.fieldName}} {{tf.fieldClass}}"
+                                [ngClass]="{'label-bg': tf.iconSupport, 'item-label': tf.isLabel, 'margin-top': tvsDomain}" *ngIf="tf.isLabel">
+                                {{tf.title}}                            
+                            </div>
+                            <div class="audio-desc">
+                                <app-audio-desc-attachment *ngIf="audioAttachmentFlag" [audioAttachmentItems]="audioAttachmentItems" [action]="manageAction" (audioAttachments)="audioAttachment($event)"></app-audio-desc-attachment>
+                                <app-audio-attachment-view *ngIf="audioAttachmentViewFlag" [attachments]="audioAttachmentItems" [action]="EditAttachmentAction" (attachmentAction)="attachmentAction($event)"></app-audio-attachment-view>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radio Button -->
+                <div *ngSwitchCase="'radio'">
+                    <span *ngIf="tf.apiFieldKey == 'forTrainingOnly'" class="sales-condition-icon custom-field-margin-padding field-label item-label" style="text-indent: 25px">{{tf.title}}</span>
+                    <div class="radio-button" [ngClass]="{'custom-green' : ['manualPurchase', 'forTrainingOnly'].includes(tf.apiFieldKey)}">
+                        <label class="cursor" [ngClass]="{'active': opt.checked }"
+                            *ngFor="let opt of tf.itemValues" id="radio-{{opt.id}}">
+                            <input type="radio" [name]="opt.name" [formControlName]="tf.apiFieldKey" [value]="opt.id" [checked]="opt.checked"
+                                (change)="onChange(tf.fieldType, tf.fieldName, c, opt.id, -1)" [(ngModel)]="tf.selectedVal">
+                            <span class="checkmark" [ngClass]="{'active': opt.checked}"></span>
+                            {{opt.name}}
+                        </label>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'checkbox'">
+                    <div class="radio-button">
+                        <label class="cursor" [ngClass]="{'active': opt.checked}" *ngFor="let opt of tf.itemValues"
+                            id="radio-{{opt.id}}">
+                            <input type="checkbox" [name]="opt.name" [formControlName]="tf.apiFieldKey" [value]="opt.id"
+                                checked="{{opt.checked}}" (change)="onChange(tf.fieldType, tf.fieldName, c, opt.id, -1)"
+                                [(ngModel)]="tf.selectedVal">
+                            <span class="checkmark" [ngClass]="{'active': opt.checked}"></span>
+                            {{opt.name}}
+                        </label>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'checkbox-single'">
+                    <div ngClass="{'flext-align-center' : tf.LabelName != 'bannerImageFit', 'flext-align-right' : tf.LabelName == 'bannerImageFit'}">
+                        <span *ngIf="tf.LabelName == 'bannerImageFit'" class="banner-label">Banner image fit:</span>
+                        <p-checkbox styleClass="{{pageInfo.access == 'market-place' ? 'custom-checkbox-design-market-place' : 'custom-checkbox-design'}}" [name]="tf.apiFieldKey" [disabled]="tf.apiFieldKey == 'isFree' && duplicateMarketPlace" [formControlName]="tf.apiFieldKey" [(ngModel)]="tf.selectedVal" (onChange)="onChange(tf.fieldType, tf.fieldName, c, $event.checked, -1)" [binary]="true"></p-checkbox>
+                        <span class="custom-checkbox-text-design">{{tf.LabelName == "bannerImageFit" ? "Fill" : tf.title}}</span>
+                    </div>
+                </div>
+
+                <!-- Date Picker -->
+                <div *ngSwitchCase="'input-date'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!tf.isLabel ? tf.title : ''}}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg"></div>
+                        <div class="field-col calendar-col alt-text cursor">
+                            <dp-date-picker placeholder="{{tf.placeholder}}"
+                                formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.dateVal" [config]="datePickerConfig"
+                                (onSelect)="onChange(tf.fieldType, tf.fieldName, c, $event.date, -1)"></dp-date-picker>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'input-date-prime'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!tf.isLabel ? tf.title : ''}}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg"></div>
+                        <div class="field-col calendar-col alt-text cursor">
+                            <p-calendar placeholder="{{tf.placeholder}}" dateFormat="mm-dd-yy" styleClass="{{tf.apiFieldKey == 'expiryDateBirdPrice' ? 'custom-position-date' : ''}}" formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.dateVal" [minDate]="tf.apiFieldKey == 'startDate' ? miniumStartDate : (tf.apiFieldKey == 'expiryDateBirdPrice' ? miniumStartDate : miniumEndDate)" (onSelect)="onChange(tf.fieldType, tf.fieldName, c, $event, -1)" [maxDate]="tf.apiFieldKey == 'endDate' ? maximumEndDate : (tf.apiFieldKey == 'expiryDateBirdPrice' ? miniumExpiryDateBird : maximumStartDate)"></p-calendar>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'dropdown-prime'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!tf.isLabel ? tf.title : ''}}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg"></div>
+                        <div class="field-col calendar-col alt-text cursor">
+                            <p-dropdown appendto="body" [style]="{'width':'100%', 'height': '36px', 'align-items': 'center'}" class="drop-col dropdown" 
+                                [filter]="true" [formControlName]="tf.apiFieldKey" [(ngModel)]="tf.selectedValues" resetFilterOnHide="true"
+                                [options]="tf.apiFieldKey == 'country' ? countryDropdownData : stateDropdownData" placeholder="{{tf.placeholder}}" 
+                                optionLabel="name" optionValue="id" (onChange)="onChange(tf.fieldType, tf.fieldName, c, $event.value, -1);">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngSwitchCase="'input-time'">
+                    <div class="field-label {{tf.fieldName}} item-label custom-field-margin-padding" *ngIf="tf.isLabel">{{tf.title}}</div>
+                    <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!tf.isLabel ? tf.title : ''}}">
+                        <div class="field-col bg-col {{tf.fieldName}}-bg"></div>
+                        <div class="field-col calendar-col alt-text cursor">
+                            <p-calendar placeholder="{{tf.placeholder}}" formControlName="{{tf.apiFieldKey}}" [timeOnly]="true" [(ngModel)]="tf.dateVal" [showTime]="true" [minDate]="minDateTime[tf.apiFieldKey] ? minDateTime[tf.apiFieldKey] : ''" [hourFormat]="12" (onSelect)="onChange(tf.fieldType, tf.fieldName, c, $event, -1)"></p-calendar>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attachment -->
+                <div *ngSwitchCase="'attachments'">
+                    <div class="prob-form-row attachment-row ">
+                        <app-file-attachment *ngIf="threadUpload" class="attachment-file" [action]="manageAction"
+                            [pushData]="pageInfo.pushFormData" [apiData]="apiData" [attachmentItems]="attachmentItems" (uploadedItems)="attachments($event)">
+                        </app-file-attachment>
+                        <app-attachment-view *ngIf="attachmentFlag" [action]="EditAttachmentAction" [access]="pageInfo.access" [attachments]="attachmentItems"
+                            (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                    </div>
+                </div>
+
+                <!-- Slider -->
+                <div *ngSwitchCase="'slider'">
+                    <div class="slider">
+                        <div class="field-label slider-label {{tf.fieldClass}}">{{tf.LabelName}}</div>
+                        <div class="field-label slider-placeholder">{{tf.title}}:<span *ngIf="tf.selectedValues > 0"
+                                class="slider-val {{tf.fieldClass}}">{{tf.selectedValues}} {{tf.placeholder}}</span></div>
+                        <!--p-slider formControlName="{{tf.apiFieldKey}}" [(ngModel)]="tf.selectedValues" [min]="tf.minValue" [max]="tf.maxValue" [step]="tf.intervalValue" [animate]="true" styleClass="cust-slider" (onChange)="onChange(tf.fieldType, tf.fieldName, c, $event.value, -1)"></p-slider-->
+                        <mat-slider class="custom-mat-slider" [disabled]="disabled" [invert]="invert" [max]="tf.maxValue"
+                            [min]="tf.minValue" [step]="tf.intervalValue" formControlName="{{tf.apiFieldKey}}"
+                            [(ngModel)]="tf.selectedValues" [vertical]="vertical"
+                            (change)="onChange(tf.fieldType, tf.fieldName, c, $event.value, -1)">
+                        </mat-slider>
+                    </div>
+                </div>
+                <div *ngIf="['workstreams', 'manufacturer', 'year'].includes(tf.fieldName) && webForm.controls[tf.apiFieldKey].errors" class="invalid-feedback"
+                    [ngClass]="{'invalid-field': step1Submitted && !tf.valid}">
+                    <div id="valid-error" class="field-err" *ngIf="webForm.controls[tf.apiFieldKey].errors.required">{{tf.isReqiredText}}
+                    </div>
+                </div>
+                <div *ngIf="((CBADomain && tf.fieldName == 'repairOrder') || tf.fieldName == 'vinNo' || tf.fieldName == 'vin' || tf.fieldName == 'vinNoScanTool') && tf.invalidFlag" class="invalid-feedback invalid-field">
+                    <div id="valid-error" class="field-err">{{tf.invalidError}}</div>
+                </div>
+                <div class="invalid-feedback" *ngIf="checkIsValid(tf.fieldName, tf.selectedVal) && ['startDate', 'endDate', 'startTime', 'endTime', 'timeZone','country', 'state'].includes(tf.fieldName)" [ngClass]="{'invalid-field': ((step == 'step1' && step1Submitted) || (step == 'step2' && step2Submitted) && !tf.valid)}">
+                    <div id="valid-error" class="field-err">{{tf.isReqiredText}}</div>
+                </div>
+                <div *ngIf="!['startDate', 'endDate', 'startTime', 'endTime', 'timeZone','country', 'state'].includes(tf.fieldName) && (!tf.valid && checkIsValid(tf.fieldName, tf.selectedVal) && (tf.fieldName != 'vinNo' || (tf.fieldName == 'vinNo' && tf.isMandatary == 1) || (pageInfo.access == 'thread' && tf.fieldName == 'content' && tf.isMandatary == 0)) || (pageInfo.access == 'market-place' && checkIsValid(tf.fieldName, tf.selectedVal) && !tf.selectedVal && !tf.apiFieldKey.includes('inPersonDay')))" class="invalid-feedback" [ngClass]="{'invalid-field': ((step == 'step1' && step1Submitted) || (step == 'step2' && step2Submitted) && !tf.valid)}">
+                    <div id="valid-error" class="field-err" *ngIf="!tf.valid && !tf.invalidFlag">{{tf.isReqiredText}}</div>
+                </div>
+                <div *ngIf="['manualName','sku','trainingMode', 'trainingName'].includes(tf.fieldName) && checkIsValid(tf.fieldName, tf.selectedVal)" class="invalid-feedback" [ngClass]="{'invalid-field': ((step == 'step1' && step1Submitted) || (step == 'step2' && step2Submitted) && tf.valid)}">
+                    <div id="valid-error" class="field-err" *ngIf="tf.valid && !tf.invalidFlag">{{tf.fieldName == 'manualName' ? 'Manual name already exists' :tf.fieldName == 'trainingName' ? 'Training name already exists' : tf.fieldName == 'trainingMode' ? 'This training mode for above training already exists' : 'This SKU already exists'}}</div>
+                </div>
+                <div *ngIf="showStartDateValidation && tf.fieldName == 'startDate'" class="invalid-feedback invalid-field">
+                    <div id="valid-error" class="field-err">Start date should be less than end date</div>
+                </div>
+                <div *ngIf="showBirdPriceValidation && tf.fieldName == 'birdPrice'" class="invalid-feedback invalid-field">
+                    <div id="valid-error" class="field-err">Early bird price must be less than regular price</div>
+                </div>
+                <div *ngIf="showManualDiscountPriceValidation && tf.fieldName == 'manualDiscountPrice'" class="invalid-feedback invalid-field">
+                    <div id="valid-error" class="field-err">Discount price must be less than manual's price</div>
+                </div>
+                <div *ngIf="showPriceError && tf.fieldName == 'birdPrice'" class="invalid-feedback invalid-field">
+                    <div id="valid-error" class="field-err">Regular price is required to calculate bird price</div>
+                </div>
+                <div *ngIf="webForm?.controls?.email?.errors && tf.fieldName == 'email'" class="invalid-feedback invalid-field">
+                    <div *ngIf="webForm?.controls?.email?.errors?.pattern" id="valid-error" class="field-err">Email must be valid email</div>
+                </div>
+                <div *ngIf="(webForm?.controls?.zoomEmail?.touched || step1Submitted) && webForm?.controls?.zoomEmail?.errors && tf.fieldName == 'zoomEmail'" class="invalid-feedback invalid-field">
+                    <div *ngIf="webForm?.controls?.zoomEmail?.errors?.required" id="valid-error" class="field-err">Zoom Email is required</div>
+                    <div *ngIf="webForm?.controls?.zoomEmail?.errors?.pattern" id="valid-error" class="field-err">Email must be valid email</div>
+                </div>
+                <div *ngIf="showCustomValidation && tf.fieldName == 'maxParticipants'" class="invalid-feedback invalid-field">
+                    <div id="valid-error" class="field-err">{{customValidationMsg}}</div>
+                </div>
+                <i *ngIf="tf.fieldName == 'zoomEmail'" class="d-flex instructions">
+                    <img src="assets/images/service-provider/info-dark-grey.png"  alt="" srcset="">
+                    <span>This must be the zoom account email of the webinar host</span>
+                </i>
+                <i *ngIf="tf.fieldName == 'email' && selectedTrainingMode != 'Recorded'" class="d-flex instructions">
+                    <img src="assets/images/service-provider/info-dark-grey.png"  alt="" srcset="">
+                    <span>Email to get questions from users</span>
+                </i>
+            </div>
+
+            <!-- Recent Selection Lists -->
+            <div class="recent-selections recent-top {{tf.selection}}"
+                [ngClass]="{'hide': !tf.recentShow || tf.selectedVal.length > 0}"
+                *ngIf="tf.recentSelection == 1 && tf.recentSelectionValue && tf.recentSelectionValue.length > 0 && !tf.loading"
+                [style.width.px]="panelWidth">
+                <div class="recent-col recent-label">Recent Selections:</div>
+                <div class="recent-col recent-list">
+                    <div class="cursor items" *ngFor="let recent of tf.recentSelectionValue; let r=index;"
+                        (click)="recentSelection(tf, recent, c)">
+                        <span *ngIf="tf.fieldName != 'make'">{{recent.name}}</span>
+                        <span *ngIf="tf.fieldName == 'make'">{{recent.genericProductName}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- sales person -->
+        <div class="col-md-12 sales-person-display presenting-users" *ngIf="pageInfo.access == 'market-place' && tf.fieldName == 'salesPerson'">
+            <ul >
+                <li  *ngFor="let item of salesPersonsList">
+                    <div class="img-cntr">
+                        <a><span (click)="removeLinkedSalesPersonEmit(item)" class="icon-cntr cursor-pointer">&ndash;</span></a>
+                        <div class="img-cntr-inner">
+                            <img src="{{item.profileImg}}" onerror="this.src='assets/images/thumb_profile_image.png'"/>
+                        </div>
+                    </div>
+                    <p class="text-nowrap">{{item.userName}}</p>
+                </li>
+
+            </ul>
+      </div>
+    <!--  -->
+    </ng-container>
+</div>
+<div *ngIf="actionField" id="sib-actions">
+    <p-accordion class="sib-tab" (onClose)="onTabClose($event)" (onOpen)="onTabOpen($event)">
+        <p-accordionTab header="SIB Action {{ac+1}}" [(selected)]="secTabStatus[ac]" [disabled]="secTabStatus[ac]" id="tab-{{ac}}" [ngClass]="{'disable': apiFormFields.mainActionItems[0].disable}" *ngFor="let df of apiFormFields.cells.sib; let ac = index;" [formGroup]="webForm">
+            <div *ngFor="let sc of df.sibActions; let s = index;">
+                <div *ngIf="sc.fieldType == 'hidden' && sc.selectedValues > 0" class="sec-actions">
+                    <span *ngIf="!sc.saveFlag && apiFormFields.cells.sib.length > 1" class="cursor action-col delete-icon" (click)="sibSectionAction('delete', ac, apiFormFields.cells.sib, sc.selectedValues)">Delete <span class="bg-icon"></span></span>
+                    <span *ngIf="!sc.saveFlag" class="cursor action-col edit-icon" (click)="sibSectionAction('edit', ac, df, sc.selectedValues)">Edit <span class="bg-icon"></span></span>
+                    <span *ngIf="sc.saveFlag" class="cursor action-col cancel-icon" (click)="sibSectionAction('cancel', ac, df, sc.selectedValues)">Cancel <span class="bg-icon"></span></span>
+                    <span *ngIf="sc.saveFlag" class="cursor action-col save-icon" (click)="sibSectionAction('save', ac, df, sc.selectedValues)">Save <span class="bg-icon"></span></span>
+                </div>
+            </div>
+            <div class="row sib-sec">
+                <div class="field-item {{sf.fieldClass}} {{sf.fieldName}}" [ngClass]="{'hide': sf.rowItems.length == 0 && !sf.displayFlag || sf.fieldType == 'hidden'}" *ngFor="let sf of df.sibActions; let d = index;"> <!--{{ac}} {{d}}-->
+                    <div *ngIf="sf.rowItems.length > 0" [ngClass]="{'row': sf.fieldType != 'frame-input'}">
+                        <div class="sib-rows" [ngClass]="{'sib-more': sf.rowItems.length > 1 &&  a != sf.rowItems.length-1}" *ngFor="let sc of sf.rowItems; let a = index;">
+                            <div class="row-items">
+                                <div *ngFor="let sbf of sc.cellAction; let sb = index;" [ngClass]="{'label-col': sbf.fieldType == 'label' || sbf.fieldType == 'label-dropdown'}">
+                                    <div *ngIf="sbf.displayFlag" [ngSwitch]="sbf.fieldType">
+                                        <div *ngIf="sbf.isMandatary && sbf.editFlag" class="required-text {{sbf.fieldName}}" [ngClass]="{'hide': sbf.fieldType == 'label' || sbf.fieldType == 'label-dropdown', 'top-0': sf.isLabel}">{{requiredTxt}}</div>
+                                        <!-- Frame Input Field -->
+                                        <div *ngIf="sbf.fieldType == 'frame-input'">
+                                            <span class="cursor close" *ngIf="sf.rowItems.length > 1 && sbf.editFlag" (click)="removeFrameRow(sf.rowItems, d, a)"></span>
+                                            <div class="cursor dynamic-form-control split-bg-col {{sbf.fieldName}}">
+                                                <div class="field-col bg-col {{sbf.fieldName}}-bg {{sbf.fieldClass}}-bg"></div>
+                                                <div class="field-col text-col alt-text">
+                                                    <input matInput class="{{sbf.fieldClass}}" [ngClass]="{'readonly': !sf.saveFlag}" placeholder="{{sbf.placeholder}}" formControlName="{{sbf.apiFieldKey}}-{{ac}}-{{d}}-{{a}}" [(ngModel)]="sbf.selectedValues" maxlength="{{sbf.maxLength}}" autocomplete="off" [readonly]= "!sbf.editFlag" (input)="onChange(sbf.fieldType, sbf.fieldName, d, $event.target.value, -1, '', true, ac, a)" />
+                                                    <span [ngClass]="{'cba-vin': CBADomain, 'active': sbf.selectedValues != undefined && sbf.selectedValues.length == 17 && !sbf.duplicateFlag && sbf.editFlag}" (click)="onChange(sbf.fieldType, sbf.fieldName, d, sbf.selectedValues, -1, 'frame-api', true, ac, a, 'change')" class="vin-action text-right"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Label Field-->
+                                        <div *ngSwitchCase="'label'" class="frame-label" [ngClass]="{'readonly': !sf.saveFlag}">
+                                            <div class="label-item {{sbf.fieldClass}}">
+                                                {{sbf.placeholder}}
+                                                <div class="label-val">
+                                                    {{sbf.selectedValues}}
+                                                    <span *ngIf="sbf.action && sbf.editFlag" class="cursor edit" (click)="manageSelection(sbf, d, sf, ac, a)"></span>
+                                                </div>
+                                            </div>                        
+                                        </div>
+                                    </div>
+                                    <div *ngIf="sbf.fieldType == 'frame-input' && ((!sbf.valid && sbf.selectedValues == '' && step == 'step1' && step1Submitted) || sbf.invalidFlag || sbf.duplicateFlag || (!sbf.vinValid && sbf.valid && sbf.selectedValues != '' && step == 'step1' && step1Submitted))" class="invalid-feedback invalid-field">
+                                        <div id="valid-error" class="field-err">
+                                            <span *ngIf="sbf.invalidFlag">{{sbf.invalidError}}</span>
+                                            <span *ngIf="sbf.duplicateFlag">{{sbf.duplicateError}}</span>
+                                            <span *ngIf="sbf.valid && !sbf.vinValid && !sbf.invalidFlag">{{sbf.verifyError}}</span>
+                                            <span *ngIf="!sbf.invalidFlag && !sbf.duplicateFlag && !sbf.valid">{{sbf.isReqiredText}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="sf.fieldType == 'frame-input' && sf.invalidFlag" class="invalid-feedback invalid-field">
+                                    <div id="valid-error" class="field-err">{{sf.invalidError}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div *ngIf="sf.actionItems.length > 0 && sf.actionItems[0].action" class="row-action-item" [ngClass]="{'more-actions': sf.rowItems.length}">
+                            <span [ngClass]="{'disabled': sf.actionItems[0].disable}" (click)="addFrameRow(df, ac, d, sf.actionItems[0].disable)">{{sf.actionItems[0].label}}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="sf.rowItems.length == 0 && sf.displayFlag" [ngSwitch]="sf.fieldType">
+                        <div *ngIf="sf.isMandatary" class="required-text {{sf.fieldName}}" [ngClass]="{'top-0': sf.isLabel}">{{requiredTxt}}</div>
+                        <!-- Input Field -->
+                        <div *ngSwitchCase="'input'">
+                            <div class="field-label {{sf.fieldName}} {{sf.fieldClass}} item-label" *ngIf="sf.isLabel"> {{sf.title}}</div>
+                            <div class="cursor dynamic-form-control split-bg-col {{sf.fieldName}}" title="{{!sf.isLabel ? sf.title : ''}}" [ngClass]="{'focused': sf.selectedValues != ''}">
+                                <div class="field-col bg-col {{sf.fieldName}}-bg {{sf.fieldClass}}-bg"></div>
+                                <div class="field-col text-col alt-text">
+                                    <input matInput class="{{sf.fieldClass}}" [ngClass]="{'readonly': !sf.saveFlag}" placeholder="{{sf.placeholder}}"
+                                        formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [ngModel]="sf.selectedValues"
+                                        maxlength="{{sf.maxLength}}" autocomplete="off"
+                                        [readonly]= "!sf.editFlag"
+                                        (ngModelChange)="onChange(sf.fieldType, sf.fieldName, d, $event, -1)">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngSwitchCase="'input-with-count'">
+                            <div>
+                                <div class="field-label {{sf.fieldName}} {{sf.fieldClass}} item-label" *ngIf="sf.isLabel">{{sf.title}}</div>
+                                <div>
+                                    {{pendingInputText}}
+                                </div>
+                            </div>
+                            <div class="cursor dynamic-form-control split-bg-col {{sf.fieldName}}" title="{{!sf.isLabel ? sf.title : ''}}" [ngClass]="{'focused': sf.selectedValues != ''}">
+                                <div class="field-col bg-col {{sf.fieldName}}-bg {{sf.fieldClass}}-bg"></div>
+                                <div class="field-col text-col alt-text">
+                                    <input matInput class="{{sf.fieldClass}}" [ngClass]="{'readonly': !sf.saveFlag}" placeholder="{{sf.placeholder}}"
+                                        formControlName="{{sf.apiFieldKey}}" [ngModel]="sf.selectedValues"
+                                        maxlength="{{sf.maxLength}}" autocomplete="off"
+                                        [readonly]= "!sf.editFlag"
+                                        (ngModelChange)="onChange(sf.fieldType, sf.fieldName, d, $event, -1); valueChange(sf.selectedValues)">
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Input Box Field -->
+                        <div *ngSwitchCase="'inputbox'">
+                            <div class="cursor dynamic-form-control" [ngClass]="{'focused': sf.selectedValues != ''}">
+                                <div class="field-col text-col alt-text">
+                                    <input matInput class="input-box0" [ngClass]="{'readonly': !sf.saveFlag}" placeholder="{{sf.placeholder}}"
+                                        formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [ngModel]="sf.selectedValues"
+                                        maxlength="{{sf.maxLength}}" autocomplete="off"
+                                        [readonly]= "!sf.editFlag"
+                                        (ngModelChange)="onChange(sf.fieldType, sf.fieldName, d, $event.target.value, -1, '', true, ac)">
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Dropdown Field -->
+                        <div *ngSwitchCase="'dropdown'">
+                            <div class="field-label {{sf.fieldName}} item-label custom-field-margin-padding" *ngIf="sf.isLabel">{{sf.title}}</div>
+                            <div class="custom-drop-down {{sf.selection}}" title="{{!sf.isLabel ? sf.title : ''}}"
+                                [ngClass]="{'empty': pageInfo.access == 'documents' && sf.itemValues.length == 0 && (sf.fieldName == 'make' || sf.fieldName == 'manufacturer')}">
+                                <!-- Single Selection -->
+                                <div *ngIf="sf.loading" class="dash-loader cust-loader field-loader"><img
+                                        src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                                <div class="single-select" *ngIf="sf.selection == 'single'">
+                                    <div class="drop-col split-col">
+                                        <span class="split-icon {{sf.fieldName}}-bg"></span>
+                                    </div>
+                                    <p-dropdown appendTo="body" [style]="{'width':'100%'}" [ngClass]="{'enable': sf.selectedValues != '', 'readonly': !sf.saveFlag}" class="drop-col dropdown"
+                                        [options]="sf.itemValues" formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [(ngModel)]="sf.selectedValues"
+                                        placeholder="{{sf.placeholder}}" autoWidth="true" filter="true" optionLabel="name"
+                                        optionValue="id" resetFilterOnHide="true" [disabled]="sf.disabled" [virtualScroll]="true"
+                                        (onChange)="onChange(sf.fieldType, sf.fieldName, d, $event.value, -1)"></p-dropdown>
+                                </div>
+                                
+                                <!-- Multiple Selection -->
+                                <div *ngIf="sf.selection == 'multiple' ">
+                                    <div class="multi-select" [ngClass]="{'empty': sf.selectedVal.length == 0}">
+                                        <div class="drop-col split-col">
+                                            <span class="split-icon {{sf.fieldName}}-bg"></span>
+                                        </div>
+                                        <p-multiSelect #multi class="drop-col dropdown" [ngClass]="{'readonly': !sf.saveFlag}" [options]="sf.itemValues"
+                                            formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [(ngModel)]="sf.selectedIds"
+                                            [selectedItemsLabel]="sf.placeholder" placeholder="{{sf.placeholder}}"
+                                            autoWidth="true" filter="true" resetFilterOnHide="true" optionLabel="name" optionId="id"
+                                            filterPlaceHolder="Search {{sf.placeholder}}" [disabled]="sf.disabled"
+                                            (onChange)="selectedItems(sf.fieldName, $event.value)">
+                                            <ng-template let-sf.fieldName pTemplate="selectedItems">
+                                                <ng-container *ngFor="let item of sf.selectedVal; let i = index;">{{item}}<span
+                                                        *ngIf="sf.selectedVal.length > i+1">, </span>
+                                                </ng-container>
+                                                <span class="p-placeholder" *ngIf="sf.selectedVal.length == 0">{{sf.placeholder}}</span>
+                                            </ng-template>
+                                        </p-multiSelect>
+                                    </div>
+                                    <div class="dynmic-selected-items" [ngClass]="{'readonly': !sf.saveFlag}" *ngIf="sf.selectedValues.length > 0">
+                                        <div class="selected-items ws-selected-items">
+                                            <div *ngFor="let item of sf.selectedValues; let t=index" class="tag-text ws-tag-text">
+                                                <span>{{item}}</span>
+                                                <i *ngIf="sf.disabled" class="material-icons tag-close"
+                                                    (click)="disableTagSelection(sf.fieldName, item, t);">close</i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="dynmic-selected-items" [ngClass]="{'readonly': !sf.saveFlag}" *ngIf="sf.selection == 'single' && (sf.fieldName == 'make' || sf.fieldName == 'SelectProductType' || sf.fieldName == 'year') && (sf.selectedVal != '')">
+                            <div class="selected-items ws-selected-items">
+                                <div class="tag-text ws-tag-text">
+                                    <span>{{sf.selectedVal}}</span>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Custom Popup Field -->
+                        <div *ngSwitchCase="'popup'" class="cursor custom-drop-down popup" title="{{sf.title}}">
+                            <!-- Single Selection -->
+                            <div *ngIf="sf.selection == 'single'">
+                                <div class=" {{sf.selection}}" (click)="manageSelection(sf)">
+                                    <div *ngIf="sf.loading" class="dash-loader cust-loader field-loader"><img
+                                            src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                                    <div class="single-select" [ngClass]="{'empty': sf.disabled}" *ngIf="sf.selection == 'single'">
+                                        <div class="drop-col split-col">
+                                            <span class="split-icon {{sf.fieldName}}-bg {{industryType.class}}"></span>
+                                        </div>
+                                        <p-dropdown class="drop-col dropdown" [ngClass]="{'readonly': !sf.saveFlag}" [options]="sf.itemValues"
+                                            formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [(ngModel)]="sf.selectedValues"
+                                            placeholder="{{sf.placeholder}}" autoWidth="true" filter="true"
+                                            optionLabel="name" optionValue="id" resetFilterOnHide="true" [disabled]="true"
+                                            (onChange)="onChange(sf.fieldType, sf.fieldName, d, $event.value, -1)"></p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="dynmic-selected-items" [ngClass]="{'readonly': !sf.saveFlag}" *ngIf="sf.selectedValues != ''">
+                                    <div class="selected-items ws-selected-items">
+                                        <div class="tag-text ws-tag-text">
+                                            <span>{{sf.selectedValues}}</span>
+                                            <i *ngIf="!sf.disabled" class="material-icons tag-close"
+                                                (click)="disableTagSelection(sf.fieldName, sf.selectedValues, 0, df, d);">close</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+            
+                            <!-- Multiple Selection -->
+                            <div *ngIf="sf.selection == 'multiple'"
+                                [ngClass]="{'hide': sf.fieldName == 'errorCode' && !apiFormFields[d-1].selection}">
+                                <div class="multi-select" [ngClass]="{'empty': sf.disabled}" (click)="manageSelection(sf, secIndex, '', ac)">
+                                    <div class="drop-col split-col">
+                                        <span class="split-icon {{sf.fieldName}}-bg {{sf.fieldClass}}-bg {{industryType.class}}"></span>
+                                    </div>
+                                    <p-multiSelect #multi class="drop-col dropdown" [ngClass]="{'readonly': !sf.saveFlag}" [options]="sf.itemValues"
+                                        formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [selectedItemsLabel]="sf.placeholder"
+                                        placeholder="{{sf.placeholder}}" autoWidth="true" filter="true" resetFilterOnHide="true"
+                                        optionLabel="name" optionId="id" filterPlaceHolder="Search {{sf.placeholder}}" [disabled]="true">
+                                        <ng-template let-sf.fieldName pTemplate="selectedItems">
+                                            <ng-container *ngFor="let item of sf.selectedVal; let i = index;">{{item}}<span
+                                                    *ngIf="sf.selectedVal.length > i+1">, </span>
+                                            </ng-container>
+                                            <span class="p-placeholder" *ngIf="sf.selectedVal.length == 0">{{sf.placeholder}}</span>
+                                        </ng-template>
+                                    </p-multiSelect>
+                                </div>
+                                <div class="dynmic-selected-items" [ngClass]="{'readonly': !sf.saveFlag}" *ngIf="sf.selectedValues.length > 0">
+                                    <div class="selected-items ws-selected-items">
+                                        <div *ngFor="let item of sf.selectedValues; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item}}</span>
+                                            <i *ngIf="!sf.disabled" class="material-icons tag-close"
+                                                (click)="disableTagSelection(sf.fieldName, item, t, df, d);">close</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Thread Type Select -->
+                        <div *ngSwitchCase="'ThreadTypeSelect'" class="row">
+                            <div class="cursor field-box rect-box {{item.itemClass}}"
+                                [ngClass]="{'active': item.isActive, 'deactive': item.active == 0}"
+                                *ngFor="let item of sf.itemValues;"
+                                (click)="onChange(sf.fieldType, sf.fieldName, d, item.apiValue, -1)">
+                                <div class="item-row">
+                                    <div class="item-col {{item.apiValue}}"></div>
+                                    <div class="item-col">
+                                        <div class="title">{{item.name}}</div>
+                                        <div class="desc">{{item.description}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Help Type Select -->
+                        <div *ngSwitchCase="'helpTypeCollectionCell'">
+                            <div class="cursor text-center field-box square-box" [ngClass]="{'active': item.isActive}"
+                                *ngFor="let item of sf.itemValues;"
+                                (click)="onChange(sf.fieldType, sf.fieldName, d, item.apiValue, -1)">
+                                <div class="item-row">
+                                    <div class="item-col {{item.name | lowercase }}"></div>
+                                    <div class="item-col">{{item.name}}</div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Toggle -->
+                        <div *ngSwitchCase="'toggle'" class="row">
+                            <div class="cursor field-box toggle-box {{sf.fieldClass}}"
+                                [ngClass]="{'active': sf.selection, 'inactive': !sf.selection, 'hide': sf.disabled}">
+                                <span class="toggle-col field-label {{industryType.slug}}">{{sf.title}}</span>
+                                <span class="toggle-col toggle-option">
+                                    <p-inputSwitch formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [(ngModel)]="sf.selection"
+                                        (onChange)="onChange(sf.fieldType, sf.fieldName, d, $event.checked, -1, '', true, ac)"></p-inputSwitch>
+                                </span>
+                            </div>
+                        </div>
+            
+                        <!-- Text Area -->
+                        <div *ngSwitchCase="'textarea'">
+                            <div class="dynamic-form-control">
+                                <div class="field-col text-col alt-text">
+                                    <div class="field-label {{sf.fieldName}} {{sf.fieldClass}}"
+                                        [ngClass]="{'label-bg': sf.iconSupport, 'item-label': sf.isLabel, 'readonly': !sf.saveFlag}" *ngIf="sf.isLabel">
+                                        {{sf.title}}</div>
+                                    <textarea *ngIf="sf.isEditor == 0" [ngClass]="{'readonly': !sf.saveFlag}" placeholder="{{sf.placeholder}}"
+                                        formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}" [ngModel]="sf.selectedValues"
+                                        maxlength="{{sf.maxLength}}" autocomplete="off"
+                                        [readonly]= "!sf.editFlag"
+                                        (ngModelChange)="onChange(sf.fieldType, sf.fieldName, d, $event, -1)"></textarea>
+                                    <p-editor *ngIf="sf.isEditor == 1" [ngClass]="{'readonly': !sf.saveFlag}" formControlName="{{sf.apiFieldKey}}-{{ac}}-{{d}}"
+                                        [ngModel]="sf.selectedValues"
+                                        [readonly]= "!sf.editFlag"
+                                        (onTextChange)="onChange(sf.fieldType, sf.fieldName, d, $event.htmlValue, -1, '', true, ac)"
+                                        [style]="{'height': '180px'}">
+                                        <ng-template pTemplate="header">
+                                            <span class="ql-formats">
+                                                <button class="ql-bold" aria-label="Bold"></button>
+                                                <button class="ql-italic" aria-label="Italic"></button>
+                                                <button class="ql-underline" aria-label="Underline"></button>
+            
+                                                <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                    <option *ngFor="let c of textColorValues" value="{{c.color}}"
+                                                        label="{{c.color}}"></option>
+                                                </select>
+                                                <button class="ql-list" value="ordered"></button>
+                                                <button class="ql-list" value="bullet"></button>
+                                                <select title="Text Alignment" class="ql-align">
+                                                    <option selected>Gauche</option>
+                                                    <option value="center" label="Center"></option>
+                                                    <option value="right" label="Right"></option>
+                                                    <option value="justify" label="Justify"></option>
+                                                </select>
+            
+                                                <button aria-label="Link" class="ql-link"></button>
+                                                <button aria-label="Image" class="ql-image"></button>
+                                                <button aria-label="Code Block" class="ql-code-block"></button>
+                                            </span>
+                                        </ng-template>
+                                    </p-editor>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Radio Button -->
+                        <div *ngSwitchCase="'radio'">
+                            <div class="radio-button">
+                                <label class="cursor" [ngClass]="{'active': opt.checked}" *ngFor="let opt of sf.itemValues"
+                                    id="radio-{{opt.id}}">
+                                    <input type="radio" [name]="opt.name" [formControlName]="sf.apiFieldKey" [value]="opt.id"
+                                        checked="{{opt.checked}}" (change)="onChange(sf.fieldType, sf.fieldName, d, opt.id, -1)"
+                                        [(ngModel)]="sf.selectedVal">
+                                    <span class="checkmark" [ngClass]="{'active': opt.checked}"></span>
+                                    {{opt.name}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div *ngSwitchCase="'checkbox'">
+                            <div class="radio-button">
+                                <label class="cursor" [ngClass]="{'active': opt.checked}" *ngFor="let opt of sf.itemValues"
+                                    id="radio-{{opt.id}}">
+                                    <input type="checkbox" [name]="opt.name" [formControlName]="sf.apiFieldKey" [value]="opt.id"
+                                        checked="{{opt.checked}}" (change)="onChange(sf.fieldType, sf.fieldName, d, opt.id, -1)"
+                                        [(ngModel)]="sf.selectedVal">
+                                    <span class="checkmark" [ngClass]="{'active': opt.checked}"></span>
+                                    {{opt.name}}
+                                </label>
+                            </div>
+                        </div>
+            
+                        <!-- Date Picker -->
+                        <div *ngSwitchCase="'input-date'">
+                            <div class="field-label {{sf.fieldName}} item-label custom-field-margin-padding" *ngIf="sf.isLabel">{{sf.title}}</div>
+                            <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!sf.isLabel ? sf.title : ''}}">
+                                <div class="field-col bg-col {{sf.fieldName}}-bg"></div>
+                                <div class="field-col calendar-col alt-text cursor">
+                                    <dp-date-picker placeholder="{{sf.placeholder}}" [disabled]="datePickerDisableFlag"
+                                        formControlName="{{sf.apiFieldKey}}" [(ngModel)]="sf.dateVal" [config]="datePickerConfig"
+                                        (onSelect)="onChange(sf.fieldType, sf.fieldName, d, $event.date, -1)"></dp-date-picker>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div *ngSwitchCase="'input-time'">
+                            <div class="field-label {{sf.fieldName}} item-label custom-field-margin-padding" *ngIf="sf.isLabel">{{sf.title}}</div>
+                            <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{!sf.isLabel ? sf.title : ''}}">
+                                <div class="field-col bg-col {{sf.fieldName}}-bg"></div>
+                                <div class="field-col calendar-col alt-text cursor">
+                                    <p-calendar placeholder="{{sf.placeholder}}" formControlName="{{sf.apiFieldKey}}" [timeOnly]="true" [(ngModel)]="sf.dateVal" [showTime]="true" [hourFormat]="12" (onSelect)="onChange(sf.fieldType, sf.fieldName, d, $event, -1)"></p-calendar>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <!-- Attachment -->
+                        <div *ngSwitchCase="'attachments'">
+                            <div class="prob-form-row attachment-row " [ngClass]="{'readonly': !sf.saveFlag}">
+                                <app-file-attachment *ngIf="threadUpload && !sf.disabled" class="attachment-file" [action]="manageAction"
+                                    [pushData]="pageInfo.pushFormData" [apiData]="apiData" (uploadedItems)="attachments($event, sf, ac, d)">
+                                </app-file-attachment>
+                                <app-attachment-view *ngIf="sf.callback" [action]="sf.uploadAction" [access]="sibAccess" [attachments]="sf.uploadContents"
+                                    (attachmentAction)="attachmentAction($event, sf, ac, d)"></app-attachment-view>
+                            </div>
+                        </div>
+            
+                        <!-- Slider -->
+                        <div *ngSwitchCase="'slider'">
+                            <div class="slider">
+                                <div class="field-label slider-label {{sf.fieldClass}}">{{sf.LabelName}}</div>
+                                <div class="field-label slider-placeholder">{{sf.title}}:<span *ngIf="sf.selectedValues > 0"
+                                        class="slider-val {{sf.fieldClass}}">{{sf.selectedValues}} {{sf.placeholder}}</span></div>
+                                <mat-slider class="custom-mat-slider" [disabled]="disabled" [invert]="invert" [max]="sf.maxValue"
+                                    [min]="sf.minValue" [step]="sf.intervalValue" formControlName="{{sf.apiFieldKey}}"
+                                    [(ngModel)]="sf.selectedValues" [vertical]="vertical"
+                                    (change)="onChange(sf.fieldType, sf.fieldName, d, $event.value, -1)">
+                                </mat-slider>
+                            </div>
+                        </div>
+            
+                        <div *ngIf="sf.fieldName == 'vinNo' && sf.invalidFlag" class="invalid-feedback invalid-field">
+                            <div id="valid-error" class="field-err">{{sf.invalidError}}</div>
+                        </div>
+                        <div *ngIf="!sf.valid && sf.fieldName != 'vinNo' && !sf.selectedVal" class="invalid-feedback"
+                            [ngClass]="{'invalid-field': ((step == 'step1' && step1Submitted) || (step == 'step2' && step2Submitted) && !sf.valid)}">
+                            <div id="valid-error" class="field-err" *ngIf="!sf.valid">{{sf.isReqiredText}}</div>
+                        </div>
+                    </div>
+            
+                    <!-- Recent Selection Lists -->
+                    <div class="recent-selections recent-top {{sf.selection}}"
+                        [ngClass]="{'hide': !sf.recentShow || sf.selectedVal.length > 0}"
+                        *ngIf="sf.recentSelection == 1 && sf.recentSelectionValue && sf.recentSelectionValue.length > 0 && !sf.loading"
+                        [style.width.px]="panelWidth">
+                        <div class="recent-col recent-label">Recent Selections:</div>
+                        <div class="recent-col recent-list">
+                            <div class="cursor items" *ngFor="let recent of sf.recentSelectionValue; let r=index;"
+                                (click)="recentSelection(sf, recent, d)">
+                                <span *ngIf="sf.fieldName != 'make'">{{recent.name}}</span>
+                                <span *ngIf="sf.fieldName == 'make'">{{recent.genericProductName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </p-accordionTab>
+    </p-accordion>
+</div>

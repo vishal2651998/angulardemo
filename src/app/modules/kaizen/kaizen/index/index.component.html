@@ -1,0 +1,94 @@
+<div >
+    <div id="header" class="detail-page-header" >
+        <app-product-header *ngIf="!headerFlag" [pageData]="headerData" >
+        </app-product-header>
+        <app-product-header *ngIf="headerFlag" [pageData]="headerData" >
+        </app-product-header>
+    </div>
+    
+    <div class="left-section hide">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="prob-index split-sec1">
+        
+        <div class="document-list-head kaizen-list-head"
+        [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            
+            <span *ngIf="!approvedListFlag" class="cursor head-txt part-head-txt doc-approval-head-text" (click)="approvedKaizenList()">
+                <span class="head-ic-img"><img src="assets/images/documents/doc-back.png"></span>
+            </span>
+
+            <span class="head-txt part-head-txt" [ngClass]="{'kz-part-head-txt': approvedListFlag }">
+                <span class="head-ic-img">
+                    <img src="assets/images/kaizen/kaizen-placeholder-img.png" >
+                </span>
+                {{title}}
+            </span>
+            
+            
+            <span *ngIf="!approvedListFlag && kaizenAssigneeRoleId  != '0'" class="dealer-button" (click) ="loadSelectList('dealer')" [ngClass]="{'normal': !dealerButton, 'active': dealerButton }" >
+                Dealers
+            </span> 
+            <span *ngIf="!approvedListFlag && (kaizenAssigneeRoleId == '2' || kaizenAssigneeRoleId == '3' || kaizenAssigneeRoleId == '4')" class="dealer-button" (click) ="loadSelectList('tm')" [ngClass]="{'normal': !tmButton, 'active': tmButton }" >
+                TM
+            </span> 
+            <span *ngIf="!approvedListFlag &&  (kaizenAssigneeRoleId == '3' || kaizenAssigneeRoleId == '4')" class="dealer-button" (click) ="loadSelectList('asm')" [ngClass]="{'normal': !asmButton, 'active': asmButton }" >
+                ASM
+            </span>
+            <!--span *ngIf="kaizenAssigneeRoleId == '4'" class="dealer-button" (click) ="loadSelectList('nsm')" [ngClass]="{'normal': !nsmButton, 'active': nsmButton }" >
+                NSM
+            </span-->
+            <span *ngIf="!approvedListFlag && (kaizenAssigneeRoleId == '1' || kaizenAssigneeRoleId == '2')" class="mykaizen-button" (click) ="loadSelectList('kaizen')" [ngClass]="{'normal': !mykaizenButton, 'active': mykaizenButton }" >
+                MY KAIZEN
+            </span>   
+
+            
+            <span class="select-order-option">
+                <p-dropdown class="select-ts-order" appendTo="body" [options]="selectedOrderOptions" [(ngModel)]="selectedOrder" placeholder="" optionLabel="name" (onChange)="selectEvent($event,'order')" ></p-dropdown>
+            </span> 
+
+            <span *ngIf="approvedListFlag" class="select-order-option">
+                <p-dropdown class="select-ts-order" appendTo="body" [options]="selectedKOrderOptions" [(ngModel)]="selectedKOrder" placeholder="" optionLabel="name" (onChange)="selectEvent($event,'korder')" ></p-dropdown>
+            </span> 
+
+            <span *ngIf="!approvedListFlag" class="select-order-option" >               
+                <p-dropdown class="select-ts-order" appendTo="body" [options]="selectedStatusOptions" [(ngModel)]="selectedStatus" placeholder="" optionLabel="name" (onChange)="selectEvent($event,'status')" ></p-dropdown>               
+            </span>
+
+            
+
+        </div>
+        <div  class="prob-head-col head-col-2 text-right">
+           
+            <span class="designation-text">{{designationText}}</span>
+
+            <span *ngIf="approvedListFlag" (click)="approvalKaizenList()" class="doc-approve-button"><img src="assets/images/documents/doc-approval.png" ><span class="approval-text">Approval Kaizen</span></span>
+            
+        </div>
+    </div>
+       
+        <div class="cbt-filter"
+            [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+            <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                (filterAction)="applyFilter($event)"></app-filter>
+            <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                (filterAction)="applyFilter($event)"></app-filter>
+        </div>
+        <div class="probing-content cbt-content part-content doc-content"
+            [ngClass]="{'filter-expand': expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel, 'filter-collapse': !expandFlag }">
+            
+            <app-kaizen-approval ></app-kaizen-approval>
+        </div>
+        <div class="cust-right-panel info-panel media-info"
+            [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+            <span *ngIf="!rightPanel && !emptyFlag" class="expand-icon cursor" (click)="toggleInfo(rightPanel)"></span>
+            <app-doc-info *ngIf="rightPanel" [infoLoading]="rightPanel" [docDetail]="docDetail"
+                (toggleAction)="toggleAction($event)"></app-doc-info>
+        </div>
+    </div>
+</div>

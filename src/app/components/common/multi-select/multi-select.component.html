@@ -1,0 +1,37 @@
+<div *ngIf="loading" class="cust-select {{fieldName}}">
+    <mat-icon class="material-icon {{fieldName}}-icon"></mat-icon>
+    <mat-form-field class="custom-mat-sel">
+        <mat-select #select (openedChange)="openedChange($event)" placeholder="{{selectText}} {{fieldName}}" [formControl]="formControl" [(ngModel)]="dbSelected" [disabled]="disabled" multiple disableOptionCentering>
+            <div class="select-container" *ngIf="loadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" placeholder="{{searchText}} {{fieldName}}" aria-label="Search" matInput [formControl]="searchTextboxControl">
+                        <button *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon class="make-close">close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(filteredOptions | async).length == 0" class="no-result">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="select.close()">Close</div>
+                <div *ngIf="(filteredOptions | async).length > 0" class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelected"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (change)="toggleAllSelection()">Select All</mat-checkbox>
+                </div>
+                <mat-option (onSelectionChange)="selectionChange($event)" (click)="optionClick()" *ngFor="let option of filteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="loadingSelect">
+    <div *ngIf="formControl.value != ''" class="selected-items ws-selected-items">
+        <div *ngFor="let item of selectedItems; let t=index" class="tag-text ws-tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

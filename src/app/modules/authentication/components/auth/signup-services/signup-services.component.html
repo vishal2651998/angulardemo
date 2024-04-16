@@ -1,0 +1,508 @@
+<div *ngIf="loading">
+    <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+<div *ngIf="!loading">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+            <div class="page-index">
+                <div id="homeSec" class="ps" [perfectScrollbar]="sconfig">
+                    <div class="dash-outer" [style.height]="'calc(100vh - '+midHeight+'px)'">
+                        <div class="header">
+                            <div class="banner">
+                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row">
+                                    <div class="banner-bg-container" [ngStyle]="{'background-image': 'url(assets/images/login/ev-header-bg.png)'}">
+                                        <div class="mp-desktop-view">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row" > 
+                                                <div class="width-80-per height-60-px flex-align-center">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left flex-align-center">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">                                            
+                                                                <div class="header-left cursor-pointer">
+                                                                    <img (click)="redirectionPage(domainName,'home')" [src]="headerLogoIcon" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right flex-align-center">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">
+                                                                <div class="header-right">
+                                                                    <div class="btn-head-signin" (click)="redirectionPage(domainName,'login')">                                                                        
+                                                                        <span>SIGN IN</span>
+                                                                        <img src="assets/images/login/elec-btn-signin.png" alt="" />
+                                                                    </div>
+                                                                </div>                            
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mp-mobile-view">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12row no-margin no-padding flex-center row"> 
+                                                <div class="height-60-px flex-align-center">  
+                                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">     
+                                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-margin no-padding header-left text-left cursor-pointer">
+                                                            <img (click)="redirectionPage(domainName,'home')" [src]="headerLogoIcon" />
+                                                        </div>
+                                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-margin no-padding text-right cursor-pointer">
+                                                            <div (click)="showMobileMenu = !showMobileMenu" class="mp-menu topmenu p-menubar p-component"><a  class="p-menubar-button"><i  class="pi pi-bars"></i></a></div>  
+                                                        </div>
+                                                        <div class="mobile-menu-list-items custom-mobile-menu" *ngIf="showMobileMenu">
+                                                            <ul>
+                                                                <li (click)="goToLink('home')"><a>Sign IN</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="banner-content-container flex-align-center">
+                                            <div class="banner-content vertical-center">
+                                                <h6>FUSER FOR ELECTRICIANS</h6>
+                                            </div>
+                                        </div> 
+
+                                    </div>  
+                                </div>
+                            </div>                   
+                        </div>  
+                        <div class="center">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-center row  background-bg" > 
+                                <div class="width-80-per flex-align-center">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding" > 
+                                        <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-6 row no-margin no-padding paddingRt0" > 
+                                            <!--<div class="content-desc" *ngIf="businessDomainData.market_place_description != '' && businessDomainData.market_place_description != null" >{{businessDomainData.market_place_description}}</div>
+                                            <div class="content-desc-empty" *ngIf="businessDomainData.market_place_description == '' || businessDomainData.market_place_description == null" >&nbsp;</div> -->                              
+                                            <div class="content-desc" >
+                                                <p>Fuser is at the forefront of revolutionizing DC Fast Charger service and support. With the rapid, nationwide rollout of these chargers, the industry faces a critical need to ensure uptime and reliability. Our mission is to connect the trained electricians with service and support opportunities in the fast-growing EV Charger sector.</p>
+                                                <p>By registering with Fuser, electricians play a vital role in meeting EV charger uptime requirements. We are forging strong partnerships with charger manufacturers and CPOs, streamlining the process of service request to registered electricians on the Fuser platform. Together, we drive the expansion and maintenance of the electric vehicle charging infrastructure, propelling us towards a more sustainable and electrified future.</p>
+                                                <p class="p-black">Joining our network is quick and straightforward. Register today!</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-6 row no-margin no-padding text-left flex-align-center paddingLt0">
+                                            <div class="border-dotted">
+                                                <div class="lt">
+                                                <img src="assets/images/login/signup-electricians.png" alt="" />
+                                                </div>
+                                                <div class="rt">
+                                                    <div class="title-dotted">Sign Up for Electricians</div>
+                                                    <div class="btn-dotted" (click)="signupPOPUP()">
+                                                        <img src="assets/images/login/elec-btn-white.png" alt="" />
+                                                        <span>SIGN UP</span>
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <!--div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-center row " > 
+                                <div class="width-80-per flex-align-center">
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding" > 
+                                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-6 row no-margin no-padding text-left flex-align-center">
+                                            <div class="border-dotted">
+                                                <img src="assets/images/login/signup-electricians.png" alt="" />
+                                                <div class="title-dotted">Signup for Electricians</div>
+                                                <div class="btn-dotted" (click)="signupPOPUP()">
+                                                    <img src="assets/images/login/elec-btn-white.png" alt="" />
+                                                    <span>SIGN UP</span>
+                                                </div>
+                                            </div>
+                                        </div>                    
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 row no-margin no-padding text-right flex-align-center">
+                                            <div class="border-dotted ">
+                                                <img src="assets/images/login/CPOs.png" alt="" />
+                                                <div class="title-dotted">CPOs and Charger Manufacturers, contact us here.</div>
+                                                <div class="btn-dotted">
+                                                    <img src="assets/images/login/CPOs-btn-white.png" alt="" />
+                                                    <span>CONTACT US</span>
+                                                </div>
+                                            </div>
+                                        </div>                         
+                                    </div>
+                                </div>
+                            </div-->
+                        </div>      
+                    </div>
+                </div>             
+                <div class="footer">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin footer-top-border"></div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row footer-row" > 
+                        <div class="width-80-per flex-align-center">
+                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding footer-text-lt" style="padding-bottom: 5px !important;">
+                                    <span class="text-co">&copy; Collabtic {{year}}. All rights reserved.</span>
+                                </div>                                 
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<p-dialog [(visible)]="signupModal" [modal]="true" [style]="{width: '850px'}"
+[draggable]="false" [resizable]="false"
+    class="service-modal-width form-type-fields">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Electrician Sign Up</span>            
+        </div>
+    </ng-template>
+    <div >
+ <!-- user Form end-->
+
+<div class="loader-sign" align="center" *ngIf="companyLoader">
+    <!--img src="assets/images/loading.svg" alt="Loader" /-->
+    <div class="post-loader-sign"><div class="post-loader-svg-sign"></div></div>
+</div>
+
+ <form [formGroup]="companyForm" class="participant-form-row company-detail-form-row"
+ style="padding-bottom:15px !important">
+ <div class="row form-div-main">     
+     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+         <div class="label d-flex justify-content-between">
+             <span class="popup-text-style">Business Name</span>
+             <span class="popup-text-style cursor-pointer" (click)="openBusinessNew()" style="color: #469073;">
+                 <img style="margin-right: 5px;" width="14px" height="14px" src="assets/images/service-provider/add-plus.png" />
+                 New Business Name
+             </span>
+         </div>
+         <div class="p-inputgroup">
+             <span class="p-inputgroup-addon"><img height="19px"
+                     src="assets/images/service-provider/company-feild.png" width="14px"></span>
+             <p-dropdown class="width-100-perc" appendTo="body" [filter]="true"
+             name="name"
+             styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+             formControlName="name" [options]="businessData"
+             [(ngModel)]="businessDataModel"
+             (onChange)="shopChanged('change', $event)" 
+             placeholder="Select Business Name" optionLabel="name"  
+             resetFilterOnHide = true filterPlaceholder="Search Business Name"  >
+                 <ng-template let-group pTemplate="group">
+                     <div class="p-d-flex p-ai-center">
+                         <span>{{group.name}}</span>
+                     </div>
+                 </ng-template>
+             </p-dropdown>
+         </div>
+         <div *ngIf="compform['name'].invalid && companyFormSubmitted">
+             <div class="error-msg"
+                 *ngIf="compform['name'].errors && compform['name'].errors['required']">
+                 Name is required
+             </div>
+         </div>
+     </div>
+ </div>
+ <div class="row form-div-main">
+     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+         <div class="label">
+             <span class="popup-text-style">Address 1</span>
+             <ng-container *ngIf="multipleAddressAvailable && companyAddressOptions">
+                 <span *ngIf="companyAddressOptions.length > 1 || showChangeAddress"
+                     class="add-new-address-design cursor-pointer"
+                     (click)="showAddressPopup = true" style="color:#469073"><img
+                         style="margin-right: 4px; object-fit: contain;" width="13px" height="18px"
+                         src="assets/images/service-provider/map-pin-green.png" />
+                     Change Address</span>
+                 <span
+                     *ngIf="companyAddressOptions.length == 1 && !showChangeAddress"
+                     class="add-new-address-design cursor-pointer" style="color:#469073"
+                     (click)="setAddressValueNullClicked()"><img
+                         style="margin-right: 5px;" width="14px" height="14px"
+                         src="assets/images/service-provider/add-plus.png" /> New Address</span>
+             </ng-container>
+         </div>
+         <div class="p-inputgroup">
+             <span class="p-inputgroup-addon"><img height="19px" 
+                     src="assets/images/service-provider/map-pin.png"
+                     width="14px"></span><input class="p-inputtext p-component" 
+                 formControlName="address1" placeholder="Address 1" type="text"
+                 
+                 >
+         </div>
+         <div *ngIf="compform['address1'].invalid && companyFormSubmitted">
+             <div class="error-msg"
+                 *ngIf="compform['address1'].errors && compform['address1'].errors['required']">
+                 Address 1 is required
+             </div>
+         </div>
+     </div>
+     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+         <div class="label">
+             <span class="popup-text-style">Address 2</span>
+         </div>
+         <div class="p-inputgroup">
+             <span class="p-inputgroup-addon"><img height="19px"
+                     src="assets/images/service-provider/map-pin.png"
+                     width="14px"></span><input
+                 class="p-inputtext p-component ng-untouched ng-pristine ng-valid"
+                 placeholder="Address 2" formControlName="address2" type="text"
+                 
+                 >
+         </div>
+     </div>
+ </div>
+ <div class="row form-div-main">
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+         <div class="label">
+             <span class="popup-text-style">State</span>
+         </div>
+         <div class="p-inputgroup">
+             <span class="p-inputgroup-addon"><img height="20px"
+                     src="assets/images/service-provider/map-pin.png" width="20px">
+             </span>
+             <p-dropdown class="width-100-perc" appendTo="body" [filter]="true"
+                 name="stateValue"
+                 styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+                 formControlName="state" [options]="companyStateDropdownData"
+                 placeholder="Select State" optionLabel="name" optionValue="id"
+                 [group]="true"
+                 >
+                 <ng-template let-group pTemplate="group">
+                     <div class="p-d-flex p-ai-center">
+                         <span>{{group.name}}</span>
+                     </div>
+                 </ng-template>
+             </p-dropdown>
+
+         </div>
+         <div *ngIf="compform['state'].invalid && companyFormSubmitted">
+             <div class="error-msg"
+                 *ngIf="compform['state'].errors && compform['state'].errors['required']">
+                 State is required
+             </div>
+         </div>
+     </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+         <div class="label">
+             <span class="popup-text-style">City</span>
+         </div>
+         <div class="p-inputgroup">
+             <span class="p-inputgroup-addon"><img height="19px"
+                     src="assets/images/service-provider/map-pin.png"
+                     width="14px"></span><input
+                 class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                 placeholder="City" formControlName="city" type="text"
+                 
+                 >
+         </div>
+         <div *ngIf="compform['city'].invalid && companyFormSubmitted">
+             <div class="error-msg"
+                 *ngIf="compform['city'].errors && compform['city'].errors['required']">
+                 City is required
+             </div>
+         </div>
+     </div>
+     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+         <div class="label">
+             <span class="popup-text-style">Zip</span>
+         </div>
+         <div class="p-inputgroup">
+             <span class="p-inputgroup-addon"><img height="18px"
+                     src="assets/images/service-provider/map-circle-pin-grey.png"
+                     width="12px"></span>
+             <input class="p-inputtext p-component" placeholder="Zip"
+                 formControlName="zip" type="text" >
+         </div>
+         <div *ngIf="compform['zip'].invalid && companyFormSubmitted">
+             <div class="error-msg"
+                 *ngIf="compform['zip'].errors && compform['zip'].errors['required']">
+                 Zip is required
+             </div>
+         </div>
+
+     </div>
+     
+ </div>
+ <div class="btn-dotted btn-continue" (click)="continuePage()">           
+    <span>CONTINUE</span>&nbsp;&nbsp;&nbsp;
+    <img src="assets/images/login/redirect-login-arrow.png" alt="" />
+</div>
+</form>
+        
+    </div>
+</p-dialog>
+
+
+<p-dialog styleClass="service-provider-pricing-popup" *ngIf="businessFormPopup" [(visible)]="businessFormPopup"
+[modal]="true" [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}"
+[draggable]="false">
+<ng-template pTemplate="header">
+    <div>
+        <span>New Business</span>
+    </div>
+    <div class="flex-align-center">
+        <button class="pri-button-update" (click)="newBusinessUpdate()" type="button">
+            <label class="label">CONTINUE&nbsp;&nbsp;</label>
+            <img src="assets/images/login/redirect-login-arrow.png" alt="" />
+        </button>
+        <i style="color: #c4cbdb; margin-left: 10px;" (click)="businessFormPopup = false"
+            class="cursor-pointer pi pi-times"></i>
+    </div>
+</ng-template>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+    
+    <div class="loader-sign loader-sign-popup2" align="center" *ngIf="businessLoader">
+        <!--img src="assets/images/loading.svg" alt="Loader" /-->
+        <div class="post-loader-sign"><div class="post-loader-svg-sign"></div></div>
+    </div>
+
+    <form [formGroup]="businessForm" class="participant-form-row company-detail-form-row"
+        style="padding-bottom:15px !important">
+        <div class="row form-div-main">
+            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                <div class="label">
+                    <span class="popup-text-style">Business Phone Number</span>
+                </div>
+                <div class="p-inputgroup cart-phone-field">
+                    <span class="p-inputgroup-addon">
+                        <img height="20px" src="assets/images/service-provider/calling.png" width="20px">
+                    </span>
+                    <!-- <input class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                        placeholder="Enter Phone" formControlName="phoneNumber" type="text"> -->
+                        <ngx-intl-tel-input style="width: 100%"
+                                                        [cssClass]="'custom border-left-0'"
+                                                        class="KA_input_text_Phone_new"
+                                                        [preferredCountries]="preferredCountries"
+                                                        [enableAutoCountrySelect]="true"
+                                                        [enablePlaceholder]="true"
+                                                        customPlaceholder="Mobile Number"
+                                                        [searchCountryFlag]="true" [phoneValidation]="true"
+                                                        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                                        [selectFirstCountry]="true"
+                                                        [selectedCountryISO]="selectedCountryIS0"
+                                                        [maxLength]="10" [separateDialCode]="separateDialCode"
+                                                        [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                                        formControlName="phoneNumber">
+                                                    </ngx-intl-tel-input>
+                </div>
+                <div *ngIf="businessInfoForm?.phoneNumber.invalid && businessFormSubmitted">
+                    <div class="error-msg" *ngIf="businessInfoForm?.phoneNumber.errors['required']">
+                        Phone number is required
+                    </div>
+                    <div class="error-msg" *ngIf="!businessInfoForm?.phoneNumber.errors['required']">
+                        Enter Valid Phone number
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
+                <div class="label d-flex justify-content-between">
+                    <span class="popup-text-style">Business Name</span>
+
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><img height="19px"
+                            src="assets/images/service-provider/company-feild.png" width="14px"></span>
+                    <input class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                        placeholder="Enter Business Name" formControlName="name" type="text" (keyup)="checkBusinessValidation()" >
+                </div>
+                <div *ngIf="businessInfoForm['name'].invalid && businessFormSubmitted">
+                    <div class="error-msg"
+                        *ngIf="businessInfoForm['name'].errors && businessInfoForm['name'].errors['required']">
+                        Name is required
+                    </div>
+                </div>
+                <div *ngIf="businessValidation?.isValid" class="error-msg">
+                    {{businessValidation?.message}}
+                </div>
+            </div>
+        </div>
+        <div class="row form-div-main">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="label">
+                    <span class="popup-text-style">Address 1</span>
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><img height="19px"
+                            src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                        class="p-inputtext p-component" formControlName="address1" placeholder="Address 1"
+                        type="text">
+                </div>
+                <div *ngIf="businessInfoForm['address1'].invalid && businessFormSubmitted">
+                    <div class="error-msg"
+                        *ngIf="businessInfoForm['address1'].errors && businessInfoForm['address1'].errors['required']">
+                        Address 1 is required
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="label">
+                    <span class="popup-text-style">Address 2</span>
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><img height="19px"
+                            src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                        class="p-inputtext p-component ng-untouched ng-pristine ng-valid" placeholder="Address 2"
+                        formControlName="address2" type="text">
+                </div>
+            </div>
+        </div>
+        <div class="row form-div-main">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="label">
+                    <span class="popup-text-style">State</span>
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><img height="20px"
+                            src="assets/images/service-provider/map-pin.png" width="20px">
+                    </span>
+                    <p-dropdown class="width-100-perc" appendTo="body" [filter]="true" name="stateValue"
+                        styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+                        formControlName="state" [options]="companyStateDropdownData" placeholder="Select State"
+                        optionLabel="name" optionValue="id" [group]="true">
+                        <ng-template let-group pTemplate="group">
+                            <div class="p-d-flex p-ai-center">
+                                <span>{{group.name}}</span>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+
+                </div>
+                <div *ngIf="businessInfoForm['state'].invalid && businessFormSubmitted">
+                    <div class="error-msg"
+                        *ngIf="businessInfoForm['state'].errors && businessInfoForm['state'].errors['required']">
+                        State is required
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="label">
+                    <span class="popup-text-style">City</span>
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><img height="19px"
+                            src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                        class="p-inputtext p-component ng-pristine ng-invalid ng-touched" placeholder="City"
+                        formControlName="city" type="text">
+                </div>
+                <div *ngIf="businessInfoForm['city'].invalid && businessFormSubmitted">
+                    <div class="error-msg"
+                        *ngIf="businessInfoForm['city'].errors && businessInfoForm['city'].errors['required']">
+                        City is required
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="label">
+                    <span class="popup-text-style">Zip</span>
+                </div>
+                <div class="p-inputgroup">
+                    <span class="p-inputgroup-addon"><img height="18px"
+                            src="assets/images/service-provider/map-circle-pin-grey.png" width="12px"></span>
+                    <input class="p-inputtext p-component" placeholder="Zip" formControlName="zip" type="text">
+                </div>
+                <div *ngIf="businessInfoForm['zip'].invalid && businessFormSubmitted">
+                    <div class="error-msg"
+                        *ngIf="businessInfoForm['zip'].errors && businessInfoForm['zip'].errors['required']">
+                        Zip is required
+                    </div>
+                </div>
+
+            </div>
+        </div>     
+    </form>
+
+</div>
+</p-dialog>

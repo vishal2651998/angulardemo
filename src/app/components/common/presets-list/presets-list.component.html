@@ -1,0 +1,72 @@
+<div *ngIf="loading">
+    <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+<div *ngIf="!loading">
+    <div *ngIf="emptyFlag">
+        <div class="no-item-list" [style.height.px]="innerHeight">
+            <div class="item-empty-container">
+                <img src="assets/images/preset/empty-preset-img.png" alt="" />
+                <div>
+                    <span class="empty-res">Get started by tapping on "New Preset".</span>
+                </div>
+                <div>
+                    <span class="cursor add-btn" (click)="openPresetsAction('new','')">
+                        <span ><i  class="pi pi-plus" style="font-size: 14px;margin-right: 4px;color: #ffffff;"></i></span>
+                        <span class="save-text">New Preset</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+     </div> 
+    <div *ngIf="!emptyFlag" [style.height.px]="innerHeight">
+        <div #top id="step" class="ps form-fields" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)"> 
+             
+             <div >
+                <p-accordion class="report-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of presetsData; let s = index;"
+                (onClose)="onTabClose(s)" (onOpen)="onTabOpen(s)">
+                    <p-accordionTab id="section-{{s}}" class="presets-list-{{item.id}} section list-div-row" [transitionOptions]="'100ms'" [selected]="item.isSelected" [ngClass]="{ 'list-div-row-active' : item.listSelected }">
+                        <p-header class="sec-info">
+                            <div class="content-div">                                                                    
+                                <div class="content-title">
+                                    <span class="persets-title-overflow" [title]="item.titleMakeModelYearPH" [innerHTML]="item.titleMakeModelYear"></span>
+                                    <!--span >{{item.title}}</span-->                                       
+                                    <!--span class="content-makemodel" [innerHTML]="item.makeModel"></span>-->                                
+                                </div> 
+                                <div class="content-more">
+                                    <div id="more" class="more-icon">
+                                        <div class="actions-div">
+                                            <div id="add-button" title="Select" class="add-button active" (click)="openPresetsAction('emit',item)"><span class="add-button-text">SELECT</span><img src="assets/images/thread/pp-add-icon.png"></div>
+                                            
+                                            <span title="Edit" (click)="openPresetsAction('edit',item.id)">
+                                                <img src="assets/images/thread-detail/thread-edit.svg" alt="" onload="SVGInject(this)">
+                                                
+                                            </span>                                                                          
+                                        </div>
+                                    </div>
+                                </div>                                 
+                            </div>  
+                        </p-header>
+                        <div class="content-list" id="cont-list-{{s}}">
+                            <div class="content-div">
+                                <div class="content-desc">
+                                    <span [innerHTML]="item.content"></span> 
+                                </div>                                                       
+                                <div class="attachment-div presets-div">                     
+                                    <app-attachment-view *ngIf="!item.attachmentLoading" [loading]="item.attachmentLoading" [action]="item.action" [dynamicGid]="item.id" [access]="pageAccess"  [attachments]="item.attachments" ></app-attachment-view>
+                                </div>
+                                <div class="content-posted-detail">
+                                    <span class="profile-img">
+                                        <img onerror="this.src='assets/images/thumb_profile_image.png'" class="post-p-img" [src]="item.profileImage" >
+                                    </span>
+                                    <span class="profile-text">{{item.userName}}</span>                                    
+                                    <span class="profile-text">{{item.createdDate}}</span>
+                                </div>
+                            </div> 
+                        </div>                      
+                    </p-accordionTab>
+                </p-accordion>
+                <div class="lazy-loading" *ngIf="lazyLoading"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+            </div>
+        </div>
+    </div>
+</div>

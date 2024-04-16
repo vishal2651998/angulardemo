@@ -1,0 +1,253 @@
+<p-messages [(value)]="systemMsg" [enableService]="false"></p-messages>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading">
+<div class="">
+    <div class="">
+        <div class="">
+           
+            <div class="prob-list-cont prob-list-cont-escalation" [ngClass]="{ 'es-no-item-new-div' : ItemEmpty }" [style.height.px]="emptyHeight">
+                <div *ngIf="loading" class="loading-small-screen-scroll" align="center">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+                </div>
+                <div *ngIf="!initLoading && !ItemEmpty">
+               
+                <p-table 
+                [value]="productsList"               
+                [styleClass]="
+                'p-datatable-sm p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+                "
+                [columns]="cols"            
+                [autoLayout]="true"
+                [scrollable]="true"
+                [lazy]="true"
+                [scrollHeight]="innerHeightFix"
+                [totalRecords]="itemTotal"
+                >
+                    <ng-template pTemplate="header" let-columns >
+                        <tr >   
+                                                
+                            <th *ngFor="let col of columns" class="{{col.columnpclass}}">
+                                <span class=""></span>{{col.header}}
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template 
+                    pTemplate="body" 
+                    let-productsList
+                    let-rowData 
+                    let-columns="columns" 
+                    let-index="rowIndex">
+                        <tr 
+                        [pReorderableRow]="index" 
+                         class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.newmatrix }}"
+                          [ngClass] = " { 'disableClass' : productsList.isActive=='0'  } "
+    
+                        >
+                       
+    
+                            <td 
+                                 #ptabletdata
+                                class="{{ col.columnpclass }}  oneclassstep font-email"
+                                pEditableColumn
+                                *ngFor="let col of columns" class="{{col.columnpclass}}">
+                          
+                                <ng-container *ngTemplateOutlet="inputtype1"> </ng-container>
+                                <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+                               
+                                <ng-template #inputtype1>
+                                    <div *ngIf="col.headerId == '1'" [class]="'overflowclassdash'">
+                                        
+                                            <span class="cursor"
+                                              [id]="
+                                                'product_options' + productsList.id + col.headerId
+                                              "
+                                              *ngIf="rowData[col.field]?.name"
+                                            >
+                                              {{ rowData[col.field].name }}
+                                            </span>
+                                            <span *ngIf="!rowData[col.field]?.name">
+                                              <span class="cursor"
+                                                [id]="
+                                                  'product_options' +
+                                                  productsList.id +
+                                                  col.headerId
+                                                "
+                                                *ngIf="rowData[col.field]"
+                                                >{{ rowData[col.field] }}</span
+                                              >
+                                              <span class="cursor"
+                                                [id]="
+                                                  'product_options' +
+                                                  productsList.id +
+                                                  col.headerId
+                                                "
+                                                *ngIf="!rowData[col.field]"
+                                                >-</span
+                                              >
+                                            </span>
+                                            
+                                      </div>
+                                </ng-template>
+                                <ng-template #inputtype2>
+                                  <div *ngIf="col.inputType == '2'"> 
+                                    <div *ngIf="col.headerId == '3'" [class]="'overflowclassdash'">
+                                        <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown
+                                            [id]="
+                                                'product_options' + productsList.id + col.headerId
+                                            "
+                                            [filter]="true"
+                                            (onChange)="
+                                                onChangeOption(
+                                                $event,
+                                                productsList,
+                                                col.headerId,
+                                                col.columnName,
+                                                index
+                                                )
+                                            "
+                                            filterBy="name"
+                                            [placeholder]="'Select'"
+                                            appendTo="body"                                        
+                                            [options]="accountTypes"
+                                            optionLabel="name"
+                                            [(ngModel)]="rowData[col.field]"
+                                            dataKey="name"
+                                            class="input-with-icon-inside-select {{
+                                                productsList.isPredefined
+                                            }}  mat-typography"
+                                            ></p-dropdown>
+                                        </ng-template>
+                        
+                                        <ng-template class="text-center" pTemplate="output">
+                                            
+                                            <span class="cursor"
+                                            
+                                            [id]="
+                                            'product_options' + productsList.id + col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]?.name"
+                                        >
+                                            {{ rowData[col.field].name }}
+                                        </span>
+                                        <span *ngIf="!rowData[col.field]?.name">
+                                            <span class="cursor"
+                                            
+                                            [id]="
+                                                'product_options' +
+                                                productsList.id +
+                                                col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]"
+                                            >{{ rowData[col.field] }}</span
+                                            >
+                                            <span class="cursor"
+                                                [id]="
+                                                'product_options' +
+                                                productsList.id +
+                                                col.headerId
+                                                "
+                                                *ngIf="!rowData[col.field]"
+                                                >Select</span
+                                            >
+                                            </span>
+                                            <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                        </ng-template>
+                                        </p-cellEditor>
+                                    </div>  
+                                    <div *ngIf="col.headerId == '2'" [class]="'overflowclassdash'">
+                                        <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                            <p-dropdown
+                                            [id]="
+                                                'product_options' + productsList.id + col.headerId
+                                            "
+                                            [filter]="true"
+                                            (onChange)="
+                                                onChangeOption(
+                                                $event,
+                                                productsList,
+                                                col.headerId,
+                                                col.columnName,
+                                                index
+                                                )
+                                            "
+                                            filterBy="name"
+                                            [placeholder]="'Select'"
+                                            appendTo="body"                                        
+                                            [options]="businessRoles"
+                                            optionLabel="name"
+                                            [(ngModel)]="rowData[col.field]"
+                                            dataKey="name"
+                                            class="input-with-icon-inside-select {{
+                                                productsList.isPredefined
+                                            }}  mat-typography"
+                                            ></p-dropdown>
+                                        </ng-template>
+                        
+                                        <ng-template class="text-center" pTemplate="output">
+                                            
+                                            <span class="cursor"
+                                            
+                                            [id]="
+                                            'product_options' + productsList.id + col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]?.name"
+                                        >
+                                            {{ rowData[col.field].name }}
+                                        </span>
+                                        <span *ngIf="!rowData[col.field]?.name">
+                                            <span class="cursor"
+                                            
+                                            [id]="
+                                                'product_options' +
+                                                productsList.id +
+                                                col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]"
+                                            >{{ rowData[col.field] }}</span
+                                            >
+                                            <span class="cursor"
+                                                [id]="
+                                                'product_options' +
+                                                productsList.id +
+                                                col.headerId
+                                                "
+                                                *ngIf="!rowData[col.field]"
+                                                >Select</span
+                                            >
+                                            </span>
+                                            <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                        </ng-template>
+                                        </p-cellEditor>
+                                    </div>                                   
+                                  </div>
+                                  </ng-template>
+                                 
+    
+                                 
+    
+                                 
+    
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>                 
+                <div *ngIf="displayNoRecords == '2'" class="es-no-item-list-new-div"> 
+                    <div class="es-no-item-list">
+                        <div class="es-no-item-container">
+                        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                        <p class="es-no-item-text">No result found</p>              
+                        </div>
+                    </div>   
+                </div>
+             </div>
+                
+        </div>                
+    </div>
+</div>
+</div>

@@ -1,0 +1,85 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="d-flex">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" [accessModule]="accessModule"
+                    (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="right-section" style="width: calc(100% - 60px) !important;">
+        <div class="prob-index system-setting">
+            <div class="container-fluid">
+                <div class="center-middle-width-container">
+                    <div class="center-middle-width padding-common padding-common-hq">
+                        <div class="d-flex align-items-center justify-content-between w-100" *ngIf="!locationToolsFlag">
+                            <div class=" hq-head" style="padding:10px 0 0 0;">
+                                <div class="hq-head-row-1 d-flex align-items-center" style="height: 50px;">
+                                    <div class="d-flex align-items-center">
+                                        <img style="vertical-align: top;position: relative;" class="hq-head-img"
+                                            src="../../../../assets/images/hq/audit-head-default.png" alt="" width="20" height="24" />
+                                        <!--span class="hq-head-text">Tools & Equipment</span-->
+                                        <span class="hq-head-text" style="vertical-align: top;">Audit/Inspection</span>
+                                    </div>
+
+                                    <div class="top-container" style="overflow:hidden;display: inline-block;">
+                                        <div class="sub-group-container" [style.width.px]="setTWidth">
+                                            <div class="ps subTabWidth d-flex" [perfectScrollbar]="sconfig" style="align-items: baseline;">
+                                                <div class="sub-group-inner-container">
+                                                    <span class="inspection-icon section-btn cursor"
+                                                        [ngClass]="{ 'active' : inspectionListFlag, 'normal' : !inspectionListFlag }"
+                                                        (click)="onChangeTab('level3')">Audit/Inspection</span>
+                                                    <span *ngIf="!user.data || !user.data.shopId" class="template-icon section-btn cursor"
+                                                        [ngClass]="{ 'active' : templateListFlag, 'normal' : !templateListFlag }"
+                                                        (click)="onChangeTab('level2')">Templates</span>
+                                                    <span *ngIf="!user.data || !user.data.shopId" class="section-icon section-btn cursor"
+                                                        [ngClass]="{ 'active' : sectionListFlag, 'normal' : !sectionListFlag }"
+                                                        (click)="onChangeTab('level1')">Sections</span>
+
+ 
+
+                                                    <!-- <ul style="display: inline-block;" >
+                                                        <li *ngIf="inspectionListFlag"  class="sub-tab selected-sub-tab" (click)="onChangeSubTab('In-process', 'In-process')">In-process</li>
+                                                        <li *ngIf="inspectionListFlag" class="sub-tab normal-sub-tab" (click)="onChangeSubTab('Not-started', 'Not-started')">Not-started</li>
+                                                        <li *ngIf="inspectionListFlag" class="sub-tab normal-sub-tab" (click)="onChangeSubTab('Completed', 'Completed')">Completed</li> 
+                                                                                                           
+                                                    </ul>                -->
+                                                </div>
+                                                <p-dropdown
+                                                    
+                                                    [(ngModel)]="typeFilter" (ngModelChange)="filterData()"
+                                                    appendTo="body" [options]="typesList" optionLabel="name"
+                                                    optionValue="id" class="p-dropdown-workflowtype col-2"
+                                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                    placeholder="Select Type">
+                                                </p-dropdown>
+                                                <p-dropdown
+                                                  
+                                                    [(ngModel)]="statusFilter" (ngModelChange)="filterData()"
+                                                    appendTo="body" [options]="statusList" optionLabel="name"
+                                                    optionValue="id" class="p-dropdown-workflowtype col-2"
+                                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                    placeholder="Select Status">
+                                                </p-dropdown>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width: 100%; display: block;background-color: #fff;">
+                            <app-dekra-audit-list *ngIf="toolsListFlag"
+                                (dekraauditComponentRef)="dekraauditPageRef = $event"
+                                (callback)="dekraauditCallback($event)"></app-dekra-audit-list>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

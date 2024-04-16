@@ -1,0 +1,714 @@
+<div *ngIf="loading">
+    <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+<div *ngIf="!loading">
+    <div class="row form-type-fields">
+        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+            <div class="page-index">
+                <div class="header">
+                    <div class="mp-desktop-view">
+                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row" > 
+                            <div class="width-80-per height-60-px flex-align-center">
+                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left flex-align-center">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">                                            
+                                            <div class="header-left cursor-pointer">
+                                                <img (click)="redirectionPage()" [src]="businessLogo" />
+                                            </div>
+                                            <div *ngIf="diagnationDomain" class="parallelogram">New Screen</div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div> 
+                <div class="height-set">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig"> 
+                        <div class="center repair-order">
+                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row repair-order-top-bg" *ngIf="!diagnationDomain"> 
+                                <div class="width-80-per flex-align-center">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding"> 
+                                        <div class="order-top-lt">
+                                            <div class="top-circle-img flex-align-center"><img class="circle-div-img" src="assets/images/repair-order-pl.png" alt="" /></div>
+                                        </div>
+                                        <div class="order-top-rt flex-align-center">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding"> 
+                                                <div class="top-title-text">Schedule a Service</div>                                   
+                                                <div class="top-desc-text">Enter the name of the Technician we will be working with and provide more detailed description of the problem, so we can help you more efficiently.</div>
+                                            </div>
+                                        </div>                                                              
+                                    </div>
+                                </div>
+                            </div>  
+                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row repair-order-form"> 
+                                <div class="width-80-per flex-align-center">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                    <form [formGroup]="scheduleForm" >
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="diagnationDomain">
+                                            <div class="label-head-row-1 mtop27 flex-align-center" style="width: 98%;">
+                                                <img src="assets/images/repair-order/tech-info.svg" onload="SVGInject(this)" alt="Technician Info" />
+                                                <span>Please select or enter your shop technician info, who we will be working with</span>
+                                                <!--span class="req-text ml-auto">Required</span-->
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="diagnationDomain">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">    
+                                                    <div class="input-text-row form-group">
+                                                        <p-dropdown class="p-dropdown-tech" [ngClass]="{ 'p-dropdown-tech-red' : technicianValidFlag, 'p-dropdown-tech-green' : !technicianValidFlag }" [options]="contacts" [filter]="true"  resetFilterOnHide="true" filterBy="name" placeholder="Select Technician" (onChange)="contactChanged($event)" optionLabel="name" optionValue="id"
+                                                            formControlName="technician" [(ngModel)]="contactTechnician" container="body" >                                                            
+                                                        </p-dropdown>             
+                                                        <button pButton pRipple type="button" icon="pi pi-plus" label="Add Technician" class="p-button-rounded button-new button-tech" 
+                                                        (click)="serviceAction('new', 'contact');" >
+                                                        </button>                                                        
+                                                    </div>
+                                                    <div style="top:10px;" class="service-form-error-row" *ngIf="technicianValidFlag">Enter Technician</div>                                                    
+                                                </div>                                                                                             
+                                            </div>                                                                                                                            
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="diagnationDomain">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-1 flex-align-center" style="width: 99%;">
+                                                        <img src="assets/images/repair-order/prob-desc.svg" onload="SVGInject(this)" alt="Problem Description" />
+                                                        <span>Additional Problem Detail</span>
+                                                        <!--span class="text-count ml-auto">{{scheduleForm.value.description.length}}/{{maxLen}}</span-->
+                                                        <span class="req-text ml-auto">Required</span>
+                                                    </div>
+                                                    <div  style="width:99%;">
+                                                        <ckeditor class="editor-desc-green" [ngClass]="{ 'editor-desc-red' : problemDescFlag }" [editor]="Editor" [config]="configCke" container="body"
+                                                        formControlName="description" (change)="onChange('desc')"                                 
+                                                        [(ngModel)]="description"></ckeditor>
+                                                    </div>                                                       
+                                                    <div class="service-form-error-row" *ngIf="problemDescFlag">Enter Additional Problem Detail</div>                                                      
+                                                </div>  
+                                            </div>                                              
+                                        </div>
+                                        
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding schedule-service-form-row"  *ngIf="diagnationDomain">                                            
+                                            <div class="col-lg-6 col-md-6 col-sm-6 set-width-50 padding-left0">                                             
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">  
+                                                    <div class="attach-row-lt mtop17 label-head-row-1 flex-align-center">
+                                                        <img src="assets/images/repair-order/attachments-img.svg" onload="SVGInject(this)" alt="Attachments" />
+                                                        <span>Attachments</span>
+                                                    </div>
+                                                    <div class="attach-row-rt cursor-pointer" (click)="attachmentPopup(0,'new');">
+                                                        <span class="attach-text"><img class="attach-img" src="assets/images/repair-order/attachments-img.svg" onload="SVGInject(this)" alt="Attachments" />&nbsp;Attach Files</span>
+                                                        <span class="attach-count" *ngIf="commentUploadedItemsFlag">{{commentUploadedItemsLength}}</span>
+                                                    </div> 
+                                                    <div class="attachment-row " *ngIf="postUploadActionTrue" [ngClass]="{'reference-info-hide': postUploadActionTrue }" >
+                                                        <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                                                    </div>   
+                                                </div>                                              
+                                            </div> 
+                                            <div class="col-lg-6 col-md-6 col-sm-6 set-width-50 padding-left0">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding col-right"> 
+                                                    <div class="action-buttons mtop24">
+                                                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SUBMIT"
+                                                        class="p-button-rounded button-save cursor" (click)="formSubmit('submit')"></button>
+                                                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label="SUBMIT"
+                                                        class="p-button-rounded button-save button-spin"></button>                                                            
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>       
+                                           
+                                        
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                            
+                                            <div class="col-lg-6 col-md-6 col-sm-12 padding-left0">                                             
+                                                <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">                                             
+                                                    <div class="label-head-row-1 flex-align-center" style="margin:8px 0 -5px 0 !important;">
+                                                        <img src="assets/images/repair-order/service-type.svg" onload="SVGInject(this)" alt="Service Type" />
+                                                        <span>Service Type</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6" style="text-transform: capitalize;">
+                                                        <p-dropdown readonly="true" class="p-dropdown-servicetype" placeholder="Service Type" formControlName="servicetype" [(ngModel)]="servicetype" [options]="servicetypeOptions" >                                                            
+                                                        </p-dropdown>    
+                                                    </div>  
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 padding-left0"></div>
+                                        </div>
+
+                                      
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="label-head-row-1 flex-align-center">
+                                                <img src="assets/images/repair-order/buss-info.svg" onload="SVGInject(this)" alt="Business Info" />
+                                                <span>Business Info</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/buss-info.svg" onload="SVGInject(this)" alt="Business Name" />
+                                                        <span>Business Name</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Business Name" formControlName="businessname"
+                                                        [(ngModel)]="businessname"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/map-img.svg" onload="SVGInject(this)" alt="Business Address 1" />
+                                                        <span>Business Address 1</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Business Address 1" formControlName="businessaddress1"
+                                                        [(ngModel)]="businessaddress1"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/map-img.svg" onload="SVGInject(this)" alt="Business Address 2" />
+                                                        <span>Business Address 2</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Business Address 2" formControlName="businessaddress2"
+                                                        [(ngModel)]="businessaddress2"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/map-img.svg" onload="SVGInject(this)" alt="State" />
+                                                        <span>State</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="State" formControlName="state"
+                                                        [(ngModel)]="state"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/map-img.svg" onload="SVGInject(this)" alt="City" />
+                                                        <span>City</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="City" formControlName="city"
+                                                        [(ngModel)]="city"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/map-img.svg" onload="SVGInject(this)" alt="Zip" />
+                                                        <span>Zip</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Zip" formControlName="zip"
+                                                        [(ngModel)]="zip"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/email-img.svg" onload="SVGInject(this)" alt="email" />
+                                                        <span>Email</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Email" formControlName="bussemailaddress"
+                                                        [(ngModel)]="bussemailaddress"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/phone-img.svg" onload="SVGInject(this)" alt="Phone Number" />
+                                                        <span>Phone Number</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Phone Number" formControlName="bussphonenumber"
+                                                        [(ngModel)]="bussphonenumber"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="label-head-row-1 flex-align-center">
+                                                <img src="assets/images/repair-order/buss-cont-info.svg" onload="SVGInject(this)" alt="Business Contact Info" />
+                                                <span>Business Contact</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/buss-cont-info-img.svg" onload="SVGInject(this)" alt="First Name" />
+                                                        <span>First Name</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="First Name" formControlName="sfirstname"
+                                                        [(ngModel)]="sfirstname"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/buss-cont-info-img.svg" onload="SVGInject(this)" alt="Last Name" />
+                                                        <span>Last Name</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Last Name" formControlName="slastname"
+                                                        [(ngModel)]="slastname"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/email-img.svg" onload="SVGInject(this)" alt="email" />
+                                                        <span>Email</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Email" formControlName="semailaddress"
+                                                        [(ngModel)]="semailaddress"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-3 col-md-3 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/phone-img.svg" onload="SVGInject(this)" alt="Phone Number" />
+                                                        <span>Phone Number</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Phone Number" formControlName="sphonenumber"
+                                                        [(ngModel)]="sphonenumber"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="diagnationDomain">
+                                            <div class="col-lg-6 col-md-6 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/buss-cont-info-img.svg" onload="SVGInject(this)" alt="Billing Name" />
+                                                        <span>Billing First Name</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Billing First Name" formControlName="billingFirstName"
+                                                        [(ngModel)]="billingFirstName"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/buss-cont-info-img.svg" onload="SVGInject(this)" alt="Billing Last Name" />
+                                                        <span>Billing Last Name</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Billing Last Name" formControlName="billingLastName"
+                                                        [(ngModel)]="billingLastName"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>                                           
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="label-head-row-1 flex-align-center">
+                                                <img src="assets/images/repair-order/vehicle-info.svg" onload="SVGInject(this)" alt="Vehicle Info" />
+                                                <span>Vehicle Info</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0 col-width-20">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/vin-img.svg" onload="SVGInject(this)" alt="VIN" />
+                                                        <span>VIN</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="VIN" formControlName="vin"
+                                                        [(ngModel)]="vin"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0 col-width-20">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/make-img.svg" onload="SVGInject(this)" alt="Make" />
+                                                        <span>Make</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Make" formControlName="make"
+                                                        [(ngModel)]="make"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0 col-width-20">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/model-img.svg" onload="SVGInject(this)" alt="Model" />
+                                                        <span>Model</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Model" formControlName="model"
+                                                        [(ngModel)]="model"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0 col-width-20">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/year-img.svg" onload="SVGInject(this)" alt="Year" />
+                                                        <span>Year</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Year" formControlName="vyear"
+                                                        [(ngModel)]="vyear"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0 col-width-20">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/odo-img.svg" onload="SVGInject(this)" alt="ODO" />
+                                                        <span>ODO</span>
+                                                        <!--span class="req-text ml-auto">Required</span-->
+                                                    </div>
+                                                    <div class="input-text-row form-group">
+                                                        <input [ngClass]="{ 'inputbox-odo-red' : odometerFlag, 'set-opacity6' : odoReadOnly }" class="inputbox inputbox-odo" matInput placeholder="ODO" formControlName="odo"
+                                                        [(ngModel)]="odo" [readonly]="odoReadOnly" (input)="onChange('odo')" (keypress)="restrictNumeric($event)"                                           
+                                                        maxlength="" />  
+                                                        <p-dropdown class="p-dropdown-meter" [(ngModel)]="unit" [options]="unitOptions" >                                                            
+                                                        </p-dropdown>                                                     
+                                                    </div> 
+                                                    <div class="service-form-error-row" style="top: 6px;" *ngIf="odometerFlag">Enter ODO</div> 
+                                                </div>                                              
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="label-head-row-1 flex-align-center">
+                                                <img src="assets/images/repair-order/order-details.svg" onload="SVGInject(this)" alt="Order Details" />
+                                                <span>Order Details</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                            <div class="col-lg-4 col-md-4 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/order-number-img.svg" onload="SVGInject(this)" alt="Order Number" />
+                                                        <span>Order Number</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Order Number" formControlName="ordernumber"
+                                                        [(ngModel)]="ordernumber"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/products-img.svg" onload="SVGInject(this)" alt="Products (Services)" />
+                                                        <span>Products (Services)</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="Products (Services)" formControlName="productservices"
+                                                        [(ngModel)]="productservices"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>
+                                            <div class="col-lg-4 col-md-4 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-2 flex-align-center">
+                                                        <img src="assets/images/repair-order/dn-invoice-img.png" alt="DN Invoice#" />
+                                                        <span>DN Invoice#</span>
+                                                    </div>
+                                                    <div class="input-text-row form-group set-opacity6">
+                                                        <input class="inputbox" [readonly]="formreadonlyflag" matInput placeholder="DN Invoice#" formControlName="dninvoice"
+                                                        [(ngModel)]="dninvoice"                                             
+                                                        maxlength="" />                                                        
+                                                    </div>  
+                                                </div>                                              
+                                            </div>                                            
+                                        </div>
+
+                                        
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding schedule-service-form-row" *ngIf="diagnationDomain">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-1 flex-align-center" style="width: 99%;">
+                                                        <img src="assets/images/repair-order/prob-desc.svg" onload="SVGInject(this)" alt="" />
+                                                        <span>Customer Complaint</span>
+                                                    </div>
+                                                    <div  style="width:99%;">
+                                                        <textarea class="form-control" [readonly]="formreadonlyflag" placeholder="Customer Complaint" [(ngModel)]="initComplaint" formControlName="initComplaint" ></textarea>
+                                                        <!--ckeditor [editor]="Editor" [config]="configCkeComplaint" container="body"
+                                                        formControlName="initComplaint" (change)="onChange('initComplaint')"  
+                                                        readonly = true                               
+                                                        [(ngModel)]="initComplaint"></ckeditor-->
+                                                    </div>                                              
+                                                </div>  
+                                            </div>                                              
+                                        </div>
+                                        
+                                        
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="fuserDomain">
+                                            <div class="label-head-row-1 mtop27 flex-align-center" style="width: 98%;">
+                                                <img src="assets/images/repair-order/tech-info.svg" onload="SVGInject(this)" alt="Technician Info" />
+                                                <span>Technician Info (Person who will service the vehicle)</span>
+                                                <!--span class="req-text ml-auto">Required</span-->
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="fuserDomain">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">    
+                                                    <div class="input-text-row form-group">
+                                                        <p-dropdown class="p-dropdown-tech" [ngClass]="{ 'p-dropdown-tech-red' : technicianValidFlag, 'p-dropdown-tech-green' : !technicianValidFlag }" [options]="contacts" [filter]="true"  resetFilterOnHide="true" filterBy="name" placeholder="Select Technician" (onChange)="contactChanged($event)" optionLabel="name" optionValue="id"
+                                                            formControlName="technician" [(ngModel)]="contactTechnician" container="body" >                                                            
+                                                        </p-dropdown>             
+                                                        <button pButton pRipple type="button" icon="pi pi-plus" label="Add Technician" class="p-button-rounded button-new button-tech" 
+                                                        (click)="serviceAction('new', 'contact');" >
+                                                        </button>                                                        
+                                                    </div>
+                                                    <div style="top:10px;" class="service-form-error-row" *ngIf="technicianValidFlag">Enter Technician</div>                                                    
+                                                </div>                                                                                             
+                                            </div>                                                                                                                            
+                                        </div>
+                                        
+
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" *ngIf="fuserDomain">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 padding-left0">  
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">                                             
+                                                    <div class="label-head-row-1 flex-align-center" style="width: 99%;">
+                                                        <img src="assets/images/repair-order/prob-desc.svg" onload="SVGInject(this)" alt="Problem Description" />
+                                                        <span>Problem Description</span>
+                                                        <!--span class="text-count ml-auto">{{scheduleForm.value.description.length}}/{{maxLen}}</span-->
+                                                        <span class="req-text ml-auto">Required</span>
+                                                    </div>
+                                                    <div  style="width:99%;">
+                                                        <ckeditor class="editor-desc-green" [ngClass]="{ 'editor-desc-red' : problemDescFlag }" [editor]="Editor" [config]="configCke" container="body"
+                                                        formControlName="description" (change)="onChange('desc')"                                 
+                                                        [(ngModel)]="description"></ckeditor>
+                                                    </div>                                                       
+                                                    <div class="service-form-error-row" *ngIf="problemDescFlag">Enter Problem Description</div>                                                      
+                                                </div>  
+                                            </div>                                              
+                                        </div>
+                                        
+                                        
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding schedule-service-form-row"  *ngIf="fuserDomain">                                            
+                                            <div class="col-lg-6 col-md-6 col-sm-6 set-width-50 padding-left0">                                             
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">  
+                                                    <div class="attach-row-lt mtop17 label-head-row-1 flex-align-center">
+                                                        <img src="assets/images/repair-order/attachments-img.svg" onload="SVGInject(this)" alt="Attachments" />
+                                                        <span>Attachments</span>
+                                                    </div>
+                                                    <div class="attach-row-rt cursor-pointer" (click)="attachmentPopup(0,'new');">
+                                                        <span class="attach-text"><img class="attach-img" src="assets/images/repair-order/attachments-img.svg" onload="SVGInject(this)" alt="Attachments" />&nbsp;Attach Files</span>
+                                                        <span class="attach-count" *ngIf="commentUploadedItemsFlag">{{commentUploadedItemsLength}}</span>
+                                                    </div> 
+                                                    <div class="attachment-row " *ngIf="postUploadActionTrue" [ngClass]="{'reference-info-hide': postUploadActionTrue }" >
+                                                        <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                                                    </div>   
+                                                </div>                                              
+                                            </div> 
+                                            <div class="col-lg-6 col-md-6 col-sm-6 set-width-50 padding-left0">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding col-right"> 
+                                                    <div class="action-buttons mtop24">
+                                                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SUBMIT"
+                                                        class="p-button-rounded button-save cursor" (click)="formSubmit('submit')"></button>
+                                                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label="SUBMIT"
+                                                        class="p-button-rounded button-save button-spin"></button>                                                            
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>                                                                             
+                                        
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding schedule-service-form-row" *ngIf="diagnationDomain">                                            
+                                            <div class="col-lg-6 col-md-6 col-sm-12 padding-left0"></div> 
+                                            <div class="col-lg-6 col-md-6 col-sm-12 padding-left0"> 
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding col-right"> 
+                                                    <div class="action-buttons">
+                                                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SUBMIT"
+                                                        class="p-button-rounded button-save cursor" (click)="formSubmit('submit')"></button>
+                                                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label="SUBMIT"
+                                                        class="p-button-rounded button-save button-spin"></button>                                                            
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </div>                                         
+                                    </form>                                        
+                                </div>
+                            </div>   
+                        </div>                  
+                    </div>  
+                </div>
+                </div>
+                <div class="footer">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin footer-top-border"></div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row footer-row" > 
+                        <div class="width-80-per flex-align-center">
+                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding footer-text-lt">
+                                    <span class="text-co">&copy; Collabtic {{year}}. All rights reserved.</span>
+                                </div>                                
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [header]="false" [(visible)]="successFlag"  [closable]="false" [modal]="true" styleClass="p-fluid ro-success-msg-dialog-popup"> 
+    <div class="automated-msg-container">  
+        <div class="green-div">
+            <div>
+                <img src="assets/images/repair-order/ro-success-tick.png">  
+            </div>
+            <div>
+                <p class="text-1">Your request has been submitted.</p>
+                <p class="text-2">Your DN Invoice# {{dninvoice}}</p>
+                <!--p class="text-2">Your RO ID# {{workOderId}}</p-->                
+            </div>
+        </div>  
+        <div class="white-div">     
+            <div>          
+                <p class="text-3">We will contact you.</p>
+            </div> 
+            <div class="cursor btn-div" (click)="redirectionURL()">
+                <img src="assets/images/tick-active.png"><span>OK</span>                
+            </div>
+        </div>    
+    </div>  
+</p-dialog>
+
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="actionFlag" [baseZIndex]="100" position="right"
+    [dismissible]="false">
+    <h1 style="font-weight: normal">
+        <span class="truncate">{{actionTitle}}</span>
+    </h1>
+    <div class="action-form">        
+        <form [formGroup]="serviceContactForm">
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">First Name</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="techFirstName" 
+                        placeholder="Enter First Name" maxlength="50" [ngModel]="tscf.techFirstName.value"       
+                        [ngClass]="{ 'is-invalid': (serviceContactSubmit && tscf.techFirstName.errors)}" />
+                    <div *ngIf="serviceContactSubmit && tscf.techFirstName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="tscf.techFirstName.errors.required">First name is required</div>
+                    </div>
+                </div>                
+            </div>
+
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Last Name</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="lastName" 
+                        placeholder="Enter Last Name" maxlength="50"                         
+                        [ngClass]="{ 'is-invalid': (serviceContactSubmit && tscf.lastName.errors)}" />
+                    <div *ngIf="serviceContactSubmit && tscf.lastName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="tscf.lastName.errors.required">Last name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/email-icon.png" alt="Email" class="icons-size mr-2 new-request-icon mail" />
+                        <span class="split-col text-col">Email</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                        maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceContactSubmit && tscf.email.errors)}" />
+                    <div *ngIf="serviceContactSubmit && tscf.email.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="tscf.email.errors">Email is invalid</div>                        
+                    </div>
+                    <div *ngIf="serviceError" class="signuperror-row">{{serviceErrorMsg}}</div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Phone</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                        formControlName="phoneNumber">
+                    <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                        <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                        <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                    </div>
+                    <div *ngIf="serviceContactSubmit">
+                        <!--div id="valid-error" class="field-err" *ngIf="tscf.phoneNumber.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                        <div class="field-err" *ngIf="!invalidNumber">Invalid phone number</div>                        
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">                
+                <div class="action-buttons">
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                    class="p-button-rounded button-save button-sidebar cursor" (click)="formAction('submit')"></button>
+                    <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                    class="p-button-rounded button-save button-spin button-sidebar"></button>
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                    class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>                    
+                </div>
+            </div>
+        </form>
+    </div>
+</p-sidebar>
+

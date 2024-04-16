@@ -1,0 +1,104 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData"  (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="loading-small-screen-scroll trst" align="center" *ngIf="loading" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div class="ts-list" *ngIf="!loading">
+    <p-messages [(value)]="msgs1" [enableService]="false"></p-messages>
+    <div class="ts-list-lt topltwidth">
+        <div class="ts-list-lt-top">
+            <img src="assets/images/tech-support/tech-support-team-head-img.png" >
+            <span class="title-text">Team</span>
+        </div>
+    </div>
+    <div class="ts-list-rt toprtwidth">
+        <div class="ts-list-rt-top">
+            <div class="lt">
+                <!--div class="cursor thread-add-new"  (click)="navigateWindow('add','0')">                            
+                    <span class=""><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >New Team</span>                            
+                </div-->
+    
+            </div>                
+            <div class="rt">
+                              
+            </div>            
+        </div>
+    </div>
+</div>
+<div class="ts-list" *ngIf="!loading">
+    <div class="ts-list-lt ts-list-bottom cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <div class="" >
+            <div id="filter">
+                <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()">
+                    <div *ngIf="expandFlag">
+                        <img src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+                    </div>
+                    <div *ngIf="!expandFlag">
+                        <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+                    </div>
+                </div>
+                <div class="filter-widgets ts-list-lt-center transition" *ngIf="expandFlag">
+                    <div class="team-title-text">Team Name</div>
+                    <div [style.height]="'calc(91vh - '+rmHeight+'px)'">
+                        <div id="step" class="ps" [perfectScrollbar]="sconfig">                            
+                            <div class="user-row">
+                                <div *ngIf="teamList.length>0">
+                                    <div *ngFor="let tm of teamList; let i=index;" id="teamid-{{tm.id}}" class="profile-row" [ngClass]="{ 'active' : tm.activeClass, 'normal' : !tm.activeClass }" (click)="selectTap(i,tm.id)">
+                                        <div class="profile-row-inner">                                            
+                                            <span class="pimg" *ngIf="tm.isDefault == '0'">
+                                                <img onerror="this.src='assets/images/tech-support/teamsupport-left-icon.png'" [src]="tm.techTeamImage">
+                                            </span> 
+                                            <span class="pimg" *ngIf="tm.isDefault == '1'" popoverClass="custom-tooltip menu-tooltip title-tooltip title-tooltip-bg-gray" container="body" [ngbPopover]="defaultteam" popoverTitle="Default Team" placement="bottom-left" triggers="hover">
+                                                <img onerror="this.src='assets/images/tech-support/teamsupport-left-icon.png'" [src]="tm.techTeamImage">
+                                                <span class="default-span-relative"><span class="default-span-absolute"><img width="13" height="13"  src='assets/images/tech-support/team-isdefault-icon.png' ></span></span>                                                                                               
+                                            </span>  
+                                            <ng-template #defaultteam></ng-template>                                                                                    
+                                            <span class="uname" >{{tm.name}}</span>
+                                            <span class="more-button-rt">
+                                                <span (click)="$event.stopPropagation();" *ngIf="((teamList.length != 1) && (i == teamList.length-1))" title="More" 
+                                                tooltipClass="worksteam-tooltip edit-worksteam-tt" triggers="click" [autoClose]="true"
+                                                container="body" placement="top" [ngbTooltip]="teamEdit"
+                                                class="more-button">
+                                                    <span class="more-circle">&nbsp;</span>
+                                                    <span class="more-circle">&nbsp;</span>
+                                                    <span class="more-circle">&nbsp;</span>
+                                                </span>
+                                                <span (click)="$event.stopPropagation();" *ngIf="((teamList.length == 1) || (i != teamList.length-1))" title="More" 
+                                                tooltipClass="worksteam-tooltip edit-worksteam-tt" triggers="click" [autoClose]="true"
+                                                container="body" placement="bottom" [ngbTooltip]="teamEdit"
+                                                class="more-button">
+                                                    <span class="more-circle">&nbsp;</span>
+                                                    <span class="more-circle">&nbsp;</span>
+                                                    <span class="more-circle">&nbsp;</span>
+                                                </span>
+                                                <ng-template #teamEdit>
+                                                    <div class="tooltip-worksteam-new cursor" (click)="navigateWindow('edit',tm.id);$event.stopPropagation();">
+                                                        <span class="w-img"><img src="assets/images/workstreams-page/edit-workstream-icon.png"></span>
+                                                        <span class="w-text">Edit Team</span>
+                                                    </div> 
+                                                    <div *ngIf="tm.isDefault == '0'" class="tooltip-worksteam-new cursor" (click)="navigateWindow('default',tm.id,i);$event.stopPropagation();">
+                                                        <span class="w-img"><img src="assets/images/tech-support/setus-default-icon.png"></span>
+                                                        <span class="w-text">Set as default</span>
+                                                    </div>                                                    
+                                                </ng-template>
+                                            </span>
+                                        </div>                    
+                                    </div>                                        
+                                </div>              
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ts-list-rt transition" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">        
+        <div class="ts-list-rt-center">
+            <div class="probing-content cbt-content part-content part-content-threads-new">
+                <app-techsupport-team-list [pageDataInfo]="pageData" (changeAction)="changeAction($event)" (serviceAction)="serviceAction($event)"></app-techsupport-team-list>
+            </div>
+        </div>
+    </div>
+</div>
+

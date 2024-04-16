@@ -1,0 +1,111 @@
+<div *ngIf="loading || (accessFrom == 'search' && searchLoading)" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="sortLoading" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading && ((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading ))" class="cust-loader esc-loader lazy-loader cust-lazy-loader {{accessFrom}}" [ngClass]="{'kb-thumb-lazy-loader': thumbView, 'kb-list-lazy-loader': !thumbView}"></div>
+<div *ngIf="thumbView  && !loading && !itemEmpty && !displayNoRecords" class="parts-thumb-view" [style.height.px]="innerHeight">
+    <div class="kb-thumb-view" #top *ngIf="!loading" [ngClass]="{'empty': displayNoRecords, 'opacity': opacityFlag}" id="partList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">     
+        <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row masonry-item-container {{accessFrom}}" [ngClass]="{'parts-empty': displayNoRecords}" [updateLayout]="updateMasonryLayout" [ordered]="true">
+            <div ngxMasonryItem class="card parts-grid-col masonry-item" *ngFor="let item of kbList">
+                <p-card class="parts-card cursor parts-expand-card">                      
+                    <div class="parts-image" [ngStyle]="{'background-image': 'url(' + item.bannerImgDesktop + ')'}" [ngClass]="{'default-img': item.isDefaultImg}">
+                        <span>ID# {{item.id}}</span> 
+                    </div>  
+
+                    <div class="part-cont">
+                        <div class="app-info">
+                            <div class="title-1 truncate" title="KB #{{item.productGroup}}">{{item.productGroup}}</div>
+                            <div class="title-2 truncate" title="{{item.subProductGroup}}">{{item.subProductGroup}}</div>
+                            <div class="title-3 truncate" title="{{item.partModel}}">Part# {{item.partModel}}</div>                               
+                        </div>
+                        <div class="parts-count">
+                            <div *ngIf="item.likeCount > 0" class="parts-action parts-like">
+                                {{item.likeCount}}
+                                <span *ngIf="item.likeCount <= 1">Like</span>
+                                <span *ngIf="item.likeCount > 1">Likes</span>
+                            </div>
+                            <div *ngIf="item.pinCount > 0" class="parts-action parts-pin">
+                                {{item.pinCount}}
+                                <span *ngIf="item.pinCount <= 1">Pin</span>
+                                <span *ngIf="item.pinCount > 1">Pins</span>
+                            </div>
+                            <div *ngIf="item.viewCount > 0" class="parts-action parts-view">
+                                {{item.viewCount}}
+                                <span *ngIf="item.viewCount <= 1">View</span>
+                                <span *ngIf="item.viewCount > 1">views</span>
+                            </div>
+                        </div>
+                    </div>
+                </p-card>
+            </div>            
+        </ngx-masonry>
+    </div>
+</div>
+<div *ngIf="!thumbView && !loading && !itemEmpty && !displayNoRecords" class="prob-list-cont">
+    <div class="documents-grid-row documents-grid-row-new" [ngClass]="{'documents-grid-row-opacity1': !loading, 'documents-grid-row-opacity0': loading}">                 
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag}">
+            <p-table #table [columns]="cols" [scrollable]="true" [totalRecords]="kbList.length" id="file-datatable" class="file-datatable thread-list-table sib-list-table kb-list-table" [value]="kbList" [scrollHeight]="'calc(100vh - 220px)'" (scroll)="scroll($event)">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th *ngFor="let col of columns" class="{{col.columnpclass}}">    
+                            {{col.header}}
+                        </th>
+                    </tr>                    
+                </ng-template>
+                <ng-template pTemplate="body" let-kbList >
+                <tr class="cursor">                                                        
+                        <td class="w1"><span class="p-table-col" title="KB #{{kbList.kbId}}">{{kbList.kbId}}</span></td>
+                        <td class="w2"><span class="p-table-col" title="{{kbList.productGroup}}" >{{kbList.productGroup}}</span></td>
+                        <td class="w3"><span class="p-table-col" title="{{kbList.subProductGroup}}">{{kbList.subProductGroup}}</span></td>
+                        <td class="w4"><span class="p-table-col" title="{{kbList.partModel}}">{{kbList.partModel}}</span></td>
+                        <td class="w5"><span class="p-table-col" title="{{kbList.problemCategory}}">{{kbList.problemCategory}}</span></td>
+                        <td class="w6"><span class="p-table-col" title="{{kbList.createdOn}}">{{kbList.createdOn}}</span></td>
+                        <td class="w7"><span class="p-table-col" title="{{kbList.createdBy}}">{{kbList.createdBy}}</span></td>
+                        <td class="w8"><span class="p-table-col" title="{{kbList.modifiedOn}}">{{kbList.modifiedOn}}</span></td>
+                        <td class="w9"><span class="p-table-col" title="{{kbList.updatedBy}}">{{kbList.updatedBy}}</span></td>
+                        <td class="w10" >
+                            <span class="status" [ngStyle]="{'background-color': kbList.statusColor}">{{kbList.status}}</span>
+                            <span id="more" class="more-icon" [matMenuTriggerFor]="more"><img src="assets/images/more-icon.png" alt="More" /></span>
+                            <mat-toolbar color="primary">
+                                <mat-menu #more="matMenu" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="deactive"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                            <li class="cursor active" (click)="navKB('edit', kbList.kbId)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            <li class="cursor active" (click)="delete(kbList.kbId)"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                            <li class="cursor active" (click)="socialAction(kbList.kbId, kbList.pinStatus)"><img src="{{assetPartPath}}{{kbList.pinImg}}" alt="Pin" />&nbsp;&nbsp;{{kbList.pinTxt}}</li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table> 
+        </div> 
+    </div>
+</div>
+<div class="parts-thumb-view kb-thumb-view" [style.height.px]="innerHeight" *ngIf="(displayNoRecords || displayNoRecordsDefault) && !loading" [style.height.px]="innerHeight">
+    <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newKBInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="newKBInfo"></app-empty-container>
+</div>  
+
+<!--
+<div class="no-item-list-new" *ngIf="!loading && !itemEmpty && (displayNoRecords || displayNoRecordsDefault)" [style.height.px]="innerHeight">
+    <div class="itm-empty-container">
+        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+        <p class="item-empty-para empty-res padd-top-20">No result found</p>
+    </div>
+</div> 
+
+
+<div *ngIf="!loading && itemEmpty" class="parts-thumb-view no-item-list" [style.height.px]="innerHeight-80">
+    <div class="item-empty-container-new">
+        <div class="empty-cont">
+            <div class="empty-res">
+                <img src="assets/images/knowledge-base/no-kb.png" alt="" />
+                <p class="makepopuptext-spa">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus felis enim, 
+                    suscipit et ligula accumsan. </p>   
+                <span class="new-prob">New Knowledge Base</span>                 
+            </div>
+        </div> 
+    </div>
+</div> 
+-->

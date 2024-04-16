@@ -1,0 +1,89 @@
+<div class="main-contaier setmarginBottom {{optionsval.shortName}}">    
+  <p-accordion [multiple]="true" >
+    <p-accordionTab [selected]="true">
+      <p-header class="accordion-icon ">
+        <div class="container-fluid">
+          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+            <div class="menu-name-bar col col col-lg-6 col-md-6 col-xl-6 col-sm-12 landing-padding0">
+              <div>
+                <span class="bg-image {{optionsval.imageClass}}">
+                  <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                  <!--img src="assets/images/landing-page/team-members-status.png" alt=""-->
+                </span>
+                <span class="menu-name">{{optionsval.placeholder}}</span>
+                <span><i class="pi hide pi-ellipsis-v"></i></span>
+              </div>
+            </div>
+            <div class="col col col-lg-6 col-md-6 col-xl-6 col-sm-12 landing-padding0">
+              <div class="rightside-menu-header" *ngIf="!loading">
+                <div class="select-landing-group-div" (click)="$event.stopPropagation();">
+                  <p-dropdown class="select-group-order"  appendTo="body" [options]="selectedGroupOptions" [(ngModel)]="selectedGroup" placeholder="" optionLabel="name" (onChange)="selectEvent($event);" ></p-dropdown>
+                </div>
+                <div class="see-more-text" *ngIf="seemore">
+                  <span>See More</span>
+                  <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                </div>
+                <div class="plusone60 showinline"><i class="pi pi-chevron-up"></i></div>
+                <div class="minusone60 hide"><i class="pi pi-chevron-down"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-header>
+      <div class="landing-report-section ticket-section">
+        <div class="loading-small-screen" *ngIf="loading"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        
+        <div class="" *ngIf="!loading">
+          <div class="container-fluid">
+
+           
+            <div *ngIf="memberStatus.length == 0" class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 justify-center">
+              <div class="nothingtoshow">
+                <div class="no-data-contaier">
+                    <div>
+                      <img class="no-data-img-chart" src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                    </div>
+                    <div class="no-data-text">Nothing to show</div>
+                </div>
+            </div>
+            </div>
+
+            <div *ngIf="memberStatus.length > 0" class="member-status-section row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+              <div>
+                <div>
+                <p-table [value]="memberStatus" [scrollable]="true" [scrollHeight]="pTableHeight"  class="widgets-table"
+                [paginator]="paginations" [rows]="4">                    
+                  <ng-template pTemplate="header" >
+                      <tr>
+                          <th class="thText tw64 col-sticky">Members</th>
+                          <th class="thText tw18 col-sticky">System Status</th>
+                          <th class="thText tw18 col-sticky">Support Readiness</th>                          
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-memberStatusArr>
+                      <tr (click)="clickTicketTD(memberStatusArr.id)">
+                          <td class="tdText tw64">
+                            <span class="profile-img">
+                              <span class="pimg">
+                                <img [src]="memberStatusArr.profileImg" onerror="this.src='assets/images/thumb_profile_image.png'" class="profileImg" >
+                              </span>
+                            </span>
+                            <span class="profile-text">
+                              <span class="name-text text-truncate" title="{{memberStatusArr.name}}">{{memberStatusArr.name}}</span>
+                              <span class="sub-text text-truncate" title="{{memberStatusArr.title}}">{{memberStatusArr.title}}</span>
+                            </span>
+                          </td>
+                          <td class="tdText tw18"><span class="srstatus srstatus{{memberStatusArr.availability}}"></span><span></span>{{memberStatusArr.availabilityText}}</td>
+                          <td class="tdText tw18"><span class="readstatusImg readstatusImg{{memberStatusArr.supportReadiness}}"></span>{{memberStatusArr.supportReadinessText}}</td>                          
+                      </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-accordionTab>
+    </p-accordion>
+  </div>

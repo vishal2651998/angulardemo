@@ -1,0 +1,32 @@
+<div *ngIf="mediaLoading" class="media-types cust-select gts-sel prob-catg">
+    <!--mat-icon *ngIf="splitIcon" class="material-icon media-material-icon year-icon"></mat-icon-->
+    <mat-form-field class="custom-mat-sel prob-catg-sel" [ngClass]="{'media-mat-sel': splitIcon}">
+        <mat-select #selectopt panelClass="mat-bottom-panel" (openedChange)="openedChange($event)" placeholder="Select Media Types" [formControl]="mediaFormControl" [(ngModel)]="dbSelectedMedia" multiple disableOptionCentering>
+            <div class="select-container" *ngIf="mediaLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" class="media-search-input" placeholder="Search Media Types" aria-label="Search Media Types" matInput [formControl]="mediaSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(mediaFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="selectopt.close()">Close</div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of mediaFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="mediaLoadingSelect">
+    <div *ngIf="mediaFormControl.value != ''" class="selected-items ps" [perfectScrollbar]="sconfig">
+        <div *ngFor="let item of mediaItems; let t=index" class="tag-text media-tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

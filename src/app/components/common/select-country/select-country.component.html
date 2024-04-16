@@ -1,0 +1,22 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">
+    <div *ngIf="!loading" class="login-loader text-center"><img src="assets/images/loading.svg" alt="Loader" /></div>    
+    <div *ngIf="loading">
+    <div class="modal-header"> 
+        <div class="setwidthhead"></div>
+        <img  class="close-icon" aria-label="Close" (click)="activeModal.dismiss('Cross click')" src="assets/images/login/popup-close.png" />
+    </div>
+    <div class="modal-body">        
+        <div class="reset-password select-country">           
+            <h6 class="head-text text-center">Select Country</h6>        
+            <div class="center-cont">
+                <div class="input-group" [ngClass]="{ 'active': continueButtonEnable }">
+                    <div class="input-group-prepend domain-img"  [ngClass]="{ 'active': continueButtonEnable, 'normal' : !continueButtonEnable  }"></div>
+                    <p-dropdown class="select-part-status-dd" [ngClass]="{ 'active-dd': continueButtonEnable, 'normal-dd' : !continueButtonEnable  }" appendTo="body" [options]="countries" [(ngModel)]="selectedCountry" placeholder="Select Country" optionLabel="name" (onChange)="onSelectedCountry($event)" ></p-dropdown>               
+                </div>
+                <div *ngIf="!continueButtonEnable" class="btn-div disabled"><span>Continue</span></div>
+                <div *ngIf="continueButtonEnable" class="btn-div" (click)="continueButton()"><span>Continue</span></div>
+            </div>            
+        </div>  
+    </div>
+</div>
+</div>

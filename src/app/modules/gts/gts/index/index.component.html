@@ -1,0 +1,110 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag"  [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index gts-sec split-sec1">
+    <div *ngIf="!ItemEmpty" class="prob-list-head-gts">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt">
+                <span class="gts-head-ic">
+                    <img src="assets/images/gts/gts_title_icon.svg" onload="SVGInject(this)">
+                </span>
+                GTS
+            </span>
+            <!--div *ngIf="createAccess" class="cursor thread-add-new"  [ngClass]="{'thread-add-new-ms': msTeamAccess, 'ms-thread-add-web': msTeamAccess, 'hide' : !accessLevel.create }" (click)="navigateWindow(newGtsUrl)">                            
+                <span class=""><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >New GTS Procedure</span>                            
+            </div-->
+
+            <!-- <span *ngIf="createAccess" class="new-prob" (click)="navigateWindow(newGtsUrl)">New GTS Procedure</span> -->
+            <!-- <span  class="action-col pin-col-gts normal cursor"  ></span>
+            <span class="action-col thumb-col cursor" [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView}" ></span> -->
+            <span class="filter hide">
+                <div class="filter-text">Filter By</div>
+                <div class="prod-type">
+                    <div class="cust-select prob-sel">
+                        <mat-form-field class="custom-mat-sel prob-catg-sel split-sel">
+                            <mat-select placeholder="Type" (selectionChange)="selectChange('type', $event)" disableOptionCentering>
+                                <mat-option *ngFor="let type of prodTypes" [value]="type.name">
+                                {{ type.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="model">
+                    <div class="cust-select mod-select">
+                        <mat-form-field class="custom-mat-sel model-sel split-sel">
+                            <mat-select placeholder="Model" (selectionChange)="selectChange('model', $event)" disableOptionCentering>
+                                <mat-option *ngFor="let mod of models" [value]="mod.name">
+                                {{ mod.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="year">
+                    <div class="cust-select year-select">
+                        <mat-form-field class="custom-mat-sel year-sel split-sel">
+                            <mat-select placeholder="Model" (selectionChange)="selectChange('year', $event)" disableOptionCentering>
+                                <mat-option *ngFor="let y of years" [value]="y.name">
+                                {{ y.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </span>
+
+        </div>
+
+        <div class="prob-head-col head-col-2">
+            <ul>
+                <!-- <li class="prob-action gts-action calendar-normal cursor" title="Date"></li-->
+                <li *ngIf="deletedListFlag" class="gts-action-btn cursor" title="Return to GTS List"  (click)="actionView('list')">
+                    <img src="assets/images/gts/gts-list-back.png" >
+                    <span>Return to GTS List</span>
+                </li> 
+                <li *ngIf="!deletedListFlag" class="gts-action-btn cursor" title="Deleted GTS"  (click)="actionView('delete')">
+                    <img src="assets/images/gts/gts-delete.png">
+                    <span>Deleted GTS</span>
+                </li> 
+                <li class="prob-action gts-action export-new cursor" title="Export as Excel" (click)="exportAction()">
+                <span class="export-text">Export as Excel</span>
+                </li> 
+                <li class="prob-action gts-action cursor" [ngClass]="{'thumb-view-gts': !thumbView, 'list-view-gts': thumbView}" title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType(thumbView)"></li>
+            </ul>
+        </div>
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+      </div>
+    <div class="probing-content cbt-content part-content" [ngClass]="{'filter-expand-gts': expandFlag, 'filter-collapse-gts': !expandFlag}">
+        <app-gts-lists (gtsCreateAccess)="gtsCreateAccess($event)" (accessLevelValue)="accessLevelValu($event)"></app-gts-lists>
+    </div>
+    <!-- <div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div> -->
+</div>
+<p-dialog [(visible)]="displayGTSModal" [header]="false" [modal]="true" [draggable]="false" [resizable]="true"
+class="gts-disable-popup">
+<ng-template pTemplate="header">
+    <div class="required-header">
+        <span style="font-size: 18px;font-weight: 500;">Access</span>
+    </div>
+</ng-template>
+<div>
+
+    <div class="label-text">{{gtsText}}</div>
+
+
+</div>
+</p-dialog>
+

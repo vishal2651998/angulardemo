@@ -1,0 +1,202 @@
+<div id="header" *ngIf="!msTeamAccess">
+    <app-product-header (policyPopup)="newPolicyPopup = true"  [pageData]="headerData" ></app-product-header>
+  </div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-marketplace-sidebar [activeMenuItem]="'market-place/policies'" accessModule="{{bodyClass}}"></app-marketplace-sidebar>
+    </nav>
+  </div>
+</div>
+
+<div class="prob-index split-sec1 right-section">
+    <div class="policies-head d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <img src="assets/images/service-provider/policy-grey-dark.png" alt="">
+            <span style="font-size: 22px; margin-left: 12px;color: #4c4b4b;font-weight: bold;">Policies</span>
+        </div>
+        <div *ngIf="policies.length > 0" class="d-flex align-items-center">
+            <div class="d-flex align-items-center cursor-pointer add-new-policy-section" (click)="addNewPolicy()">
+                <img src="assets/images/service-provider/add-new.png" alt="">
+                <span>New Policy</span>
+            </div>
+            <div class="d-flex align-items-center cursor-pointer policy-actions" (click)="editPolicy()">
+                <img src="assets/images/service-provider/edit-green.png" alt="">
+                <span>EDIT</span>
+            </div>
+            <div class="d-flex align-items-center cursor-pointer policy-actions" (click)="deletePolicy()" >
+                <img class="dlt-img" src="assets/images/service-provider/delete-green.png" alt="">
+                <span>Delete</span>
+            </div>
+            <div class="d-flex align-items-center cursor-pointer policy-actions" (click)="showHistory()">
+                <img src="assets/images/service-provider/history-green.png" alt="">
+                <span>History</span>
+            </div>
+        </div>
+    </div>
+    <div class="loading-small-screen-scroll center" align="center" *ngIf="pageLoading"><img
+        src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!pageLoading" class="prob-new" style="display: flex; flex-wrap: wrap;">
+        <ng-container *ngIf="policies && policies.length > 0">
+            <div class="col-lg-2" style="padding-left: 24px;">
+                <div style="height: calc(100vh - 120px); padding-top:17px !important;" [perfectScrollbar]="sconfig"
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black custom-margin-gallery p-0">
+                    <div *ngFor="let policy of policies; let i = index;"
+                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+                        <div [ngClass]="selectedPolicyId == policy.id ? 'select-nav-menu' : ''"
+                            class="d-flex justify-content-between align-items-center cursor-pointer custom-padding-nav-menu" (click)="getPolicyData(policy.id)">
+                            <div class="d-flex" style="width:90%;">
+                                <img style="object-fit: contain;margin: 1px 5px 0px 2px;" width="17px" height="17px"
+                                src="{{selectedPolicyId == policy.id ? 'assets/images/service-provider/policy-list-icon.png' : 'assets/images/service-provider/policy-list-icon-grey.png'}}">
+                            <span
+                                class="text-truncate {{selectedPolicyId == policy.id ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}" style="width:85%" data-toggle="tooltip" data-placement="top" title="{{policy.name  | titlecase}}" >{{policy.name
+                                | titlecase}} </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row new-pro-cont col-lg-10 step1 mt-0" style="padding-right:30px">
+                <div class="form-cont col-lg-12" style="height: calc(100vh - 120px)!important; overflow: hidden;">
+                    <form class="form-horizontal full-height" [formGroup]="policyForm">
+                        <div style="height: 44px !important; padding: 13px 20px 10px !important;" class="new-prob-head background-grey d-flex justify-content-between align-items-center">
+                            <div class="new-col title w-auto text-white">
+                                {{policyName | titlecase}}
+                            </div>
+                            <div class="new-col actions w-auto d-flex">
+                                <div class="policy-labels d-flex align-items-center field-label py-0">
+                                    <span class="white modified-on pr-3" *ngIf="modifiedOn"><img
+                                            src="assets/images/service-provider/datetime-white.png">Last
+                                        modified on: {{getDateFormat(modifiedOn)}}</span>
+                                    <span class="white modified-by" *ngIf="modifiedBy"><img src="{{modifiedByImage}}">Modified by:
+                                        {{modifiedBy}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div [style.height]="'calc(100vh - 120px)'">
+                            <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading"><img
+                                    src="assets/images/loading.svg" alt="Loader" /></div>
+                            <ng-container *ngIf="!loading && !editMode">
+                                <div class="ps form-fields"  [perfectScrollbar]="sconfig">
+                                    <div class="form-items" style="padding: 10px 20px !important;">
+                                        <div class="full-height">
+                                            <div class="col-12 no-padding full-height">
+                                                <div class="prob-form-row col-12 no-padding full-height">
+                                                    <div class="col-12 no-padding full-height outer-div">
+                                                        <div class="policy-content-html px-0 ck-content" *ngIf="policyContent"
+                                                            [innerHtml]="transformHtml(policyContent)"></div>
+                                                        <div class="policy-content-new-html full-height" style="display: table; width: 100%;"
+                                                            *ngIf="!policyContent">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-fields" style="height: fit-content; margin-bottom: 60px;" *ngIf="policyTagsList?.length > 0">
+                                            <hr class="grey my-2">
+                                            <span>
+                                                <img style="width:18px; margin-right: 5px" src="assets/images/service-provider/tag-grey-light.png" alt=""> Tag
+                                            </span>
+                                            <div class="selected-items pl-4">
+                                                <div *ngFor="let item of policyTagsList; let t=index" class="tag-text">
+                                                    <span>{{item}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="(!policies || policies.length == 0 ) && !loading">
+            <div class="no-policies-section">
+                <div class="d-flex flex-column align-items-center justify-content-center w-100 no-policies-section-body">
+                    <img style="width: 250px;" src="assets/images/service-provider/policy-empty.png">
+                    <div class="add-policy-text">Get started by tapping on "Add {{policyType | titlecase}} Policy"</div>
+                    <div class="add-new-policy">
+                        <span class="add-button" (click)="addNewPolicy()"><img src="assets/images/service-provider/add-new.png"><span>Add {{policyType | titlecase}} Policy</span></span>
+                    </div>
+                </div>
+            </div>
+         </ng-container>
+    </div>
+</div>
+
+<p-dialog [(visible)]="newPolicyPopup" [modal]="true" [style]="{ width: '75vw' }"
+    (onHide)="newPolicyPopup = false;editMode = false;policyFormSubmitted = false" [draggable]="false" [resizable]="false">
+    <ng-template pTemplate="header">
+        <div class="d-flex justify-content-between w-100 align-items-center">
+        <span class="text-xl font-bold">{{nf.policyId.value == 0 ? 'New Policy' : 'Edit Policy'}}</span>
+        <span>
+            <button pButton pRipple type="button"
+            (click)="onSubmit()" icon="pi pi-check"
+            iconPos="right" label="Save" class="p-button-rounded p-button-success green-button-color float-right"></button>
+        </span>
+    </div>
+    </ng-template>
+        <form class="new-policy-form form-horizontal full-height" [formGroup]="newPolicyForm">
+
+            <div class="row mt-3">
+                <div class="col-6">
+                    <label class="policy-details d-flex justify-content-between">
+                        <span><img style="width:18px; margin-right: 5px" src="assets/images/service-provider/policy-name-icon.png" alt=""> Policy name</span>
+                        <i class="required">Required</i>
+                    </label>
+                    <input class="col-12 form-control bg-grey" placeholder="Enter Policy Name" formControlName="name" [class.is-invalid]="nf.name.errors && policyFormSubmitted">
+                    <div class="text-danger" *ngIf="nf.name.errors && policyFormSubmitted">
+                        Policy name is required
+                    </div>
+                </div>
+                <div class="col-6">
+                    <label class="policy-details">
+                        <img style="width:18px; margin-right: 5px" src="assets/images/service-provider/tag-grey-light.png" alt=""> Tag
+                    </label>
+                    <div class="cursor def-select select-tags bg-grey" (click)="manageList()"
+                        style="margin-top: 7px !important; border-radius: .25rem">
+                        <div class="tag-col tag-text" [ngClass]="{'disable': filteredTags?.length == 0}">
+                            Select Tags <img src="assets/images/dropdown_downarrow.png">
+                        </div>
+                    </div>
+                    <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                        <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                            <span>{{item}}</span>
+                            <i class="material-icons tag-close"
+                                (click)="disableTagSelection(t)">close</i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 outer-div">
+                    <label class="policy-details pt-1 d-flex align-items-center justify-content-between">
+                        <span style="white-space: nowrap;">
+                            <img style="width:18px; margin-right: 5px" src="assets/images/service-provider/policy-textarea.png" alt="">
+                            Policy Details
+                        </span>
+                        <i class="required">Required</i>
+                    </label>
+                    <ckeditor [class.invalid-editor]="nf.content.errors && policyFormSubmitted" [editor]="Editor" [config]="configCke" container="body" formControlName="content">
+                    </ckeditor>
+                    <div class="text-danger" *ngIf="nf.content.errors && policyFormSubmitted">
+                        Policy details required
+                    </div>
+                </div>
+            </div>
+        </form>
+</p-dialog>
+
+<p-dialog styleClass="history-show" header="History" [(visible)]="historyPopup" [style]="{width: '50vw'}" [modal]="true" (onHide)="historyPopup = false">
+        <ul class="p-0 m-0">
+            <ng-container *ngFor="let policy of policyHistory; let i=index;">
+                <li class="row policy-labels py-2">
+                    <span class="col-6 m-0 d-flex align-items-center" *ngIf="policy.modified_on"><img class="mr-2" width="14px"
+                        src="assets/images/service-provider/datetime.png">Last
+                    modified on: {{getDateFormat(policy.modified_on)}}</span>
+                <span class="col-6 m-0 d-flex align-items-center" *ngIf="policy.modified_by_name"><img class="mr-2" src="{{policy.modified_by_image}}" style="border-radius: 50%;width: 18px;height: 18px;">Last modified by:
+                    {{policy.modified_by_name}}</span>
+                </li>
+                <hr class="my-1" *ngIf="i != policyHistory.length - 1">
+            </ng-container>
+        </ul>
+</p-dialog>

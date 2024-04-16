@@ -1,0 +1,217 @@
+<div class="main-contaier {{optionsval.shortName}}">
+  <p-accordion [multiple]="true" (onClose)="onTabClose2($event)" (onOpen)="onTabOpen2($event)">
+    <p-accordionTab [selected]="optionsval.isExpand" [ngClass]="{ 'new-page-tvs' : newPageAccess }">
+      <p-header class="accordion-icon " *ngIf="!newPageAccess">
+        <div class="container-fluid">
+          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+            <div class="menu-name-bar col col col-lg-9  col-md-9 col-xl-9 col-sm-8 landing-padding0">
+              <div>
+                <span class="bg-image {{optionsval.imageClass}}">
+                  <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                </span>
+                <span class="menu-name">{{optionsval.placeholder}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span *ngIf="ehelpContentFlagStatus" class="ann-more-button" container="body"
+                  tooltipClass="help-content-tooltip sidebarTeam5" triggers="manual" [autoClose]="false"
+                  [ngbTooltip]="escalationTT" #ttescalation="ngbTooltip" (click)="$event.stopPropagation();"></span>
+                <ng-template #escalationTT>
+                  <div class="tt-helpcontent-container">
+                    <div class="tt-bg-image {{ehelpContentIconName}}"></div>
+                    <div class="tt-title">
+                      <div class="lt-img {{ehelpContentIconName}}"></div>
+                      <div class="rt-text">{{ehelpContentTitle}} <span *ngIf="domainId==1 || domainId==27 || domainId==52">{{escalationCount}}</span>
+                      </div>
+                    </div>
+                    <div class="tt-desp">{{ehelpContentContent}}</div>                   
+                    <div class="tt-div tt-next-div" (click)="nextTooltip(ehelpContentId)"><span class="button-div button-next-div" ><span class="text">DONE</span></span></div>
+                  </div>
+                </ng-template>
+                <span><i class="pi hide pi-ellipsis-v"></i></span>
+              </div>
+            </div>
+            <div class="col col col-lg-3 col-md-3 col-xl-3 col-sm-4 landing-padding0">
+              <div class="rightside-menu-header">
+                <div (click)="taponMore($event)" class="see-more-text see-more-text-new" *ngIf="escseemore">
+                  <span>See More</span>
+                  <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                </div>
+                <span *ngIf="optionsval.isExpand">
+                  <div class="plusone20 showinline"><i class="pi pi-chevron-up"></i></div>
+                  <div class="minusone20 hide"><i class="pi pi-chevron-down"></i></div>
+                </span>
+                <span *ngIf="!optionsval.isExpand">
+                  <div class="plusone20 hide"><i class="pi pi-chevron-up"></i></div>
+                  <div class="minusone20 showinline"><i class="pi pi-chevron-down"></i></div>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-header>
+      <!--
+                     <div class="inner-content-accrodian">
+                    {{optionsval.placeholder}}
+                 </div>
+                 -->
+      <div class="escalation-listing-widget">
+        <div class="loading-small-screen-scroll" *ngIf="loadingesc">
+          <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+        <div class="loading-small-screen-scroll" *ngIf="lazyLoading">
+          <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+        <div class="nothingtoshow" *ngIf="!loadingesc && noescalation && !newPageAccess">
+          <div class="no-data-contaier">
+            <div>
+              <img class="no-data-img" src="assets/images/landing-page/empty-escalation.svg">
+            </div>
+            <div class="no-data-text">{{noescText}}</div>
+          </div>
+        </div> <div class="nothingtoshow" [style.height.px]="innerHeight" *ngIf="!loadingesc && noescalation && newPageAccess" [ngClass]="{ 'no-data-contaier-new' : (domainId==52 || domainId==27 || domainId==1) }">
+          <div class="no-data-contaier">
+            <div>
+              <img class="no-data-img" src="assets/images/landing-page/empty-escalation.svg">
+            </div>
+            <div class="no-data-text">{{noescText}}</div>
+          </div>
+        </div>
+        <div class="padding10" >
+          <div class="container-fluid">
+            <div *ngIf="domainId==52 || domainId==27 || domainId==1">
+              <div *ngIf="newPageAccess" [style.height.px]="innerHeight">
+                <div class="ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                  <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0-new landing-padding0">
+                    <div [id]="escalations.threadId" (click)="escalationClick($event,escalations.threadId)"
+                      class="escalation-content cursor col col-lg-4  col-md-4 col-xl-4 col-sm-12"
+                      *ngFor="let escalations of landingescalations; let escx = index">
+                      <div class="esc-container">
+                        <div class="esc-type" [style.background-color]="escalations.bgColor"
+                          [style.color]="escalations.colorCode">
+                          {{escalations.escalatedType}}
+                        </div>
+                        <div class="container-fluid">
+                          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 esc-body">
+                            <div
+                              class="esc-banner col col-lg-auto  col-md-auto col-xl-auto col-sm-auto landing-padding0">
+                              <img class="esc-img-baneer" src="{{escalations.bannerImage}}">
+                            </div>
+                            <div class="text-overflow col col-lg-9  col-md-9 col-xl-9 col-sm-9">
+                              <div class="esc-thread-title">{{escalations.threadTitle}}
+                              </div>
+                              <div class="makemodelcontent">
+                                <span class="esc-make">{{escalations.make}}</span>
+                                <i style="font-size: 13px;vertical-align: text-top;" class="pi pi-chevron-right"></i>
+                                <span class="esc-model">{{escalations.model}}</span>
+                              </div>
+                              <div class="esc-date-id">
+                                <div class="col-30-row esc-threadID">ID# {{escalations.threadId}}</div>
+                                <div title="{{escalations.createdOn}}" class="col-70-row text-right esc-date">
+                                  {{escalations.createdOn}}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="!newPageAccess" class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+                <div (click)="escalationClick($event,escalations.threadId)"
+                  class="escalation-content cursor col col-lg-4  col-md-4 col-xl-4 col-sm-12"
+                  *ngFor="let escalations of landingescalations; let escx = index">
+                  <div class="esc-container">
+                    <div class="esc-type" [style.background-color]="escalations.bgColor"
+                      [style.color]="escalations.colorCode">
+                      {{escalations.escalatedType}}
+                    </div>
+                    <div class="container-fluid">
+                      <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 esc-body">
+                        <div class="esc-banner col col-lg-auto  col-md-auto col-xl-auto col-sm-auto landing-padding0">
+                          <img class="esc-img-baneer" src="{{escalations.bannerImage}}">
+                        </div>
+                        <div class="text-overflow col col-lg-9  col-md-9 col-xl-9 col-sm-9">
+                          <div class="esc-thread-title">{{escalations.threadTitle}}</div>
+                          <div class="makemodelcontent">
+                            <span class="esc-make">{{escalations.make}}</span>
+                            <i style="font-size: 13px;vertical-align: text-top;" class="pi pi-chevron-right"></i>
+                            <span class="esc-model">{{escalations.model}}</span>
+                          </div>
+                          <div class="esc-date-id">
+                            <div class="col-30-row esc-threadID">ID# {{escalations.threadId}}</div>
+                            <div title="{{escalations.createdOn}}" class="col-70-row text-right  esc-date">
+                              {{escalations.createdOn}}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0" *ngIf="domainId!=1 && domainId!=27 && domainId!=4 && domainId!=52">
+              <div (click)="escalationClick($event,escalations.threadId)"
+                class="escalation-content cursor col col-lg-4 col-md-4 col-xl-4 col-sm-12"
+                *ngFor="let escalations of landingescalations; let escx = index">
+                <div class="esc-container">
+                  <div class="esc-type">
+                    {{escalations.escalatedType}}
+                  </div>
+                  <div class="container-fluid">
+                    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 esc-body">
+                      <div class="esc-banner col col-lg-auto col-md-auto col-xl-auto col-sm-auto landing-padding0">
+                        <img class="esc-img-baneer" src="{{escalations.bannerImage}}">
+                      </div>
+                      <div class="text-overflow col col-lg-9 col-md-9 col-xl-9 col-sm-9">
+                        <div class="esc-thread-title">{{escalations.threadTitle}}</div>
+                        <div class="makemodelcontent">
+                          <span class="esc-make">{{escalations.make}}</span>
+                          <i style="font-size: 13px;vertical-align: text-top;" class="pi pi-chevron-right"></i>
+                          <span class="esc-model">{{escalations.model}}</span>
+                        </div>
+                        <div class="esc-date-id">
+                          <div class="col-30-row esc-threadID">ID# {{escalations.threadId}}
+                          </div>
+                          <div title="{{escalations.createdOn}}" class="col-70-row text-right esc-date">
+                            {{escalations.createdOn}}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div (click)="taptomarcoescalation($event)" class="row col-lg-12 col-md-12 col-sm-12 landing-padding0"
+              *ngIf="domainId==4">
+              <div class="escalation-content cursor col col-lg-4 col-md-4 col-xl-4 col-sm-12">
+                <div class="esc-container" style="border: 1px solid #dcdcdc;">
+                  <!--
+                                    <div class="esc-type">
+                                    
+                                    Escalation Report
+                                </div>
+                               -->
+                  <div class="container-fluid">
+                    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 esc-body">
+                      <div class="esc-banner col col-lg-auto col-md-auto col-xl-auto col-sm-auto landing-padding0">
+                        <img style="background: #f99a35; margin: 6px 0px 6px 6px;padding: 7px;" class="esc-img-baneer"
+                          src="assets/images/landing-page/landing-escalation-icon.svg">
+                      </div>
+                      <div class="text-overflow col col-lg-9 col-md-9 col-xl-9 col-sm-9">
+                        <div class="esc-thread-title">Escalation Report</div>
+                        <div style="font-size: 18px;font-family: 'Roboto-Medium';color:#f99a35;">
+                          {{escalationCount}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>

@@ -1,0 +1,1619 @@
+<div id="header">
+  <app-product-header
+    *ngIf="!headerFlag"
+    [pageData]="headerData"
+    (search)="applySearch($event)"
+  ></app-product-header>
+  <app-product-header
+    *ngIf="headerFlag"
+    [pageData]="headerData"
+    (search)="applySearch($event)"
+  ></app-product-header>
+</div>
+
+<div class="prob-index">
+  <div class="probing-content">
+    <div class="prob-list-cont prob-list-cont-escalation" [ngClass]=" { 'es-prod-matrix' : showuserdashboarddata, 'es-configutaion' : configurationdata } ">
+      <div *ngIf="loading" class="loading-small-screen-scroll" align="center">
+        <img src="assets/images/loading.svg" alt="Loader" />
+      </div>
+      <p-table
+        #dt
+        id="productmatrix-table-data"
+        *ngIf="showuserdashboarddata"
+        [columns]="selectedColumns"
+        [styleClass]="
+          'p-datatable-sm p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+        "
+        [columns]="cols"
+        [frozenColumns]="frozenCols"
+        [autoLayout]="true"
+        (onHeaderCheckboxToggle)="checkallcheckbox(productsList, $event)"
+        frozenWidth="258px"
+        [value]="productsList"
+        [scrollable]="true"
+        (onLazyLoad)="loadPage($event)"
+        [lazy]="true"
+        [scrollHeight]="innerHeightFix"
+        [totalRecords]="itemTotal"
+      >
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <col *ngFor="let col of columns" [style]="{ width: col.width }" />
+          </colgroup>
+        </ng-template>
+
+        <ng-template pTemplate="caption">
+          <div class="escalationv2-list-head">
+            <div class="prob-head-col head-col-1 text-left">
+              <span>
+                <img
+                  class="header-userdash-img"
+                  src="assets/images/escalations/escalation-icon.png"
+                />
+              </span>
+              <span class="head-txt header-usermanage-title">
+                {{ pageaccesstitle }}
+              </span>
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-1')"
+                class="tab tab-1 active action-col"
+              >
+                Product level Escalation
+              </span>
+
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-2')"
+                class="tab tab-2 action-col"
+              >
+                Dealership level Escalation
+              </span>
+
+              <span
+              *ngIf="!publishbutton"
+              (click)="toggleTab('tab-7')"
+              class="tab tab-7 action-col hide"
+            >
+              Dealership level Escalation NEW
+            </span>
+
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-3')"
+                class="tab tab-3 action-col"
+              >
+                Escalation Configuration
+              </span>
+
+             
+
+              <span
+                *ngIf="!publishbutton"
+                class="tab tab-4 action-col active"
+                (click)="newMatrix($event)"
+                >Add New
+              </span>
+              <span  *ngIf="!publishbutton">
+              <p-dropdown
+              
+              [filter]="true"
+              (onChange)="countryDataFilter($event)"
+              filterBy="name"
+              [placeholder]="'Select Country'"
+              appendTo="body" *ngIf="domainId=='97'"
+              
+              [(ngModel)]="defaultCountry"
+              [options]="countryDropDownList"
+              optionLabel="name"
+              
+              dataKey="name"
+              class="input-with-icon-inside-select mat-typography"
+            ></p-dropdown>
+          </span>
+              <!--<span (click)="addNewcolumn()" class="tab tab-6 action-col ">Add Column  <span class="submit-btn"></span></span>-->
+            </div>
+            <div class="prob-head-col head-col-2 text-right">
+              <span
+                *ngIf="publishbutton && !checkedOptActDeAct"
+                class="tab tab-5 action-col"
+                (click)="cancelproductItems()"
+                >Cancel <span class="cancel-btn"></span
+              ></span>
+              <span
+                *ngIf="publishbutton && !checkedOptActDeAct"
+                class="tab tab-6 action-col"
+                (click)="saveproductItemsMatrix(true)"
+              >
+                Save
+                <span class="submit-btn"> </span>
+              </span>
+
+              <!--
+                  <span [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || matrixActionFlag), 'show': (headerCheck == 'unchecked' || loading)}">
+                    <span *ngIf="!publishbutton" class="action-col cursor edit-make" (click)="editMake()">Edit Make</span>
+                </span>
+                -->
+            </div>
+          </div>
+        </ng-template>       
+
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th
+              pEditableColumn
+              class="p-table-header {{ col.columnpclass }} showcolorwithpre{{
+                col.columnpredefind
+              }}"
+              pResizableColumn
+              [pSortableColumn]="col.field"
+              [pSortableColumnDisabled]="
+                col.field === 'profileImage' ||
+                col.field === 'uId' ||
+                col.field === 'toolbar' ||
+                col.field === 'id' ||
+                col.field === 'dealerName'
+              "
+              *ngFor="let col of columns"
+            >
+              <span *ngIf="col.field == 'uId'">
+                <p-tableHeaderCheckbox
+                  style="margin-left: 10px"
+                ></p-tableHeaderCheckbox>
+              </span>
+              <span
+                [id]="'headeredit' + col.headerId"
+                [title]="col.header"
+                class="setwidthtotexthereEsc"
+              >
+              {{ col.header }}
+              </span>
+              <!--<p-sortIcon [field]="col.field"></p-sortIcon>  <p-columnFilter  type="text" field="{{col.field}}" display="menu"></p-columnFilter>-->
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template          
+          pTemplate="body"
+          let-productsList
+          let-rowData
+          let-columns="columns" 
+        >
+          <tr style="height: 50px;"
+            class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.id }}"
+            [pSelectableRow]="productsList"
+          >
+            <td
+              #ptabletdata
+              class="{{ col.columnpclass }}  oneclassstep font-email"
+              pEditableColumn
+              *ngFor="let col of columns"
+            >
+              <ng-container *ngTemplateOutlet="inputtype1"> </ng-container>
+
+              <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+
+              <ng-container *ngTemplateOutlet="inputtype4"> </ng-container>
+
+              <ng-template #inputtype4>
+                <span *ngIf="col.inputType == '4'">
+                  <p-tableCheckbox
+                    (click)="selectRow(productsList, e.checked)"
+                    (ngModelChange)="checkAllp($event)"
+                    [value]="productsList"
+                    #e
+                  ></p-tableCheckbox>
+                </span>
+              </ng-template>
+              <ng-template #inputtype1>
+                <div *ngIf="col.inputType == '3'">
+                  <div
+                    class="cursor"
+                    [id]="'product_options' + productsList.uId + col.headerId"
+                    (click)="
+                      manageOption(
+                        rowData[col.field],
+                        productsList,
+                        col.headerId,
+                        col.columnName
+                      )
+                    "
+                    *ngIf="rowData[col.field]"
+                  >
+                      <span class="font-email font-email-edit-c2">
+                        <span *ngFor="let workstreamitems of rowData[col.field]; let r1 = index" [title]="setItemArray(rowData[col.field])">
+                          {{workstreamitems.name}}{{r1 === rowData[col.field].length -1 ? '' : ',&nbsp;' }}
+                        </span>
+                      </span>
+                      <span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+
+
+                  </div>
+                  <div
+                    class="cursor"
+                    [id]="'product_options' + productsList.uId + col.headerId"
+                    *ngIf="!rowData[col.field]"
+                    (click)="
+                      manageOption(
+                        $event,
+                        productsList,
+                        col.headerId,
+                        col.columnName)"
+                  >
+                  <div class="font-email cursor">Select Options<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  </div>
+                </div>
+
+                <div [id]="'product_models' + productsList.uId + col.headerId" *ngIf="col.inputType == '5' && rowData[col.field] != '' " (click)="modelsDisplay(productsList)">
+                  <span class="font-email cursor"  >{{ rowData[col.field] }}</span>
+                  <span class="font-email cursor" *ngIf="rowData[col.field] == '1' ">&nbsp;Model</span>
+                  <span class="font-email cursor" *ngIf="rowData[col.field] != '1' ">&nbsp;Models</span>
+                </div>
+                <div *ngIf="col.inputType == '5' &&  rowData[col.field] == '' "><span class="font-email" > - </span></div>
+
+                <div [id]="'product_users' + productsList.uId + col.headerId" class="escalation-email-div" *ngIf="col.inputType == '6' && rowData[col.field].length > 0">
+
+                  <div class="escalation-email-data cursor" [ngClass]="{ 'set-width1' : rowData[col.field].length > 1 }" (click)="manageUserSelection('new', productsList, col.field, col.headerId)">
+                    <div class="escalation-email-profile">
+                      <img [src]="rowData[col.field][0].profileImg">
+                      <!--<span class="availability availability-status1"></span>-->
+                    </div>
+                    <div class="escalation-email-text">
+                      <div ><span class="font-email font-email-edit-c1" [title]="rowData[col.field][0].email">{{ rowData[col.field][0].email }}</span><span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                      <div class="font-role">{{ rowData[col.field][0].role }}</div>
+                    </div>
+                  </div>
+                  <div class="escaltion-email-more cursor"  (click)="manageUserSelection('view', productsList, col.field, col.headerId)" *ngIf="rowData[col.field].length > 1" >
+                    <span class="escalation-count-text">+{{ rowData[col.field].length - 1 }}</span>
+                  </div>
+                </div>
+               
+                <div [id]="'product_users' + productsList.uId + col.headerId" *ngIf="col.inputType == '6' && rowData[col.field] && rowData[col.field].length == 0" (click)="manageUserSelection('new', productsList, col.field, col.headerId)" >
+                 
+                  <div class="font-email cursor" *ngIf="col.field == 'L1esc'">Select User ( L1 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'L2esc'">Select User ( L2 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'L3esc'">Select User ( L3 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'L4esc'">Select User ( L4 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'L5esc'">Select User ( L5 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'L6esc'">Select User ( L6 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'qadL1'">Select User ( QAD L1)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'qadL2'">Select User ( QAD L2)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  <div class="font-email cursor" *ngIf="col.field == 'qadL3'">Select User ( QAD L3)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                </div>
+
+              </ng-template>
+
+              <ng-template #inputtype2>
+                <div *ngIf="col.inputType == '2'" [class]="'overflowclassdash'">
+                  <p-cellEditor>
+                    <ng-template pTemplate="input">
+                      <p-dropdown
+                        [id]="
+                          'product_attributes' + productsList.uId + col.headerId
+                        "
+                        [filter]="true"
+                        (onChange)="
+                          onChangemake(
+                            $event,
+                            productsList,
+                            col.headerId,
+                            col.columnName
+                          )
+                        "
+                        filterBy="name"
+                        [placeholder]="'Select Option'"
+                        appendTo="body"
+                        (onFocus)="funcall(col.headerId)"
+                        [options]="productAttributesValues"
+                        optionLabel="name"
+                        [(ngModel)]="rowData[col.field]"
+                        dataKey="name"
+                        class="input-with-icon-inside-select {{
+                          productsList.isPredefined
+                        }}  mat-typography"
+                      ></p-dropdown>
+                    </ng-template>
+
+                    <ng-template class="text-center" pTemplate="output">
+                      <span class="cursor"
+                        [id]="
+                          'product_attributes' + productsList.uId + col.headerId
+                        "
+                        *ngIf="rowData[col.field]?.name"
+                      >
+                        {{ rowData[col.field].name }}
+                      </span>
+                      <span *ngIf="!rowData[col.field]?.name">
+                        <span class="cursor"
+                          [id]="
+                            'product_attributes' +
+                            productsList.uId +
+                            col.headerId
+                          "
+                          *ngIf="rowData[col.field]"
+                          >{{ rowData[col.field] }}</span
+                        >
+                        <span class="cursor"
+                          [id]="
+                            'product_attributes' +
+                            productsList.uId +
+                            col.headerId
+                          "
+                          *ngIf="!rowData[col.field]"
+                          >Select Product</span
+                        >
+                      </span>
+                      <span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+                    </ng-template>
+                  </p-cellEditor>
+                </div>
+              </ng-template>
+            </td>
+          </tr>
+        </ng-template>
+
+       
+        
+      </p-table>
+
+      <div *ngIf="ItemEmpty && showuserdashboarddata"  >
+        
+        <div *ngIf="displayNoRecords == '1'" class="es-no-item-list-new-div"> 
+          <div class="es-no-item-list"  [style.height.px]="emptyHeight-65">
+            <div class="es-no-item-container">
+              <div class="es-no-item-width">
+              <img src="assets/images/escalations/no-escalation.png" alt="no-escalation" />
+            </div>
+              <p class="es-item-text">Get started by tapping on "Add New Product Attribute".</p>
+              <span class="es-add-new" (click)="newMatrix($event)">Add New</span>
+            
+          </div>
+          </div>   
+        </div>
+       
+        <div *ngIf="displayNoRecords == '2'" class="es-no-item-list-new-div"> 
+          <div class="es-no-item-list"  [style.height.px]="emptyHeight-65">
+            <div class="es-no-item-container">
+              <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+              <p class="es-no-item-text">No result found</p>              
+            </div>
+          </div>   
+        </div>
+     
+
+      </div>
+
+      <!---------------------------------  Dealership new start---------------------------------------------------------------------->
+      <p-table
+      #dt
+      id="productmatrix-table-data"
+      *ngIf="showDealerShipDataNew"
+      [columns]="selectedColumns"
+      [styleClass]="
+        'p-datatable-sm p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+      "
+      [columns]="cols"
+      [frozenColumns]="frozenCols"
+      [autoLayout]="true"
+      (onHeaderCheckboxToggle)="checkallcheckbox(productsList, $event)"
+      frozenWidth="258px"
+      [value]="productsList"
+      [scrollable]="true"
+      (onLazyLoad)="loadPage($event)"
+      [lazy]="true"
+      [scrollHeight]="innerHeightFix"
+      [totalRecords]="itemTotal"
+    >
+      <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+          <col *ngFor="let col of columns" [style]="{ width: col.width }" />
+        </colgroup>
+      </ng-template>
+
+      <ng-template pTemplate="caption">
+        <div class="escalationv2-list-head">
+          <div class="prob-head-col head-col-1 text-left">
+            <span>
+              <img
+                class="header-userdash-img"
+                src="assets/images/escalations/escalation-icon.png"
+              />
+            </span>
+            <span class="head-txt header-usermanage-title">
+              {{ pageaccesstitle }}
+            </span>
+            <span
+              *ngIf="!publishbutton"
+              (click)="toggleTab('tab-1')"
+              class="tab tab-1 action-col"
+            >
+            Product level Escalation
+            </span>
+
+            <span
+              *ngIf="!publishbutton"
+              (click)="toggleTab('tab-2')"
+              class="tab tab-2 action-col"
+            >
+              Dealership level Escalation
+            </span>
+
+            <span
+            *ngIf="!publishbutton"
+            (click)="toggleTab('tab-7')"
+            class="tab tab-7 active action-col hide"
+          >
+            Dealership level Escalation NEW
+          </span>
+
+            <span
+              *ngIf="!publishbutton"
+              (click)="toggleTab('tab-3')"
+              class="tab tab-3 action-col"
+            >
+              Escalation Configuration
+            </span>
+
+            <p-dropdown
+              
+            [filter]="true"
+            (onChange)="countryDataFilter($event)"
+            filterBy="name" *ngIf="domainId=='97'"
+            [placeholder]="'Select Country'"
+            appendTo="body"
+            
+            [(ngModel)]="defaultCountry"
+            [options]="countryDropDownList"
+            optionLabel="name"
+            
+            dataKey="name"
+            class="input-with-icon-inside-select mat-typography"
+          ></p-dropdown>
+            <span
+              *ngIf="!publishbutton"
+              class="tab tab-4 action-col active"
+              (click)="newMatrix($event)"
+              >Add New
+            </span>
+
+            <!--<span (click)="addNewcolumn()" class="tab tab-6 action-col ">Add Column  <span class="submit-btn"></span></span>-->
+          </div>
+          <div class="prob-head-col head-col-2 text-right">
+            <span
+              *ngIf="publishbutton && !checkedOptActDeAct"
+              class="tab tab-5 action-col"
+              (click)="cancelproductItems()"
+              >Cancel <span class="cancel-btn"></span
+            ></span>
+            <span
+              *ngIf="publishbutton && !checkedOptActDeAct"
+              class="tab tab-6 action-col"
+              (click)="saveproductItemsMatrix(true)"
+            >
+              Save
+              <span class="submit-btn"> </span>
+            </span>
+
+            <!--
+                <span [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || matrixActionFlag), 'show': (headerCheck == 'unchecked' || loading)}">
+                  <span *ngIf="!publishbutton" class="action-col cursor edit-make" (click)="editMake()">Edit Make</span>
+              </span>
+              -->
+          </div>
+        </div>
+      </ng-template>       
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th
+            pEditableColumn
+            class="p-table-header {{ col.columnpclass }} showcolorwithpre{{
+              col.columnpredefind
+            }}"
+            pResizableColumn
+            [pSortableColumn]="col.field"
+            [pSortableColumnDisabled]="
+              col.field === 'profileImage' ||
+              col.field === 'uId' ||
+              col.field === 'toolbar' ||
+              col.field === 'id' ||
+              col.field === 'dealerName'
+            "
+            *ngFor="let col of columns"
+          >
+            <span *ngIf="col.field == 'uId'">
+              <p-tableHeaderCheckbox
+                style="margin-left: 10px"
+              ></p-tableHeaderCheckbox>
+            </span>
+            <span
+              [id]="'headeredit' + col.headerId"
+              [title]="col.header"
+              class="setwidthtotexthereEsc"
+            >
+            {{ col.header }}
+            </span>
+            <!--<p-sortIcon [field]="col.field"></p-sortIcon>  <p-columnFilter  type="text" field="{{col.field}}" display="menu"></p-columnFilter>-->
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template          
+        pTemplate="body"
+        let-productsList
+        let-rowData
+        let-columns="columns" 
+      >
+        <tr style="height: 50px;"
+          class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.id }}"
+          [pSelectableRow]="productsList"
+        >
+          <td
+            #ptabletdata
+            class="{{ col.columnpclass }}  oneclassstep font-email"
+            pEditableColumn
+            *ngFor="let col of columns"
+          >
+            <ng-container *ngTemplateOutlet="inputtype1"> </ng-container>
+
+            <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+
+            <ng-container *ngTemplateOutlet="inputtype4"> </ng-container>
+
+            <ng-template #inputtype4>
+              <span *ngIf="col.inputType == '4'">
+                <p-tableCheckbox
+                  (click)="selectRow(productsList, e.checked)"
+                  (ngModelChange)="checkAllp($event)"
+                  [value]="productsList"
+                  #e
+                ></p-tableCheckbox>
+              </span>
+            </ng-template>
+            <ng-template #inputtype1>
+              <div *ngIf="col.inputType == '3'">
+                <div
+                  class="cursor"
+                  [id]="'product_options' + productsList.uId + col.headerId"
+                  (click)="
+                    manageOption(
+                      rowData[col.field],
+                      productsList,
+                      col.headerId,
+                      col.columnName
+                    )
+                  "
+                  *ngIf="rowData[col.field]"
+                >
+                    <span class="font-email font-email-edit-c2">
+                      <span *ngFor="let workstreamitems of rowData[col.field]; let r1 = index" [title]="setItemArray(rowData[col.field])">
+                        {{workstreamitems.name}}{{r1 === rowData[col.field].length -1 ? '' : ',&nbsp;' }}
+                      </span>
+                    </span>
+                    <span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+
+
+                </div>
+                <div
+                  class="cursor"
+                  [id]="'product_options' + productsList.uId + col.headerId"
+                  *ngIf="!rowData[col.field]"
+                  (click)="
+                    manageOption(
+                      $event,
+                      productsList,
+                      col.headerId,
+                      col.columnName)"
+                >
+                <div class="font-email cursor">Select Options<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                </div>
+              </div>
+
+              <div [id]="'product_models' + productsList.uId + col.headerId" *ngIf="col.inputType == '5' && rowData[col.field] != '' " (click)="modelsDisplay(productsList)">
+                <span class="font-email cursor"  >{{ rowData[col.field] }}</span>
+                <span class="font-email cursor" *ngIf="rowData[col.field] == '1' ">&nbsp;Dealer</span>
+                <span class="font-email cursor" *ngIf="rowData[col.field] != '1' ">&nbsp;Dealers</span>
+              </div>
+              <div *ngIf="col.inputType == '5' &&  rowData[col.field] == '' "><span class="font-email" > - </span></div>
+
+              <div [id]="'product_users' + productsList.uId + col.headerId" class="escalation-email-div" *ngIf="col.inputType == '6' && rowData[col.field].length > 0">
+
+                <div class="escalation-email-data cursor" [ngClass]="{ 'set-width1' : rowData[col.field].length > 1 }" (click)="manageUserSelection('new', productsList, col.field, col.headerId)">
+                  <div class="escalation-email-profile">
+                    <img [src]="rowData[col.field][0].profileImg">
+                    <!--<span class="availability availability-status1"></span>-->
+                  </div>
+                  <div class="escalation-email-text">
+                    <div ><span class="font-email font-email-edit-c1" [title]="rowData[col.field][0].email">{{ rowData[col.field][0].email }}</span><span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                    <div class="font-role">{{ rowData[col.field][0].role }}</div>
+                  </div>
+                </div>
+                <div class="escaltion-email-more cursor"  (click)="manageUserSelection('view', productsList, col.field, col.headerId)" *ngIf="rowData[col.field].length > 1" >
+                  <span class="escalation-count-text">+{{ rowData[col.field].length - 1 }}</span>
+                </div>
+              </div>
+
+              <div [id]="'product_users' + productsList.uId + col.headerId" *ngIf="col.inputType == '6' && rowData[col.field].length == 0" (click)="manageUserSelection('new', productsList, col.field, col.headerId)" >
+               
+                <div class="font-email cursor" *ngIf="col.field == 'L1esc'">Select User ( L1 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'L2esc'">Select User ( L2 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'L3esc'">Select User ( L3 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'L4esc'">Select User ( L4 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'L5esc'">Select User ( L5 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'L6esc'">Select User ( L6 Esc Role)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'qadL1'">Select User ( QAD L1)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'qadL2'">Select User ( QAD L2)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                <div class="font-email cursor" *ngIf="col.field == 'qadL3'">Select User ( QAD L3)<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+            </div>
+
+            </ng-template>
+
+            <ng-template #inputtype2>
+              <div *ngIf="col.inputType == '2'" [class]="'overflowclassdash'">
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <p-dropdown
+                      [id]="
+                        'product_attributes' + productsList.uId + col.headerId
+                      "
+                      [filter]="true"
+                      (onChange)="
+                        onChangemake(
+                          $event,
+                          productsList,
+                          col.headerId,
+                          col.columnName
+                        )
+                      "
+                      filterBy="name"
+                      [placeholder]="'Select Option'"
+                      appendTo="body"
+                      (onFocus)="funcall(col.headerId)"
+                      [options]="productAttributesValues"
+                      optionLabel="name"
+                      [(ngModel)]="rowData[col.field]"
+                      dataKey="name"
+                      class="input-with-icon-inside-select {{
+                        productsList.isPredefined
+                      }}  mat-typography"
+                    ></p-dropdown>
+                  </ng-template>
+
+                  <ng-template class="text-center" pTemplate="output">
+                    <span class="cursor"
+                      [id]="
+                        'product_attributes' + productsList.uId + col.headerId
+                      "
+                      *ngIf="rowData[col.field]?.name"
+                    >
+                      {{ rowData[col.field].name }}
+                    </span>
+                    <span *ngIf="!rowData[col.field]?.name">
+                      <span class="cursor"
+                        [id]="
+                          'product_attributes' +
+                          productsList.uId +
+                          col.headerId
+                        "
+                        *ngIf="rowData[col.field]"
+                        >{{ rowData[col.field] }}</span
+                      >
+                      <span class="cursor"
+                        [id]="
+                          'product_attributes' +
+                          productsList.uId +
+                          col.headerId
+                        "
+                        *ngIf="!rowData[col.field]"
+                        >Select Attribute</span
+                      >
+                    </span>
+                    <span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+                  </ng-template>
+                </p-cellEditor>
+              </div>
+            </ng-template>
+          </td>
+        </tr>
+      </ng-template>
+
+     
+      
+    </p-table>
+
+    <div *ngIf="ItemEmpty && showDealerShipDataNew"  >
+      <div *ngIf="displayNoRecords == '1'" class="es-no-item-list-new-div"> 
+        <div class="es-no-item-list"  [style.height.px]="emptyHeight-65">
+          <div class="es-no-item-container">
+            <div class="es-no-item-width">
+            <img src="assets/images/escalations/no-escalation.png" alt="no-escalation" />
+          </div>
+            <p class="es-item-text">Get started by tapping on "Add New Dealer Attribute".</p>
+            <span class="es-add-new" (click)="newMatrix($event)">Add New</span>
+          
+        </div>
+        </div>   
+      </div>
+     
+      <div *ngIf="displayNoRecords == '2'" class="es-no-item-list-new-div"> 
+        <div class="es-no-item-list"  [style.height.px]="emptyHeight-65">
+          <div class="es-no-item-container">
+            <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+            <p class="es-no-item-text">No result found</p>              
+          </div>
+        </div>   
+      </div>
+    
+    </div>
+
+  
+      <!--------------------------------- Dealership new end------------------------------------------------------------------ -->
+      <!--------------------------------- Dealership start  ----------------------------------------------------------------- -->
+
+      <p-table
+        #dt
+        id="productmatrix-table-data"
+        *ngIf="showDealerShipData"
+        (onRowSelect)="onRowSelect($event)"
+        [resizableColumns]="true"
+        columnResizeMode="expand"
+        [columns]="selectedColumns"
+        sortMode="single"
+        [resizableColumns]="true"
+        columnResizeMode="expand"
+        [styleClass]="
+          'p-datatable-sm p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+        "
+        [columns]="cols"
+        [frozenColumns]="frozenCols"
+        [autoLayout]="true"
+        (onHeaderCheckboxToggle)="checkallcheckbox(productsList, $event)"
+        frozenWidth="258px"
+        [value]="productsList"
+        [scrollable]="true"
+        [resizableColumns]="true"
+        (onLazyLoad)="loadPage($event)"
+        [lazy]="true"
+        [scrollHeight]="innerHeightFix"
+        [totalRecords]="totalRecords"
+      >
+        <ng-template pTemplate="colgroup" let-columns>
+          <colgroup>
+            <col *ngFor="let col of columns" [style]="{ width: col.width }" />
+          </colgroup>
+        </ng-template>
+
+        <ng-template pTemplate="caption">
+          <div class="escalationv2-list-head">
+            <div class="prob-head-col head-col-1 text-left">
+              <span>
+                <img
+                  class="header-userdash-img"
+                  src="assets/images/escalations/escalation-icon.png"
+                />
+              </span>
+              <span class="head-txt header-usermanage-title">
+                {{ pageaccesstitle }}
+              </span>
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-1')"
+                class="tab tab-1 action-col"
+              >
+              Product level Escalation
+              </span>
+
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-2')"
+                class="tab tab-2 active action-col"
+              >
+                Dealership level Escalation
+              </span>
+
+              <span
+              *ngIf="!publishbutton"
+              (click)="toggleTab('tab-7')"
+              class="tab tab-7 action-col hide"
+            >
+              Dealership level Escalation NEW
+            </span>
+
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-3')"
+                class="tab tab-3 action-col"
+              >
+                Escalation Configuration
+              </span>
+
+              <p-dropdown
+              
+              [filter]="true"
+              (onChange)="countryDataFilter($event)"
+              filterBy="name" *ngIf="domainId=='97'"
+              [placeholder]="'Select Country'"
+              appendTo="body"
+              
+              [(ngModel)]="defaultCountry"
+              [options]="countryDropDownList"
+              optionLabel="name"
+              
+              dataKey="name"
+              class="input-with-icon-inside-select mat-typography"
+            ></p-dropdown>
+
+              <!-- <span
+                *ngIf="!publishbutton"
+                class="tab tab-4 action-col active"
+                (click)="newMatrix($event)"
+              >
+                Add New
+              </span> -->
+
+              <!--<span (click)="addNewcolumn()" class="tab tab-6 action-col ">Add Column  <span class="submit-btn"></span></span>-->
+            </div>
+            <div class="prob-head-col head-col-2 text-right">
+              <span
+                *ngIf="publishbutton && !checkedOptActDeAct"
+                class="tab tab-5 action-col"
+                (click)="cancelproductItems()"
+                >Cancel <span class="cancel-btn"></span
+              ></span>
+              <span
+                *ngIf="publishbutton && !checkedOptActDeAct"
+                class="tab tab-6 action-col"
+                (click)="saveproductItemsMatrix(true)"
+                >Save <span class="submit-btn"></span
+              ></span>
+
+              <span class="download-div cursor" (click)="downloadFilesDealer(downloadExcel)">
+                <span class="download-div-outer">
+                  <img src= "assets/images/escalations/es-d-download-file.png" />
+                  <span>Download Latest File</span>
+                </span>
+             </span>
+
+              <span class="export-div cursor" (click)="importDealer()">
+                 <span class="export-div-outer">
+                   <img src= "assets/images/escalations/es-dl-import.png" />
+                   <span>Import</span>
+                 </span>
+              </span>
+
+              <!--
+                  <span [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || matrixActionFlag), 'show': (headerCheck == 'unchecked' || loading)}">
+                    <span *ngIf="!publishbutton" class="action-col cursor edit-make" (click)="editMake()">Edit Make</span>
+                </span>
+                -->
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header" let-columns>
+          <tr style="height: 60px; font-size: 14px">
+            <!-- <th
+              class="p-table-header dealership-header border-0 frozenptabletow showcolorwithpre{{
+                col.columnpredefind
+              }}"
+              pResizableColumn
+              [pSortableColumn]="col.field"
+              [pSortableColumnDisabled]="
+                col.field === 'profileImage' ||
+                col.field === 'uId' ||
+                col.field === 'toolbar' ||
+                col.field === 'id'
+              "
+              *ngFor="let col of columns"
+            > -->
+            <th
+            class="p-table-header dealership-header border-0 frozenptabletow showcolorwithpre{{
+              col.columnpredefind
+            }}"
+            pResizableColumn
+            *ngFor="let col of columns"
+          >
+              <span *ngIf="col.field == 'id'">
+                <p-tableHeaderCheckbox
+                  style="margin-left: 10px"
+                ></p-tableHeaderCheckbox>
+              </span>
+
+              <div
+                class="d-flex align-items-center pl-3"
+                *ngIf="
+                  col.field != 'profileImage' &&
+                  col.field != 'toolbar' &&
+                  col.field != 'uId' &&
+                  col.field != 'id'
+                "
+              >
+                <span
+                  [id]="'headeredit' + col.headerId"
+                  [title]="col.header"
+                  class="-setwidthtotexthere"
+                  *ngIf="!edittableHeader"
+                >
+                  {{ col.header }}
+                </span>
+                <p-cellEditor
+                  id="edittableHeader{{ col.headerId }}"
+                  *ngIf="edittableHeader"
+                >
+                  <ng-template pTemplate="input">
+                    <input
+                      [id]="'headeredit' + col.headerId"
+                      (change)="checkHeaderchange($event)"
+                      (focusout)="headerValueEvent($event, col, col.header)"
+                      pInputText
+                      type="text"
+                      [(ngModel)]="col.header"
+                    />
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span [id]="'headeredit' + col.headerId">
+                      {{ col.header }}
+                    </span>
+
+                    <!-- <span  class="custom-dynamic-icon ManagerNameediticon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>-->
+                  </ng-template>
+                </p-cellEditor>
+
+                <!--(click)="attAttr1($event)"-->
+                <!-- <p-sortIcon [field]="col.field" *ngIf="col.inputType != '7'"></p-sortIcon> -->
+                <span *ngIf="col.field == 'attributes2'" style="float: right">
+                  +
+                </span>
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template
+          pTemplate="body"
+          let-productsList
+          let-rowData
+          let-columns="columns"
+        >
+          <tr
+            [ngClass]="{
+              predefined: productsList.isPredefined,
+              'user-defined': !productsList.isPredefined
+            }"
+            class="p-table-rows border-left-0 {{ addnewrowbgcolor }}{{ productsList.uId }}"
+            [pSelectableRow]="productsList"
+          >
+            <td
+              #ptabletdata
+              class="{{ col.columnpclass }}  oneclassstep "
+              [ngClass]="{'pt-3 pb-3': col.inputType == '7'}"
+              pEditableColumn
+              *ngFor="let col of columns"
+            >
+              <ng-container *ngTemplateOutlet="inputtype1"> </ng-container>
+
+              <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+              <ng-container *ngTemplateOutlet="inputtype3"> </ng-container>
+              <ng-container *ngTemplateOutlet="inputtype4"> </ng-container>
+              <ng-container *ngTemplateOutlet="inputtype5"> </ng-container>
+              <ng-container *ngTemplateOutlet="inputtype6"> </ng-container>
+              <ng-container *ngTemplateOutlet="inputtype7"> </ng-container>
+
+              <ng-template #inputtype7>
+                <ng-container *ngIf="col.inputType == '7'">
+                  <div
+                    *ngIf="
+                      rowData[col.field].length > 0 &&
+                      rowData[col.field][0][col.field]
+                    "
+                  >
+                    <div [id]="'product_users' + productsList.uId + col.headerId" class="escalation-email-div">
+
+                      <div class="escalation-email-data cursor" [ngClass]="{ 'set-width1' : rowData[col.field].length > 1 }" (click)="manageUserSelection('new', productsList, col.field, col.headerId)">
+                        <div class="escalation-email-profile">
+                          <img src="https://tpa-file-output.s3-accelerate.amazonaws.com/userprofile/thumb_profile_image.png">
+                          <!--<span class="availability availability-status1"></span>-->
+                        </div>
+                        <div class="escalation-email-text">
+                          <div ><span class="font-email font-email-edit-c1" [matTooltip]="rowData[col.field][0][col.field]">{{ rowData[col.field][0][col.field] }}</span><span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                          <div class="font-role">{{ rowData[col.field][0][col.field + "Role"] }}</div>
+                        </div>
+                      </div>
+                      <div class="escaltion-email-more cursor"  (click)="manageUserSelection('view', productsList, col.field, col.headerId)" *ngIf="rowData[col.field].length > 1" >
+                        <span class="escalation-count-text">+{{ rowData[col.field].length - 1 }}</span>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div [id]="'product_users' + productsList.uId + col.headerId"  *ngIf="rowData[col.field].length === 0" (click)="manageUserSelection('new', productsList, col.field, col.headerId)" >
+                    <div class="font-email cursor">Select User<span class="matrix-action-icon" ><img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                  </div>
+                </ng-container>
+              </ng-template>
+
+              <ng-template #inputtype4>
+                <span *ngIf="col.inputType == '4'">
+                  <p-tableCheckbox
+                    (click)="selectRow(productsList, e.checked)"
+                    (ngModelChange)="checkAllp($event)"
+                    [value]="productsList"
+                    #e
+                  ></p-tableCheckbox>
+                </span>
+              </ng-template>
+
+              <ng-template #inputtype1>
+                <div
+                  *ngIf="col.inputType == '1'"
+                  [ngClass]="{
+                    'text-left ':
+                      col.field == 'makeName' ||
+                      col.field == 'modelName' ||
+                      col.field == 'workstreamName'
+                  }"
+                  [class]="'overflowclassdash'"
+                >
+                  <span
+                    [ngClass]="{ 'text-left ': col.field == 'modelName' }"
+                    [id]="'userdefindModel' + productsList.uId"
+                    *ngIf="productsList.uId != '' && productsList.isPredefined"
+                    [title]="rowData[col.field]"
+                  >
+                    {{ rowData[col.field] }}
+                  </span>
+                </div>
+                <p-cellEditor
+                  *ngIf="
+                    (productsList.uId == '' || !productsList.isPredefined) &&
+                    col.inputType == '1'
+                  "
+                >
+                  <ng-template pTemplate="input">
+                    <input
+                      style="width: 80%"
+                      [id]="'userdefindModel' + productsList.uId"
+                      pInputText
+                      type="text"
+                      [(ngModel)]="rowData[col.field]"
+                    />
+                    <!-- <div [id]="'userdefindModeldiv' + productsList.uId" style="display:none" class="datashowonmodel">
+                                       <div *ngFor="let modelofdata of resultsModel" >
+                                            <div (click)="clickModeldiv(modelofdata.id,productsList.uId)" class="datashowonmodeldata userdefindModel{{productsList.uId}}">{{modelofdata.name}}</div>
+                                        </div>
+                                        </div>-->
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    <span
+                      [ngClass]="{ 'text-left ': col.inputType == '1' }"
+                      [id]="'userdefindModel' + productsList.uId"
+                      *ngIf="rowData[col.field]"
+                      >{{ rowData[col.field] }}</span
+                    >
+                    <span *ngIf="!rowData[col.field]">Enter Value</span>
+
+                    <span class="custom-dynamic-icon ManagerNameediticon">
+                      <img
+                        style="vertical-align: revert"
+                        src="assets/images/user-dashboard/editinner.png"
+                        alt="Matrix Action"
+                      />
+                    </span>
+                  </ng-template>
+                </p-cellEditor>
+              </ng-template>
+              <ng-template #inputtype2>
+                <ng-container *ngIf="col.inputType == '2'">
+                  <div class="row d-flex align-items-center p-2">
+                    <div class="col-sm-3">
+                      <span
+                        class="
+                          profileImg-container
+                          justify-content-end
+                          d-flex
+                          align-items-center
+
+                        "
+                        style="cursor: pointer"
+                        (click)="openProfile(rowData.userId)"
+                      >
+                        <img
+                          width="30"
+                          height="30"
+                          class="profileImg"
+                          src="https://tpa-file-output.s3-accelerate.amazonaws.com/userprofile/thumb_profile_image.png"
+                        />
+                       <!-- <span
+                          class="availability-status availability-status1"
+                          [ngStyle]="{
+                            width: '10px',
+                            height: '10px',
+                            top: '10px'
+                            left: '-6px'
+                          }"
+                        >
+                        </span>-->
+                      </span>
+                    </div>
+                    <div class="col-sm-8 p-0">
+                   <div
+                      class="overflow-hidden text-truncate text-left"
+                      (click)="openProfile(rowData.userId)"
+                      style="cursor: pointer"
+                      >
+                          <span
+                            [matTooltip]="rowData[col.field].name"
+                            class="text-custom"
+                            [id]="
+                              'userdefindMake' + productsList.uId + col.headerId
+                            "
+                            style="color: #6c717c"
+                          >
+                            {{ rowData[col.field].name }}
+                          </span>
+                          <span
+                          [matTooltip]="rowData[col.field].name"
+
+                            [id]="
+                              'userdefindMake' + productsList.uId + col.headerId
+                            "
+                            *ngIf="!rowData[col.field]?.name"
+                          >
+                            <span *ngIf="!rowData[col.field]"> No Data </span>
+                            <span
+                            [matTooltip]="rowData[col.field]"
+                              *ngIf="
+                                rowData[col.field] &&
+                                (col.headerId == 19 || col.headerId == 2)
+                              "
+                              class="text-custom"
+                            >
+                              {{ rowData[col.field] }}
+                            </span>
+                          </span>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-template>
+
+              <ng-template #inputtype5>
+                <div *ngIf="col.inputType == '5'" class="row">
+                  <div class="col-sm-3 pr-0" *ngIf="col.field == 'userDname'">
+                    <span class="profileImg-container w-25" *ngIf="rowData[col.field]">
+                      <img
+                        width="30"
+                        height="30"
+                        class="profileImg"
+                        src="https://tpa-file-output.s3-accelerate.amazonaws.com/userprofile/thumb_profile_image.png"
+                      />
+                    <!--  <span
+                        class="availability-status availability-status1"
+                        [ngStyle]="{
+                          width: '10px',
+                          height: '10px',
+                          top: '-10px',
+                          left: '23px'
+                        }"
+                      >
+                      </span>-->
+                    </span>
+                  </div>
+
+                  <div
+                  class="overflow-hidden text-truncate"
+                    [ngClass]="{
+                      'col-sm-8 pl-0': col.field == 'userDname',
+                      'col-sm-12': col.field !== 'userDname'
+                    }"
+                  >
+                    <span class="text-custom" [matTooltip]="rowData[col.field]" [matTooltipDisabled]="col.field !== 'userDname'">
+                      {{ rowData[col.field] ? rowData[col.field] : "-" }}
+                    </span>
+                  </div>
+                </div>
+              </ng-template>
+
+              <ng-template #inputtype3>
+                <div *ngIf="col.inputType == '3'" [class]="'overflowclassdash'">
+                  <p-cellEditor>
+                    <ng-template pTemplate="input">
+                      <p-multiSelect
+                        [id]="
+                          'userdefindMake' + productsList.uId + col.headerId
+                        "
+                        [disabled]="!productsList.editAccess"
+                        [defaultLabel]="'Select Option'"
+                        [(ngModel)]="rowData[col.field]"
+                        class="input-with-icon-inside-select mat-typography"
+                        appendTo="body"
+                        (onFocus)="funcall(col.headerId, rowData[col.field])"
+                        dataKey="id"
+                        [options]=""
+                        optionLabel="name"
+                      ></p-multiSelect>
+                      <!--
+                                            <p-dropdown [filter]="true"   filterBy="name" [placeholder]="rowData[col.field]" appendTo="body" (onChange)="binSelectmultiselect($event)" [options]="regionvalues" optionLabel="name"  [(ngModel)]="rowData[col.field]" class="input-with-icon-inside-select  mat-typography"></p-dropdown>
+                                       -->
+                    </ng-template>
+                    <ng-template class="text-center" pTemplate="output">
+                      <div
+                        class="text-left"
+                        [id]="
+                          'userdefindMake' + productsList.uId + col.headerId
+                        "
+                        [class]="'managersList' + productsList.uId"
+                      >
+                        <span
+                          [id]="
+                            'userdefindMake' + productsList.uId + col.headerId
+                          "
+                          *ngIf="rowData[col.field]?.name"
+                        >
+                          {{ rowData[col.field].name }}
+                        </span>
+                        <span
+                          [id]="
+                            'userdefindMake' + productsList.uId + col.headerId
+                          "
+                          *ngIf="!rowData[col.field]?.name"
+                        >
+                          <span
+                            [id]="
+                              'userdefindMake' + productsList.uId + col.headerId
+                            "
+                            *ngFor="
+                              let workstreamitems of rowData[col.field];
+                              let r = index
+                            "
+                          >
+                            {{ workstreamitems.name }}
+                            {{
+                              r === rowData[col.field].length - 1
+                                ? ""
+                                : ",&nbsp;"
+                            }}
+                          </span>
+                        </span>
+                        <span
+                          *ngIf="
+                            !rowData[col.field]?.name && !rowData[col.field]
+                          "
+                        >
+                          No Data
+                        </span>
+
+                        <!--<span style="float:right;" (click)="attAttr1($event)">
+                                                Add
+                                            </span>
+                                        -->
+
+                        <span class="custom-dynamic-icon ManagerNameediticon">
+                          <img
+                            style="vertical-align: revert"
+                            src="assets/images/user-dashboard/editinner.png"
+                            alt="Matrix Action"
+                          />
+                        </span>
+                      </div>
+                    </ng-template>
+                  </p-cellEditor>
+                </div>
+              </ng-template>
+
+              <ng-template #inputtype6>
+                <div class="ptablemenubar" *ngIf="col.inputType == '6'">
+                  <span
+                    class="custom-icon-user-dashboard more-icon"
+                    [matMenuTriggerFor]="menu"
+                  >
+                    <img
+                      src="assets/images/more-icon.png"
+                      alt="Matrix Action"
+                    />
+                  </span>
+                  <mat-toolbar color="primary">
+                    <!--<button mat-icon-button [matMenuTriggerFor]="menu">
+                                      <mat-icon>menu</mat-icon>
+                                    </button>-->
+                    <mat-menu #menu="matMenu" backdropClass="ptabletmenu">
+                      <!--<button mat-menu-item >
+                                        <mat-icon class="material-icon-pd reset-pass-user-icon-dash" matSuffix></mat-icon>
+                                        <span >Reset password</span>
+                                      </button>-->
+                      <button
+                        mat-menu-item
+                        (click)="onclickToolbar($event, productsList)"
+                      >
+                        <mat-icon
+                          class="material-icon edit-user-icon-dash"
+                          matSuffix
+                        ></mat-icon>
+                        <span>Duplicate</span>
+                      </button>
+                      <!-- <button mat-menu-item>
+                                        <mat-icon>videocam</mat-icon>
+                                        <span>Let's talk</span>
+                                      </button>
+                                      <button mat-menu-item>
+                                        <mat-icon>exit_to_app</mat-icon>
+                                        <span>Logout</span>
+                                      </button>
+                                    -->
+                    </mat-menu>
+                  </mat-toolbar>
+                </div>
+              </ng-template>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <!--------------------------------- Dealership end  ------------------------------------------------------------------ -->
+
+      <!--------------------------------- Escalation Configuration start  ---------------------------------------- -->
+      <div class="p-datatable p-datatable-sm p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo" *ngIf="configurationdata">
+        <div class="p-datatable-header">
+          <div class="escalationv2-list-head">
+            <div class="prob-head-col head-col-1 text-left">
+              <span>
+                <img
+                  class="header-userdash-img"
+                  src="assets/images/escalations/escalation-icon.png"
+                />
+              </span>
+              <span class="head-txt header-usermanage-title">
+                {{ pageaccesstitle }}
+              </span>
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-1')"
+                class="tab tab-1 action-col"
+              >
+              Product level Escalation
+              </span>
+
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-2')"
+                class="tab tab-2 action-col"
+              >
+                Dealership level Escalation
+              </span>
+
+              <span
+              *ngIf="!publishbutton"
+              (click)="toggleTab('tab-7')"
+              class="tab tab-7 action-col hide"
+            >
+              Dealership level Escalation NEW
+            </span>
+
+              <span
+                *ngIf="!publishbutton"
+                (click)="toggleTab('tab-3')"
+                class="tab tab-3 active action-col"
+              >
+                Escalation Configuration
+              </span>
+
+            
+              <p-dropdown
+              
+              [filter]="true"
+              (onChange)="countryDataFilter($event)"
+              filterBy="name"
+              [placeholder]="'Select Country'"
+              appendTo="body" *ngIf="domainId=='97'"
+              
+              [(ngModel)]="defaultCountry"
+              [options]="countryDropDownList"
+              optionLabel="name"
+              
+              dataKey="name"
+              class="input-with-icon-inside-select mat-typography"
+            ></p-dropdown>
+
+            </div>
+            <div class="prob-head-col head-col-2 text-right">
+              <span
+                *ngIf="publishbutton && !checkedOptActDeAct"
+                class="tab tab-5 action-col"
+                (click)="cancelproductItems()"
+                >Cancel <span class="cancel-btn"></span
+              ></span>
+              <span
+                *ngIf="publishbutton && !checkedOptActDeAct"
+                class="tab tab-6 action-col"
+                (click)="saveConfiguration()">
+                Save
+                <span class="submit-btn"> </span>
+              </span>
+
+              <!--
+                  <span [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || matrixActionFlag), 'show': (headerCheck == 'unchecked' || loading)}">
+                    <span *ngIf="!publishbutton" class="action-col cursor edit-make" (click)="editMake()">Edit Make</span>
+                </span>
+                -->
+            </div>
+          </div>
+        </div>
+
+
+      <!-- section: 1 -->
+      <div [style.height.px]="innerHeight - 30">
+        <div class="ps" [perfectScrollbar]="sconfig" >
+          <div class="container-fluid" *ngIf="!loading">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+
+                <div class="section section-1">
+                  <div class="bg-div col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                    <div class="top-container col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                        <span class="icon escalation-workflow"></span>
+                        <span class="title-head">Escalation Workflow</span>
+                    </div>
+                    <div class="center-container col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+
+                      <div class="head-col">
+                        <span class="col col-xs-12 col-sm-12 col-lg-3">Escalation levels</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-2">Regular (days)</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-3">Regular (hours)</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-2">Customer Waiting (days)</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-2">Customer Waiting (hours)</span>
+                      </div>
+
+                      <div *ngIf="escConfigTotal>0">
+                        <div class="cont-col" *ngFor="let escList of escConfigList;  let i=index">
+                          <span class="col col-xs-12 col-sm-12 col-lg-3"><div class="level-div level-{{escList.id}}">{{escList.name}}</div></span>
+
+                          <span class="col col-xs-12 col-sm-12 col-lg-2">
+                            <div class="p-dropdown-div" *ngIf="escList.param[0].helpType == '1'">
+                              <p-dropdown appendTo="body" [id]="'day1'+escList.param[0].id" [options]="days" [(ngModel)]="escList.param[0].days" placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onChangeSec1(escList.id,escList.param[0].helpType,'days',$event.value)" ></p-dropdown>
+                            </div>
+                          </span>
+                          <span class="col col-xs-12 col-sm-12 col-lg-3">
+                            <div class="p-dropdown-div" *ngIf="escList.param[0].helpType == '1'">
+                              <p-dropdown appendTo="body" [id]="'hour1'+escList.param[0].id" [options]="hours" [(ngModel)]="escList.param[0].hours" placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onChangeSec1(escList.id,escList.param[0].helpType,'hours',$event.value)" ></p-dropdown>
+                            </div>
+                          </span>
+
+                          <span class="col col-xs-12 col-sm-12 col-lg-2">
+                            <div class="p-dropdown-div" *ngIf="escList.param[1].helpType == '2'">
+                              <p-dropdown appendTo="body" [id]="'day2'+escList.param[1].id" [options]="days" [(ngModel)]="escList.param[1].days" placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onChangeSec1(escList.id,escList.param[1].helpType,'days',$event.value)" ></p-dropdown>
+                            </div>
+                          </span>
+                          <span class="col col-xs-12 col-sm-12 col-lg-2">
+                            <div class="p-dropdown-div" *ngIf="escList.param[1].helpType == '2'">
+                              <p-dropdown appendTo="body" [id]="'hour2'+escList.param[1].id" [options]="hours" [(ngModel)]="escList.param[1].hours" placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onChangeSec1(escList.id,escList.param[0].helpType,'hours',$event.value)" ></p-dropdown>
+                            </div>
+                          </span>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section section-2">
+                  <div class="bg-div col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                    <div class="top-container col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                        <span class="icon thread-status"></span>
+                        <span class="title-head">Thread status</span>
+                    </div>
+                    <div class="center-container col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                      <span class="thread-row-text">Thread status when escalation process should be paused</span>
+                      <div class="p-dropdown-div p-dropdown-div-thread" >
+                        <p-dropdown [options]="escStopStatus" [(ngModel)]="escStopStatusVal" placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onChangeSec2($event.value)"></p-dropdown>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section section-3">
+                  <div class="bg-div col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                    <div class="top-container col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+                        <span class="icon email-alert"></span>
+                        <span class="title-head email-title-head">Email Alerts </span>
+                    </div>
+                    <div class="center-container col-xs-12 col-sm-12 col-lg-12 padding0 margin0">
+
+                      <div class="head-col">
+                        <span class="col col-xs-12 col-sm-12 col-lg-3">Alert levels</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-2">Emails To</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-3">Time Interval</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-2 ">Status</span>
+                        <span class="col col-xs-12 col-sm-12 col-lg-2">No reply from</span>
+                      </div>
+
+                      <div *ngIf="escConfigAlertTotal>0">
+                        <div class="cont-col" *ngFor="let escList of escConfigAlertList">
+                          <span class="col col-xs-12 col-sm-12 col-lg-3"><div class="level-div level-{{escList.id}}">{{escList.name}}</div></span>
+
+                          <span class="col col-xs-12 col-sm-12 col-lg-2">
+                            <div class="p-dropdown-div">
+                              <p-multiSelect appendTo="body" [id]="'levels'+escList.id" [options]="levels" [(ngModel)]="escList.levels" placeholder="Select" optionLabel="name" optionValue="value" (onChange)="onChangeSec3(escList.id,'levels',$event.value)"></p-multiSelect>
+                            </div>
+                          </span>
+                          <span class="col col-xs-12 col-sm-12 col-lg-3">
+                            <div class="p-dropdown-div">
+                              <p-dropdown appendTo="body" [id]="'hoursAlert'+escList.id" [options]="hoursAlert" [(ngModel)]="escList.hours_selection" placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onChangeSec3(escList.id,'hours_selection',$event.value)"></p-dropdown>
+                            </div>
+                          </span>
+
+                          <span class="col col-xs-12 col-sm-12 col-lg-2">
+                            <div class="font-text">{{escList.type}}</div>
+                          </span>
+                          <span class="col col-xs-12 col-sm-12 col-lg-2">
+                            <div class="font-text">{{escList.whom}}</div>
+                          </span>
+
+                        </div>
+                      </div>
+
+
+
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+      <!--------------------------------- Escalation Configuration end ---------------------------------------- -->
+
+    </div>
+  </div>
+</div>
+
+<p-dialog [(visible)]="displayUnknownUsersPopup" [modal]="true" [draggable]="false" [resizable]="true"
+class="displayUnknownUsers" >
+<ng-template pTemplate="header">
+  <div class="unknowuser-header">
+    <span class="lt">Unknown Users</span>
+    <span class="rt">Total:&nbsp;<span class="yellow-text">{{unKnownUsersArr.length}}</span></span>       
+</div>
+</ng-template>
+  <div style="width: 100%;">
+    <div >
+      <div class="actions">
+        <form class="search-form kuser-search" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+            <a *ngIf="!searchClose" class="search-icon"><img alt="Search" src="assets/images/search-icon.png"></a>
+            <input type="text" autocomplete="off" class="form-control search-control" [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" >
+            <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+          </form>
+        </div>
+        <div [style.height.px]="innerHeight-30">
+          <div class="ps" [perfectScrollbar]="sconfig" >
+            <div  *ngIf="!unknownempty">
+              <div *ngFor="let unknown of listItems;"  class="feedback-status-main-content" >
+                  <div class="feedback-row cont" *ngIf="unknown.displayFlag">
+                    <span  class="profile-info profile-icon" style="background-image: url(https://tvs.mahleforum.com/img/thumb_profile_image.png)"></span>
+                    <span  class="profile-info user-name">{{unknown.name}}</span>
+                  </div>     
+              </div>
+            </div>
+            <div  *ngIf="unknownempty">
+              <div class="no-item-list-new-un">
+                <div class="item-empty-container text-center">
+                  <!-- <div class="empty-bg"></div> -->
+                  <img src="no-result-search-icon.png" alt="">
+                  <div class="empty-cont">
+                    <span class="text-center message">No result found</span>
+                  </div>
+                </div>
+              </div> 
+            </div> 
+          </div>
+        </div>
+    </div>
+  </div>
+</p-dialog>

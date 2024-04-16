@@ -1,0 +1,69 @@
+<div class="custom-modal upload-modal modal-container" id="wrapper" >
+    <div class="modal-header">
+        <div class="head-row " [ngClass]="{ 'file-attch-row': fileAttachmentEnable }">
+            <div class="head-col title">
+                <h6 class="modal-title attachment-title text-left">Attachments</h6>
+            </div>
+            <div class="head-col text-right" *ngIf="!fileAttachmentEnable">
+                <div class="search">
+                    <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+                        <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search"
+                            src="{{ assetPath }}/search-icon.png" /></a>
+                        <input autofocus type="text" class="form-control search-control"
+                          [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey" maxlength="50"
+                          [readonly]="searchReadonlyFlag" placeholder="{{ searchPlacehoder }}"
+                          (input)="onSearchChange($event.target.value)"
+                          [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" />
+                        <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close"
+                            src="{{ searchCloseImg }}" /></a>
+                        <a *ngIf="searchTick" class="search-actions search-tick" (click)="onSubmit()"><img alt="Search"
+                            src="{{ searchImg }}" /></a>
+                      </form>
+                </div>
+                <div class="close-icon cursor" title="Close" (click)="closeMedia()"></div>
+            </div>
+            <div class="head-col text-right" *ngIf="fileAttachmentEnable">
+                <div id="add-button" class="add-button" [ngClass]="{'active': uploadedItemsFlag, 'inactive':  !uploadedItemsFlag }" title="ADD" (click)="addAttachment()"><span class="add-button-text">ADD</span><img src="assets/images/thread/pp-add-icon.png" ></div>
+                <div class="close-button cursor" title="Close" (click)="closePop()"><img src="assets/images/list-close.png" ></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="attachment-head" *ngIf="!fileAttachmentEnable">
+            <div class="head-col tab-area">
+                <ul class="tab-list">
+                    <li class="{{tab.class}}" *ngFor="let tab of attachmentTabs;" (click)="changeTab(tab)" [ngClass]="{'active' : tab.isSelected, 'disable': !tab.isActive}"><span>{{tab.title}}</span></li>
+                </ul>
+            </div>
+            <div class="head-col actions text-right">
+                <ul class="action-col">
+                    <li class="action-item">
+                        <div class="apply" [ngClass]="{'active cursor': mediaFile, 'inactive':  !mediaFile}" (click)="applySelection()">
+                            <span class="tick-icon">L</span>
+                            <span class="text">Apply</span>
+                        </div>
+                    </li>
+                    <li class="action-item">
+                        <div class=" view thumb-view cursor inactive" [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView}" title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="changeView(thumbView)"></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="attachment-body" *ngIf="!fileAttachmentEnable">
+            <ng-container *ngFor="let tab of attachmentTabs;">
+                <app-media-attachment class="system-selection" *ngIf="tab.tab == 'media' && tab.isSelected" [mediaSelectionList]="mediaList" [attachmentList]="attachmentList" [apiData]="apiData"></app-media-attachment>
+            </ng-container>
+        </div>
+        <div class="attachment-body" [ngClass]="{ 'file-attachment-body': fileAttachmentEnable }">
+            <div id="f-attachments" class="ps" [perfectScrollbar]="sconfig">
+                <div class="attachment-row black-theme-row newupload-black" *ngIf="fileAttachmentEnable" [ngClass]=" { paddingRemove : uploadedItems == '' } ">
+                    <!--div class="post-error-msg post-link-error" *ngIf="postServerError && apiUrl.attachmentLinkError == '1'">{{postServerErrorMsg}}</div-->
+                    <app-file-attachment [acceptArray] = acceptArray *ngIf="fileUpload" class="attachment-file" [addLinkBool]="addLinkFlag" [fromMedia]="fromMedia" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)" [cloudTabApplyData]="cloudTabApplyData" ></app-file-attachment>
+                    <!-- Attachment List-->
+                    <app-attachment-view *ngIf="presetAttachments.length > 0" [action]="presetAttachmentAction" [access]="presetPageAccess" [attachments]="presetAttachments" (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                    <!-- Attachment List-->
+                </div>
+            </div>  
+        </div>
+    </div>
+</div>

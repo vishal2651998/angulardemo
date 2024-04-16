@@ -1,0 +1,362 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="d-flex wrapper">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" [accessModule]="accessModule"
+                    (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="right-section" style="width: calc(100% - 60px) !important;">
+        <div class="outer-section-detail">
+            <div class="hq-head" *ngIf="!loading">
+                <div class="hq-head-row-0">
+                    <span class="hq-head-breadcrumb-text cursor">Audit/Inspections</span>
+                    <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                    <span class="hq-head-breadcrumb-text cursor" routerLink="/headquarters/audit">Inspection</span>
+                    <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                    <span class="hq-head-breadcrumb-text">{{apiData?.title}}</span>
+                </div>
+                <div class="hq-head-row-1">
+                    <img src="assets/images/audit-insecption/inpection-black.png" alt="" class="hq-head-img">
+                    <span class="hq-head-text">{{apiData?.title + ' (ID# '+apiData?.id+')'}}</span>
+                </div>
+            </div>
+
+            <div [style.height.px]="innerHeight" *ngIf="loading">
+                <div class="loading-small-screen-scroll trst">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+                </div>
+            </div>
+            <div class="wrapper section-detail" *ngIf="!loading">
+                <div id="content" class="container-fluid">
+                    <div class="prob-new">
+                        <div class="row new-pro-cont col-lg-12 step1">
+                            <div class="form-cont col-lg-12">
+                                <div class="form-horizontal">
+                                    <div>
+                                        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+                                            <div class="form-items section-start">
+                                                <div class="prob-form-row">
+                                                    <div *ngIf="!apiData?.logoUrl" class="default-banner-img"></div>
+                                                    <div *ngIf="apiData?.logoUrl"
+                                                        class="{{ apiData.logoUrl ? 'img-outer-div' : ''}}">
+                                                        <img class="img-adjust" [src]="apiData?.logoUrl" alt="">
+                                                    </div>
+                                                    <div class="form-col field-col right-side-data">
+                                                        <div class="row section-name">
+                                                            <div class="col-md-12 pl-0 main-title mb-10"
+                                                                style="line-height: 1;">
+                                                                {{apiData?.title}}
+                                                                <div *ngIf="apiData?.createdById == user?.Userid || user?.roleId == 3 "
+                                                                    class="title-action">
+                                                                    <img title="Edit" (click)="goToEdit()"
+                                                                        src="assets/images/hq/hq-edit-icon.png"
+                                                                        class="loc-head-edit-img cursor"
+                                                                        style="margin-right: 8px;">
+                                                                    <img title="Delete" (click)="submitDelete()"
+                                                                        src="assets/images/hq/hq-delete-icon.png" alt=""
+                                                                        class="loc-head-edit-img cursor">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2 " style="margin-top: 10px;">
+                                                            <div class="col-3 mb-10">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/type.png" alt=""
+                                                                    srcset="">
+                                                                <span class="grey-color">Type</span>
+                                                                <div class="top-details-text">{{apiData?.typeName}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/network.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">Network Name</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.networkName}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/network.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">No. of Locations</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.locations ? apiData?.locations.length :
+                                                                    0}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/network-owner.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">Dekra Owner</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.dekraOwner}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/network-owner.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">Network Owner</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.customerOwner}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/calendar.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">Start Date</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.startDate  | localDatePipe | date: 'MMM dd, yyyy'}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <img class="mr-10"
+                                                                    src="assets/images/audit-insecption/calendar.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">Completion Date</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.completionDeadline  | localDatePipe | date: 'MMM dd,
+                                                                    yyyy'}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center">
+                                                                <div>
+                                                                    <button
+                                                                        routerLink="/marketplace/start-inspection/{{apiData?.title}}/{{apiData?.id}}"
+                                                                        role="button"
+                                                                        class="btn view-question-btn top-details-text">
+                                                                        <img class="mr-10" width="15px" height="18px"
+                                                                            src="assets/images/audit-insecption/inspection-white.png">Start
+                                                                        Inspection
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="additional-info">
+                                                    <div class="form-col field-col">
+                                                        <div class="row mt-4 mb-28 additional-border">
+                                                            <div class="col-5">
+                                                                <img class="mr-10" width="18px" height="18px"
+                                                                    src="assets/images/audit-insecption/clock.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">How often is this <span
+                                                                        class="green-color">"{{apiData?.title}}"</span>
+                                                                    conducted?</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.inspectionTime}}</div>
+                                                            </div>
+                                                            <div class="col-5">
+                                                                <img class="mr-10" width="18px" height="18px"
+                                                                    src="assets/images/audit-insecption/clock.png"
+                                                                    alt="" srcset="">
+                                                                <span class="grey-color">Total time from Communication
+                                                                    to Completion</span>
+                                                                <div class="top-details-text">
+                                                                    {{apiData?.totalTime}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="prob-form-row">
+                                                    <div class="row mb-28">
+                                                        <div class="col-md-12 pl-0">
+                                                            <div class="prob-form-control cust-comp-control">
+                                                                <div
+                                                                    class="selection-info template-section-info d-flex align-items-center">
+                                                                    <img src="assets/images/audit-insecption/link-black.png"
+                                                                        alt="">
+                                                                    <p class="mb-0">Linked with</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-28 inspection-template">
+                                                    <div class="col-12 mb-4 pl-0">
+                                                        <img class="mr-10" width="16px" height="19px"
+                                                            src="assets/images/audit-insecption/square-board.png" alt=""
+                                                            srcset="">
+                                                        <span class="linked-headings">Template</span>
+                                                        <div class="top-details-text no-data"
+                                                            *ngIf="!apiData?.templates">None</div>
+                                                        <div class="row ml-15" *ngIf="apiData?.templates">
+                                                            <div class="col-4"
+                                                                *ngFor="let template of apiData?.templates">
+                                                                <div class="templates-details">
+                                                                    <div class="mr-2">
+                                                                        <span class="template-green-icon"></span>
+                                                                    </div>
+                                                                    <div class="dbmcr-col cont ">
+                                                                        <div class="template-info-head">
+                                                                            {{template.title}}</div>
+                                                                        <div class="econtact">
+                                                                            <span class="mr-10">
+                                                                                <span
+                                                                                    class="section-count template-count">{{template?.sections
+                                                                                    && template?.sections.length ?
+                                                                                    template?.sections.length :
+                                                                                    0}}</span>
+                                                                                Sections
+                                                                            </span>
+                                                                            <span>ID# {{template.id}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-28 inspection-template">
+                                                    <div class="col-12 mb-4 pl-0">
+                                                        <img class="mr-10" width="16px" height="19px"
+                                                            src="assets/images/audit-insecption/title.png" alt=""
+                                                            srcset="">
+                                                        <span class="linked-headings">Sections</span>
+                                                        <div class="row ml-15">
+                                                            <div class="col-12 mb-1 pl-0">
+                                                                <div *ngIf="!(apiData?.sections && apiData?.sections.length)"
+                                                                    class="top-details-text no-data">No sections
+                                                                    assigned </div>
+                                                                <ng-container
+                                                                    *ngIf="apiData?.sections && apiData?.sections.length">
+                                                                    <div *ngFor="let section of apiData?.sections"
+                                                                        class="row ml-15">
+                                                                        <div class="col-12">
+                                                                            <div class="templates-details">
+                                                                                <div class="mr-2">
+                                                                                    <span
+                                                                                        class="template-green-icon"></span>
+                                                                                </div>
+                                                                                <div class="dbmcr-col cont w-100">
+                                                                                    <div
+                                                                                        class="template-info-head d-flex align-items-center justify-content-between">
+                                                                                        <div>{{section.sectionName}}
+                                                                                        </div>
+                                                                                        <div class="grey-color">ID#
+                                                                                            {{section.sectionId}}</div>
+                                                                                    </div>
+                                                                                    <div class="econtact">
+                                                                                        <span class="mr-10">
+                                                                                            <span
+                                                                                                class="section-count template-count">{{section.questionsCount}}</span>
+                                                                                            Questions
+                                                                                        </span>
+                                                                                        <a class="view-text"
+                                                                                            (click)="goToSection(section.sectionId, section.networkId)">view</a>
+                                                                                        <img *ngIf="section?.sectionNotes"
+                                                                                            class="section-notes-img"
+                                                                                            src="assets/images/audit-insecption/to-do-list-black.png">
+                                                                                        <span
+                                                                                            *ngIf="section?.sectionNotes">{{section.sectionNotes}}</span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="system-info">
+                                                    <div class="form-col field-col">
+                                                        <div class="row mb-28">
+                                                            <div class="col-md-12 pl-0">
+                                                                <div class="prob-form-control">
+                                                                    <div
+                                                                        class="selection-info template-section-info d-flex align-items-center">
+                                                                        <img src="assets/images/audit-insecption/info-black.png"
+                                                                            alt="">
+                                                                        <p class="mb-0">System Details</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mx-0 mb-2 p-0 user-content-data">
+                                                            <span class="col-3 px-0">
+                                                                <span class="d-flex align-items-center">
+                                                                    <img width="21px" height="21px"
+                                                                        src="assets/images/user-new.png"
+                                                                        class="user-content-data-img">
+                                                                    <span class="grey-color">Created By</span>
+                                                                </span>
+                                                                <span
+                                                                    class="text-black user-content-data-text ">{{apiData?.userName}}</span>
+                                                            </span>
+                                                            <span class="col-3 px-0">
+                                                                <span class="d-flex align-items-center">
+                                                                    <img width="18px" height="18px"
+                                                                        src="assets/images/audit-insecption/calendar.png"
+                                                                        class="user-content-data-img">
+                                                                    <span class="grey-color">Created On</span>
+                                                                </span>
+                                                                <span
+                                                                    class="text-black user-content-data-text ">{{apiData?.createdOn
+                                                                        | localDatePipe | date: 'MMM dd, yyyy hh:mm a'}}</span>
+                                                            </span>
+                                                            <span class="col-3 px-0">
+                                                                <span class="d-flex align-items-center">
+                                                                    <img width="21px" height="21px"
+                                                                        src="assets/images/user-new.png"
+                                                                        class="user-content-data-img">
+                                                                    <span class="grey-color">Modified By</span>
+                                                                </span>
+                                                                <span
+                                                                    class="text-black user-content-data-text ">{{apiData?.updatedByName
+                                                                    ? apiData?.updatedByName : '-'}}</span>
+                                                            </span>
+                                                            <span class="col-3 px-0">
+                                                                <span class="d-flex align-items-center">
+                                                                    <img width="16px" height="16px"
+                                                                        src="assets/images/audit-insecption/calendar.png"
+                                                                        class="user-content-data-img">
+                                                                    <span class="grey-color">Modified On</span>
+                                                                </span>
+                                                                <span class="text-black user-content-data-text ">
+                                                                    <span
+                                                                        *ngIf="apiData?.updatedOn && apiData?.updatedOn != '0000-00-00 00:00:00'">{{apiData?.updatedOn
+                                                                            | localDatePipe | date: 'MMM dd, yyyy hh:mm a'}}</span>
+                                                                    <span
+                                                                        *ngIf="!apiData?.updatedOn || apiData?.updatedOn == '0000-00-00 00:00:00'">-</span>
+                                                                </span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="row mb-28">
+                                                            <div class="col-md-12">
+                                                                <div class="field-label">
+                                                                    <span
+                                                                        class="label-col part-label part-label-new tag-bg tag-section">Tag</span>
+                                                                    <ng-container
+                                                                        *ngIf="apiData?.tagsInfo && apiData?.tagsInfo?.length">
+                                                                        <span
+                                                                            *ngFor="let tag of apiData?.tagsInfo; index as i"
+                                                                            class="tag-list d-flex align-items-center {{i != 0 ? 'ml-0' : ''}}">{{tag.name}}</span>
+                                                                    </ng-container>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

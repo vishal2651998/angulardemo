@@ -1,0 +1,929 @@
+<div id="scrollable-container" xmlns="http://www.w3.org/1999/html">
+  <p-dialog styleClass="market-place-loading-popup" [(visible)]="pageLoading" [modal]="true"
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <div class="svg-color-change">
+      <img *ngIf="atgTheme != 'atgThemeColor'"
+        src="assets/images/service-provider/loading-animation-processing-payment.svg" onload="SVGInject(this)" />
+      <img *ngIf="atgTheme == 'atgThemeColor'"
+        src="assets/images/service-provider/loading-animation-processing-payment-atg.svg" onload="SVGInject(this)" />
+    </div>
+  </p-dialog>
+  <p-dialog header="Filter" styleClass="filter-popup-dialog search-filter" [(visible)]="showFilterPopup" [modal]="true"
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <section class="form-filter-service-provider  clear-filter-strip">
+      <div class="container pad0">
+        <div class="calander-input margin-top-20px" style="width: 100%;">
+          <!-- <p-calendar [(ngModel)]="rangeDates" dateFormat="dd M yy" placeholder="Select Date" styleClass="date-range-filter" selectionMode="range" [readonlyInput]="true" inputId="range" showIcon="true" (onSelect)="applyFilter()"></p-calendar> -->
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon custom-icon-design"><img width="16px" height="16px"
+                src="assets/images/service-provider/expiry.png"></span>
+            <input readonly class="custom-datepicker-design" [locale]="{applyLabel: 'ok', format: 'DD MMM YYYY'}"
+              type="text" ngxDaterangepickerMd [(ngModel)]="rangeDates" [showCustomRangeLabel]="true"
+              [alwaysShowCalendars]="true" [ranges]="ranges" [linkedCalendars]="true" [showClearButton]="false"
+              placeholder="Select date" (change)="setShowClearFilter()" />
+            <i class="pi pi-chevron-down chevron-icon-style"></i>
+          </div>
+        </div>
+        <div class="input-container navigation-input margin-top-20px" style="width: 100%;">
+          <div class="p-inputgroup">
+            <span class="p-inputgroup-addon custom-icon-design"><img width="13px" height="17px"
+                src="assets/images/service-provider/map-pin.png"></span>
+            <p-dropdown class="width-100-perc" [filter]="true" [resetFilterOnHide]="true"
+              styleClass="custom-filter-input" [options]="groupedStates" [(ngModel)]="stateValue"
+              placeholder="Select state" optionLabel="name" optionValue="id" [group]="true"
+              (onChange)="setShowClearFilter()">
+              <ng-template let-group pTemplate="group">
+                <div class="p-d-flex p-ai-center">
+                  <span>{{group.label}}</span>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </div>
+        <div class="prob-form-control cust-comp-control" style="width: 100%;">
+          <div class="cursor def-select select-tags" (click)="manageList()"
+            style="height: 40px; border-radius: 20px !important;display: flex;">
+            <div class="tag-col tag-bg media-tag-bg" style="background-color: transparent; border-right: none;"></div>
+            <div class="tag-col tag-text media-tag-text"
+              title="{{keywordValue?.length == 0 ? 'Keywords' : convertArrayToString(keywordValue)}}">
+              {{keywordValue?.length == 0 ? 'Keywords' : convertArrayToString(keywordValue)}}
+            </div>
+            <i class="pi pi-chevron-down chevron-icon-style-new"></i>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <button style="width: 90%;" type="button"
+            class="btn margin-top-20px btn-secondary green-bg-btn-new mobile-filter-btn" (click)="applyFilter()">
+            <span><img width="16px" height="19px" src="assets/images/service-provider/filter-search.png"
+                alt=""></span>Apply
+          </button>
+          <button [disabled]="!showClearFilter" style="width: 20%; margin-left: 10px;" type="button"
+            class="btn margin-top-20px btn-secondary {{showClearFilter ? 'orange-bg-btn' : 'transparent-bg-btn'}} height-width-42px"
+            (click)="clearFilter()">
+            <img width="16px" height="19px"
+              src="assets/images/service-provider/{{showClearFilter ? 'clear-filters' : 'clear-filter-grey'}}.png"
+              alt="">
+          </button>
+        </div>
+      </div>
+    </section>
+  </p-dialog>
+  <div class="col-lg-12 col-md-12 col-sm-12 no-padding no-margin">
+    <img [src]="bannerImage" alt="Snow" [ngStyle]="{'height': imageHeight, 'width':'100%'}">
+    <div class="main-heading" *ngIf="!reparifyDomain">SERVICE PROVIDERS</div>
+    <!--<div class="main-heading" *ngIf="reparifyDomain">ATG Events</div>-->
+  </div>
+  <div [class]="atgTheme">
+    <section class="form-filter-service-provider no-pad-height clear-filter-strip">
+      <div
+        class="col-lg-12 col-md-12 col-sm-12 no-padding flex-center background-light-grey font-family-lato filters-container">
+        <form class="form-inline {{!screenResponsive ? 'custom-top-bottom-pad' : ''}}" style="width: 80%">
+          <div class="text-input wd22-margin {{screenResponsive ? 'custom-text-width' : ''}}">
+            <span class="p-input-icon-right" style="width: 100%">
+              <i (click)="applyFilterForText();"
+                class="pi pi-search {{searchValue ? 'color-white right-11-perc cursor-pointer' : ''}}"></i>
+              <i (click)="searchValue = ''; applyFilterForText();" *ngIf="searchValue"
+                class="pi pi-times cursor-pointer color-white"></i>
+              <input (keydown.enter)="applyFilterForText();" style="width: 100%" type="text"
+                class="{{searchValue ? 'highlight-text-new-1' : ''}} remove-hover-border" pInputText
+                [(ngModel)]="searchValue" placeholder="Search"/>
+            </span>
+          </div>
+          <div class="calander-input cu-calander wd22-margin" *ngIf="!screenResponsive && currentFilter != 'Manuals'">
+            <div class="p-inputgroup">
+              <span
+                class="p-inputgroup-addon custom-icon-design {{rangeDates?.startDate || rangeDates?.endDate ? 'highlight-text-new' : ''}}"><img
+                  width="16px" height="16px" src="assets/images/service-provider/expiry.png"></span>
+              <input readonly
+                class="custom-datepicker-design {{rangeDates?.startDate || rangeDates?.endDate ? 'highlight-text-new' : ''}}"
+                [locale]="{applyLabel: 'ok', format: 'DD-MM-YYYY',  displayFormat: 'DD MMM YYYY'}" type="text"
+                ngxDaterangepickerMd [(ngModel)]="rangeDates" [showCustomRangeLabel]="true" [alwaysShowCalendars]="true"
+                [ranges]="ranges" [linkedCalendars]="true" [showClearButton]="false" placeholder="Select date"
+                (datesUpdated)="datesUpdated($event)" (ngModelChange)="setShowClearFilter();" />
+              <i
+                class="pi pi-chevron-down chevron-icon-style {{rangeDates?.startDate || rangeDates?.endDate ? 'highlight-text-new' : ''}}"></i>
+            </div>
+          </div>
+          <div class="calander-input cu-calander wd22-margin" *ngIf="!screenResponsive && currentFilter == 'Manuals'">
+            <div class="p-inputgroup" style="opacity: 0.6;">
+              <span class="p-inputgroup-addon custom-icon-design"><img width="16px" height="16px" src="assets/images/service-provider/expiry.png"></span>
+              <input readonly disabled class="custom-datepicker-design" type="text" placeholder="Select date" />
+              <i
+                class="pi pi-chevron-down chevron-icon-style"></i>
+            </div>
+          </div>
+          <div class="calander-input cu-calander wd22-margin" *ngIf="!screenResponsive && currentFilter == 'Manuals'">
+            <div class="p-inputgroup" style="opacity: 0.6;">
+              <span class="p-inputgroup-addon custom-icon-design"><img
+                width="13px" height="17px" src="assets/images/service-provider/map-pin.png"></span>
+              <input readonly disabled class="custom-datepicker-design" type="text" placeholder="Select state" />
+              <i
+                class="pi pi-chevron-down chevron-icon-style"></i>
+            </div>
+          </div>
+          <div class="input-container navigation-input wd22-margin" *ngIf="!screenResponsive && currentFilter != 'Manuals'">
+            <div class="p-inputgroup" >
+              <span class="p-inputgroup-addon custom-icon-design {{stateValue ? 'highlight-text-new' : ''}}"><img
+                  width="13px" height="17px" src="assets/images/service-provider/map-pin.png"></span>
+              <p-dropdown class="width-100-perc" [filter]="true" [resetFilterOnHide]="true"
+                styleClass="custom-filter-input {{stateValue ? 'highlight-text-new' : ''}}" [options]="groupedStates"
+                [(ngModel)]="stateValue" placeholder="Select state" optionLabel="name" optionValue="id" [group]="true"
+                (onChange)="applyFilter(); setShowClearFilter();" optionDisabled="inactive">
+                <ng-template let-group pTemplate="group">
+                  <div class="p-d-flex p-ai-center">
+                    <span>{{group.label}}</span>
+                  </div>
+                </ng-template>
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="prob-form-control cust-comp-control wd22-margin" *ngIf="!screenResponsive">
+            <div class="cursor def-select select-tags {{keywordValue?.length ? 'highlight-text-new' : ''}}"
+              (click)="manageList()"
+              style="height: 42px; border-radius: 20px !important; top: 0; margin: 0; display: flex;">
+              <div class="tag-col tag-bg media-tag-bg" style="background-color: transparent; border-right: none;"></div>
+              <div class="tag-col tag-text media-tag-text"
+                style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 10px;"
+                title="{{keywordValue?.length == 0 ? 'Keywords' : convertArrayToString(keywordValue)}}">
+                {{keywordValue?.length == 0 ? 'Keywords' : convertArrayToString(keywordValue)}}
+              </div>
+              <i class="pi pi-chevron-down chevron-icon-style-new"></i>
+            </div>
+          </div>
+          <div class="mob-search flex-end-center" style="width: 9%;float: left;margin: 6px 0px !important">
+            <button type="button" *ngIf="!screenResponsive" [disabled]="true"
+              class="btn btn-secondary transparent-bg-btn {{screenResponsive ? 'height-width-40px' : 'height-width-42px'}}">
+              <img width="16px" height="19px" src="assets/images/service-provider/filter-apply-grey.png" alt="">
+            </button>
+            <button *ngIf="screenResponsive" type="button"
+              class="btn btn-secondary green-bg-btn height-width-40px margin-left-10 mob-filter-button"
+              (click)="openFilterPopup()">
+              <img width="15px" height="15px" src="assets/images/service-provider/filter-search.png" alt="">
+            </button>
+            <button type="button" [disabled]="!showClearFilter"
+              class="btn btn-secondary margin-left-10 mob-filter-mar0 {{showClearFilter ? 'orange-bg-btn' : 'transparent-bg-btn'}} {{screenResponsive ? 'height-width-40px' : 'height-width-42px'}}"
+              (click)="clearFilter()">
+              <img width="16px" height="19px"
+                src="assets/images/service-provider/{{showClearFilter ? 'clear-filters' : 'clear-filter-grey'}}.png"
+                alt="">
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+    <div
+      class="col-lg-12 col-md-12 col-sm-12 no-padding  flex-center background-light-grey font-family-lato filters-container mrt5">
+      <div class="width-80-perc">
+        <div *ngIf="!screenResponsive"
+          class="col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-start inner-section-margin alignment-set wrapflex border-bottom-3px">
+          <div (click)="setFilterAndResetData('All');"
+            class="col-xl-2 col-lg-2 cursor-pointer flex-center-align col-md-3 col-sm-3 col-5 {{currentFilter == 'All' ? 'main-text-background-upper' : 'simple-background-style'}}">
+            <img width="21px" height="19px" style="margin-right: 5px;"
+              src="{{currentFilter == 'All' ? 'assets/images/service-provider/training-2-small-white.png' : 'assets/images/service-provider/all_tab.png'}}" />
+            <span class="{{currentFilter == 'All' ? 'automative-text-style' : 'automative-text-style-new'}}">ALL</span>
+          </div>
+          <div (click)="setFilterAndResetData('Webinar');"
+            class="col-xl-2 col-lg-2 cursor-pointer flex-center-align col-md-3 col-sm-3 col-5 {{currentFilter == 'Webinar' ? 'main-text-background-upper' : 'simple-background-style'}}">
+            <img width="20px" height="16px" style="margin-right: 5px; margin-top: 3px"
+              src="{{currentFilter == 'Webinar' ? 'assets/images/service-provider/webinar-white.png' : 'assets/images/service-provider/webinar_tab.png'}}" />
+            <span
+              class="{{currentFilter == 'Webinar' ? 'automative-text-style' : 'automative-text-style-new'}}">WEBINAR</span>
+          </div>
+          <div (click)="setFilterAndResetData('Seminar');"
+            class="col-xl-2 col-lg-2 cursor-pointer flex-center-align col-md-3 col-sm-3 col-5 {{currentFilter == 'Seminar' ? 'main-text-background-upper' : 'simple-background-style'}}">
+            <img width="25px" height="16px" style="margin-right: 5px;"
+              src="{{currentFilter == 'Seminar' ? 'assets/images/service-provider/seminar-white.png' : 'assets/images/service-provider/seminar_tab.png'}}" />
+            <span
+              class="{{currentFilter == 'Seminar' ? 'automative-text-style' : 'automative-text-style-new'}}">SEMINAR</span>
+          </div>
+          <div (click)="setFilterAndResetData('Recorded');"
+            class="col-xl-2 col-lg-2 cursor-pointer flex-center-align col-md-3 col-sm-3 col-5 {{currentFilter == 'Recorded' ? 'main-text-background-upper' : 'simple-background-style'}}">
+            <img width="18px" height="17px" style="margin-right: 5px;"
+              src="{{currentFilter == 'Recorded' ? 'assets/images/service-provider/recorded-video-white.png' : 'assets/images/service-provider/recorded_tab.png'}}" />
+            <span
+              class="{{currentFilter == 'Recorded' ? 'automative-text-style' : 'automative-text-style-new'}}">RECORDED</span>
+          </div>
+          <div (click)="setFilterAndResetData('Manuals');"
+            class="manuals-button col-xl-3 col-lg-3 cursor-pointer flex-center-align col-md-3 col-sm-3 col-5 {{currentFilter == 'Manuals' ? 'main-text-background-upper' : 'simple-background-style'}}">
+            <img width="14px" height="20px" style="margin-right: 5px;"
+              src="{{currentFilter == 'Manuals' ? 'assets/images/service-provider/manual-white.png' : 'assets/images/service-provider/manual-black.png'}}" />
+            <span
+              class="{{currentFilter == 'Manuals' ? 'automative-text-style' : 'automative-text-style-new'}}">TRAINING MANUALS</span>
+          </div>
+        </div>
+        <div *ngIf="screenResponsive">
+          <div class="manual-button-dropdown {{currentFilter == 'Manuals' ? 'in-active' : ''}}">
+            <p-dropdown class="width-100-perc" [options]="filterOptions"
+              styleClass="reminderDropdownStyle margin-top-20px custom-Filter-market-place-dropdown"
+              [(ngModel)]="currentFilter" optionLabel="name" optionValue="id"
+              (onChange)="setFilterAndResetData($event.value)">
+              <ng-template let-item pTemplate="selectedItem">
+                <div class="selectedImg"><img src="{{item.selectedImage}}"></div> {{item.name}}
+              </ng-template>
+              <ng-template let-object pTemplate="item">
+                <div class="iconImg"><img src="{{object.image}}"></div> {{object.name}}
+              </ng-template>
+            </p-dropdown>
+          </div>
+          <div class="manual-button-option {{currentFilter == 'Manuals' ? 'active' : ''}}" (click)="setFilterAndResetData('Manuals');">
+            <img width="14px" height="20px" style="margin-right: 5px;"
+              src="{{currentFilter == 'Manuals' ? 'assets/images/service-provider/manual-white.png' : 'assets/images/service-provider/manual-black.png'}}" />
+            <span>Training Manuals</span>
+          </div>
+        </div>
+        <div [ngClass]="reparifyDomain ? 'margin-bottom-40px' : ''" class="inner-section">
+          <div *ngIf="!isMobile && !trainingLoading" class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+            <ngx-masonry [options]="{ gutter: 10,isFitWidth: true }" class="masonry-item-container"
+              [ngClass]="{'full-height': !serviceProviderData?.length && !loadingList}"
+              [updateLayout]="updateMasonryLayout" [ordered]="true">
+              <div ngxMasonryItem id="{{training.id}}" [ngClass]="currentFilter == 'Manuals' ? 'manual-box' : ''" class="masonry-item"
+                data-masonry='{ "columnWidth": 200, "itemSelector": ".grid-item" }'
+                *ngFor="let training of serviceProviderData; let i = index">
+                <p-card *ngIf="currentFilter != 'Manuals'" [style]="{width: '100%'}"
+                  styleClass="p-card-shadow service-provider-training-card cursor-pointer">
+                  <ng-template pTemplate="header">
+                    <div>
+                      <div class="new-style-changes"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                        <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                          style="width: 29px!important; height: 29px!important;"
+                          src="assets/images/service-provider/new-tab-open.png" />
+                        <a (click)="redirectToInnerDetailPageByRouter(training.id, training)">
+                          <img class="header-style-1"
+                            [src]="training?.bannerImageUrl ? training?.bannerImageUrl : 'assets/images/service-provider/training-blank-1.png'">
+                        </a>
+                      </div>
+                      <div class="custom-id-div-design">
+                        <span>
+                          ID#{{training.id}}
+                        </span>
+                      </div>
+                      <div
+                        *ngIf="training?.price && training?.price != '0' && (!training?.birdPrice || !checkBirdPriceAvailablity(training?.expiryDateBirdPrice))"
+                        class="pricing-section pricing-section-simple-color"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                        {{threadApi.isInt(training?.price, true, true)}}</div>
+                      <div *ngIf="!training?.price || training?.price == '0'"
+                        class="pricing-section pricing-section-free-color"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">Free</div>
+                      <div *ngIf="training.isSold == '1' && training.isClosed == '0'" class="sold-out-label-design">SOLD
+                        OUT</div>
+                      <div
+                        *ngIf="(training.isSold == '0' && training.isClosed == '1') || (training.isSold == '1' && training.isClosed == '1')"
+                        class="closed-label-design"><img
+                          style="width: 20px!important; height: 17px!important; margin-right: 5px;"
+                          src="assets/images/service-provider/training-closed-icon.png" />Closed</div>
+                      <div *ngIf="checkShowSeatsLeft(training) && training?.isSold == '0' && training?.isClosed == '0'"
+                        class="minimum-seats-available-design"><img
+                          style="width: 22px!important; height: 15px!important; margin-right: 5px;"
+                          src="assets/images/service-provider/seats-left-white.png" />
+                        {{pendingParticipantsCount(training)}} seat{{pendingParticipantsCount(training)>1 ? 's' : ''}}
+                        left</div>
+                      <div [ngbTooltip]="tipContent"
+                        *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)"
+                        class="custom-bird-price-design"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''"
+                        triggers="hover">
+                        <div class="bird-price-design">{{threadApi.isInt(training?.birdPrice, true, true)}}</div>
+                      </div>
+                      <ng-template #tipContent>
+                        <span style="text-align: left;">
+                          Early Bird Pricing: {{threadApi.isInt(training?.birdPrice, true, true)}} <br />
+                          {{threadApi.isInt(training?.birdPercentage, false, true)}}% discount from regular price <br />
+                          Expires on {{getDateFormat(training?.expiryDateBirdPrice)}} <br />
+                          <p class="tooltipregularPrice"> Regular Price: {{threadApi.isInt(training?.price, true, true)}}</p>
+                        </span>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <div class="p-card-content-inner"
+                    [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                    <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                      style="width: 29px!important; height: 29px!important;"
+                      src="assets/images/service-provider/new-tab-open.png" />
+                    <a (click)="redirectToInnerDetailPageByRouter(training.id, training);">
+                      <p class="description-style-1" title="{{training?.trainingName}}">{{training?.trainingName}}</p>
+                      <div class="feaute-align">
+                        <div *ngIf="atgTheme != 'atgThemeColor' " class="ssLeft">
+                          <ng-container *ngIf="training?.trainingMode == 'Recorded' ">
+                            <div class="imgLeft">
+                              <figure class="atgFeatureImg">
+                                <img src="assets/images/service-provider/record-grey.png">
+                              </figure>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngIf="training?.trainingMode == 'Seminar' ">
+                            <div class="imgLeft seminarImg">
+                              <figure class="atgFeatureImg">
+                                <img src="assets/images/service-provider/seminar-collabtic.png">
+                              </figure>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngIf="training?.trainingMode == 'Webinar' ">
+                            <div class="imgLeft webImg">
+                              <figure class="atgFeatureImg">
+                                <img src="assets/images/service-provider/webinar-collabtic.png">
+                              </figure>
+                            </div>
+                          </ng-container>
+                        </div>
+
+                        <div *ngIf="atgTheme == 'atgThemeColor' " class="ssLeft">
+
+                          <ng-container *ngIf="training?.trainingMode == 'Recorded' ">
+                            <div class="imgLeft">
+                              <figure class="atgFeatureImg">
+                                <img src="assets/images/service-provider/recorded_blue.png">
+                              </figure>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngIf="training?.trainingMode == 'Seminar' ">
+                            <div class="imgLeft seminarImg">
+                              <figure class="atgFeatureImg ">
+                                <img src="assets/images/service-provider/seminar_blue.png">
+                              </figure>
+                            </div>
+                          </ng-container>
+                          <ng-container *ngIf="training?.trainingMode == 'Webinar' ">
+                            <div class="imgLeft webImg">
+                              <figure class="atgFeatureImg">
+                                <img src="assets/images/service-provider/bluewebinar.png">
+                              </figure>
+                            </div>
+                          </ng-container>
+                        </div>
+                        <div title="{{training?.trainingMode}} check" class="inner-card-description-1">
+                          {{training?.trainingMode}}</div>
+                      </div>
+                      <div class="feaute-align"
+                        *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Seminar'">
+                        <div class="imgLeft">
+                          <figure class="atgFeatureImg">
+                            <img *ngIf="atgTheme != 'atgThemeColor' "
+                              src="assets/images/service-provider/calender.png" />
+                            <img *ngIf="atgTheme == 'atgThemeColor' "
+                              src="assets/images/service-provider/calendar_blue.png" />
+                          </figure>
+                        </div>
+                        <div class="imgRight">
+                          <span *ngIf="training?.startDate != training?.endDate"
+                            title="{{getStartDateFormat(training?.startDate)}} - {{getDateFormat(training?.endDate)}}"
+                            class="inner-card-description-2">{{getStartDateFormat(training?.startDate)}}
+                            - {{getDateFormat(training?.endDate)}}</span>
+                          <span *ngIf="training?.startDate == training?.endDate"
+                            title="{{getDateFormat(training?.endDate)}}"
+                            class="inner-card-description-2 margin-bottom-10px">{{getDateFormat(training?.endDate)}}</span>
+                        </div>
+                      </div>
+                      <div class="feaute-align" *ngIf="training.trainingMode == 'Recorded'">
+                        <div class="imgLeft">
+                          <figure class="atgFeatureImg">
+                            <img src="assets/images/service-provider/calender.png"
+                              *ngIf="atgTheme != 'atgThemeColor' " />
+                            <img src="assets/images/service-provider/calendar_blue.png"
+                              *ngIf="atgTheme == 'atgThemeColor' " />
+                          </figure>
+                        </div>
+                        <div class="imgRight">
+                          <span title="Posted Date: {{getDateFormat(training?.startDate)}}"
+                            class="inner-card-description-2 margin-bottom-10px">Posted Date:
+                            {{getDateFormat(training?.startDate)}}</span>
+                        </div>
+                      </div>
+                      <div class="feaute-align"
+                        *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Recorded'">
+                        <div class="imgLeft">
+                          <figure class="atgFeatureImg">
+                            <img src="assets/images/service-provider/simple-time.png"
+                              *ngIf="atgTheme != 'atgThemeColor' " />
+                            <img src="assets/images/service-provider/time_blue.png"
+                              *ngIf="atgTheme == 'atgThemeColor' " />
+                          </figure>
+                        </div>
+                        <div class="imgRight">
+                          <span *ngIf="training.trainingMode == 'Webinar'"
+                            title="{{getHourFormat(training?.startTime)}} - {{getHourFormat(training?.endTime)}}"
+                            class="inner-card-description-1">{{getHourFormat(training?.startTime)}} -
+                            {{getHourFormat(training?.endTime)}} <span
+                              *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Seminar'">{{training?.timeZone}}</span></span>
+                          <span *ngIf="training.trainingMode == 'Recorded'" title="{{training?.hours}}"
+                            class="inner-card-description-1">{{training?.hours}} hours</span>
+                        </div>
+                      </div>
+                      <div class="feaute-align " *ngIf="training.trainingMode == 'Seminar'">
+                        <div class="imgLeft">
+                          <figure class="atgFeatureImg">
+                            <img *ngIf="atgTheme != 'atgThemeColor' "   src="assets/images/service-provider/map-pin.png" />
+                            <img *ngIf="atgTheme == 'atgThemeColor' "  src="assets/images/service-provider/map-blue.png" />
+                          </figure>
+                        </div>
+                        <div class="imgRight">
+                          <span title="{{training?.city}}, {{training?.state}}"
+                            class="inner-card-description-3">{{training?.city}},
+                            {{training?.state}}</span>
+                        </div>
+
+                      </div>
+                    </a>
+                  </div>
+                  <ng-template pTemplate="footer">
+                    <div class="p-card-footer-div"
+                      [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                      <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                        style="width: 29px!important; height: 29px!important;"
+                        src="assets/images/service-provider/new-tab-open.png" />
+                      <a (click)="redirectToInnerDetailPageByRouter(training.id, training);">
+                        <div class="col-12 row custom-padding-footer no-margin">
+                          <div class="no-margin" style="width: 100%;">
+                            <!-- <div class="margin-right-20px flex-align-center" style="float: left; padding-top: 4px;"><i class="pi pi-eye icon-new"></i><span class="new-text">2k</span></div>
+                            <div class="margin-right-5px flex-align-center" style="float: left; padding-top: 4px;"><i class="pi pi-thumbs-up icon-new"></i><span class="new-text">567</span></div> -->
+                            <div *ngIf="training.isSold != '1' && training.isClosed == '0'" class="float-left cart-icon-section" (click)="toggleCartItem($event, training?.id, 'training', training?.domainID);">
+                              <img *ngIf="!(cart?.trainingIds && cart?.trainingIds.includes(training?.id))" src="assets/images/service-provider/cart-orange.png">
+                              <span *ngIf="cart?.trainingIds && cart?.trainingIds.includes(training?.id)">
+                                <img  src="assets/images/service-provider/cart-white.png">
+                              </span>
+                            </div>
+                            <div class="float-right">
+                              <img class="footer-logo-card" *ngIf="!reparifyDomain"
+                                src="{{training.businessDomainData.business_logo}}">
+                              <img class="footer-logo-card" *ngIf="reparifyDomain"
+                                src="assets/images/service-provider/atg-logo.png">
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  </ng-template>
+                </p-card>
+                <p-card *ngIf="currentFilter == 'Manuals'" [style]="{width: '100%', 'border-radius': '0 !important'}"
+                  styleClass="p-card-shadow service-provider-training-card cursor-pointer manuals">
+                  <ng-template pTemplate="header">
+                    <div>
+                      <div class="new-style-changes"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                        <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                          style="width: 29px!important; height: 29px!important;"
+                          src="assets/images/service-provider/new-tab-open.png" />
+                        <a (click)="redirectToInnerDetailPageByRouter(training.id, training)">
+                          <img *ngIf="training?.bannerImageUrl" class="header-style-1" [src]="training?.bannerImageUrl">
+                          <div *ngIf="!training?.bannerImageUrl">
+                            <img src="assets/images/service-provider/manual-placeholder.png" /></div>
+                        </a>
+                      </div>
+                      <div class="custom-id-div-design">
+                        <span>
+                          ID#{{training.id}}
+                        </span>
+                      </div>
+                      <div
+                        *ngIf="training?.price && training?.price != '0' && (!training?.discountPrice)"
+                        class="pricing-section pricing-section-simple-color"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                        {{threadApi.isInt(training?.price, true, true)}}</div>
+                      <div *ngIf="!training?.price || training?.price == '0'"
+                        class="pricing-section pricing-section-free-color"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">Free</div>
+                      <div *ngIf="training.isSold == '1' && training.isClosed == '0'" class="sold-out-label-design">SOLD
+                        OUT</div>
+                      <div
+                        *ngIf="(training.isSold == '0' && training.isClosed == '1') || (training.isSold == '1' && training.isClosed == '1')"
+                        class="closed-label-design"><img
+                          style="width: 20px!important; height: 17px!important; margin-right: 5px;"
+                          src="assets/images/service-provider/training-closed-icon.png" />Closed</div>
+                      <div [ngbTooltip]="tipContent"
+                        *ngIf="training?.discountPrice && training?.discountPrice != '0'"
+                        class="custom-bird-price-design"
+                        [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''"
+                        triggers="hover">
+                        <div class="bird-price-design">{{threadApi.isInt(training?.discountPrice, true, true)}}</div>
+                      </div>
+                      <ng-template #tipContent>
+                        <span style="text-align: left;">
+                          Discount Pricing: {{threadApi.isInt(training?.discountPrice)}} <br />
+                          {{threadApi.isInt(training?.discountPercentage, false)}}% discount from regular price <br />
+                          <p class="tooltipregularPrice"> Regular Price: {{threadApi.isInt(training?.price, true, true)}}</p>
+                        </span>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                  <div class="p-card-content-inner"
+                    [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                    <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                      style="width: 29px!important; height: 29px!important;"
+                      src="assets/images/service-provider/new-tab-open.png" />
+                    <a (click)="redirectToInnerDetailPageByRouter(training.id, training);">
+                      <p class="description-style-1" title="{{training?.manualName}}">{{training?.manualName}}</p>
+                      <div class="feaute-align manuals-feature">
+                        <div title="{{training?.businessDomainData?.business_name}} check" class="inner-card-description-1">
+                          <img class="manual-business-logo" *ngIf="!reparifyDomain"
+                              src="{{training.businessDomainData.business_logo}}">
+                            <img class="manual-business-logo" *ngIf="reparifyDomain"
+                              src="assets/images/service-provider/atg-logo.png"></div>
+                      </div>
+                    </a>
+                    <div class="float-left cart-icon-section" style="bottom:10px" (click)="toggleCartItem($event, training?.id, 'manual',training?.domainID)">
+                      <img  *ngIf="!(cart?.manualIds && cart?.manualIds.includes(training?.id))" src="assets/images/service-provider/cart-orange.png">
+                      <span  *ngIf="cart?.manualIds && cart?.manualIds.includes(training?.id)">
+                        <img src="assets/images/service-provider/cart-white.png">
+                      </span>
+                    </div>
+                  </div>
+                </p-card>
+              </div>
+              <div style="height: 100%; width: 100%; display: table; margin: 20px 0;"
+                *ngIf="!serviceProviderData?.length && !loadingList">
+                <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12"
+                  style="text-align:center; display:table-cell; vertical-align: middle;">
+                  <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center">
+                    <img width="295px" height="312px" src="assets/images/service-provider/vector-smart-object-3.png" />
+                  </div>
+                  <div
+                    class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center margin-top-bottom-30px training-text">
+                    {{currentFilter == 'Manuals' ? 'Training Manuals':'Training'}} not available
+                  </div>
+                </div>
+              </div>
+            </ngx-masonry>
+          </div>
+          <div *ngIf="isMobile && !trainingLoading" class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+            <div id="{{training.id}}" [ngClass]="currentFilter == 'Manuals' ? 'manual-box mobile' : ''" class="masonry-item" style="margin: 20px 0px 20px 0px; width: 100% !important;"
+              *ngFor="let training of serviceProviderData; let i = index">
+              <p-card *ngIf="currentFilter != 'Manuals'" [style]="{width: '100%'}"
+                styleClass="p-card-shadow service-provider-training-card cursor-pointer">
+                <ng-template pTemplate="header">
+                  <div class="parent-img forMobile">
+                    <div class="new-style-changes"
+                      [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                      <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                        style="width: 29px!important; height: 29px!important;"
+                        src="assets/images/service-provider/new-tab-open.png" alt="arrowCheck" />
+                      <a (click)="redirectToInnerDetailPageByRouter(training.id, training)">
+                        <img class="header-style-1"
+                          [src]="training?.bannerImageUrl ? training?.bannerImageUrl : 'assets/images/service-provider/training-blank-1.png'">
+                      </a>
+                    </div>
+                    <div class="custom-id-div-design">
+                      <span>
+                        ID#{{training.id}}
+                      </span>
+                    </div>
+                    <div *ngIf="training?.price && training?.price != '0' && (!training?.birdPrice || !checkBirdPriceAvailablity(training?.expiryDateBirdPrice))"
+                      class="pricing-section pricing-section-simple-color"
+                      [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''"
+                      style="float: right; position: relative; right: 5px;">{{threadApi.isInt(training?.price, true, true)}}</div>
+                    <div *ngIf="!training?.price || training?.price == '0'"
+                      class="pricing-section pricing-section-free-color"
+                      [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''"
+                      style="float: right; position: relative; right: 5px;">Free</div>
+                    <div *ngIf="training.isSold == '1' && training.isClosed == '0'" class="sold-out-label-design">SOLD
+                      OUT</div>
+                    <div
+                      *ngIf="(training.isSold == '0' && training.isClosed == '1') || (training.isSold == '1' && training.isClosed == '1')"
+                      class="closed-label-design"><img src="assets/images/service-provider/training-closed-icon.png"
+                        width="20px" height="17px" />Closed</div>
+                    <div *ngIf="checkShowSeatsLeft(training) && training?.isSold == '0' && training?.isClosed == '0'"
+                      class="minimum-seats-available-design"><img
+                        style="width: 22px!important; height: 15px!important; margin-right: 5px;"
+                        src="assets/images/service-provider/seats-left-white.png" />
+                      {{pendingParticipantsCount(training)}} seat{{pendingParticipantsCount(training) > 1 ? 's' : '' }}
+                      left</div>
+                      <div [ngbTooltip]="tipContent"
+                        *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)"
+                        class="custom-bird-price-design" [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''"
+                        triggers="hover">
+                        <div class="bird-price-design">{{threadApi.isInt(training?.birdPrice, true, true)}}</div>
+                      </div>
+                      <ng-template #tipContent>
+                        <span style="text-align: left;">
+                          Early Bird Pricing: {{threadApi.isInt(training?.birdPrice, true, true)}} <br />
+                          {{threadApi.isInt(training?.birdPercentage, false, true)}}% discount from regular price <br />
+                          Expires on {{getDateFormat(training?.expiryDateBirdPrice)}} <br />
+                          <p class="tooltipregularPrice"> Regular Price: {{threadApi.isInt(training?.price, true, true)}}</p>
+                        </span>
+                      </ng-template>
+                  </div>
+                </ng-template>
+                <div class="p-card-content-inner"
+                  [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                  <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                    style="width: 29px!important; height: 29px!important;"
+                    src="assets/images/service-provider/new-tab-open.png" />
+                  <a (click)="redirectToInnerDetailPageByRouter(training.id, training);">
+                    <p class="description-style-1" title="{{training?.trainingName}}">{{training?.trainingName}}</p>
+                    <div class="feaute-align">
+                      <div *ngIf="atgTheme != 'atgThemeColor' " class="ssLeft">
+                        <ng-container *ngIf="training?.trainingMode == 'Recorded' ">
+                          <div class="imgLeft">
+                            <figure class="atgFeatureImg">
+                              <img src="assets/images/service-provider/record-grey.png">
+                            </figure>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="training?.trainingMode == 'Seminar' ">
+                          <div class="imgLeft seminarImg">
+                            <figure class="atgFeatureImg">
+                              <img src="assets/images/service-provider/seminar-collabtic.png">
+                            </figure>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="training?.trainingMode == 'Webinar' ">
+                          <div class="imgLeft webImg">
+                            <figure class="atgFeatureImg">
+                              <img src="assets/images/service-provider/webinar-collabtic.png">
+                            </figure>
+                          </div>
+                        </ng-container>
+                      </div>
+
+                      <div *ngIf="atgTheme == 'atgThemeColor' " class="ssLeft">
+
+                        <ng-container *ngIf="training?.trainingMode == 'Recorded' ">
+                          <div class="imgLeft">
+                            <figure class="atgFeatureImg">
+                              <img src="assets/images/service-provider/recorded_blue.png">
+                            </figure>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="training?.trainingMode == 'Seminar' ">
+                          <div class="imgLeft seminarImg">
+                            <figure class="atgFeatureImg ">
+                              <img src="assets/images/service-provider/seminar_blue.png">
+                            </figure>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="training?.trainingMode == 'Webinar' ">
+                          <div class="imgLeft webImg">
+                            <figure class="atgFeatureImg">
+                              <img src="assets/images/service-provider/bluewebinar.png">
+                            </figure>
+                          </div>
+                        </ng-container>
+                      </div>
+                      <!-- <img class="margin-right-6px" style="margin-top: 1px;" width="18px" height="17px"
+                        src="assets/images/service-provider/training-2.svg" onload="SVGInject(this)"> -->
+                      <span title="{{training?.trainingMode}}"
+                        class="inner-card-description-1">{{training?.trainingMode}}</span>
+                    </div>
+                    <div class="feaute-align"
+                      *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Seminar'">
+                      <img *ngIf="atgTheme != 'atgThemeColor' " class="margin-right-8px" style="margin-top: 2px;"
+                        width="15px" height="15px" src="assets/images/service-provider/calender.png" />
+                      <img *ngIf="atgTheme == 'atgThemeColor' " class="margin-right-8px" style="margin-top: 2px;"
+                        width="15px" height="15px" src="assets/images/service-provider/calendar_blue.png" />
+                      <span *ngIf="training?.startDate != training?.endDate"
+                        title="{{getStartDateFormat(training?.startDate)}} - {{getDateFormat(training?.endDate)}}"
+                        class="inner-card-description-2">{{getStartDateFormat(training?.startDate)}}
+                        - {{getDateFormat(training?.endDate)}}</span>
+                      <span *ngIf="training?.startDate == training?.endDate"
+                        title="{{getDateFormat(training?.endDate)}}"
+                        class="inner-card-description-2">{{getDateFormat(training?.endDate)}}</span>
+                    </div>
+                    <div class="feaute-align"
+                      *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Recorded'">
+                      <img class="margin-right-9px" style="margin-top: 2px;" width="15px" height="15px"
+                        src="assets/images/service-provider/simple-time.png" />
+                      <span *ngIf="training.trainingMode == 'Webinar'"
+                        title="{{getHourFormat(training?.startTime)}} - {{getHourFormat(training?.endTime)}}"
+                        class="inner-card-description-1">{{getHourFormat(training?.startTime)}} -
+                        {{getHourFormat(training?.endTime)}} <span
+                          *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Seminar'">{{training?.timeZone}}</span></span>
+                      <span *ngIf="training.trainingMode == 'Recorded'" title="{{training?.hours}}"
+                        class="inner-card-description-1">{{training?.hours}} hours</span>
+                    </div>
+                    <div class="feaute-align" *ngIf="training.trainingMode == 'Seminar'">
+                      <img class="margin-right-9px" *ngIf="atgTheme != 'atgThemeColor' " style="margin-top: 2px;"
+                        width="13px" height="17px" src="assets/images/service-provider/map-pin.png" />
+                      <img class="margin-right-9px" *ngIf="atgTheme == 'atgThemeColor' " style="margin-top: 2px;"
+                        width="13px" height="17px" src="assets/images/service-provider/map-blue.png" />
+                      <span title="{{training?.city}}, {{training?.state}}"
+                        class="inner-card-description-3">{{training?.city}},
+                        {{training?.state}}</span>
+                    </div>
+                  </a>
+                </div>
+                <ng-template pTemplate="footer">
+                  <div class="p-card-footer-div"
+                    [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                    <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                      style="width: 29px!important; height: 29px!important;"
+                      src="assets/images/service-provider/new-tab-open.png" />
+                    <a (click)="redirectToInnerDetailPageByRouter(training.id, training);">
+                      <div class="col-12 row custom-padding-footer no-margin">
+                        <div class="no-margin" style="width: 100%;">
+                          <!-- <div class="margin-right-20px flex-align-center" style="float: left; padding-top: 4px;"><i class="pi pi-eye icon-new"></i><span class="new-text">2k</span></div>
+                            <div class="margin-right-5px flex-align-center" style="float: left; padding-top: 4px;"><i class="pi pi-thumbs-up icon-new"></i><span class="new-text">567</span></div> -->
+                            <div class="float-left cart-icon-section" style="left: 20px;" (click)="toggleCartItem($event, training?.id, 'training',training?.domainID)">
+                              <img  *ngIf="!(cart?.trainingIds && cart?.trainingIds.includes(training?.id))"  src="assets/images/service-provider/cart-orange.png">
+                              <span  *ngIf="cart?.trainingIds && cart?.trainingIds.includes(training?.id)">
+                                <img  src="assets/images/service-provider/cart-white.png">
+                              </span>
+                            </div>
+                            <div class="float-right">
+                            <img class="footer-logo-card" *ngIf="!reparifyDomain"
+                              src="{{training.businessDomainData.business_logo}}">
+                            <img class="footer-logo-card" *ngIf="reparifyDomain"
+                              src="assets/images/service-provider/atg-logo.png">
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                    <!-- <div class="float-left cart-icon-section" (click)="toggleCartItem($event, training?.id, 'training',training?.domainID)">
+                      <img  *ngIf="!(cart?.trainingIds && cart?.trainingIds.includes(training?.id))"  src="assets/images/service-provider/cart-orange.png">
+                      <span *ngIf="cart?.trainingIds && cart?.trainingIds.includes(training?.id)">
+                        <img  src="assets/images/service-provider/cart-white.png">
+                      </span>
+                    </div> -->
+                  </div>
+                </ng-template>
+              </p-card>
+              <p-card *ngIf="currentFilter == 'Manuals'" [style]="{width: '100%', 'border-radius': '0 !important'}"
+                styleClass="p-card-shadow service-provider-training-card manuals-image-div cursor-pointer">
+                <ng-template pTemplate="header">
+                  <div class="parent-img forMobile">
+                    <div class="new-style-changes"
+                      [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                      <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                        style="width: 29px!important; height: 29px!important;"
+                        src="assets/images/service-provider/new-tab-open.png" alt="arrowCheck" />
+                      <a (click)="redirectToInnerDetailPageByRouter(training.id, training)">
+                        <img *ngIf="training?.bannerImageUrl" class="header-style-1" [src]="training?.bannerImageUrl">
+                        <div *ngIf="!training?.bannerImageUrl">
+                          <img src="assets/images/service-provider/manual-placeholder.png" /></div>
+                      </a>
+                    </div>
+                    <div class="custom-id-div-design">
+                      <span>
+                        ID#{{training.id}}
+                      </span>
+                    </div>
+                  </div>
+                </ng-template>
+                <div class="p-card-content-inner"
+                  [ngClass]="training.isSold == '1' || training.isClosed == '1' ? 'low-opacity' : ''">
+                  <img (click)="redirectToInnerDetailPage(training.id, training);" class="hidden_img"
+                    style="width: 29px!important; height: 29px!important;"
+                    src="assets/images/service-provider/new-tab-open.png" />
+                  <a (click)="redirectToInnerDetailPageByRouter(training.id, training);">
+                    <p class="description-style-1" title="{{training?.manualName}}">{{training?.manualName}}</p>
+                    <!-- <div class="feaute-align">
+                      <div class="ssLeft">
+                        <div class="imgLeft">
+                          <figure class="atgFeatureImg">
+                            <img src="assets/images/service-provider/sku.png">
+                          </figure>
+                          <span title="{{training?.sku}}"
+                  class="inner-card-description-1">{{training?.sku}}</span>
+                        </div>
+                      </div>
+                    </div> -->
+                  </a>
+                  <p class="custom-price-text" *ngIf="training?.price && training?.price != '0'">
+                    <span *ngIf="training.isDiscount && training.isDiscount != '0'">
+                      <span>
+                        {{threadApi.isInt(training?.discountPrice)}}
+                      </span>
+                      <span class="strike-text">
+                        {{threadApi.isInt(training?.price)}}
+                      </span>
+                      <span class="per-discount">
+                        {{threadApi.isInt(training?.discountPercentage, false)}}% off
+                      </span>
+                      <span>
+
+                      </span>
+                    </span>
+                  <span *ngIf="training.isDiscount == '0'">
+                    <span>
+                      {{threadApi.isInt(training?.price)}}
+                    </span>
+                  </span>
+                  </p>
+                  <p class="custom-price-text" *ngIf="training.price == '0'">Free</p>
+                  <div class="manual-card-bottom-section d-flex justify-space-between">
+                    <span title="{{training?.businessDomainData?.business_name}}" class="inner-card-description-1">
+                      <img class="manual-business-logo" *ngIf="!reparifyDomain" src="{{training.businessDomainData.business_logo}}">
+                      <img class="manual-business-logo" *ngIf="reparifyDomain" src="assets/images/service-provider/atg-logo.png">
+                    </span>
+
+                    <!-- class="cart-icon-section" -->
+                    <div style="right: 8px; left: unset;" (click)="toggleCartItem($event, training?.id, 'manual',training?.domainID)">
+                      <img *ngIf="!(cart?.manualIds && cart?.manualIds.includes(training?.id))"
+                        src="assets/images/service-provider/cart-orange.png">
+                      <span *ngIf="cart?.manualIds && cart?.manualIds.includes(training?.id)">
+                        <img src="assets/images/service-provider/cart-white.png">
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </p-card>
+
+            </div>
+            <div style="height: 100%; width: 100%; display: table; margin: 20px 0;"
+              *ngIf="!serviceProviderData?.length && !loadingList">
+              <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12"
+                style="text-align:center; display:table-cell; vertical-align: middle;">
+                <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center">
+                  <img width="295px" height="312px" src="assets/images/service-provider/vector-smart-object-3.png" />
+                </div>
+                <div
+                  class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center margin-top-bottom-30px training-text">
+                  {{currentFilter == 'Manuals' ? 'Training Manuals':'Training'}} not available
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="svg-color-change" *ngIf="trainingLoading">
+            <img *ngIf="atgTheme != 'atgThemeColor' "
+              src="assets/images/service-provider/loading-animation-processing-payment.svg" onload="SVGInject(this)" />
+            <img *ngIf="atgTheme == 'atgThemeColor' "
+              src="assets/images/service-provider/loading-animation-processing-payment-atg.svg"
+              onload="SVGInject(this)" />
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 no-padding no-margin" style="margin-top: 10px !important;"
+            *ngIf="!loadingList && loadList && serviceProviderData?.length">
+            <div class="flex-center">
+              <span class="load-more" (click)="loadMoreData()"><span>LOAD MORE</span> <i
+                  class="pi pi-angle-double-down"></i></span>
+            </div>
+            <!--<div class="grey-line"></div>-->
+          </div>
+        </div>
+        <!--<div *ngIf="!reparifyDomain" class="col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-start inner-section-margin alignment-set wrapflex">
+          <div class="col-xl-2 col-lg-2 cursor-pointer flex-center-align col-md-3 col-sm-3 col-5 main-text-background-upper">
+            <span class="automative-text-style">Training Providers</span>
+          </div>
+      </div>-->
+        <div *ngIf="!reparifyDomain"
+          class="col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-start inner-section-margin alignment-set wrapflex border-bottom-3px mr-top-20">
+          <div
+            class="col-xl-12 col-lg-12 cursor-pointer flex-center-align col-md-12 col-sm-12 col-12 main-text-background-upper"
+            style="text-align: left !important; display: block;">
+            <span class="automative-text-style">Training Providers</span>
+          </div>
+        </div>
+        <div *ngIf="!reparifyDomain" class="inner-section-domains-new">
+          <app-service-domain-detail></app-service-domain-detail>
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 row custom-margin collabtic-network">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 margin-top-10px">
+              <img class="custom-position" src="assets/images/service-provider/Rectangle 9.png">
+            </div>
+            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 custom-flex-end-center margin-top-10px">
+              <span class="normal-text">To join the <span class="highlight-text">Collabtic</span> Network</span>
+            </div>
+            <div
+              class="col-lg-3 col-md-3 custom-flex-end-center-2 col-sm-3 col-xs-12 flex-align-center margin-top-10px">
+              <span (click)="openContactUs()" class="new-highlight-text cursor-pointer">CONTACT US</span>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 margin-top-10px">
+              <img class="custom-position-2" src="assets/images/service-provider/Rectangle 12.png">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- new cart popup  -->
+  <div class="cart-popup sm-center-popup " *ngIf="showCartUserDetailPopup">
+    <div class="cart-popup-instruction">Please enter your email so we can save your cart for you</div>
+    <form [formGroup]="userInfoForm">
+      <div class="p-inputgroup new-design" style="padding-top:20px">
+        <span class="p-inputgroup-addon bg-white">
+          <img width="22px" height="15px" src="assets/images/service-provider/mail-grey.png">
+        </span>
+        <input formControlName="email" type="text" placeholder="Enter Email"
+            class="p-inputtext p-component ng-pristine ng-invalid border-left-0 register-email">
+    </div>
+    </form>
+    <button class="d-inline custom-buttom-design-new-2" pButton type="button" label="save" (click)="submitUserInfo();"
+      icon="pi pi-check" iconPos="right"></button>
+    <button class="d-inline custom-buttom-design-new" (click)="closeUserDetailForm()" pButton type="button" label="Cancel"
+      icon="pi pi-times" iconPos="right"></button>
+  </div>
+</div>
+
+<p-dialog styleClass="service-provider-address-popup other-provider-popup" [(visible)]="domainSelectPopup" [modal]="true" [showHeader]="false" 
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <!-- <ng-template pTemplate="header">
+        <span>CART INFO!</span>
+        <div style="display: flex; align-items: center">
+            <i (click)="domainSelectPopup = false" class="cursor-pointer pi pi-times color-grey"></i>
+        </div>
+    </ng-template>
+    <div class="col-12">
+        <div class="col-12 text-center pt-3 px-4">
+            <span style="font-size: 16px;line-height: 1.88; font-weight: 600;">Your cart already contains {{selectedDomainId == 71 ?'ATG' : 'COLLABTIC'}} training, so you can't add 
+              training or manual from other providers.</span>
+        </div>
+    </div> -->
+    <div class="other-provider d-flex flex-column align-items-center">
+            <img src="assets/images/service-provider/cart-filled-green.png">
+            <p>There is already one provider in your cart, so you can't add other providers' training or manuals.</p>
+            <span class="d-flex" (click)="domainSelectPopup = false">
+              OK 
+              <figure class="tickImg">
+                <img src="assets/images/service-provider/tick-white.png">
+              </figure>
+            </span>
+    </div>
+</p-dialog>

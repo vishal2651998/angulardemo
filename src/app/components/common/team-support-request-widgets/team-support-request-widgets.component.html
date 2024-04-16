@@ -1,0 +1,107 @@
+<div class="main-contaier setmarginBottom {{optionsval.shortName}}">
+  <p-accordion [multiple]="true" (onClose)="onTabClose6($event)" (onOpen)="onTabOpen6($event)">
+    <p-accordionTab [selected]="true">
+      <p-header class="accordion-icon ">
+        <div class="container-fluid">
+          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+            <div class="menu-name-bar col col col-lg-9 col-md-9 col-xl-9 col-sm-8 landing-padding0">
+              <div>
+                <span class="bg-image {{optionsval.imageClass}}">
+                  <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                </span>
+                <span class="menu-name">{{optionsval.placeholder}}</span>
+                <span><i class="pi hide pi-ellipsis-v"></i></span>
+              </div>
+            </div>
+            <div class="col col col-lg-3 col-md-3 col-xl-3 col-sm-4 landing-padding0">
+              <div class="rightside-menu-header">
+                <div class="see-more-text" *ngIf="seemore">
+                  <span>See More</span>
+                  <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                </div>
+                <div class="plusone60 showinline"><i class="pi pi-chevron-up"></i></div>
+                <div class="minusone60 hide"><i class="pi pi-chevron-down"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-header>
+      <div class="landing-report-section ticket-section">
+        <div class="padding10">
+          <div class="loading-small-screen" *ngIf="loading"><img src="assets/images/loading.svg" alt="Loader" /></div>
+          
+          
+          
+          <div class="" *ngIf="!loading">
+            <div class="container-fluid">
+
+              <div *ngIf="unAssignedArray?.length == 0 || assignedArray?.length == 0 " class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 justify-center">
+                <div class="nothingtoshow">
+                  <div class="no-data-contaier">
+                      <div>
+                        <img class="no-data-img-chart" src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                      </div>
+                      <div class="no-data-text">Nothing to show</div>
+                  </div>
+              </div>
+              </div>
+
+              <div *ngIf="unAssignedArray?.length > 0 || assignedArray?.length > 0" class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+                
+                
+                <div class="row col-lg-6 col-md-6 col-sm-12 landing-padding0 landing-margin0 paddingRt15">
+                  <div class="team-support-container">
+                    <p-table [value]="unAssignedArray" 
+                    [scrollable]="true" [scrollHeight]="pTableHeight"  class="widgets-table"
+                [paginator]="paginations" [rows]="4">                    
+                      <ng-template pTemplate="header" >
+                          <tr>
+                              <th class="ass-thText tw80"><img src="assets/images/landing-page/unassigned.png">&nbsp;&nbsp;Unassigned</th>
+                              <th class="ass-thText tw20">&nbsp;</th>                            
+                          </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-unAssignedArr>
+                          <tr>                           
+                              <td (click)="clickTicketTD(unAssignedArr.teamid,'1','')" class="tdText tw80 text-truncate" title="{{unAssignedArr.teamname}}">{{unAssignedArr.teamname}}</td> 
+                              <td (click)="clickTicketTD(unAssignedArr.teamid,'1','')" class="tdText tw20"><span  [ngClass]="{'text_count_escalation': unAssignedArr.count!='-'}">{{unAssignedArr.count}}</span></td>                           
+                          </tr>
+                      </ng-template>
+                    </p-table>
+                  </div>
+                </div>
+                <div class="row col-lg-6 col-md-6 col-sm-12 landing-padding0 landing-margin0 paddingLt15">
+                  <div class="team-support-container">
+                    <p-table [value]="assignedArray" 
+                    [scrollable]="true" [scrollHeight]="pTableHeight"  class="widgets-table"
+                [paginator]="paginations" [rows]="4">                    
+                      <ng-template pTemplate="header" >
+                        <tr >
+                          <th class="ass-thText tw64"><img src="assets/images/landing-page/assigned.png">&nbsp;&nbsp;Assigned</th>
+                          <th class="ass-thText tw12">L1</th>
+                          <th class="ass-thText tw12">L2</th>
+                          <th class="ass-thText tw12">L3</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-assignedArr>
+                          <tr>                           
+                              <td (click)="clickTicketTD(assignedArr.teamid,'2','')" class="tdText tw64 text-truncate" title="{{assignedArr.teamname}}">{{assignedArr.teamname}}</td> 
+                              <td (click)="clickTicketTD(assignedArr.teamid,'2','l1')" class="tdText tw12 "><span  [ngClass]="{'text_count_escalation': assignedArr.l1!='-'}">{{assignedArr.l1}}</span></td>                           
+                              <td (click)="clickTicketTD(assignedArr.teamid,'2','l2')" class="tdText tw12 " ><span [ngClass]="{'text_count_escalation': assignedArr.l2!='-'}">{{assignedArr.l2}}</span></td>                           
+                              <td (click)="clickTicketTD(assignedArr.teamid,'2','l3')" class="tdText tw12 " ><span [ngClass]="{'text_count_escalation': assignedArr.l3!='-'}">{{assignedArr.l3}}</span></td>                          
+                          </tr>
+                      </ng-template>
+                    </p-table>
+                  </div>
+                </div>
+
+                
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>

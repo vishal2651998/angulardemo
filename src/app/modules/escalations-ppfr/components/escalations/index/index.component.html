@@ -1,0 +1,597 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+
+<div class="prob-index">
+    <div class="part-list-head ann-list-head">
+        <div class="prob-head-col media-col esc-col head-col-1">
+            <span class="head-txt part-head-txt media-head-txt" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                <img src="{{escPath}}/ppfr/ppfr-gray-icon.png">
+                {{title}}
+            </span>
+            <span *ngIf="TVSIBDomain" class="new-prob active new-prob-add" (click)="addNew()">New</span>
+            <span *ngIf="itemTotal>0 && !loading" class="ppfr-count-text">Number of PPFRs: <span class="ppfr-red-text">{{itemTotal}}</span></span>            
+        </div>        
+    </div>
+    
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div>
+
+    <div class="probing-content cbt-content part-content acc-content" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div *ngIf="loading" class="cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        <div *ngIf="!loading" class="probing-content media-content escalation-content" [ngClass]="{'filter-expand': expandFlag, 'collapse': !expandFlag}" [style.height.px]="innerHeight">
+            <div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader"></div>
+            <div *ngIf="!itemEmpty && !TVSIBDomain" class="inner-container">
+                <div class="escalation-items" [style.height.px]="innerHeight">
+                    <div class="ppfr-escalation-items ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                        <div class="ppfr-container">
+                            <div *ngFor="let item of escalationList; let i = index;" (click)="escSelection(i, item.threadId)" class="esc-list hidden-scroll-content {{item.selection}}" >
+                                <span *ngIf="item.isNewRecord" class="bg-image-new-esc-record new-esc-record-tag"></span>
+                                <div class="esc-header">
+                                    <div class="esc-header-row pbottom">
+                                        <div class="esc-header-col ppfr-head-col-1">
+                                            <div class="esc-label">{{threadTxt}} ID#</div>
+                                            <div (click)="openForumPage(item.threadId)" class="esc-val thread-id-text cursor">{{item.threadId}}</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-2">
+                                            <div class="esc-label">PPFR Date</div>
+                                            <div class="esc-val">{{item.ppfrDate}}</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-3">
+                                            <div class="esc-label">PPFR Ref No</div>
+                                            <div class="esc-val" *ngIf="item.ppfrRefNo!=''">{{item.ppfrRefNo}}</div>
+                                            <div class="esc-val" *ngIf="item.ppfrRefNo==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-4">
+                                            <div class="esc-label">Failure Status</div>
+                                            <div class="esc-val" *ngIf="item.failureStatus!=''">{{item.failureStatus}}</div>
+                                            <div class="esc-val" *ngIf="item.failureStatus==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-5">
+                                            <div class="esc-label">Plant</div>                                        
+                                            <div class="esc-val" *ngIf="item.plant!=''">{{item.plant}}</div>
+                                            <div class="esc-val" *ngIf="item.plant==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-6">
+                                            <div class="esc-label">Severity</div>                                        
+                                            <div class="esc-val" *ngIf="item.serverity!=''">{{item.serverity}}</div>
+                                            <div class="esc-val" *ngIf="item.serverity==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-7">
+                                            <div class="esc-label">Category</div>                                        
+                                            <div class="esc-val" *ngIf="item.category!=''">{{item.category}}</div>
+                                            <div class="esc-val" *ngIf="item.category==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-8">
+                                            <div class="esc-label">Occurrence</div>                                        
+                                            <div class="esc-val" *ngIf="item.noOfOccurrence!=''">{{item.noOfOccurrence}}</div>
+                                            <div class="esc-val" *ngIf="item.noOfOccurrence==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-9">
+                                            <div class="esc-label">Model</div>
+                                            <div class="esc-val" *ngIf="item.modelName!=''">{{item.modelName}}</div>
+                                            <div class="esc-val" *ngIf="item.modelName==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr-head-col-10">
+                                            <div class="esc-label">&nbsp;</div>
+                                            <div class="esc-val">&nbsp;</div>
+                                        </div>
+                                    </div>
+                                    <div class="esc-header-row esc-header-row-2">
+                                        <div class="esc-header-col ppfr1-head-col-1">
+                                            <div class="esc-label">Dealer Name</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.dealerName == ''">-</span>
+                                                    <span *ngIf="item.dealerName != ''">{{item.dealerName}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col ppfr1-head-col-2">
+                                            <div class="esc-label">Dealer City</div>
+                                            <div class="esc-val">
+                                                <div >
+                                                    <span *ngIf="item.dealerCity == ''">-</span>
+                                                    <span *ngIf="item.dealerCity != ''">{{item.dealerCity}}</span>                                            
+                                                </div>                                        
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col ppfr1-head-col-3">
+                                            <div class="esc-label">Dealer Area</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.dealerArea == ''" >-</span>
+                                                    <span *ngIf="item.dealerArea != ''">{{item.dealerArea}}</span>                                            
+                                                </div>
+                                            
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col ppfr1-head-col-4">
+                                            <div class="esc-label">Frame Number</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.frameNo == ''">-</span>
+                                                    <span *ngIf="item.frameNo != ''">{{item.frameNo}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+
+                                        <div class="esc-header-col ppfr1-head-col-5">
+                                            <div class="esc-label">Engine Number</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.engineNo == ''" >-</span>
+                                                    <span *ngIf="item.engineNo != ''">{{item.engineNo}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+
+                                        <div class="esc-header-col ppfr1-head-col-6">
+                                            <div class="esc-label">Date of sale</div>
+                                            <div class="esc-val">
+                                                <div>                                                
+                                                    <span>{{item.dateOfSale}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+
+                                        <div class="esc-header-col ppfr1-head-col-7">
+                                            <div class="esc-label">Date of Repair</div>
+                                            <div class="esc-val">
+                                                <div>                                                
+                                                    <span>{{item.dateOfRepair}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+
+                                        <div class="esc-header-col ppfr1-head-col-8">                                    
+                                            <div class="ppfr1-head-col-icons">
+                                                <span class="eq-ppfr2 cursor" title="{{item.viewppfrlink}}" (click)="openLink(item.viewppfrlink)"></span>
+                                                <span class="eq-ppfr3 cursor" title="Edit PPFR" (click)="editPPFR(item.threadId)"></span>
+                                                <span class="eq-toggle cursor" [ngClass]="{'eq-expand': item.eqCollapse, 'eq-collapse': !item.eqCollapse}" (click)="eqToggleAction(i, item.eqCollapse)"></span>                                                                                     
+                                            </div>  
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div [ngClass]="{'hide' : item.eqCollapse}" [@toggleBox]="!item.eqCollapse ? 'open' : 'closed'" class="esc-equip-list user-select">                           
+                                    <div class="esc-header-row esc-header-row-3">
+                                        <div class="esc-header-col ppfr2-head-col-1">
+                                            <div class="esc-label">itemKMs</div>
+                                            <div *ngIf="item.kms!=''" class="esc-val">{{item.kms}}</div>
+                                            <div *ngIf="item.kms==''" class="esc-val">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr2-head-col-2">
+                                            <div class="esc-label">Part Replaced</div>
+                                            <div *ngIf="item.partReplaced!=''" class="esc-val">{{item.partReplaced}} </div>
+                                            <div *ngIf="item.partReplaced==''" class="esc-val">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr2-head-col-3">
+                                            <div class="esc-label">Customer Complaint</div>
+                                            <div *ngIf="item.customerComplaint!=''" class="esc-val" [innerHtml]="item.customerComplaint"></div>
+                                            <div *ngIf="item.customerComplaint==''" class="esc-val">-</div>
+                                        </div>
+                                        <div class="esc-header-col ppfr2-head-col-4">
+                                            <div class="esc-label">Dealer Observation</div>
+                                            <div *ngIf="item.dealerObservation!=''" class="esc-val" [innerHtml]="item.dealerObservation"></div>
+                                            <div *ngIf="item.dealerObservation==''" class="esc-val">-</div>
+                                        </div>
+
+                                        <div class="esc-header-col ppfr2-head-col-5">
+                                            <div class="esc-label">Dealer Action</div>
+                                            <div *ngIf="item.dealerAction!=''" class="esc-val" [innerHtml]="item.dealerAction"></div>
+                                            <div *ngIf="item.dealerAction==''" class="esc-val">-</div>
+                                        </div>                                                               
+                                    </div>
+                                    <div class="esc-header-row esc-header-row-4" *ngIf="item.uploadContents.length>0 || item.links.length>0">
+                                        <div class="esc-header-col ppfr3-head-col-1">
+                                            <!-- Attachment List-->
+                                            <div class="reference-info">
+                                                <app-attachment-view *ngIf="!item.attachmentLoading" [loading]="item.attachmentLoading" [action]="item.action" [dynamicGid]="item.threadId" [access]="pageAccess"  [attachments]="item.attachments"></app-attachment-view>
+                                            </div>
+                                            <!-- Attachment List-->
+                                            <!--div class="esc-label">Attachments</div>
+                                            <div class="ppfr-attachments">
+                                                <span *ngIf="item.uploadContents.length>0">
+                                                    <span *ngFor="let uploadcont of item.uploadContents;">
+                                                        <span class="ppfr-image-attachment" *ngIf="uploadcont.fileExtensionType1 == 'image'">
+                                                            <img [src]="uploadcont.filePath" />   
+                                                            <span class="caption-bg-div" title="{{uploadcont.fileCaption}}" *ngIf="uploadcont.fileCaption!=''"><span class="caption-text">{{uploadcont.fileCaption}}</span></span>                                                              
+                                                        </span>
+                                                        <span class="ppfr-video-attachment" *ngIf="uploadcont.fileExtensionType1 == 'video'">
+                                                            <video class="lg-video-object lg-html5" controls preload="none">
+                                                                <source src="{{uploadcont.filePath}}" type="{{uploadcont.fileType}}">
+                                                                Your browser does not support HTML5 video.
+                                                            </video>  
+                                                            <span class="caption-bg-div" title="{{uploadcont.fileCaption}}" *ngIf="uploadcont.fileCaption!=''"><span class="caption-text">{{uploadcont.fileCaption}}</span></span>                                                              
+                                                        </span>
+                                                        <span class="ppfr-audio-attachment" *ngIf="uploadcont.fileExtensionType1 == 'audio'">
+                                                            <audio class="lg-video-object lg-html5" controls>
+                                                                <source src="{{uploadcont.filePath}}" type="{{uploadcont.fileType}}">
+                                                                Your browser does not support the audio element.
+                                                            </audio>                                                    
+                                                            <span class="caption-bg-div" title="{{uploadcont.fileCaption}}" *ngIf="uploadcont.fileCaption!=''"><span class="caption-text">{{uploadcont.fileCaption}}</span></span>                                                              
+                                                        </span> 
+                                                        <span class="ppfr-other-attachment cursor" (click)="openLink(uploadcont.filePath)" *ngIf="uploadcont.fileExtensionType1 == 'link'">
+                                                            <img src="assets/images/workstreams-page/link-icon.svg" />                                                                                                             
+                                                            <span class="caption-bg-div" title="{{uploadcont.fileCaption}}" *ngIf="uploadcont.fileCaption!=''"><span class="caption-text">{{uploadcont.fileCaption}}</span></span>                                                                                                                      
+                                                        </span>                                                
+                                                        <span class="ppfr-other-attachment cursor" (click)="openLink(uploadcont.filePath)" *ngIf="uploadcont.fileExtensionType1 == 'application' || uploadcont.fileExtensionType1 == 'text'">                                                                                                           
+                                                            <img *ngIf="uploadcont.fileExtensionType2 == 'pdf'" src="assets/images/workstreams-page/pdf-icon.svg" />  
+                                                            <img *ngIf="uploadcont.fileExtensionType2 == 'xlsx' || uploadcont.fileExtensionType2 == 'xls' || uploadcont.fileExtensionType2 == 'octet-stream' || uploadcont.fileExtensionType2 == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'" src="assets/images/workstreams-page/xls-icon.svg" />
+                                                            <img *ngIf="uploadcont.fileExtensionType2 == 'docx' || uploadcont.fileExtensionType2 == 'doc'" src="assets/images/workstreams-page/doc-icon.svg" />
+															<img *ngIf="uploadcont.fileExtensionType2 == 'docx' || uploadcont.fileExtensionType2 == 'exe'" src="assets/images/documents/exe-big-icon.png" />
+                                                            <img *ngIf="uploadcont.fileExtensionType2 == 'pptx' || uploadcont.fileExtensionType2 == 'ppt'" src="assets/images/workstreams-page/ppt-icon.svg" />
+                                                            <img *ngIf="uploadcont.fileExtensionType2 == 'html' || uploadcont.fileExtensionType2 == 'text'" src="assets/images/workstreams-page/html-icon.svg" />                                                                                                                                                                                                            
+                                                            <span class="caption-bg-div" title="{{uploadcont.fileCaption}}" *ngIf="uploadcont.fileCaption!=''"><span class="caption-text">{{uploadcont.fileCaption}}</span></span>                                                              
+                                                        </span>
+                                                    </span> 
+                                                </span>
+                                                <span *ngIf="item.links>0">
+                                                    <span *ngFor="let linkcont of item.links;">                                                    
+                                                        <span class="ppfr-other-attachment cursor" (click)="openLink(linkcont.filePath)">
+                                                            <img src="assets/images/workstreams-page/link-icon.svg" />                                                                                                             
+                                                            <span class="caption-bg-div" title="{{linkcont.fileCaption}}" *ngIf="linkcont.fileCaption!=''"><span class="caption-text">{{linkcont.fileCaption}}</span></span>                                                              
+                                                        </span>
+                                                    </span> 
+                                                </span>                                     
+                                            </div-->
+                                        </div>                                                                                              
+                                    </div>
+                                </div>
+
+                                <div class="esc-users" [ngClass]="{'eq-expand': item.eqCollapse, 'eq-collapse': !item.eqCollapse}">
+                                    <div class="ppfr-user-list user-list user-list-width cursor" *ngFor="let user of item.eqUsers;" [matMenuTriggerFor]="eu">
+                                        <div class="ppfr-profile profile" [ngStyle]="{'background-image': 'url(' + user.assigneeprofileImage + ')'}">
+                                            <span class="avail" [ngClass]="{'user-offline': user.availability == 0, 'user-active': user.availability == 1, 'user-inactive': user.availability == 2}"></span>
+                                        </div>
+                                        <div class="ppfr-info info">
+                                            <div class="info-inner">
+                                                <div class="name" title="{{user.assigneeFirstLastname}}">{{user.assigneeFirstLastname}}</div>
+                                                <div class="title" title="{{user.placeholder}}">{{user.placeholder}}</div>
+                                            </div>                                    
+                                        </div>
+                                        <mat-menu #eu="matMenu">
+                                            <div id="ng-popover" class="popover prob-tooltip">
+                                                <div class="arrow"></div>
+                                                <div class="popover-body" id="ng-popover-cont">
+                                                    <ul class="user-actions">                                                        
+                                                        <li class="cursor profile view cursor" (click)="navProfile(user.assigneeId)">Profile</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!itemEmpty && TVSIBDomain" class="inner-container">
+                <div class="escalation-items" [style.height.px]="innerHeight">
+                    <div class="ppfr-escalation-items ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                        <div class="ppfr-container">
+                            <div *ngFor="let item of escalationList; let i = index;" (click)="escSelection(i, item.id)" class="esc-list hidden-scroll-content {{item.selection}}" >
+                                <span *ngIf="item.isNewRecord" class="bg-image-new-esc-record new-esc-record-tag"></span>
+                                <div class="esc-header">
+                                    <div class="esc-header-row pbottom">
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col1-1">
+                                            <div class="esc-label">{{threadTxt}} ID#</div>
+                                            <div *ngIf="item.threadId == '0'" class="esc-val">-</div>
+                                            <div *ngIf="item.threadId>0" (click)="openForumPageTVSIB(item.id,item.threadId)" class="esc-val thread-id-text cursor">{{item.threadId}}</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col2-1">
+                                            <div class="esc-label">Incident number</div>
+                                            <div *ngIf="item.incidentNumber == ''" class="esc-val">-</div>
+                                            <div *ngIf="item.incidentNumber != ''" class="esc-val">{{item.incidentNumber}}</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col3-1">
+                                            <div class="esc-label">Distributor/Dealer Name</div>
+                                            <div class="esc-val" *ngIf="item.dealerName==''">-</div>    
+                                            <div class="esc-val" *ngIf="item.dealerName!=''">{{item.dealerName}}</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col4-1">
+                                            <div class="esc-label">Severity</div>
+                                            <div class="esc-val" *ngIf="item.serverity!=''">{{item.serverity}}</div>
+                                            <div class="esc-val" *ngIf="item.serverity==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col5-1">
+                                            <div class="esc-label">Date</div>
+                                            <div class="esc-val" *ngIf="item.ppfrDate!=''">{{item.ppfrDate}}</div>
+                                            <div class="esc-val" *ngIf="item.ppfrDate==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col6-1">
+                                            <div class="esc-label">Country</div>                                        
+                                            <div class="esc-val" *ngIf="item.country!=''">{{item.country}}</div>
+                                            <div class="esc-val" *ngIf="item.country==''">-</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col7-1">
+                                            <div class="esc-label">Location</div>                                        
+                                            <div class="esc-val" *ngIf="item.location!=''">{{item.location}}</div>
+                                            <div class="esc-val" *ngIf="item.location==''">-</div>
+                                        </div>                                        
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col8-1">
+                                            <div class="esc-label">Model</div>
+                                            <div class="esc-val" *ngIf="item.modelName!=''">{{item.modelName}}</div>
+                                            <div class="esc-val" *ngIf="item.modelName==''">-</div>
+                                        </div>                                       
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col9-1 align-left">
+                                            <div class="esc-label">Engine#</div>                                        
+                                            <div class="esc-val" *ngIf="item.engineNo!=''">{{item.engineNo}}</div>
+                                            <div class="esc-val" *ngIf="item.engineNo==''">-</div>
+                                        </div>
+                                        <!--div class="esc-header-col esc-header-col-new ppfr1-head-col9-1">
+                                            <div class="esc-label">&nbsp;</div>
+                                            <div class="esc-val">&nbsp;</div>
+                                        </div-->
+                                    </div>
+                                    <div class="esc-header-row esc-header-row-2">
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col1-1">
+                                            <div class="esc-label">Frame#</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.frameNo == ''">-</span>
+                                                    <span *ngIf="item.frameNo != ''">{{item.frameNo}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col2-1">
+                                            <div class="esc-label">KMs</div>
+                                            <div class="esc-val">
+                                                <div >
+                                                    <span *ngIf="item.kms == ''">-</span>
+                                                    <span *ngIf="item.kms != ''">{{item.kms}}</span>                                            
+                                                </div>                                        
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col3-1">
+                                            <div class="esc-label">Sale Date</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.dateOfSale == ''" >-</span>
+                                                    <span *ngIf="item.dateOfSale != ''">{{item.dateOfSale}}</span>                                            
+                                                </div>
+                                            
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col4-1">
+                                            <div class="esc-label">Complaint Date</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.complaintDate == ''">-</span>
+                                                    <span *ngIf="item.complaintDate != ''">{{item.complaintDate}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col5-1">
+                                            <div class="esc-label">Repair Date</div>
+                                            <div class="esc-val">
+                                                <div>
+                                                    <span *ngIf="item.dateOfRepair == ''" >-</span>
+                                                    <span *ngIf="item.dateOfRepair != ''">{{item.dateOfRepair}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>                                       
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col6-1">
+                                            <div class="esc-label">Part#</div>
+                                            <div class="esc-val">
+                                                <div> 
+                                                    <span *ngIf="item.partNumber == ''" >-</span>                                               
+                                                    <span *ngIf="item.partNumber != ''" >{{item.partNumber}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col7-1">
+                                            <div class="esc-label">Description</div>
+                                            <div class="esc-val">
+                                                <div> 
+                                                    <span *ngIf="item.description == ''" >-</span>                                               
+                                                    <span *ngIf="item.description != ''" >{{item.description}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col8-1">
+                                            <div class="esc-label">QTY</div>
+                                            <div class="esc-val">
+                                                <div> 
+                                                    <span *ngIf="item.qty == ''" >-</span>                                               
+                                                    <span *ngIf="item.qty != ''" >{{item.qty}}</span>                                            
+                                                </div>                                       
+                                            </div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr1-head-col9-1">                                    
+                                            <div class="ppfr1-head-col-icons">
+                                                <span class="eq-ppfr2 cursor" title="{{item.viewppfrlink}}" (click)="openLink(item.viewppfrlink)"></span>
+                                                <span class="eq-ppfr3 cursor" title="Edit PPFR" (click)="editPPFRTVSIB(item.id)"></span>
+                                                <span class="eq-toggle cursor" [ngClass]="{'eq-expand': item.eqCollapse, 'eq-collapse': !item.eqCollapse}" (click)="eqToggleAction(i, item.eqCollapse)"></span>                                                                                     
+                                            </div>  
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                
+                                <div [ngClass]="{'hide' : item.eqCollapse}" [@toggleBox]="!item.eqCollapse ? 'open' : 'closed'" class="esc-equip-list user-select">                           
+                                    <div class="esc-header-row esc-header-row-3">                                        
+                                        <div class="esc-header-col esc-header-col-new ppfr2-head-col1-1">
+                                            <div class="esc-label">Customer Complaint</div>
+                                            <div *ngIf="item.customerComplaint!=''" class="esc-val" [innerHtml]="item.customerComplaint"></div>
+                                            <div *ngIf="item.customerComplaint==''" class="esc-val">-</div>
+                                        </div>
+                                        <div class="esc-header-col esc-header-col-new ppfr2-head-col2-1">
+                                            <div class="esc-label">Dealer Observation</div>
+                                            <div *ngIf="item.dealerObservation!=''" class="esc-val" [innerHtml]="item.dealerObservation"></div>
+                                            <div *ngIf="item.dealerObservation==''" class="esc-val">-</div>
+                                        </div>
+
+                                        <div class="esc-header-col esc-header-col-new ppfr2-head-col3-1">
+                                            <div class="esc-label">Dealer Action</div>
+                                            <div *ngIf="item.dealerAction!=''" class="esc-val" [innerHtml]="item.dealerAction"></div>
+                                            <div *ngIf="item.dealerAction==''" class="esc-val">-</div>
+                                        </div>                                                               
+                                    </div>
+                                    <div class="esc-header-row esc-header-row-4" *ngIf="item.uploadContents.length>0 || item.links.length>0">
+                                        <div class="esc-header-col ppfr3-head-col-1">
+                                            <!-- Attachment List-->
+                                            <div class="reference-info">
+                                                <app-attachment-view *ngIf="!item.attachmentLoading" [loading]="item.attachmentLoading" [action]="item.action" [dynamicGid]="item.threadId" [access]="pageAccess"  [attachments]="item.attachments"></app-attachment-view>
+                                            </div>                                           
+                                        </div>                                                                                              
+                                    </div>
+                                
+
+                                <!--div [ngClass]="{'hide' : item.eqCollapse}" [@toggleBox]="!item.eqCollapse ? 'open' : 'closed'"-->
+                                    <div *ngIf="TVSIBDomain">
+                                        <div class="esc-header-row-5" *ngIf="item.serviceHistory.length>0">
+                                            <span class="table-lable-text">Previous Service History:&nbsp;&nbsp;</span><span class="table-count-text">{{item.serviceHistory.length}}</span>
+                                            <p-table appendTo="body" [scrollable]="true" [scrollHeight]="pTableHeight" [totalRecords]="item.serviceHistory.length" id="file-datatable" class="file-datatable thread-list-table" [value]="item.serviceHistory">
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th class="">Service date</th>
+                                                        <th class="">KMs</th>
+                                                        <th class="">Customer reported for any specific complaints</th>
+                                                        <th class="">Observations </th>
+                                                        <th class="">Action Details</th>
+                                                        <th class="">Oil replacement Yes / No</th> 
+                                                        <th class="">Oil Grade& Make</th>                                
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-serviceHistory>
+                                                    <tr class="cursor">
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceDate == ''" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceDate != ''" >{{serviceHistory.serviceDate}}</span>                                                     
+                                                        </td>  
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceKMs == ''" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceKMs != ''" >{{serviceHistory.serviceKMs}}</span>                                                     
+                                                        </td> 
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceAction == ''" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceAction != ''" >{{serviceHistory.serviceAction}}</span>                                                     
+                                                        </td>
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceObservations == ''" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceObservations != ''" >{{serviceHistory.serviceObservations}}</span>                                                     
+                                                        </td> 
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceActionDetails == ''" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceActionDetails != ''" >{{serviceHistory.serviceActionDetails}}</span>                                                     
+                                                        </td>  
+                                                        
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceSelectedOil['name']==undefined" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceSelectedOil['name']!=undefined">{{serviceHistory.serviceSelectedOil['name']}}</span>                                                     
+                                                        </td>
+                                                        <td class="">
+                                                            <span *ngIf="serviceHistory.serviceGradeOil == ''" >-</span>                                               
+                                                            <span *ngIf="serviceHistory.serviceGradeOil != ''" >{{serviceHistory.serviceGradeOil}}</span>                                                     
+                                                        </td> 
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>   
+                                        </div>
+                                        <div class="esc-header-row-5" *ngIf="item.noOfOccurance.length>0">
+                                            <span class="table-lable-text">No. of Occurrence (Same complaint reported other vehicles):&nbsp;&nbsp;</span><span class="table-count-text">{{item.noOfOccurance.length}}</span>
+                                            <p-table appendTo="body" [scrollable]="true" [scrollHeight]="pTableHeight" [totalRecords]="item.noOfOccurance.length" id="file-datatable" class="file-datatable thread-list-table" [value]="item.noOfOccurance">
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th class="">Location</th>
+                                                        <th class="">Frame#</th>
+                                                        <th class="">Engine#</th>
+                                                        <th class="">KMs</th>                                
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-noOfOccurance>
+                                                    <tr class="cursor">
+                                                        <td class="">
+                                                            <span *ngIf="noOfOccurance.occLocation == ''" >-</span>                                               
+                                                            <span *ngIf="noOfOccurance.occLocation != ''" >{{noOfOccurance.occLocation}}</span>                                                     
+                                                        </td> 
+                                                        <td class="">
+                                                            <span *ngIf="noOfOccurance.occFrame == ''" >-</span>                                               
+                                                            <span *ngIf="noOfOccurance.occFrame != ''" >{{noOfOccurance.occFrame}}</span>                                                     
+                                                        </td> 
+                                                        <td class="">
+                                                            <span *ngIf="noOfOccurance.occEngine == ''" >-</span>                                               
+                                                            <span *ngIf="noOfOccurance.occEngine != ''" >{{noOfOccurance.occEngine}}</span>                                                     
+                                                        </td> 
+                                                        <td class="">
+                                                            <span *ngIf="noOfOccurance.occKMs == ''" >-</span>                                               
+                                                            <span *ngIf="noOfOccurance.occKMs != ''" >{{noOfOccurance.occKMs}}</span>                                                     
+                                                        </td>                                                                                                              
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>   
+                                        </div>
+                                    </div>
+                                <!--/div-->
+
+                                <!--div [ngClass]="{'hide' : item.eqCollapse}" [@toggleBox]="!item.eqCollapse ? 'open' : 'closed'" class="esc-equip-list user-select"-->                           
+                                    <div class="esc-header-row esc-header-row-3">                                        
+                                        <div class="esc-header-col esc-header-col-new ppfr2-head-col1-1">
+                                            <div class="esc-label">Other Details</div>
+                                            <div *ngIf="item.otherDetails!=''" class="esc-val" [innerHtml]="item.otherDetails"></div>
+                                            <div *ngIf="item.otherDetails==''" class="esc-val">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+
+                                <div class="esc-users" [ngClass]="{'eq-expand': item.eqCollapse, 'eq-collapse': !item.eqCollapse}">
+                                    <div class="ppfr-user-list user-list user-list-width cursor" *ngFor="let user of item.eqUsers;" [matMenuTriggerFor]="eu">
+                                        <div class="ppfr-profile profile" [ngStyle]="{'background-image': 'url(' + user.assigneeprofileImage + ')'}">
+                                            <span class="avail" [ngClass]="{'user-offline': user.availability == 0, 'user-active': user.availability == 1, 'user-inactive': user.availability == 2}"></span>
+                                        </div>
+                                        <div class="ppfr-info info">
+                                            <div class="info-inner">
+                                                <div class="name" title="{{user.assigneeFirstLastname}}">{{user.assigneeFirstLastname}}</div>
+                                                <div class="title" title="{{user.placeholder}}">{{user.placeholder}}</div>
+                                            </div>                                    
+                                        </div>
+                                        <mat-menu #eu="matMenu">
+                                            <div id="ng-popover" class="popover prob-tooltip">
+                                                <div class="arrow"></div>
+                                                <div class="popover-body" id="ng-popover-cont">
+                                                    <ul class="user-actions">                                                        
+                                                        <li class="cursor profile view cursor" (click)="navProfile(user.assigneeId)">Profile</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="itemEmpty" class="media-list">
+                <div class="empty-container" [style.height.px]="innerHeight">                                
+                    <div class="empty-res-center text-center">
+                        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102" />
+                        <p>No result found.</p>
+                    </div>
+                </div> 
+            </div>           
+        </div>
+    </div>
+    <div *ngIf="!loading" class="cust-right-panel acc-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="right-landing-toggle-menu-bar">
+            <div class="filter-toggle" [ngClass]="{'collapse-arrow': rightPanel, 'expand-arrow': !rightPanel}" (click)="toggleInfo(rightPanel)">  </div>
+            <div class="domain-widget" [ngClass]="{'': rightPanel, 'hide': !rightPanel}">  
+                <div class="empty-container bg-white" [style.height.px]="innerHeight">                                
+                    <div class="empty-res text-center">
+                        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102" />
+                        <p>Nothing to show</p>
+                    </div>
+                </div>                           
+            </div>
+        </div>
+    </div>   
+</div>

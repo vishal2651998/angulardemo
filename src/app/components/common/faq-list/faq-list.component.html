@@ -1,0 +1,96 @@
+<div class="faq-container" [ngClass]="{'empty': itemEmpty}">
+    <div *ngIf="loading" class="col">
+        <div class="center-loading trst justify-content-center align-items-center" align="center">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+        </div>
+    </div>
+    <div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader faq"></div>
+    <!-- FAQ List -->
+    <div *ngIf="!loading">
+        <div class="faq-view" *ngIf="!itemEmpty">
+            <div #top id="faqList" class="section-scroll active" [perfectScrollbar]="fconfig" (scroll)="onScroll($event)">
+                <div class="faq-row">
+                    <p-accordion class="report-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of faqItems; let f = index;"
+                    (onClose)="onTabClose()" (onOpen)="onTabOpen()">
+                        <p-accordionTab id="section-{{f}}" class="section" [transitionOptions]="'100ms'" [selected]="item.isSelected">
+                            <p-header class="sec-info">
+                                <div class="sec-title adas-title">
+                                    <span class="sec-head truncate" title="{{item.faqTitle}}">{{item.faqTitle}}</span>
+                                    <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-adas-{{f}} hide" [matMenuTriggerFor]="secAction" 
+                                            (click)="$event.stopPropagation();">
+                                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #secAction="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul>
+                                                    <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor" (click)="actionEdit(item, item.id)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                    <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor" (click)="actionDelete(item, f)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                </ul>
+                                            </div> 
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                            </p-header>
+                            <div class="content-list" id="info-list-{{f}}" [style.height.px]="item.contHeight">
+                                <div class="customized-timeline info-cont" [perfectScrollbar]="iconfig">
+                                    <div class="info-items desc-cont-{{f}}">
+                                        <div class="info-content no-bottom">
+                                            <div class="cont-info adas-info">
+                                                <div class="adas-cont">
+                                                    <div class="cont-desc" [innerHTML]="item.faqDesc"></div>
+                                                </div>                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+            </div>            
+        </div>
+        <div *ngIf="itemEmpty" class="faq-view empty empty-container">
+            <div class="center-loading empty-banner report justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="emptyBanner" alt="Empty" /><br />
+                    <div class="item-empty-para empty-res report-empty padd-top-20">{{emptyCont}}</div>
+                    <div class="cursor thread-add-new" (click)="addFaq()">              
+                        <span class="action-new"><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span>New FAQ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="false" [resizable]="true" class="report-modal card-spacing">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button pButton pRipple type="button" icon="pi pi-save" iconPos="right" label="Save"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': formValid}" (click)="saveData()"></button>
+        </div>
+    </ng-template>
+    <form *ngIf="faqFormFlag" [formGroup]="faqForm">
+        <div class="field-row">
+            <div class="label bg title">FAQ Title <span class="right-info-col">Required</span></div>
+            <div class="field">
+                <input class="input" placeholder="FAQ Title" formControlName="faqTitle" (blur)="changeItem('faqTitle', $event.target.value)"
+                    maxlength="250" autocomplete="off" [ngClass]="{ 'is-invalid': (faqFormSubmit && f.faqTitle.errors) || faqExist }" />
+                <div *ngIf="faqExist || (faqFormSubmit && f.faqTitle.errors)" class="invalid-feedback">
+                    <div *ngIf="faqExist" id="valid-error" class="field-err">{{existError}}</div>
+                    <div id="valid-error" class="field-err" *ngIf="!faqExist && f.faqTitle.errors.required">FAQ Title is required</div>
+                </div>    
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="label bg desc">FAQ Description <span class="right-info-col">{{faqForm.value.faqDesc.length}}/500</span></div>
+            <div class="field">
+                <ckeditor [editor]="Editor" [config]="configCke" formControlName="faqDesc" [ngClass]="{ 'is-invalid': (faqFormSubmit && f.faqDesc.errors) || faqExist }"></ckeditor>
+                <div *ngIf="faqFormSubmit && f.faqDesc.errors" class="invalid-feedback">
+                    <div id="valid-error" class="field-err" *ngIf="f.faqDesc.errors.required">FAQ Description is required</div>
+                </div> 
+            </div>
+        </div>
+    </form>
+</p-dialog>

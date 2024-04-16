@@ -1,0 +1,177 @@
+<div id="filter" [ngClass]="{'active': expandFlag, 'active-filter': activeFilter}">
+    <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()"></div>
+    <div *ngIf="expandFlag" class="filter-widgets dashb-filter-widgets">
+        <div class="filter-title">Filter
+            <span class="filter-reset" [ngClass]="{'hide': !activeFilter}" (click)="applyFilter(!resetFlag)"></span>
+        </div>
+        <div *ngIf="filterLoading" class="filter-loading" [style.height.px]="filterHeight">
+            <div class="loader"><img src="assets/images/blue-loading.svg" alt="Loader" /></div>
+        </div>
+        <div *ngIf="!filterLoading" class="filter-area">
+            <div class="scrollbar scrollbar-primary thin filter-content" [style.height.px]="filterHeight">
+                <div *ngIf="workstreamWidget" class="filter-field filter-select workstream-select">
+                    <label class="labeltext">Workstream</label>
+                    <app-workstream-list [filteredWorkstreams]="filteredWorkstreams" [workstreams]="workstreams" (selectedWorkstreams)="selectedWorkstreams($event)"></app-workstream-list>
+                </div>
+                <div *ngIf="statusWidget" class="filter-field filter-select status-select">
+                    <label class="labeltext">Usage Time</label>
+                    <mat-form-field class="custom-mat-sel prob-catg-sel">
+                        <mat-select [(ngModel)]="statusValue" placeholder="" (selectionChange)="filterChange('change',statusId, $event.value)" disableOptionCentering>
+                            <mat-option *ngFor="let st of status" [value]="st.id">
+                            {{ st.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="statusValueName != ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>{{statusValueName}}</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                    <div *ngIf="statusValueName == ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>All</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="timeDurationWidget" class="filter-field">
+                    <label class="labeltext">Time Duration</label>
+                    <mat-slider #duration class="duration-slider" (change)="sliderOnChange($event.value)" [displayWith]="durationFormatLabel" tickInterval="{{maxDuration}}" min="{{minDuration}}" max="{{maxDuration}}" value="10" [thumbLabel]="thumbLabel"></mat-slider>
+                </div>
+                <div *ngIf="startDateWidget" class="filter-field date-field">
+                    <label class="labeltext">Start Date</label>
+                    <mat-form-field color="accent" appearance="fill">
+                        <input matInput [matDatepicker]="startDate" [(ngModel)]="startOfMonth" (dateChange)="filterChange('change',startDateId, $event.value)"  [max]="endDateValue">
+                        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+                        <mat-datepicker #startDate color="primary"></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div *ngIf="endDateWidget" class="filter-field date-field">
+                    <label class="labeltext">End Date</label>
+                    <mat-form-field color="accent" appearance="fill">
+                        <input matInput [matDatepicker]="endDate" [(ngModel)]="endDateValue" (dateChange)="filterChange('change',endDateId, $event.value)" [min]="startOfMonth" [max]="today">
+                        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+                        <mat-datepicker #endDate color="primary"></mat-datepicker>
+                    </mat-form-field>
+                    <div *ngIf="dateErrorFlag" class="field-error" style="top: 0px;">Start date should not be greater than end date</div>
+                </div>
+                <div *ngIf="geoGraphWidget" class="filter-field filter-select geo-select">
+                    <label class="labeltext">Geographical</label>
+                    <mat-form-field class="custom-mat-sel prob-catg-sel">
+                        <mat-select [(ngModel)]="zoneValue" placeholder="Search Zone" (selectionChange)="filterChange('change',zoneId, $event.value)" disableOptionCentering>
+                            <mat-option *ngFor="let zone of zones" [value]="zone.val">
+                            {{ zone.option }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="zoneValue != ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>{{zoneValue}}</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                    <!-- Area Dropdown With Search Option-->
+                    <app-areas *ngIf="geoAreaFilter" [filteredAreas]="areaValue" [areas]="areas" (selectedAreas)="selectedAreas($event)"></app-areas>
+
+                    <!--mat-form-field>
+                        <mat-select [(ngModel)]="stateValue" placeholder="Select State" disableOptionCentering [disabled]="stateDisable">
+                            <mat-option *ngFor="let state of states" [value]="state.val">
+                            {{ state.option }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field-->
+
+                    <!-- Territory Dropdown With Search Option -->
+                    <app-territories *ngIf="geoTerFilter" [filteredTerritories]="territoryValue" [territories]="territories" (selectedTerritories)="selectedTerritories($event)"></app-territories>
+
+                    <!-- Town Dropdown With Search Option-->
+                    <!--app-towns *ngIf="geoTownFilter" [filteredTowns]="townValue" [towns]="towns" (selectedTowns)="selectedTowns($event)"></app-towns-->
+                </div>
+                <div *ngIf="userTypeWidget" class="filter-field filter-select utype-select">
+
+                    <label *ngIf="platformId!='1'" class="labeltext">User Types</label>
+                    <label *ngIf="platformId=='1'" class="labeltext">Select Thread Owners</label>
+                    <mat-form-field class="custom-mat-sel prob-catg-sel">
+                        <mat-select [(ngModel)]="userTypeValue" placeholder="Select User Types" (selectionChange)="filterChange('change',userTypeId, $event.value)" disableOptionCentering>
+                            <mat-option *ngFor="let ut of userTypes" [value]="ut.id">
+                            {{ ut.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="userTypeValue != ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>{{userTypeValueName}}</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                    <div *ngIf="userTypeValue == ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>All</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="searchUserWidget" class="filter-field filter-select tuser-select">
+                    <label class="labeltext">Search User</label>
+                    <app-thread-users *ngIf="userFilter" [filteredUsers]="filteredUsers" [users]="users" (selectedUsers)="selectedUsers($event)"></app-thread-users>
+                </div>
+                <div *ngIf="yearWidget" class="filter-field filter-select year-select">
+                    <label class="labeltext">Year</label>
+                    <mat-form-field class="custom-mat-sel prob-catg-sel">
+                        <mat-select [(ngModel)]="filterYearValue" placeholder="Select Year" (selectionChange)="filterChange('change', yearId, $event.value)" disableOptionCentering>
+                            <mat-option *ngFor="let year of filterYears" [value]="year">
+                            {{ year }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="filterYearValue != ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>{{filterYearValue}}</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="monthWidget" class="filter-field filter-select month-select">
+                    <label class="labeltext">Month</label>
+                    <mat-form-field class="custom-mat-sel prob-catg-sel">
+                        <mat-select [(ngModel)]="filterMonthValue" placeholder="Select Month" (selectionChange)="filterChange('change',monthId, $event.value)" disableOptionCentering>
+                            <mat-option *ngFor="let month of months" [value]="month.id" [disabled]="disableMonthSelection(month.id)">
+                            {{ month.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div *ngIf="filterMonthValue != ''" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+                        <div class="tag-text">
+                            <span>{{filterMonthName}}</span>
+                            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="searchDealerWidget" class="filter-field filter-select dealer-select">
+                    <label class="labeltext">Search User</label>
+                    <app-dealers *ngIf="dealerFilter" [filteredDealers]="filteredDealers" [dealers]="dealers" (selectedDealers)="selectedDealers($event)"></app-dealers>
+                </div>
+                <div *ngIf="searchModelWidget" class="filter-field filter-select model-select">
+                    <label class="labeltext">Search Models</label>
+                    <app-models [splitIcon]="splitIcon" [filteredModels]="filteredModels" [models]="models" (selectedModels)="selectedModels($event)"></app-models>
+                </div>
+                <div *ngIf="sortByWidget" class="filter-field filter-select status-select">
+                    <label class="labeltext">Sort By</label>
+                    <mat-form-field class="custom-mat-sel prob-catg-sel">
+                        <mat-select [(ngModel)]="sortByValue" placeholder="" (selectionChange)="filterChange('change',sortById, $event.value)">
+                            <mat-option *ngFor="let st of sortBy" [value]="st.id">
+                            {{ st.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <!--div *ngIf="!filterLoading" class="filter-action text-center">
+                <button *ngIf="disableFilterAction" mat-button disabled>Apply</button>
+                <button *ngIf="!disableFilterAction" mat-raised-button (click)="applyFilter(resetFlag)">Apply</button>
+                <button mat-raised-button mat-warn color="warn" (click)="applyFilter(!resetFlag)">Reset</button>
+            </div-->
+        </div>
+    </div>
+</div>

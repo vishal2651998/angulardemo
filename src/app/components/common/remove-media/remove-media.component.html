@@ -1,0 +1,35 @@
+<div class="modal-body" [ngClass]="{'text-center': !removeFlag}">   
+    <div *ngIf="removeFlag" class="del-row delete-row">
+        <span class="checkbox-col">
+            <span class="chk-img" (click)="checkboxChange('remove')">
+                <img *ngIf="removeCheckFlag" src="assets/images/announcement/radiobox-selected.png" />
+                <img *ngIf="!removeCheckFlag" src="assets/images/announcement/radiobox-normal.png" />
+            </span>
+        </span>                               
+        <span class="text-col">Permanently delete the file</span>
+    </div>
+    <div class="del-row" [ngClass]="{'remove-row': !removeFlag, 'delete-row': removeFlag}">
+        <span class="checkbox-col">
+            <span class="chk-img" (click)="checkboxChange('delete')">
+                <img *ngIf="deleteCheckFlag" src="assets/images/announcement/radiobox-selected.png" />
+                <img *ngIf="!deleteCheckFlag" src="assets/images/announcement/radiobox-normal.png" />
+            </span>
+        </span>                               
+        <span *ngIf="removeFlag" class="text-col">Remove the file (not delete it)</span>
+        <span *ngIf="!removeFlag" class="text-col">Remove the file from {{mediaInfo.contentType}}</span>
+    </div>
+    <div *ngIf="!removeFlag" class="del-row info">
+        <div class="info-text">
+            Since this file is used in other areas, it will not be deleted.
+        </div>
+    </div>
+      
+</div>
+<div class="modal-footer">
+    <div class="confirm-actions">
+        <button type="button" class="btn action-btn cancel" (click)="action('cancel')">Cancel<span class="cancel-btn"></span></button>                
+        <button class="btn action-btn submit" (click)="action('submit')">OK
+            <span class="submit-btn"></span>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="modal-policy modal-container custom-modal manage-modal" id="wrapper">
+    <div class="modal-header modal-follow-header" style="background-color: #313d55;"> 
+        <h6 class="modal-title">{{title}}</h6>  
+        <!--div class="actions">           
+            <span (click)="close()" class="cursor close follow-close">
+                <img *ngIf="!loading" src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div-->      
+    </div>
+    <div class="modal-body" [style.height.px]="height">
+        <div class="ps" [perfectScrollbar]="sconfig">
+            <div *ngIf="loading" class="loading-image"><img src="assets/images/loading.svg" alt="Loader" width="60"/></div>                
+            <div *ngIf="!loading">
+                <div class="privacy-content" [innerHTML]="content"></div>                         
+            </div>
+        </div>         
+    </div>
+    <div class="modal-footer">        
+        <div class="confirm-actions">
+            <div class="footer-content">
+                
+                <!--div *ngIf="!checkboxFlag" class="checkbox-error-div" >Please check to accept Privacy Policy</div-->
+                <div class="checkbox-div" (click)="checkboxChange(checkboxFlag)">
+                    <img *ngIf="checkboxFlag" src="assets/images/announcement/acc-checkbox-selected.png" />
+                    <img *ngIf="!checkboxFlag" src="assets/images/announcement/acc-checkbox-normal.png" />
+                    <span>&nbsp;&nbsp;Check to accept Privacy Policy</span>
+                </div>
+
+            </div>
+            <button class="btn action-btn cancel" (click)="buttonClick('cancel')">Cancel<span class="cancel-btn"></span></button>
+            <button *ngIf="checkboxFlag" class="btn action-btn submit" (click)="buttonClick('ok')">Ok<span class="submit-btn"></span></button>
+            <button *ngIf="!checkboxFlag" class="btn action-btn submit disabled cursor-default">Ok<span class="submit-btn"></span></button>
+        </div>
+    </div>
+</div>

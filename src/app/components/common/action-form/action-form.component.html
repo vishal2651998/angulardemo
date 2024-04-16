@@ -1,0 +1,112 @@
+<div class="custom-modal modal-container" id="wrapper">
+    <div class="modal-header">
+        <h6 *ngIf="access != 'Delete Folder' && !mediaFlag" class="modal-title text-center">{{title}}</h6>
+        <h6 *ngIf="mediaFlag" class="modal-title media-title text-center" title="{{title}}">{{title}}</h6>
+        <h6 *ngIf="access == 'Delete Folder'" class="modal-title text-center" style="width:100%;">{{title}}</h6>
+    </div>
+    <div *ngIf="initLoading && !actionFormFlag && !dtcFlag" class="action-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    
+    <form *ngIf="actionFormFlag" [formGroup]="actionForm">
+        <div class="modal-body">
+            <div class="dtc-form-row">
+                <div class="dtc-form-control">
+                    <input autocomplete="off" matInput placeholder="{{placehoder}}" [(ngModel)]="actionName" formControlName="name" maxlength="50" [ngClass]="{ 'is-invalid': actionSubmitted && c.name.errors || nameExistFlag }" (input)="onNameChange($event.target.value)">
+                    <div *ngIf="actionSubmitted && c.name.errors" class="invalid-feedback">
+                        <div *ngIf="c.name.errors.required">{{errTxt}}</div>
+                    </div>
+                    
+                    <div *ngIf="nameExistFlag" class="invalid-feedback">{{errTxt}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="confirm-actions" *ngIf="!initLoading && actionFormFlag">
+                <button class="btn action-btn cancel" (click)="cancelAction()">Cancel<span class="cancel-btn"></span></button>
+                <button class="btn action-btn submit" (click)="actionSubmit()">Submit<span class="submit-btn"></span></button>
+            </div>
+            <div class="confirm-actions disabled" *ngIf="initLoading && actionFormFlag">
+                <button class="btn action-btn cancel">Cancel<span class="cancel-btn"></span></button>
+                <button class="btn action-btn submit">Submit<span class="submit-btn"></span></button>
+            </div>            
+        </div>
+    </form>
+    <form *ngIf="dtcFlag" [formGroup]="dtcForm">
+        <div class="modal-body">
+            <div class="dtc-form-row">
+                <div class="dtc-form-control dtc-code-form-control">
+                    <input matInput placeholder="Enter DTC Code *" [(ngModel)]="actionName" formControlName="code" maxlength="10" [ngClass]="{ 'is-invalid': dtcSubmitted && d.code.errors || dtcExistFlag }">
+                    <div *ngIf="dtcSubmitted && d.code.errors" class="invalid-feedback">
+                        <div *ngIf="d.code.errors.required">{{dtcErrTxt}}</div>
+                    </div>
+                </div>
+                <div class="dtc-form-control dtc-code-form-control">
+                    <input matInput placeholder="Enter DTC Description" [(ngModel)]="actionDescVal" formControlName="desc" maxlength="50" [ngClass]="{ 'is-invalid': dtcSubmitted && d.desc.errors || dtcExistFlag }">
+                    <div *ngIf="dtcSubmitted && d.desc.errors" class="invalid-feedback">
+                        <div *ngIf="d.desc.errors.required">DTC Description is required</div>
+                    </div>
+                    <div *ngIf="dtcExistFlag" class="invalid-feedback">{{dtcErrTxt}}</div>
+                </div>                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="confirm-actions">
+                <!--button class="btn action-btn cancel" (click)="cancelAction()">Cancel<span class="cancel-btn"></span></button-->
+                <button class="btn action-btn submit" (click)="dtcSubmit()">Submit<span class="submit-btn"></span></button>
+            </div>
+        </div>
+    </form>
+
+    <div *ngIf="!initLoading && !actionFormFlag && !dtcFlag && !createFolder && !mediaFlag && !createCategory && !uploadFlag" class="change-password">
+        <app-change-password [apiData]="apiData" (emitResponse)="emitResponse($event)"></app-change-password>
+    </div>
+    
+    <div *ngIf="createFolder" class="create-folder">
+        <app-create-folder [apiData]="apiData" [actionInfo]="actionInfo" (emitResponse)="emitResponse($event)"></app-create-folder>
+    </div>
+
+    <div *ngIf="createCategory" class="create-folder">
+        <app-create-category [apiData]="apiData" [actionInfo]="actionInfo" (emitResponse)="emitResponse($event)"></app-create-category>
+    </div>
+    
+    <div *ngIf="mediaFlag" class="create-folder media-remove">
+        <app-remove-media [mediaInfo]="actionInfo" (emitResponse)="emitMediaResponse($event)"></app-remove-media>
+    </div>
+    
+    <div *ngIf="uploadFlag">
+        <div class="modal-body upload-conf">
+            <div class="file-name">{{actionInfo.fileName}}</div>
+            <div class="del-row delete-row">
+                <span class="checkbox-col text-center">
+                    <span class="chk-img cursor" (click)="checkboxChange('update')">
+                        <img *ngIf="updateCheckFlag" src="assets/images/announcement/{{access == 'Upload Customer' ? 'radiobox-selected-green' : 'radiobox-selected'}}.png" />
+                        <img *ngIf="!updateCheckFlag" src="assets/images/announcement/radiobox-normal.png" />
+                    </span>
+                </span>                               
+                <span class="text-col">
+                    <div class="text-head">Update</div>
+                    <div class="text-cont">The newly added data will be updated along with the existing data</div>
+                </span>
+            </div>
+            <div class="del-row delete-row" *ngIf="access != 'Upload Shops'">
+                <span class="checkbox-col text-center">
+                    <span class="chk-img cursor" (click)="checkboxChange('replace')">
+                        <img *ngIf="deleteCheckFlag" src="assets/images/announcement/{{access == 'Upload Customer' ? 'radiobox-selected-green' : 'radiobox-selected'}}.png" />
+                        <img *ngIf="!deleteCheckFlag" src="assets/images/announcement/radiobox-normal.png" />
+                    </span>
+                </span>                               
+                <span class="text-col">
+                    <div class="text-head">Replace</div>
+                    <div class="text-cont">Data should be cleared and replaced with newly uploaded data</div>
+                </span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="confirm-actions">
+                <button type="button" class="btn action-btn cancel" (click)="btnAction('cancel')">Cancel<span class="cancel-btn"></span></button>                
+                <button class="btn action-btn submit {{access == 'Upload Customer' ? 'green-button-color' : '' }}" (click)="btnAction('submit')">OK
+                    <span class="submit-btn"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

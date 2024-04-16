@@ -1,0 +1,49 @@
+<div align="center" class="container-fluid   thread-page-container">
+    <div class="top-container"></div>    
+    <div [style.height.px]="midHeight" >
+        <div class="loading-small-screen-scroll trst" align="center" *ngIf="loadingKnowledgeArticle && !centerloading || (accessFrom == 'search' && searchLoading)">
+            <!--img src="assets/images/loading.svg" alt="Loader" /--></div>
+        <div align="center" id="thread-data-container" [ngClass]="{'opacity': opacityFlag}" class="row row-data thread-scroll-container "  [perfectScrollbar]="sconfig" 
+            (scroll)="onScroll($event)">
+            <div class="ka-category-container">       
+        
+                <!--<div class="loading-small-screen-scroll" style="width:110px" align="center" *ngIf="centerloading" ><img src="assets/images/landing-page/loadingKnowledgeArticle.svg" alt="Loader" /></div>-->
+        
+        
+                <div>
+
+                <ngx-masonry [options]="{ gutter: 10,isFitWidth: true }" class="masonry-item-container"
+                    [updateLayout]="updateMasonryLayout" [ordered]="true">
+                    <div ngxMasonryItem class="masonry-item"
+                        data-masonry='{ "columnWidth": 200, "itemSelector": ".grid-item" }'
+                        *ngFor="let threadList of knowledgeArticleListArray; let trd = index">
+                                  
+                            <div class="ka-card" (click)="loadKAList(threadList.fileCount,threadList.catId,threadList.categoryName)" [ngClass]="{ 'set-opacity' : threadList.fileCount == 0 }">
+                                <div *ngIf="threadList.logo == ''" class="ka-card-top empty" [ngStyle]="{'background-image': 'url(' + defaultCatLogo + ')'}" ></div>
+                                <div *ngIf="threadList.logo != ''" class="ka-card-top" [ngStyle]="{'background-image': 'url(' + threadList.logo + ')'}" ></div>
+                                <div class="ka-card-bottom">
+                                    <span class="ka-card-lt">
+                                        <p class="text-first" [title]="threadList.categoryName">{{threadList.categoryName}}</p>
+                                        <p class="text-second">{{threadList.fileCountText}}</p>
+                                    </span>                                                           
+                                </div>
+                            </div>
+                            <span *ngIf="threadList.isSystemFolder == 0" class="ka-card-rt cursor-pointer" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"><span class="more-image" [ngClass]="{ 'empty-more' : threadList.fileCount == 0 }"></span></span>
+                            <mat-toolbar color="primary">
+                                <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu CatMenu">
+                                    <div class="part-menu" >
+                                        <ul class="more-actions more-actions-ca">
+                                            <li class="cursor-pointer" (click)="editCatPopup(threadList.categoryName,threadList.catId)"><img class="img-edit" src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            <li class="cursor-pointer" (click)="deleteCatPopup(threadList.categoryName,threadList.catId,threadList.fileCount)"><img class="img-del" src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>                                    
+                                            <li class="cursor-pointer" (click)="updateLogo(threadList)"><img class="img-gra" src="assets/images/media/image-thumb.png" alt="Upload">&nbsp;&nbsp;Update Graphic</li>                                    
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar> 
+                        
+                    </div>
+                </ngx-masonry>                            
+            </div>
+        </div>
+    </div>
+</div>

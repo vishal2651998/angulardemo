@@ -1,0 +1,83 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+    <div [style.height.px]="innerHeight">
+        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+            <div class="section-container">
+                <div class="title-row">
+                    <div class="lt">
+                        <img src="assets/images/user-settings/welcome-message-img.png">
+                        <span class="title-text">Welcome Message</span>
+                    </div>                   
+                </div>
+                
+                <div class="domain-login-page-bg-container">
+
+                    <div *ngFor="let item of systemSettingsData; let s = index;">
+                        
+                        <div class="items display-block">
+                            <div class="type-col-2" *ngFor="let type of item.settings; let s1 = index;">
+                                <div class="type-col-2-lt">
+                                    <p class="p-title">{{type.placeHolder}}</p>
+                                </div>
+                                <div class="type-col-2-rt">
+                                    <!-- toggle -->
+                                    <div class="cursor toggle-box togglebox">
+                                        <span class="toggle-col field-label"></span>
+                                        <span class="toggle-col toggle-option">
+                                            <p-inputSwitch [(ngModel)]="type.toggleBox" (onChange)="onToggleBoxChange(item.settingsId,type.itemId,$event.checked)">
+                                            </p-inputSwitch>
+                                        </span>
+                                    </div>
+                                    <!-- toggle -->
+                                </div>                                    
+                            </div>                        
+                        </div>
+                        
+                    <div class="banner-fit">
+                        Banner image fit:<p-checkbox id="bannerfit_checkbox2"
+                            [(ngModel)]="landingBannerFit"
+                            (onChange)="UpdateCheckBox()"
+                            disabled = true
+                            [binary]="true" inputId="binary" label="Fill"></p-checkbox>
+                    </div>                   
+                    <div class="image-container">
+                        <div class="image-container-lt">                        
+                            <span  *ngIf="loginImageUrl == '' " >
+                                <div class="banner">
+                                    <div class="action-btn new-upload"></div>
+                                    <div class="upload-actions-new">                                        
+                                        <span class="upload-text-new">Video/Image preview</span>
+                                    </div>
+                                </div>
+                            </span>
+                            <span  *ngIf="loginImageUrl != '' && loginFileType == 'image'" >
+                                <div class="banner" [ngClass]="{ 'contain' : !landingBannerFit, 'cover': landingBannerFit}" [ngStyle]="{'background-image': 'url(' + loginImageUrl + ')'}"></div>
+                            </span>
+                            <span  *ngIf="loginImageUrl != '' && loginFileType == 'video'" >  
+                                <video [src]="loginImageUrl" width="550" height="310" controls style="border-radius: 9px;">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </span>                             
+                        </div>                        
+                        <div class="image-container-rt">
+                            <span>Uploaded Image Size: 1280 x 720px &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>      
+                            <span>Supported file types: .mp4, .jpg, .png</span>  
+                            <div class="attachment-row  black-theme-row newupload-white attachment-welcome-message-right">
+                                <app-file-attachment *ngIf="editPostUpload" class="attachment-file" [action]="manageAction" [apiData]="postEditApiData" [attachmentItems]="attachmentItems"  (uploadedItems)="editAttachments($event)"></app-file-attachment>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    
+
+

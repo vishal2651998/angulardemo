@@ -1,0 +1,118 @@
+<mat-accordion [multi]="true" #accordion="matAccordion">
+    <mat-expansion-panel class="{{panel.class}}"
+    [disabled]="panel.isDisabled"
+    [expanded]="panel.isExpanded"
+    [hideToggle]="false"
+    (opened)="beforeParentPanelOpened(panel, applicationList)"
+    (closed)="beforeParentPanelClosed(panel, applicationList)"
+    (afterCollapse)="afterPanelClosed()"
+    (afterExpand)="afterPanelOpened()"
+    *ngFor="let panel of accordionList"
+    #mapanel="matExpansionPanel">
+        <mat-expansion-panel-header *ngIf="panel.id == 'app-info'">
+            <mat-panel-title>
+            <b>{{panel.title}}</b>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div *ngIf="panel.id == 'app-info'" class="app-accord">
+           <!-- <div *ngIf="isTvs" class="mt-1"> 
+                <div class="app-list">
+                    <span *ngIf="partsList.productCodeList.length" class="product-items heading_title">
+                        <label class="heading_title">{{partsList.productCodeList[0].title}}</label>
+                        <ul class="prod_code">
+                            <li *ngFor="let m of partsList.productCodeList[0].values">{{m}}</li>
+                        </ul>                                            
+                    </span>
+                 
+                </div>
+            </div> -->
+            <div *ngIf="appFlag">
+                <mat-accordion [multi]="true" #accordion="matAccordion">
+                    <mat-expansion-panel class="{{app.class}}"
+                    [ngClass]="{'disabled': app.isDisabled}"
+                    [disabled]="app.isDisabled"
+                    [expanded]="app.isExpanded"
+                    [hideToggle]="false"
+                    (opened)="beforePanelOpened(app)"
+                    (closed)="beforePanelClosed(app)"
+                    (afterCollapse)="afterPanelClosed()"
+                    (afterExpand)="afterPanelOpened()"            
+                    *ngFor="let app of applicationList"
+                    #mapanel="matExpansionPanel">
+                        <mat-expansion-panel-header class="mat-expansion-panel-header {{app.title | lowercase}}">
+                            <mat-panel-title>
+                                <div class="app-info">
+                                    <span class="title" [innerHTML]="app.title"></span>
+                                </div>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <div class="app-list" *ngIf="access == 'adas'">
+                            <span *ngIf="app.appData.model?.length > 0" class="model-items">
+                                Model
+                                <ul *ngIf="app.appData.model?.length == 1 && app.appData.model[0].name == 'General'">
+                                    <li>{{app.appData.model[0].name}}</li>
+                                </ul>
+                                <ul *ngIf="app.appData.model?.length >= 1  && app.appData.model[0].name != 'General'">
+                                    <li *ngFor="let m of app.appData.model">{{m.name}} > {{m.makeName}}</li>
+                                </ul>
+                            </span>
+                            <span *ngIf="app.appData.year?.length > 0 && app.title != 'All'" class="year-items">
+                                Year
+                                <ul>
+                                    <li *ngFor="let y of app.appData.year">{{y.name}}</li>
+                                </ul>
+                            </span>
+                        </div>
+                        <div class="app-list" *ngIf="access != 'adas'">
+                            <span *ngIf="app.appData.model?.length > 0" class="model-items">
+                                Model
+                                <ul>
+                                    <li *ngFor="let m of app.appData.model">{{m}}</li>
+                                </ul>                                            
+                            </span>
+                            <span *ngIf="app.appData.year?.length > 0 && app.title != 'All'" class="year-items">
+                                Year
+                                <ul>
+                                    <li *ngFor="let y of app.appData.year">{{y}}</li>
+                                </ul>
+                            </span>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+            <div *ngIf="!appFlag && access == 'part'" class="empty-info" [innerHtml]="defAppType"></div>
+            <div *ngIf="isTvs"> 
+                <div class="app-list">
+                    <span *ngIf="partsList.traditionalInfo.length" class="traditional-items heading_title">
+                        <label class="heading_title">{{partsList.traditionalInfo[0].title}}</label>
+                        <ul>
+                            <p-table [scrollable]="true" [totalRecords]="partsList.traditionalInfo.length"   [value]="partsList.traditionalInfo[0].values" >
+                                <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Additional Mode Info </th>
+                                        <th>Part Quantity </th>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-items>
+                                    <tr class="cursor ">
+                                        <td>{{items.name}}</td>
+                                        <td>{{items.partQuantity}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </ul>                                            
+                    </span>
+                    <span *ngIf="!partsList.traditionalInfo.length" class="part-quantity heading_title">
+                        <label class="heading_title">Part Quantity</label>
+                        <span class="initial">1</span>
+                    </span>
+                    <span *ngIf="partsList.colorNames.length" class="color-icon heading_title">
+                        <label class="heading_title">{{partsList.colorNames[0].title}}</label>
+                        <span class="initial colour" *ngFor="let m of partsList.colorNames[0].values">{{m.name}}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </mat-expansion-panel>
+</mat-accordion>

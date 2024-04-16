@@ -1,0 +1,299 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+
+<div class="prob-index media-index escalation-index">
+    <div class="part-list-head media-list-head esc-list-head">
+        <div class="prob-head-col media-col esc-col head-col-1">
+            <span class="head-txt part-head-txt media-head-txt">
+                <img src="{{escPath}}/esc-gray-icon.png">
+                {{title}}
+            </span>
+            <span class="tab tab-1 esc esc-l{{tab.id}} cursor" *ngFor="let tab of escalationTabList" [ngClass]="{'active': section == tab.id}" (click)="sectionChange(tab.id)">{{tab.name}}<span class="count">({{tab.count}})</span></span>
+            <span title="Show recent" class="cursor esc-history" *ngIf="historyFlag && showhistoryButton" (click)="taptoRenderdata('0')">
+                <img style="vertical-align: text-top;padding-top: 2px;" src="assets/images/escalations/recent-history-selected.png">
+                <span class="history-text recent">Show recent</span>
+            </span>
+            <span title="Show history" class="cursor esc-recentdata" *ngIf="!historyFlag && showhistoryButton" (click)="taptoRenderdata('1')">
+                <img style="vertical-align: text-top;padding-top: 2px;" src="assets/images/escalations/recent-history.png">
+                <span class="history-text">Show history</span>
+            </span>
+            <span *ngIf="showhistoryButton && showdashboardOption" title="Dashboard" style="padding-right: 10px;" class="cursor esc-recentdata"  (click)="taptoDashboard()">
+               <img style="vertical-align: text-top;padding-top: 2px;" src="assets/images/escalations/dashboard-menu.png">
+                <span class="history-text">Dashboard</span>
+            </span>
+        </div>
+        <div class="prob-head-col media-col esc-col head-col-2 text-right">
+            <div [ngClass]="{'hidden': loading}" class="upload-date">
+                <span class="label" [ngClass]="{'history-text': historyFlag, '': !historyFlag}">CEO Juice Report Updated <span [ngClass]="{'history-text': historyFlag, 'innter-text': !historyFlag}" >{{lastUploadedDate}}</span></span>
+                <span class="export" (click)="export(downloadUrl)" title="{{recentRecTxt}}"><span class="export-btn"></span>{{recentRecTxt | uppercase }}</span>
+            </div>            
+        </div>
+    </div>
+    
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div>
+
+    <div class="media-scroll esc-scroll" [ngClass]="{'filter-expand': expandFlag, 'collapse': !expandFlag}">
+        <div *ngIf="loading" class="cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        <div *ngIf="!loading" class="probing-content media-content escalation-content" [ngClass]="{'filter-expand': expandFlag, 'collapse': !expandFlag}" [style.height.px]="innerHeight">
+            <div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader"></div>
+            <div *ngIf="!itemEmpty" class="inner-container row col-lg-12" [style.height.px]="innerHeight">
+                <div class="escalation-items ps col-lg-8" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                    <div class="cursor esc-list hidden-scroll-content {{item.selection}}" *ngFor="let item of escalationList; let i = index;" (click)="escSelection(i, item.id)">
+                        <span *ngIf="item.isNewRecord" class="bg-image-new-esc-record new-esc-record-tag"></span>
+                        <div class="esc-header">
+                            <div class="esc-header-row">
+                                <div class="esc-header-col head-col-1">
+                                    <div class="esc-label">Date Hits Report</div>
+                                    <div class="esc-val">{{item.dateHitsReport}}</div>
+                                </div>
+                                <div class="esc-header-col head-col-2">
+                                    <div class="esc-label">Territory</div>
+                                    <div class="esc-val">{{item.territoryId}}</div>
+                                </div>
+                                <div class="esc-header-col head-col-3">
+                                    <div class="esc-label">Location</div>
+                                    <div class="esc-val">{{item.territoryName}}</div>
+                                </div>
+                                <div class="esc-header-col head-col-4">
+                                    <div class="esc-label">Customer ID</div>
+                                    <div class="esc-val">{{item.customerId}}</div>
+                                </div>
+                                <div class="esc-header-col head-col-5">
+                                    <div class="esc-label">Customer Name</div>
+                                    <div class="esc-val truncate" title="{{item.customerName}}">{{item.customerName}}</div>
+                                </div>
+                                <div class="esc-header-col head-col-6">
+                                    <div class="esc-label">Serial Number</div>
+                                    <div class="esc-val truncate" title="{{item.equipmentSrNo}}">{{item.equipmentSrNo}}</div>
+                                </div>
+                            </div>
+                            <div class="esc-header-row esc-header-row-2">
+                                <div class="esc-header-col head-col-1">
+                                    <div class="esc-label">Contact/Phone</div>
+                                    <div class="esc-val">
+                                        <div *ngIf="!item.phoneActionFlag">
+                                            <span *ngIf="item.contactPhoneNo == ''" [innerHtml]="emptyCont"></span>
+                                            <span *ngIf="item.contactPhoneNo != ''">{{item.contactPhoneNo}}</span>
+                                            <span class="edit" (click)="escEdit('contact', i, item.contactPhoneNo)"><img src="{{escPath}}/action-edit.png" /></span>
+                                        </div>
+                                        <div class="action-row" *ngIf="item.phoneActionFlag">
+                                            <input #phone class="phone" type="text" maxlength="12" [disabled]="actionLoading" [(ngModel)]="escPhone" (focus)="focusIn()" (focusout)="focusOut(i, 'contact')" (keyup)="onTextChange('contact', $event)" />
+                                            <span class="submit">
+                                                <img *ngIf="!item.phoneActionLoading" src="{{escPath}}/action-submit.png" (click)="saveEscalation(i, 'contact')" />
+                                                <img *ngIf="item.phoneActionLoading" class="action-loader" src="{{assetPath}}/filter/filter-loading.svg" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="esc-header-col head-col-2">
+                                    <div class="esc-label">MFG Ticket#</div>
+                                    <div class="esc-val">
+                                        <div *ngIf="!item.ticketActionFlag">
+                                            <span *ngIf="item.mfgTicketNo == ''" [innerHtml]="emptyCont"></span>
+                                            <span *ngIf="item.mfgTicketNo != ''">{{item.mfgTicketNo}}</span>
+                                            <span class="edit" (click)="escEdit('ticket', i, item.mfgTicketNo)"><img src="{{escPath}}/action-edit.png" /></span>
+                                        </div>
+                                        <div class="action-row" *ngIf="item.ticketActionFlag">
+                                            <input #ticket class="ticket" type="text" maxlength="10" [disabled]="actionLoading" [(ngModel)]="escTicket" (focus)="focusIn()" (focusout)="focusOut(i, 'ticket')" (keyup)="onTextChange('ticket', $event)" />
+                                            <span class="submit">
+                                                <img *ngIf="!item.ticketActionLoading" src="{{escPath}}/action-submit.png" (click)="saveEscalation(i, 'ticket')" />
+                                                <img *ngIf="item.ticketActionLoading" class="action-loader" src="{{assetPath}}/filter/filter-loading.svg" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="esc-header-col head-col-3">
+                                    <div class="esc-label">Date Customer Contacted</div>
+                                    <div class="esc-val">
+                                        <div *ngIf="!item.dateActionFlag">
+                                            <span *ngIf="item.dateCustomerContacted == ''" [innerHtml]="emptyCont"></span>
+                                            <span *ngIf="item.dateCustomerContacted != ''">{{item.dateCustomerContacted}}</span>
+                                            <span class="edit" (click)="escEdit('date', i, item.dateCustomerContact)"><img src="{{escPath}}/action-edit.png" />
+                                            </span>
+                                        </div>
+                                        <div class="action-row" *ngIf="item.dateActionFlag">
+                                            <p-calendar
+                                                [(ngModel)]="item.dateCustomerContact" [showIcon]="true" [touchUI]="true"
+                                                dateFormat="yy-mm-dd"
+                                                [readonlyInput]="true" inputId="touchui"
+                                                (onSelect)="onTextChange('date', $event)"
+                                                (onShow)="focusIn()">
+                                            </p-calendar>
+                                            <span class="submit">
+                                                <img *ngIf="!item.dateActionLoading" src="{{escPath}}/action-submit.png" (click)="saveEscalation(i, 'date')" />
+                                                <img *ngIf="item.dateActionLoading" class="action-loader" src="{{assetPath}}/filter/filter-loading.svg" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="esc-header-col head-col-4">
+                                    <div class="esc-label">Thread ID#</div>
+                                    <div class="esc-val">
+                                        <div *ngIf="!item.threadActionFlag">
+                                            <span *ngIf="item.threadId == ''" [innerHtml]="emptyCont"></span>
+                                            <span *ngIf="item.threadId != ''">{{item.threadId}}</span>
+                                            <span class="edit" (click)="escEdit('thread', i, item.threadId)"><img src="{{escPath}}/action-edit.png" /></span>
+                                        </div>
+                                        <div class="action-row" *ngIf="item.threadActionFlag">
+                                            <input #thread class="thread" type="text" maxlength="10" [disabled]="actionLoading" [(ngModel)]="escThreadId" (keypress)="restrictNumeric($event)" (focus)="focusIn()" (focusout)="focusOut(i, 'thread')" (keyup)="onTextChange('thread', $event)" />
+                                            <span class="submit">
+                                                <img *ngIf="!item.threadActionLoading" src="{{escPath}}/action-submit.png" (click)="saveEscalation(i, 'thread')" />
+                                                <img *ngIf="item.threadActionLoading" class="action-loader" src="{{assetPath}}/filter/filter-loading.svg" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="esc-header-col head-col-5 user-select text-right">
+                                    <div class="status"><span class="{{item.escalationStatus | lowercase}}" [ngStyle]="{'background-color': item.escalationStatusColor}">{{item.escalationStatus}}</span></div>
+                                    <div class="eq-toggle cursor" [ngClass]="{'eq-expand': item.eqCollapse, 'eq-collapse': !item.eqCollapse}" (click)="eqToggleAction(i, item.eqCollapse)"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div [ngClass]="{'hide' : item.eqCollapse}" [@toggleBox]="!item.eqCollapse ? 'open' : 'closed'" class="esc-equip-list user-select">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="{{head.class}}" *ngFor="let head of escEquipHeader;">{{head.title}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="equip-items">
+                                    <tr *ngFor="let eq of item.equimentInfo">
+                                        <td title="{{eq.equipmentNumber}}">{{eq.equipmentNumber}}</td>
+                                        <td title="{{eq.model}}">{{eq.model}}</td>
+                                        <td title="{{eq.callNumber}}">{{eq.callNumber}}</td>
+                                        <td title="{{eq.callCloseDatetime}}">{{eq.callCloseDatetime}}</td>
+                                        <td title="{{eq.bwMeter}}">{{eq.bwMeter}}</td>
+                                        <td>
+                                            <span *ngIf="eq.colorMeter != ''" title="{{eq.colorMeter}}">{{eq.colorMeter}}</span>
+                                            <span *ngIf="eq.colorMeter == ''" [innerHtml]="emptyCont"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="esc-users" [ngClass]="{'eq-expand': item.eqCollapse, 'eq-collapse': !item.eqCollapse}">
+                            <div class="user-list" [ngClass]="{'default': user.isDefault == 1}" *ngFor="let user of item.eqUsers;" [matMenuTriggerFor]="eu">
+                                <div class="profile" [ngStyle]="{'background-image': 'url(' + user.profileImg + ')'}">
+                                    <span class="avail" [ngClass]="{'user-offline': user.availability == 0, 'user-active': user.availability == 1, 'user-inactive': user.availability == 2}"></span>
+                                </div>
+                                <div class="info">
+                                    <div class="name" title="{{user.userName}}">{{user.userName}}</div>
+                                    <div class="title" title="{{user.title}}">{{user.title}}</div>
+                                </div>
+                                <mat-menu #eu="matMenu">
+                                    <div id="ng-popover" class="popover prob-tooltip">
+                                        <div class="arrow"></div>
+                                        <div class="popover-body" id="ng-popover-cont">
+                                            <ul class="user-actions">
+                                                <li class="cursor remove" *ngIf="user.isDefault == 0" (click)="manageUser('remove', i, user.userId)">Remove</li>
+                                                <li class="cursor profile view" (click)="navProfile(user.userId)">Profile</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                            </div>
+                            <div *ngIf="item.userLength > 0" class="cursor more-user" title="View Users" (click)="manageUser('view', i)">
+                                <span>+{{item.userLength}}</span>
+                            </div>
+                            <div *ngIf="domainId == 4 && !historyFlag && item.usersList.length < 11 && item.escalationStatus != 'Completed'" class="cursor add-user" title="Add User" (click)="manageUser('new', i)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-plan action-plan-scroll col-lg-4" [style.height.px]="innerHeight">
+                    <div class="action-plan-inner">
+                        <p-accordion class="custom-accordion flat-custom-accordion esc-accordion" [multiple]="true">
+                            <p-accordionTab class="action-plan" [selected]="true" [transitionOptions]="'100ms'">
+                                <p-header class="header" (click)="escToggle($event)">
+                                    <span class="ac-col ac-col-1">
+                                        <span class="header-img">
+                                            <img src="{{escPath}}/action-plan-icon.png" >
+                                        </span>
+                                        <span class="header-text">
+                                            Action Plan
+                                        </span>
+                                    </span>
+                                    <span class="ac-col ac-col-2">
+                                        <div class="save">
+                                            <button type="button" [disabled]="actionPlanLoading || !saveFlag" class="cursor btn text-center" (click)="saveEscalation(-1, 'action-plan')">Save 
+                                                <img *ngIf="!actionPlanLoading" src="{{assetPath}}/parts/save-draft.png" />
+                                                <img *ngIf="actionPlanLoading" class="submit-btn-loader" src="{{assetPath}}/filter/filter-loading.svg"/>
+                                            </button>
+                                        </div>
+                                    </span>
+                                </p-header>
+                                <div class="editor ps" [perfectScrollbar]="sconfig" [style.height.px]="innerHeight-40">
+                                    <p-editor [(ngModel)]="escActionPlan" (onTextChange)="onTextChange('action-plan', $event)" [style]="{'height': infoHeight}">
+                                        <p-header>
+                                            <span class="ql-formats">
+                                                <button class="ql-bold" aria-label="Bold"></button>
+                                                <button class="ql-italic" aria-label="Italic"></button>
+                                                <button class="ql-underline" aria-label="Underline"></button>
+                                            
+                                                <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                </select>
+                                                <button class="ql-list" value="ordered"></button>
+                                                <button class="ql-list" value="bullet"></button>
+                                                <select title="Text Alignment" class="ql-align" >
+                                                    <option selected>Gauche</option>
+                                                    <option value="center" label="Center"></option>
+                                                    <option value="right" label="Right"></option>
+                                                    <option value="justify" label="Justify"></option>
+                                                </select>            
+                                            
+                                                <button aria-label="Link" class="ql-link"></button>
+                                                <!--button aria-label="Image" class="ql-image"></button-->
+                                            </span>
+                                        </p-header>
+                                    </p-editor>
+                                    <div class="action-cont">
+                                        <!--div class="save hide">
+                                            <button type="button" [disabled]="actionPlanLoading || !saveFlag" class="cursor btn text-center" (click)="saveEscalation(-1, 'action-plan')">Save 
+                                                <img *ngIf="!actionPlanLoading" src="{{assetPath}}/parts/save-draft.png" />
+                                                <img *ngIf="actionPlanLoading" class="submit-btn-loader" src="{{assetPath}}/filter/filter-loading.svg"/>
+                                            </button>
+                                        </div-->
+                                        <div class="info">
+                                            <div class="date"><span class="label">Last modified on: </span>{{escModifiedDate}}</div>
+                                            <div class="name"><span class="label">Last modified by: </span>{{escModifiedBy}}</div> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </p-accordionTab>
+                            <!--p-accordionTab class="comments" [transitionOptions]="'100ms'">
+                                <p-header class="header">
+                                    <span class="header-img">
+                                        <img src="{{escPath}}/comment-icon.png">
+                                    </span>
+                                    <span class="header-text">
+                                        Comments
+                                    </span>
+                                </p-header>
+                                Comments Section
+                            </p-accordionTab-->
+                        </p-accordion>
+                    </div>
+                </div>               
+            </div>
+            <div *ngIf="itemEmpty" class="media-list">
+                <div class="no-item-list no-res-list text-center">
+                    <div class="item-empty-container">
+                        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102" />
+                        <p class="item-empty-para empty-res padd-top-20">No Escalations found.</p>
+                    </div>
+                </div>
+            </div>
+            <!--div *ngIf="displayNoRecords" class="no-item-list no-res-list text-center">
+                <div class="item-empty-container">
+                    <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102" />
+                    <p class="item-empty-para empty-res padd-top-20">No result found</p>
+                </div>
+            </div-->
+        </div>        
+    </div>
+</div>

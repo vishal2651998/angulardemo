@@ -1,0 +1,384 @@
+<div class="dash-head">
+  <app-dashboard-header [pageData]="headerData"></app-dashboard-header>
+</div>
+
+<div
+  class="dashboard-content"
+  [ngClass]="{ 'filter-collapse': !expandFlag, 'filter-expand': expandFlag }"
+>
+  <div [style.height.px]="innerHeight">
+    <div class="ps" [perfectScrollbar]="sconfig">
+      <div class="dash-counts">
+        <div class="row col-lg-12 col-md-12 col-sm-12">
+          <div class="col-lg-3 col-md-6 col-sm-12 dash-counts-col">
+            <div class="dashboard-col">
+              <div *ngIf="regUserLoading" class="loader dash-loader">
+                <img src="assets/images/blue-loading.svg" alt="Loader" />
+              </div>
+              <div *ngIf="!regUserLoading">
+                <div class="cnt-col cnt-col-left user-icon">
+                  <img
+                    src="{{ dashImgPath }}{{ regUserIcon }}"
+                    alt="{{ regUserTxt }}"
+                  />
+                </div>
+                <div class="cnt-col cnt-col-right reg-user-cont">
+                  <span class="dash-row cnt-row">
+                    {{ regUserCount ? regUserCount : 0 }}
+                  </span>
+                  <span class="dash-row txt-row">{{ regUserTxt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-12 dash-counts-col">
+            <div class="dashboard-col">
+              <div *ngIf="tvsEmpLoading" class="loader dash-loader">
+                <img src="assets/images/blue-loading.svg" alt="Loader" />
+              </div>
+              <div *ngIf="!tvsEmpLoading">
+                <div class="cnt-col cnt-col-left emp-icon">
+                  <img
+                    src="{{ dashImgPath }}{{ empIcon }}"
+                    alt="{{ empTxt }}"
+                  />
+                </div>
+                <div class="cnt-col cnt-col-right emp-cont">
+                  <span class="dash-row cnt-row">
+                    {{ empCount ? empCount : 0 }}
+                  </span>
+                  <span class="dash-row txt-row">{{ empTxt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-12 dash-counts-col">
+            <div class="dashboard-col">
+              <div *ngIf="totalDealersLoading" class="loader dash-loader">
+                <img src="assets/images/blue-loading.svg" alt="Loader" />
+              </div>
+              <div *ngIf="!totalDealersLoading">
+                <div class="cnt-col cnt-col-left dealer-icon">
+                  <img
+                    src="{{ dashImgPath }}{{ dealerIcon }}"
+                    alt="{{ dealerTxt }}"
+                  />
+                </div>
+                <div class="cnt-col cnt-col-right dealer-cont">
+                  <span class="dash-row cnt-row">
+                    {{ dealerCount ? dealerCount : 0 }}
+                  </span>
+                  <span class="dash-row txt-row">{{ dealerTxt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 col-sm-12 dash-counts-col others">
+            <div class="dashboard-col">
+              <div *ngIf="othersLoading" class="loader dash-loader">
+                <img src="assets/images/blue-loading.svg" alt="Loader" />
+              </div>
+              <div *ngIf="!othersLoading">
+                <div class="cnt-col cnt-col-left group-icon">
+                  <img
+                    src="{{ dashImgPath }}{{ groupIcon }}"
+                    alt="{{ groupTxt }}"
+                  />
+                </div>
+                <div class="cnt-col cnt-col-right user-cont">
+                  <span class="dash-row cnt-row">{{ groupCount }}</span>
+                  <span class="dash-row txt-row">{{ groupTxt }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dashboard-charts">
+        <div class="row col-lg-12 col-md-12 col-sm-12 chart-row">
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">
+                {{ dealerUsageTitle }} {{ dealerMidTitle }} {{ month }}
+                {{ currYear }}
+              </div>
+              <div class="chart-cont">
+                <div class="chart-area cursor">
+                  <div *ngIf="dealerUsageLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!dealerUsageLoading && !dealerUsageDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-delaer-usage-chart
+                    *ngIf="!dealerUsageLoading && dealerUsageDataAvail"
+                    [chartData]="dealerActivity"
+                    [chartOptions]="dealerUsageOptions"
+                    (click)="navigatePage('mis/dashboard/dealer-usage')"
+                  ></app-delaer-usage-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">{{ userTitle }}</div>
+              <div class="chart-cont guage-cont">
+                <div class="chart-area guage-chart">
+                  <div *ngIf="activeUsersLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!activeUsersLoading && !activeUserDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-active-users-chart
+                    *ngIf="!activeUsersLoading && activeUserDataAvail"
+                    [chartData]="activeUsers"
+                    [chartOptions]="activeUsersOptions"
+                  ></app-active-users-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">
+                {{ threadTitle }} {{ month }} {{ currYear }}
+              </div>
+              <div class="chart-cont">
+                <div class="chart-area cursor">
+                  <div *ngIf="threadLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!threadLoading && !threadDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-thread-chart
+                    *ngIf="!threadLoading && threadDataAvail"
+                    [chartData]="threadMetrics"
+                    [chartOptions]="threadOptions"
+                    (click)="navigatePage('mis/dashboard/threads')"
+                  ></app-thread-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row col-lg-12 col-md-12 col-sm-12 chart-row d-none">
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">{{ escTitle }}</div>
+              <div class="chart-cont">
+                <div class="chart-area">
+                  <div *ngIf="escLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!escLoading && !escDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-current-escalation-chart
+                    *ngIf="!escLoading && escDataAvail"
+                    [chartData]="escMetrics"
+                    [chartOptions]="escOptions"
+                  ></app-current-escalation-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">{{ escModTitle }}</div>
+              <div class="chart-cont">
+                <div class="chart-area cursor">
+                  <div *ngIf="escModLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!escModLoading && !escModDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-escalation-models
+                    *ngIf="!escModLoading && escModDataAvail"
+                    [chartData]="escModMetrics"
+                    [chartOptions]="escModOptions"
+                    (click)="navigatePage('mis/dashboard/escalation/models')"
+                  ></app-escalation-models>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">{{ escZoneTitle }}</div>
+              <div class="chart-cont">
+                <div class="chart-area cursor">
+                  <div id="escalationZone"></div>
+                  <div *ngIf="escZoneLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!escZoneLoading && !escZoneDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-escalation-zones
+                    *ngIf="!escZoneLoading && escZoneDataAvail"
+                    [chartData]="escZoneMetrics"
+                    [chartOptions]="escZoneOptions"
+                    (click)="navigatePage('mis/dashboard/escalation/region')"
+                  ></app-escalation-zones>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row col-lg-12 col-md-12 col-sm-12 chart-row">
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col d-none">
+            <div class="chart-col">
+              <div class="chart-head">{{ contUsageTitle }} {{ month }}</div>
+              <div class="chart-cont">
+                <div class="chart-area">
+                  <div *ngIf="contentTypeLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!contentTypeLoading && !contentTypeDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-content-type-chart
+                    *ngIf="!contentTypeLoading && contentTypeDataAvail"
+                    [chartData]="contentTypes"
+                    [chartOptions]="contentTypeOptions"
+                  ></app-content-type-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-12 col-sm-12 dash-chart-col d-none">
+            <div class="chart-col">
+              <div class="chart-head">
+                {{ gtsStatusTitle }} ({{ month }} {{ currYear }})
+              </div>
+              <div class="chart-cont">
+                <div class="chart-area gts-status-chart">
+                  <div *ngIf="gtsStatusLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!gtsStatusLoading && !gtsStatusDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-gts-usage-status-chart
+                    *ngIf="!gtsStatusLoading && gtsStatusDataAvail"
+                    [chartData]="gtsUsagebyStatus"
+                    [chartOptions]="gtsUsageStatusOptions"
+                  ></app-gts-usage-status-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 dash-chart-col">
+            <div class="chart-col">
+              <div class="chart-head">
+                {{ gtsProblemTitle }} ({{ month }} {{ currYear }})
+              </div>
+              <div class="chart-cont">
+                <div class="chart-area">
+                  <div *ngIf="gtsProblemLoading" class="loader dash-loader">
+                    <img src="assets/images/blue-loading.svg" alt="Loader" />
+                  </div>
+                  <div
+                    *ngIf="!gtsProblemLoading && !gtsProblemDataAvail"
+                    class="empty-chart text-center"
+                  >
+                    <img
+                      src="assets/images/dashboard/empty-chart.png"
+                      alt="Empty Chart"
+                    /><br />
+                    No Data
+                  </div>
+                  <app-gts-usage-problem-chart
+                    *ngIf="!gtsProblemLoading && gtsProblemDataAvail"
+                    [chartData]="gtsUsagebyProblemType"
+                    [chartOptions]="gtsUsagebyProblemTypeOptions"
+                  ></app-gts-usage-problem-chart>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="dash-filter"
+  [ngClass]="{ 'filter-expand': expandFlag, 'filter-collapse': !expandFlag }"
+>
+  <app-dash-filter
+    *ngIf="filterLoading"
+    (toggle)="expandAction($event)"
+    [filterOptions]="filterOptions"
+    (filterAction)="applyFilter($event)"
+  ></app-dash-filter>
+  <app-dash-filter
+    *ngIf="!filterLoading"
+    (toggle)="expandAction($event)"
+    [filterOptions]="filterOptions"
+    (filterAction)="applyFilter($event)"
+  ></app-dash-filter>
+</div>

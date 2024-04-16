@@ -1,0 +1,54 @@
+<div [ngClass]="{'hide': !loading}" [style.height.px]="innerHeight">
+    <div class="loading-small-screen-scroll fix-center trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div class="item-content" [ngClass]="{'hide': loading}">
+    <div *ngIf="!emptyListFlag" class="thread-detail-section view-v3">
+        <div *ngIf="recentFlag" class="section-left thread-view-recent thread-view3-recent left-col-collapse" [style.height.px]="innerHeight">
+            <app-thread-view-recent view="sview-v3" [facetsDatatems]="facetsDatatems" [filterItems]="filterItems" [searchValue]="searchValue" [threadId]="threadId" (threadRecentComponentRef)="threadRecentRef = $event" (threadRecentCallBack)="threadRecentCallBack($event)" (threadViewRecentActionEmit)="threadViewRecentAction($event)"></app-thread-view-recent>
+        </div>
+        <div *ngIf="!loading" class="item-section section-right section-middle thread-view-comments thread-view3-comments
+         left-col-expand">
+            <div class="th-outer-col th-outer-col-2 fixes-view-col">
+                <div class="thread-detail-page threadPostcommentDiv">
+                    <div [style.height.px]="innerHeight" class="thread-post-hover">
+                        <div #top id="step" class="ps thread-post  threadPostcomment" [perfectScrollbar]="sconfig" >
+                            <app-thread-detail-view detailView="view-v3" [innerHeight]="innerHeight" (detailViewComponentRef)="detailViewRef = $event" (detailViewCallBack)="detailViewCallBack($event)" ></app-thread-detail-view>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="emptyListFlag" [style.height.px]="innerHeight">
+        <div class="no-item-list empty-container text-center">
+            <div class="item-empty-container item-empty-container-global empty-center">
+                <img class="field-imge-store" width="92" height="76" src="assets/images/search-empty-banner-icon.png" alt="no-result">
+                <p class="field-imge-p1" >No result found</p>  
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [header]="false" [modal]="true" [draggable]="false" [resizable]="false" [(visible)]="moreInfoFlag"
+ [position]="dialogPosition" class="v3-mask">
+    <h1 style="font-weight: normal">
+        <span class="head truncate">More Additional Info</span>
+        <span class="sidebar-close-icon cursor text-right" (click)="closeSidebar('more-info')"></span>
+    </h1>
+    <div class="content" [style.height.px]="innerHeight+94">
+        <div class="vehicle-info" [perfectScrollbar]="dconfig">
+            <div class="items" *ngFor="let item of detailInfo;">
+                <div class="item-row">
+                    <div class="item-col key">
+                        <span class="truncate" title="{{item.name}}">{{item.name}}</span>
+                    </div>
+                    <div class="item-col value text-right">
+                        <span class="truncate" title="{{item.value}}">{{item.value}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>

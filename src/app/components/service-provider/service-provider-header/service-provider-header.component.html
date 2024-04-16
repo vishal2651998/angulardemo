@@ -1,0 +1,157 @@
+<div class="Layer-0" [class]="atgTheme">
+    <header>
+        <div class="navigation-wrap start-header start-style">
+        <div class="container-fluid">
+            <div class="row no-margin">
+                <div class="col-12 custom-padding-header flex-center">
+                    <nav class="navbar navbar-expand-md flex-space-between custom-width-header">
+                    <div class="flex">
+                        <a class="navbar-brand" href="">
+                            <img class="{{reparifyDomain ? 'height-40px' : ''}}" [src]="reparifyDomain ? 'assets/images/service-provider/atg-logo.png' : 'assets/images/login/collabtic-logo-blacktext.png'" [alt]="reparifyDomain ? 'Reparify Logo' : 'Collabtic Logo'" />
+                        </a>
+                    </div>
+                    <!-- <p-menubar [model]="menu" styleClass="topmenu desktop-view">
+                    </p-menubar> -->
+                    <ul class="custom-menu-ul desktop-view">
+                        <li class="contact-li">
+                            <img src="assets/images/service-provider/contact us.png" style="font-family:lato" >
+                            <a (click)="goToLink('contact-us')">Contact Us</a>
+                        </li>
+                        <!-- d-none -->
+                        <li class="cart-item " (clickOutside)="onClickedOutside()">
+                            <a (click)="openCartPopup = !openCartPopup" >
+                                <img src="assets/images/service-provider/cart-black.png" style="width: 25px; height:22px;font-family:lato">
+                                <span class="cus-menu">Cart</span>
+                                <span *ngIf="cart && (cart?.manuals?.length > 0 || cart?.trainings?.length > 0)"
+                                  class="count-txt"  >{{cart.totalItems}}</span>
+                            </a>
+                            <!--cart popup--><!-- (clickOutside)="openCartPopup = false" -->
+
+                            <ng-container *ngIf="openCartPopup"> 
+                                <div class="cart-popup custom-top-popup" *ngIf="cart?.trainings.length > 0 || cart?.manuals.length > 0">
+                                    <div class="cart-product-div" *ngFor="let training of cart.trainings; let trainingIndex = index " [class.border-bottom-0]="cart?.manuals.length == 0 && trainingIndex == cart?.trainings.length - 1">
+                                        <div class="img-div cursor-pointer" (click)="redirectToInnerDetailPageByRouter(training, false)"> <img [src]="training?.bannerImageUrl"
+                                                onerror="this.src='assets/images/service-provider/training-blank-1.png'" class="product-img">
+                                        </div>
+                                        <div class="product-content-div">
+                                            <h4 class="ttl cursor-pointer" (click)="redirectToInnerDetailPageByRouter(training, false)">{{training.trainingName}}</h4>
+                                            <!-- <p class="text">Training mode: {{training?.trainingMode}}</p> -->
+                                            <p class="product-price">
+                                                <b *ngIf="training?.isBirdPrice == '0'" class="green-text">${{training?.price}}</b>
+                                                <span *ngIf="training?.isBirdPrice == '1'">
+                                                    <b class="green-text">
+                                                        ${{training?.birdPrice}}
+                                                    </b>
+                                                    <span class="strike-text">
+                                                        {{training?.price | currency: 'USD':true:'1.2-2'}}
+                                                    </span>
+                                                    <span class="per-discount">
+                                                        {{training?.birdPercentage}}% off
+                                                    </span>
+                                                </span>
+                                            </p>
+                                            <span class="p-button-icon pi pi-times cursor-pointer" (click)="removeTrainingPopup(trainingIndex)" ></span>
+                                        </div>
+                                    </div>
+                                    <div class="cart-product-div" *ngFor="let manual of this.cart?.manuals;let manualIndex = index" [class.border-bottom-0]="manualIndex == cart?.manuals.length - 1">
+                                        <div class="img-div cursor-pointer" (click)="redirectToInnerDetailPageByRouter(manual, true)"><img [src]="manual?.bannerImageUrl"
+                                                onerror="this.src='assets/images/service-provider/manual-placeholder.png'" class="product-img">
+                                        </div>
+                                        <div class="product-content-div">
+                                            <h4 class="ttl cursor-pointer" (click)="redirectToInnerDetailPageByRouter(manual, true)">{{manual.manualName}}</h4>
+                                            <p class="product-price">
+                                                <b class="green-text" *ngIf="manual.isDiscount == '0'">${{manual.price}}</b>
+                                                <span *ngIf="manual?.isDiscount == '1'">
+                                                    <b class="green-text">
+                                                        ${{manual?.discountPrice}}
+                                                    </b>
+                                                    <span class="strike-text">
+                                                        {{manual?.price | currency: 'USD':true:'1.2-2'}}
+                                                    </span>
+                                                    <span class="per-discount">
+                                                        {{manual?.discountPercentage}}% off
+                                                    </span>
+                                                </span>
+                                            </p>
+                                            <span class="p-button-icon pi pi-times cursor-pointer" (click)="removeManualPopup(manualIndex)"></span>
+                                        </div>
+                                    </div>
+                                    <div class="total-amt-div">
+                                        <div class="btn-div"><a (click)="openCartPopup= false" routerLink='cart'
+                                                class="main-btn chkout-btn">Checkout</a></div>
+                                                <span class="clear-btn" style="cursor:pointer;" (click)="openCartClearPopup = !openCartClearPopup"><img style="width:17px;height:20px" src="assets/images/service-provider/clear-white.png"></span>
+                                    </div>
+                                </div>
+
+                                <div class="custom-top-popup cart-empty-popup text-center"
+                                    *ngIf="cart?.trainings.length == 0 && cart?.manuals.length == 0">
+                                    <img src="assets/images/service-provider/empty-cart.png" style="height: 24px; width: 27px;">
+                                    <span>Shopping cart is empty.</span>
+                                    <span class="p-button-icon pi pi-times cross cursor-pointer" (click)="openCartPopup = !openCartPopup"></span>
+                                </div>
+                            </ng-container>
+                        </li>
+                    </ul>
+
+                    <div class="custom-top-popup add-remove-popup text-center sm-center-popup" *ngIf="cartUpdatedMessage">
+                        <div class="add-remove">
+                            <img src="assets/images/service-provider/tick-filled.png" style="height: 19px; width: 19px;">
+                            <span style="color:#298368">{{cartUpdatedMessage}}</span>
+                        </div>
+                    </div>
+
+                    <!--mobile menu start-->
+                    <div class="custom-mobile-menu">
+                        <div class="topmenu p-menubar p-component">
+                            <a (click)="showMobileMenu = !showMobileMenu" class="center p-menubar-button"><i class="pi pi-bars"></i></a>
+                         </div>
+                    </div>
+                    </nav>
+                    <div class="mobile-menu-list-items custom-mobile-menu" *ngIf="showMobileMenu">
+                        <ul>
+                            <li (click)="goToLink('home')"><a>Home</a></li>
+                            <li (click)="goToLink('contact-us')"><a>Contact Us</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </header>
+    <p-dialog styleClass="cart-clear-popup" [(visible)]="openCartClearPopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+        <div class="clear-cart-popup">
+                <img src="assets/images/service-provider/cart-clear-orange.png" alt="" style="width:75px;">
+                <div class="warning">Woud you like to empty the cart?</div>
+                <div>
+                    <span class="btn yes-button" (click)="clearCart()">
+                        YES
+                        <i class="pi pi-check"></i>
+                    </span>
+                    <span class="btn no-button" (click)="openCartClearPopup = !openCartClearPopup">
+                        NO
+                        <i class="pi pi-times"></i>
+                    </span>
+                </div>
+        </div>
+    </p-dialog>
+    <!-- remove manual && training popup -->
+    <p-dialog styleClass="cart-clear-popup" [(visible)]="trainingpopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+        <div class="clear-cart-popup">
+                <div class="warning">Would you like to remove the Training ?</div>
+                <div class="pt-2">
+                    <button class="btn mr-2" style="background-color: #469073;color:white" (click)="removeTraining()">Yes</button>
+                    <button class="btn" style="background-color: #2f3967;color:white" (click)="trainingpopup = !trainingpopup">No</button>
+                </div>
+        </div>
+    </p-dialog>
+    <p-dialog styleClass="cart-clear-popup" [(visible)]="manualpopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+        <div class="clear-cart-popup">
+                <div class="warning">Would you like to remove the Manual ?</div>
+                <div class="pt-2">
+                    <button class="btn mr-2" style="background-color: #469073;color:white" (click)="removeManual()">Yes</button>
+                    <button class="btn" style="background-color: #2f3967;color:white" (click)="manualpopup = !manualpopup">No</button>
+                </div>
+        </div>
+    </p-dialog>
+</div>

@@ -1,0 +1,213 @@
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading">
+    <div class="th-error-div" *ngIf="threadViewError"><div class="error-msg">{{threadViewErrorMsg}}</div></div> 
+    <div  *ngIf="!threadViewError">
+    <div id="header">
+        <!-- Enable for silent push-->
+        <!--app-product-header class="hide" [pageData]="headerData"></app-product-header-->
+        <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+    </div>  
+    
+    <div class="thread-detail-section thread-detail-section-other">
+        <div class="th-outer-col th-outer-col-1"></div>
+        
+        <div class="th-outer-col th-outer-col-2" [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel}">
+            <div [style.height.px]="innerHeight">
+                <div id="documentView" class="ps thread-post" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">                      
+                    <div #tdpage class="thread-detail-page" [ngClass]="{ 'opacity': opacityFlag}" >  
+                        <div class="thread-detail-div">
+                            <div class="thread-detail-div-col thread-detail-div-left">
+                                <div class="thread-detail-view thread-detail-view-no-post">
+                                    <!--div class="thread-head display-table">
+                                        <div class="display-tablecell thread-head-col1">
+                                            <div class="display-table">
+                                                <div class="display-tablecell">
+                                                    <div class="th-head-img"><span class="rounded-circle cursor-pointer" (click)="taponprofileclick(threadViewData.contributerId)" [ngStyle]="{'background-image': 'url(' + threadViewData.profileImage + ')'}"></span><span class="availability-status availability-status{{threadViewData.availability}}"></span></div>                            
+                                                </div>
+                                                <div class="display-tablecell">
+                                                    <span class="th-head-text1 cursor-pointer" (click)="taponprofileclick(threadViewData.contributerId)">{{threadViewData.userName}}</span>
+                                                    <span class="th-head-text2">{{userRoleTitle}}</span>
+                                                    <span class="th-head-text3">{{threadPosted}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="display-tablecell thread-head-col2">&nbsp;</div>
+                                        <div class="display-tablecell thread-head-col3">&nbsp;</div>
+                                        <div class="display-tablecell thread-head-col4">
+                                            <span class="th-date-text">{{threadCreatedOn}}</span>                   
+                                        </div>
+                                    </div-->
+                                    <div class="thread-content">
+                                        <div class="display-table table-row1 doc-table-row1">
+                                           <div class="display-tablecell table-col-1-1 thread-img-div {{styleName}}">
+                                                <span class="thread-cover-img" *ngIf="flagId == 1 || flagId == 2 || flagId == 6">                                                   
+                                                    <span class="thread-bg thread-bg1 {{bannerClass}}" [ngStyle]="{'background-image': 'url(' + contentPath + ')'}"></span>
+                                                </span>                                                
+                                                <span class="" [ngClass]="{'thread-cover-img': threadViewData.bannerImage != '','doc-thread-img': threadViewData.bannerImage == ''}" *ngIf="flagId == 3 || flagId == 4 || flagId == 8 || flagId == 5 || flagId == 0"> 
+                                                    <span  class="thread-bg {{styleName}}" [ngClass]="{'banner-image': threadViewData.bannerImage != ''}" 
+                                                    [ngStyle]="threadViewData.bannerImage != '' ? {'background-image': 'url(' + contentPath + ')'} : ''">
+                                                        <!-- <img  *ngIf="styleName == 'empty'" src='assets/images/documents/document-default-img.svg' alt='' onload='SVGInject(this)' /> -->
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="display-tablecell table-col-1-2 doc-table-col-1-2">
+                                                <div class="thread-title">{{threadViewData.title}}</div>                        
+                                            </div>
+                                        </div>
+                                        <div class="table-row2"> 
+                                            <div class="problem-row setPaddingTop3">                  
+                                                <div class="problem-col-lt ann-problem"></div>
+                                                <div class="problem-col-rt w90">
+                                                    <p class="problem-col-head problem-col-head-color">Description</p>                                                                                      
+                                                </div> 
+                                                <div *ngIf="threadViewData.description != ''" class="doc-description" [innerHTML]="threadViewData.description"></div> 
+                                                <div *ngIf="threadViewData.description == ''" class="doc-description"><i style="color:#a7a7a7;">NA</i></div> 
+                                            </div>                          
+                                        </div>
+                                        <div class="table-row2">
+                                            <div class="problem-row setPaddingLeft1">  
+                                                <div class="problem-row setPadding" *ngIf="taglength>0">
+                                                    <div class="problem-col-lt tag doc-tag-lt"><img src='assets/images/thread-detail/tag.svg' alt='' onload='SVGInject(this)' /></div>
+                                                    <div class="problem-col-rt w90">
+                                                        <p class="problem-col-head doc-problem-col-head">Tag<span *ngIf="tagData.length > 1">s</span></p>
+                                                        <div class="tag-cont-div doc-tag-cont-div" *ngFor="let item of tagData;"> 
+                                                            <span class="tag-cont btn tag">{{item.name}}</span>                                       
+                                                        </div>
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="table-row2 table-row3 doc-table-row3">
+                                            <!-- Application Info -->
+                                            <app-application [accordionList]="accordionList" [applicationList]="appList"></app-application>
+
+                                            <div class="thread-detail-widget main-contaier" *ngIf="!attachmentLoading">
+                                                <p-accordion class="custom-accordion flat-custom-accordion thread-detail-accordion" [multiple]="true">
+                                                    <p-accordionTab class="comments" [transitionOptions]="'100ms'" [selected]="true">
+                                                        <p-header class="header">
+                                                            <span class="header-img">
+                                                                <img src="assets/images/thread-detail/attachments-white.png">
+                                                            </span>
+                                                            <span class="header-text">
+                                                                Attachments
+                                                            </span>
+                                                        </p-header>                               
+                                                        <!-- Attachment List-->
+                                                        <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                                                        <!-- Attachment List-->
+                                                    </p-accordionTab>
+                                                </p-accordion>
+                                            </div>
+
+                                            <!-- System Information -->
+                                            <div class="reference-info">
+                                                <mat-accordion [multi]="true" #accordion="matAccordion">
+                                                    <mat-expansion-panel class="{{panel.class}}"
+                                                    [disabled]="panel.isDisabled"
+                                                    [expanded]="panel.isExpanded"
+                                                    [hideToggle]="false"
+                                                    (opened)="beforeParentPanelOpened(panel, emptyList)"
+                                                    (closed)="beforeParentPanelClosed(panel, emptyList)"
+                                                    (afterCollapse)="afterPanelClosed()"
+                                                    (afterExpand)="afterPanelOpened()"
+                                                    *ngFor="let panel of referenceAccordion"
+                                                    #mapanel="matExpansionPanel">
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                            <b>{{panel.title}}</b>
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                            <div class="app-accord">
+                                                                <app-system-info-view [systemInfo]="systemInfo"></app-system-info-view>
+                                                            </div>
+                      
+                                                    </mat-expansion-panel>
+                                                </mat-accordion>
+                                            </div>
+                                            
+                                        </div>
+
+                                        <div class="table-row2">
+                                            <div class="problem-row setPaddingLeft1">  
+                                                <div class="problem-row setPadding setPaddingNew" *ngIf="countrylength>0">
+                                                    <div class="problem-col-lt tag doc-tag-lt doc-tag-lt-new"><img src='assets/images/thread-detail/country.svg' /></div>
+                                                    <div class="problem-col-rt w90">
+                                                        <p class="problem-col-head doc-problem-col-head" *ngIf="countryData.length > 1">Countries</p>
+                                                        <p class="problem-col-head doc-problem-col-head" *ngIf="countryData.length == 1">Country</p>
+                                                        <div class="tag-cont-div doc-tag-cont-div" *ngFor="let item of countryData;"> 
+                                                            <span class="tag-cont btn tag">{{item.name}}</span>                                       
+                                                        </div>
+                                                    </div> 
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="table-row4 cursor-pointer" (click)="threadDashboarUserList('document-dashboard','views',threadViewData.resourceID,'1')"> 
+                                            <div class="display-table row4"> 
+                                                <div class="display-tablecell row4-col1">
+                                                    <div class="icons-div">                                                        
+                                                        <span title="Like" class="icon icon-like cursor-pointer" (click)="socialAction('like', threadViewData.likeStatus); $event.stopPropagation();" [ngStyle]="{'background-image': 'url('+threadViewData.likeImg+')'}"></span>
+                                                        <span class="icon-count-text">{{threadViewData.likeCountVal}}</span>
+                                                    </div>
+                                                    <div class="icons-div">                                                       
+                                                        <span title="Pin" class="icon icon-pin cursor-pointer" (click)="socialAction('pin', pinStatus); $event.stopPropagation();" [ngStyle]="{'background-image': 'url('+pinImg+')'}"></span>
+                                                        <span class="icon-count-text">{{pinCountVal}}</span>
+                                                    </div>     
+                                                    <div class="icons-div ">
+                                                        <span title="View" class="icon icon-view"></span>
+                                                        <span class="icon-count-text" *ngIf="threadViewData.viewCount>0">{{threadViewData.viewCount}}</span>
+                                                        <span class="icon-count-text" *ngIf="threadViewData.viewCount==0">-</span>
+                                                    </div>                            
+                                                </div>
+                                                <div class="display-tablecell row4-col2">
+                                                    <div class="icons-div icon-left">
+                                                        <span title="Share" class="icon icon-thread-share "></span>                                
+                                                    </div>                                                                     
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="thread-detail-div-col thread-detail-div-right thread-detail-scroll-to scrollbar scrollbar-primary thin">
+                               <div class="edit-history-div">
+                                    <div class="thread-history-div" *ngIf="threadEdited=='1'">  
+                                        <div class="table-row2">
+                                            <div class="problem-row setPaddingTop">
+                                                <div class="problem-col-lt thread-history-date"></div>
+                                                <div class="problem-col-rt w86">
+                                                    <p class="edit-text1">Edited On</p>
+                                                    <p *ngIf="threadViewData.editHistory" class="edit-text2">{{threadViewData.editHistory[threadViewData.editHistory.length-1].updatedOnNew}}</p>      
+                                                </div> 
+                                            </div>
+                                            <div class="problem-row setPaddingTop setPaddingTop2">
+                                                <div *ngIf="threadViewData.editHistory" class="problem-col-lt thread-history-edituser"><span class="thread-history-edituser-img rounded-circle" [ngStyle]="{'background-image': 'url(' + threadViewData.editHistory[threadViewData.editHistory.length-1].profileImage + ')'}"></span></div>
+                                                <div class="problem-col-rt w86">
+                                                    <p class="edit-text1">Edited By</p>
+                                                    <p *ngIf="threadViewData.editHistory" class="edit-text2">{{threadViewData.editHistory[threadViewData.editHistory.length-1].userName}}</p>      
+                                                </div> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                    </div>      
+                  </div>
+            </div> 
+        </div>
+        
+        <div class="th-outer-col th-outer-col-3" [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel}">
+            <div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+                <app-domain-members [disableRightPanel]="disableRightPanel"></app-domain-members>
+            </div>
+        </div>             
+        
+    </div>
+        
+</div>
+</div>
+
+
+

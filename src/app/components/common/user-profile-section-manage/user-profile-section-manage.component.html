@@ -1,0 +1,830 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">{{headText}}</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button
+                *ngIf="certificationFlag || trainingFlag || organizationFlag || shopTechnologyFlag || shopPoliciesFlag ||shopCertificationFlag"
+                (click)="save()" pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="{{saveText}}"
+                class="p-button-rounded button-save button-save-hq cursor"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close" (click)="close()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="ups-parent-succ-div" *ngIf="serverSuccess">
+        <div class="ups-success-msg"><span>{{serverSuccessMsg}}</span></div>
+    </div>
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form [formGroup]="form" class="action-form">
+            <div class="container">
+                <div class="row input-row mt-2 mx-0">
+                    <!-- certification start -->
+                    <div *ngIf="certificationFlag" class="col-sm-12 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['certificationMasterId'] && !!this.form.controls['certificationMasterId'].errors && !!this.form.controls['certificationMasterId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img style="width: 20px; height: 18px;"
+                                    src="assets/images/user-profile/certification-name.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Certification Name</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Certification Name" /-->
+
+                            <p-dropdown #pdropdown1 appendTo="body" [options]="certificationNameList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'certification-name','Certification Name' )"
+                                optionValue="id" formControlName="certificationMasterId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown1.hide();updateName('',0,'Certification Name','New','certification-name');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="certificationFlag" class="col-sm-4 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['certificationProviderId'] && !!this.form.controls['certificationProviderId'].errors && !!this.form.controls['certificationProviderId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/certification-provider.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Certification Provider</label>
+                            </div>
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+                        <div class="input-filed">
+                            <!--input pInputText class="w-100" placeholder="Certification Provider" type="text"
+                            formControlName="certificationProvider" -->
+
+                            <p-dropdown #pdropdown2 appendTo="body" [options]="certificationProviderList"
+                                optionLabel="name" [filter]="true" resetFilterOnHide="true" filterBy="name"
+                                placeholder="Select"
+                                (onChange)="valueChanged($event, 'certification-provider','Certification Provider' )"
+                                optionValue="id" formControlName="certificationProviderId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown2.hide();updateName('',0,'Certification Provider','New','certification-provider');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <div *ngIf="certificationFlag" class="col-sm-4 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['certificateOnDate'] && !!this.form.controls['certificateOnDate'].errors && !!this.form.controls['certificateOnDate'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" height="19px" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Certified on</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Date" /> -->
+                            <p-calendar readonlyInput="true" dateFormat="M dd, yy" appendTo="body"
+                                formControlName="certificateOnDate" [maxDate]="maximumDate" [showIcon]="true"
+                                inputId="icon" placeholder="Certified on"
+                                (onSelect)="changeFilter('cdate', $event)"></p-calendar>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="certificationFlag" class="col-sm-4 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['certificateExpiryDate'] && !!this.form.controls['certificateExpiryDate'].errors && !!this.form.controls['certificateExpiryDate'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" height="19px" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Expiration</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Date" /> -->
+                            <p-calendar class="date_picker_popup_cert" readonlyInput="true" [minDate]="miniumDate"
+                                dateFormat="M dd, yy" appendTo="body" [style]="{'width':'100%'}"
+                                [inputStyle]="{'width':'100%'}" formControlName="certificateExpiryDate"
+                                [showIcon]="true" inputId="icon" placeholder="Expiration"
+                                (onSelect)="changeFilter('edate', $event)"></p-calendar>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <!-- certification start -->
+                    <!-- training start -->
+                    <div *ngIf="trainingFlag" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['trainingNameMasterId'] && !!this.form.controls['trainingNameMasterId'].errors && !!this.form.controls['trainingNameMasterId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/training-name.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" style="width: 23px;height: 16px;" />
+                                <label class="mb-0">Training Name</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Training Name" />-->
+
+                            <p-dropdown #pdropdown3 appendTo="body" [options]="trainingNameList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'training-name','Training Name' )" optionValue="id"
+                                formControlName="trainingNameMasterId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown3.hide();updateName('',0,'Training Name','New','training-name');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="trainingFlag" class="col-sm-6 mb-30">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" height="19px" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Date</label>
+                            </div>
+
+                            <!-- <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div> -->
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Date" /> -->
+                            <p-calendar readonlyInput="true" dateFormat="M dd, yy" appendTo="body"
+                                [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                formControlName="trainingDate" [showIcon]="true" inputId="icon"
+                                placeholder="Select"></p-calendar>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="trainingFlag" class="col-sm-4 mb-30">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/training-course.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Course</label>
+                            </div>
+
+                        </div>
+                        <div class="input-filed">
+                            <!--input pInputText class="w-100" placeholder="Course" type="text"
+                            formControlName="course" -->
+
+                            <p-dropdown #pdropdown4 appendTo="body" [options]="trainingCourseList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'training-course','Training Course' )" optionValue="id"
+                                formControlName="trainingCourseMasterId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown4.hide();updateName('',0,'Training course','New','training-course');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <div *ngIf="trainingFlag" class="col-sm-4 mb-30">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/stack-grey.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Track</label>
+                            </div>
+
+                        </div>
+                        <div class="input-filed">
+                            <!--<input pInputText class="w-100" placeholder="Track" type="text"
+                            formControlName="track" >-->
+
+                            <p-dropdown #pdropdown5 appendTo="body" [options]="trainingTrackList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'training-track','Training Track' )" optionValue="id"
+                                formControlName="trainingTrackMasterId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown5.hide();updateName('',0,'Training Track','New','training-track');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <div *ngIf="trainingFlag" class="col-sm-4 mb-30">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/org-name.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Training Source</label>
+                            </div>
+
+                        </div>
+                        <div class="input-filed">
+                            <!--<input pInputText class="w-100" placeholder="Training Source" type="text"
+                            formControlName="source" >-->
+                            <p-dropdown #pdropdown6 appendTo="body" [options]="trainingSourceList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'training-source','Training Source' )" optionValue="id"
+                                formControlName="trainingSourceMasterId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown6.hide();updateName('',0,'Training Source','New','training-source');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <!-- training start-->
+                    <!-- organization start-->
+                    <div *ngIf="organizationFlag" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['organisationsMasterId'] && !!this.form.controls['organisationsMasterId'].errors && !!this.form.controls['organisationsMasterId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/org-name.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Organization Name</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--<input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Organization Name" />-->
+                            <p-dropdown #pdropdown7 appendTo="body" [options]="OrganizationNameList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'organization-name','Organization Name' )"
+                                optionValue="id" formControlName="organisationsMasterId">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown7.hide();updateName('',0,'Organization Name','New','organization-name');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="organizationFlag" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['organisationsID'] && !!this.form.controls['organisationsID'].errors && !!this.form.controls['organisationsID'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/org-number.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">ID</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input formControlName="organisationsID" type="text" pInputText
+                                class="pinputboxborder w-100" (change)="inputChange($event)" placeholder="Enter ID" />
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <!-- organization end -->
+                    <!-- attachment -->
+                    <div *ngIf="certificationFlag || trainingFlag || organizationFlag" class="col-sm-12 mb-30">
+                        <div>
+
+                            <div class="attach-row-rt ">
+                                <span (click)="attachmentPopup(0,'new');" class="attach-text attach-row cursor-pointer">
+                                    <img class="attach-img" src="assets/images/repair-order/attachments-img.svg"
+                                        onload="SVGInject(this)" alt="Attachments" />
+                                    <span style="color: #444444;
+                                    position: relative;
+                                    top: -1px;
+                                    left: 3px;">Attachments</span>
+                                </span>
+                                <span class="attach-count"
+                                    *ngIf="commentUploadedItemsFlag">{{commentUploadedItemsLength}}</span>
+                            </div>
+                            <div class="attachment-row " *ngIf="postUploadActionTrue"
+                                [ngClass]="{'reference-info-hide': postUploadActionTrue }">
+                                <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction"
+                                    [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                                <!-- Attachment List-->
+                                <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading"
+                                    [action]="action" [attachments]="attachmentsData"></app-attachment-view>
+                                <!-- Attachment List-->
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- shop certification start -->
+                    <div *ngIf="shopCertificationFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['type'] && !!this.form.controls['type'].errors && !!this.form.controls['type'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/stack-grey.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Type</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Certification Name" /-->
+
+                            <p-dropdown #pdropdown1 appendTo="body" [options]="certificationTypeList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'certification-type','Type' )" optionValue="id"
+                                formControlName="type">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown1.hide();updateName('',0,'Type','New','certification-type');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                            <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                        </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="shopCertificationFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['certification'] && !!this.form.controls['certification'].errors && !!this.form.controls['certification'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/certification-list.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Certification</label>
+                            </div>
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+                        <div class="input-filed">
+                            <!--input pInputText class="w-100" placeholder="Certification Provider" type="text"
+                            formControlName="certificationProvider" -->
+
+                            <p-dropdown #pdropdown2 appendTo="body" [options]="certificationList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'certification-list','Certification' )"
+                                optionValue="id" formControlName="certification">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown2.hide();updateName('',0,'Certification','New','certification-list');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <div *ngIf="shopCertificationFlag && !loading" class="col-sm-4 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['cdate'] && !!this.form.controls['cdate'].errors && !!this.form.controls['cdate'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" height="19px" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Certified on</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Date" /> -->
+                            <p-calendar readonlyInput="true" dateFormat="M dd, yy" appendTo="body"
+                                formControlName="cdate" [maxDate]="maximumDate" [showIcon]="true" inputId="icon"
+                                placeholder="Certified on" (onSelect)="changeFilter('cdate', $event)"></p-calendar>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="shopCertificationFlag && !loading" class="col-sm-4 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['edate'] && !!this.form.controls['edate'].errors && !!this.form.controls['edate'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" height="19px" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Expiration</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Date" /> -->
+                            <p-calendar readonlyInput="true" [minDate]="miniumDate" dateFormat="M dd, yy"
+                                appendTo="body" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                formControlName="edate" [showIcon]="true" inputId="icon" placeholder="Expiration"
+                                (onSelect)="changeFilter('edate', $event)"></p-calendar>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="shopCertificationFlag && !loading" class="col-sm-4 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['years'] && !!this.form.controls['years'].errors && !!this.form.controls['years'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Years Certified?</label>
+                            </div>
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+                        <div class="input-filed">
+                            <!--input pInputText class="w-100" placeholder="Certification Provider" type="text"
+                            formControlName="certificationProvider" -->
+
+                            <!-- <p-dropdown #pdropdown2 appendTo="body" [options]="certificationYearsList" [filter]="true"  resetFilterOnHide="true" filterBy="name" 
+                            placeholder="Select" (onChange)="valueChanged($event, 'certification-years','Certification' )" 
+                            formControlName="years"> 
+
+                            </p-dropdown> -->
+
+                            <p-dropdown #pdropdown2 appendTo="body" [options]="certificationYearsList" [filter]="true"
+                                optionValue="id" resetFilterOnHide="true" filterBy="name" optionLabel="name"
+                                placeholder="Select"
+                                (onChange)="valueChanged($event, 'certification-years','Certification' )"
+                                formControlName="years">
+                                <ng-template let-year pTemplate="item">
+                                    {{ year.name }}
+                                </ng-template>
+                            </p-dropdown>
+
+
+
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <div class="loader" *ngIf="loading"><img style="position: relative; left:0; top:0;" src="assets/images/landing-page/loading-more.svg"
+                        alt="Loader" />
+                    </div>
+                    <!-- shop certification start -->
+                    <!-- shop Technology start-->
+                    <div *ngIf="shopTechnologyFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['type'] && !!this.form.controls['type'].errors && !!this.form.controls['type'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/stack-grey.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Type</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--<input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                            placeholder="Organization Name" />-->
+                            <p-dropdown #pdropdown7 appendTo="body" [options]="technologyTypeList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'technology-type','Type' )" optionValue="id"
+                                formControlName="type">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown7.hide();updateName('',0,'Type','New','technology-type');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="shopTechnologyFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['solution'] && !!this.form.controls['solution'].errors && !!this.form.controls['solution'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/technology-solution.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Solution</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--<input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                            placeholder="Organization Name" />-->
+                            <p-dropdown #pdropdown7 appendTo="body" [options]="technologySolutionList"
+                                optionLabel="name" [filter]="true" resetFilterOnHide="true" filterBy="name"
+                                placeholder="Select"
+                                (onChange)="valueChanged($event, 'technology-solution','Solution' )" optionValue="id"
+                                formControlName="solution">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown7.hide();updateName('',0,'Solution','New','technology-solution');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div class="loader" *ngIf="loading"><img style="position: relative; left:0; top:0;" src="assets/images/landing-page/loading-more.svg"
+                            alt="Loader" />
+                    </div>
+                    <!-- shop Technology end -->
+                    <!-- shop Policies start-->
+                    <div *ngIf="shopPoliciesFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['type'] && !!this.form.controls['type'].errors && !!this.form.controls['type'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/stack-grey.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Type</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--<input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                            placeholder="Organization Name" />-->
+                            <p-dropdown #pdropdown7 appendTo="body" [options]="policiesTypeList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'policies-type','Type' )" optionValue="id"
+                                formControlName="type">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown7.hide();updateName('',0,'Type','New','policies-type');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="shopPoliciesFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['provider'] && !!this.form.controls['provider'].errors && !!this.form.controls['provider'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img style="width: 18px;height: 22px;"
+                                    src="assets/images/user-profile/certification-provider.png" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Provider</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--<input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                            placeholder="Organization Name" />-->
+                            <p-dropdown #pdropdown7 appendTo="body" [options]="policiesProviderList" optionLabel="name"
+                                [filter]="true" resetFilterOnHide="true" filterBy="name" placeholder="Select"
+                                (onChange)="valueChanged($event, 'policies-provider','Provider' )" optionValue="id"
+                                formControlName="provider">
+
+                                <ng-template let-shop pTemplate="item">
+                                    <div class="shop-item" *ngIf="shop.id == 0"
+                                        (click)="$event.stopPropagation();pdropdown7.hide();updateName('',0,'Provider','New','policies-provider');">
+                                        <div><span style="color:#469073;">{{shop.label}}</span></div>
+                                    </div>
+                                    <div class="option-item" *ngIf="shop.id > 0">
+                                        {{shop.name}}
+                                        <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                    </div>
+                                </ng-template>
+
+                            </p-dropdown>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div *ngIf="shopPoliciesFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['limits'] && !!this.form.controls['limits'].errors && !!this.form.controls['limits'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/tech-limits.png" alt=""
+                                    class="mr-2 new-request-icon" />
+                                <label class="mb-0">Limits</label>
+                            </div>
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+                        <div class="input-filed">
+                            <input pInputText class="w-100 pinputboxborder" placeholder="Limits" type="text"
+                                maxlength="8" formControlName="limits" (change)="valueChanged('2','','')">
+
+                            <!--<p-dropdown #pdropdown2 appendTo="body" [options]="policiesLimitsList" [filter]="true"  resetFilterOnHide="true" filterBy="name" 
+                            placeholder="Select" (onChange)="valueChanged($event, 'policies-limits','Limits' )" 
+                            formControlName="limits"> 
+                            </p-dropdown>-->
+
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+                    </div>
+                    <div *ngIf="shopPoliciesFlag && !loading" class="col-sm-6 mb-30"
+                        [ngClass]="submitClicked && !!this.form.controls && !!this.form.controls['edate'] && !!this.form.controls['edate'].errors && !!this.form.controls['edate'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/user-profile/calender-small-dark.png" height="19px" alt=""
+                                    class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Expiration</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!-- <input formControlName="name" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Date" /> -->
+                            <p-calendar readonlyInput="true" [minDate]="miniumDate" dateFormat="M dd, yy"
+                                appendTo="body" appendTo="body" [style]="{'width':'100%'}"
+                                [inputStyle]="{'width':'100%'}" formControlName="edate" [showIcon]="true" inputId="icon"
+                                placeholder="Expiration" (onSelect)="changeFilter('edate', $event)"></p-calendar>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div class="loader" *ngIf="loading"><img style="position: relative; left:0; top:0;" src="assets/images/landing-page/loading-more.svg"
+                        alt="Loader" />
+                    </div>
+                    <!-- shop Technology end -->
+                    <div *ngIf="serverError" class="ups-err-text">{{serverErrorMsg}}</div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

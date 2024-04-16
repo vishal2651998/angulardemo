@@ -1,0 +1,123 @@
+<div *ngIf="thumbView" class="folder-list">
+    <ngx-masonry [options]="{ gutter: 10 }" [updateLayout]="updateMasonryLayout" [ordered]="true">
+        <ng-container *ngFor="let item of items">
+            <div ngxMasonryItem class="folder-card masonry-item">
+                <div class="document-folder-item-system" [ngClass]="{'document-folder-item-syystem': item.isSystemFolder == 1, 'document-folder-item': item.isSystemFolder == 0, 'empty' : (!item.isMfg && item.fileCount == 0) || (item.isMfg && item.isMake && item.fileCount == 0) || (item.isMfg && !item.isMake && ( item.subFolderCount == 0 && item.fileCount == 0 ))}" (click)="viewDocument(item)">
+                    <span *ngIf="domainAccess">
+                        <span> <!-- *ngIf="item.isSystemFolder == 0 || (item.isMfg && !item.isMake)" -->
+                            <!--div *ngIf="item.isSystemFolder == 0 && !item.isMfg" class="three-dot three-dot-action" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div>
+                            <div *ngIf="item.isSystemFolder == 1 && item.isMfg && !item.isMake" class="three-dot-mfg three-dot-mfg-action" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div-->
+                            <div *ngIf="item.isSystemFolder == 0" class="three-dot three-dot-action" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div>
+                            <div *ngIf="item.isSystemFolder == 1" class="three-dot-mfg three-dot-mfg-action" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div>
+                            <mat-toolbar color="primary">
+                                <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu">
+                                    <div class="part-menu" >
+                                        <ul class="more-actions">
+                                            <li *ngIf="item.isSystemFolder == 0 && !item.isMfg" class="cursor active" (click)="editfolderpopup(item.folderName,item.id,item.workstreamsList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            <li *ngIf="item.isSystemFolder == 0 && !item.isMfg" class="cursor active" (click)="deletefolderpopup(item.folderName,item.id,item.fileCount)"><img class="img-del" src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                            <li class="cursor active" [ngStyle]="item.isSystemFolder == 1 ? {'padding': '0px 20px 5px 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(item, 'upload')"><img class="img-upload" src="assets/images/media/image-thumb.png" alt="Upload"><span *ngIf="item.logo == ''">{{uploadTxt}}</span> <span *ngIf="item.logo != ''">{{updateTxt}}</span></li>
+                                            <li *ngIf="item.logo != ''" class="cursor active" [ngStyle]="item.isSystemFolder == 1 ? {'padding': '10px 20px 0 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(item, 'remove')"><img class="img-upload" src="assets/images/delete.png" alt="Remove"><span>Remove Image</span></li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>
+                        </span>                   
+                    </span>
+
+                    <!--div [ngClass]="{'system-folder': item.isSystemFolder == 1, 'user-folder': item.isSystemFolder == 0, 'hide': item.isMfg}"></div>
+                    <div class="view-count-new" [ngClass]="{'hide': item.isMfg}">
+                        <span class="view-text">{{item.viewCount}}&nbsp;&nbsp;
+                            <img *ngIf="item.isSystemFolder == 1" src="assets/images/documents/eye-icon.png">
+                            <img *ngIf="item.isSystemFolder == 0" src="assets/images/documents/eye-icon-gray.png">
+                        </span>
+                    </div-->                    
+                    <!--div class="view-count">{{item.viewCount}}</div-->
+                    <div class="mfg-logo-div">
+                        <img *ngIf="item.isSystemFolder == 1" [src]="item.logo" onerror="this.src='assets/images/documents/sys-folder-thumb.png'" >
+                        <img *ngIf="item.isSystemFolder == 0" [src]="item.logo" onerror="this.src='assets/images/documents/user-folder-thumb.png'" >
+                    </div>
+                    <div title="{{item.folderName}}" class="system-heading" [ngClass]="{'system-folder-head': item.isSystemFolder == 1}">{{item.folderName}}</div>
+                    <div class="system-sub-heading">
+                        <ng-container *ngIf="item.subFolderCount > 0">
+                            {{item.subFolderCount}} Folder<span *ngIf="item.subFolderCount > 1">s</span></ng-container>
+                        <ng-container *ngIf="item.subFolderCount > 0 && item.fileCount > 0">,
+                        </ng-container>
+                        <ng-container *ngIf="item.fileCount > 0">{{item.fileCount}}
+                            File<span *ngIf="item.fileCount > 1">s</span></ng-container>
+                    </div>
+                    <div class="system-sub-heading empty" *ngIf="item.subFolderCount == 0 && item.fileCount == 0">
+                        Empty
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ngx-masonry>
+</div>
+<div *ngIf="!thumbView" class="doc-list-cont">
+    <div id="documentTable">
+        <p-table #table [totalRecords]="items.length" id="file-datatable" class="file-datatable folder-datatable thread-list-table folder-list-table" [value]="items">
+            <ng-template pTemplate="body" let-items let-i="rowIndex">
+                <tr class="cursor" (click)="viewDocument(items)">
+                    <td>
+                        <div class="doc-item">
+                            <div class="item-col mfg-col icon">
+                                <span class="document-img" [ngClass]="{'folder-bg': items.isSystemFolder == 1, 'file-bg': items.isSystemFolder == 0}"></span>
+                                <span class="mfg-logo-new" *ngIf="items.isSystemFolder == 1"><img src="{{items.logo}}" onerror="this.src='assets/images/documents/sys-folder-thumb.png'" /></span>
+                                <span class="mfg-logo-new" *ngIf="items.isSystemFolder == 0"><img src="{{items.logo}}" onerror="this.src='assets/images/documents/user-folder-thumb.png'" /></span>
+                            </div>
+                            <div class="item-col title mfg-title">
+                                <div>{{items.folderName}}</div>
+                                <div class="folder-user-details" *ngIf="items.isSystemFolder == 1">
+                                    <span><span class="system-folder">System Folder</span></span>
+                                </div>
+                                <div class="folder-user-details" *ngIf="items.isSystemFolder == 0">
+                                    <span *ngIf="items.createdOn !=''"><span class="label">Created on </span>{{items.createdOn | date:'mediumDate'}}</span>
+                                    <span *ngIf="items.userName !=''" class="item"><span class="label">by </span>{{items.userName}} </span> 
+                                    <span *ngIf="items.updatedOn !=''" class="item"><span class="label">Updated on </span>{{items.updatedOn | date:'mediumDate'}} </span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="doc-count text-right">
+                            <div class="doc-col folder">
+                                <span class="count-row" *ngIf="items.subFolderCount > 0">
+                                    <span class="count-col subFolderCount">{{items.subFolderCount}} </span>
+                                    <span class="count-col folder-text">Folder<span *ngIf="items.subFolderCount > 1">s</span></span>
+                                </span>
+                            </div>
+                            <div class="doc-col file">
+                                <span class="count-row" *ngIf="items.fileCount > 0">
+                                    <span class="count-col filecount">{{items.fileCount}}</span>
+                                    <span class="count-col file-text">File<span *ngIf="items.fileCount > 1">s</span></span>
+                                </span>
+                                <span class="empty text-center" *ngIf="items.fileCount == 0">-</span>
+                            </div>
+                            <span class="doc-more">
+                                <!--div *ngIf="items.isSystemFolder == 1" id="more" class="more-icon" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div-->
+                                <div id="more" class="more-icon" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();">
+                                    <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu">
+                                        <div class="part-menu" >
+                                            <ul class="more-actions">
+                                                <li *ngIf="items.isSystemFolder == 0" class="cursor active" (click)="editfolderpopup(items.folderName,items.id,items.workstreamsList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                <li *ngIf="items.isSystemFolder == 0" class="cursor active" (click)="deletefolderpopup(items.folderName,items.id,items.fileCount)"><img class="img-del" src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                <li class="cursor active" [ngStyle]="items.isSystemFolder == 1 ? {'padding': '0px 20px 5px 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(items, 'upload')"><img class="img-upload" src="assets/images/media/image-thumb.png" alt="Upload"><span *ngIf="items.logo == ''">{{uploadTxt}}</span> <span *ngIf="items.logo != ''">{{updateTxt}}</span></li>
+                                                <li *ngIf="items.logo != ''" class="cursor active" [ngStyle]="items.isSystemFolder == 1 ? {'padding': '10px 20px 0 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(items, 'remove')"><img class="img-upload" src="assets/images/delete.png" alt="Remove"><span>Remove Image</span></li>
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </span>
+                        </div>
+                    </td>
+                </tr>          
+            </ng-template>
+        </p-table>
+    </div>
+</div>

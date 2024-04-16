@@ -1,0 +1,110 @@
+<app-custom-accordion-tab [headerTemplate]="headerTemplate" [Config]="accordionConfig" class="mb-4">
+  <div class="inner-content-accrodian announcement-listing-widget">
+    <div class="loading-small-screen" *ngIf="loadingann"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div class="nothingtoshow" *ngIf="noannouncement">
+      <div class="no-data-contaier">
+        <div>
+          <img class="no-data-img" src="assets/images/landing-page/empty-announcement.svg">
+        </div>
+        <div class="no-data-text">{{noannounceText}}</div>
+      </div>
+    </div>
+    <div class="announcement-content cursor" (click)="announceClick($event,announcements.uId)"
+      *ngFor="let announcements of landingannouncements; let anm = index" [@anim]="announcements.state">
+      <div class="container-fluid announcementgrid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 class-margin-align ">
+          <span *ngIf="!announcements.readStatus" class="bg-image-new-announcement new-announcement-tag"></span>
+          <div class="align-self-center left-alignment col col-lg-auto  col-md-auto col-xl-auto col-sm-auto ">
+            <span class="profileImg-container">
+              <img class="profileImg" [src]="announcements.profileImage" />
+              <span class="availability-status "></span>
+            </span>
+          </div>
+          <div class="align-self-center middle-alignment col col-lg-9  col-md-9 col-xl-9 col-sm-10 landing-padding0">
+            <div class="title-container">
+              <span title="{{announcements.title}}"
+                class="ann-title left-continer-section">{{announcements.title}}</span>
+              <span *ngIf="announcements.urgencyLevelText" class="ann-urgent middle-continer-section"><img
+                  src="assets/images/landing-page/announcement-urgent.png"></span>
+              <span class="workstream-name"
+                *ngFor="let Workstreamssingle of announcements.WorkstreamsList; let wnm = index">
+                {{Workstreamssingle.name}}
+              </span>
+            </div>
+            <div class="ann-date"><span>{{announcements.contributerName}}</span>,
+              <span>{{announcements.createdOn}}</span></div>
+          </div>
+          <div class="align-self-center right-alignment col col-lg-2  col-md-2 col-xl-2 col-sm-10 landing-padding0">
+            <div class="announce-like-container">
+              <span><img src="assets/images/landing-page/landing-like-icon.png"></span>
+              <span class="ann_like_count">{{announcements.likeCount}}</span>
+            </div>
+            <div class="announce-view-container">
+              <span><img src="assets/images/landing-page/landing-view-icon.png"></span>
+              <span class="ann_view_count">{{announcements.viewCount}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-custom-accordion-tab>
+
+
+<ng-template #headerTemplate>
+  <div class="container-fluid">
+    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+      <div class="menu-name-bar col col col-lg-6  col-md-6 col-xl-6 col-sm-6 landing-padding0">
+        <div> <span class="bg-image {{optionsval.imageClass}}">
+          <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+        </span>
+          <span class="menu-name">{{optionsval.placeholder}}</span>
+          <span *ngIf="(newAnnouncementOption || roleId=='3') && noAcccheckURL != 'shops'" class="ann-more-button" tooltipClass="announce-tooltip" triggers="click"
+            [autoClose]="true" placement="right" [ngbTooltip]="worksteamEdit" (click)="$event.stopPropagation();"><span
+              class="more-circle">&nbsp;</span><span class="more-circle">&nbsp;</span><span
+              class="more-circle">&nbsp;</span></span>
+
+          <ng-template #worksteamEdit>
+            <div class="tooltip-ann-new" (click)="newAnnouncement($event);$event.stopPropagation();">
+              <span class="w-img"><img src="assets/images/documents/plus.png"></span>
+              <span class="w-text">New Announcement</span>
+            </div>
+            <div class="tooltip-ann-new" (click)="dashboardAnnouncement($event);$event.stopPropagation();">
+              <span class="w-img"><img src="assets/images/announcement/announce-dashboard-icon.png"></span>
+              <span class="w-text">Announcement Dashboard</span>
+            </div>
+          </ng-template>
+
+          <span class="ann-more-button ann-more-button-tt" tooltipClass="help-content-tooltip sidebarTeam3"
+            container="body" triggers="manual" [autoClose]="false" placement="right-top" [ngbTooltip]="announcementTT"
+            #ttannouncement="ngbTooltip" (click)="$event.stopPropagation();"></span>
+            
+          <ng-template #announcementTT>
+            <div class="tt-helpcontent-container">
+              <div class="tt-bg-image {{ahelpContentIconName}}"></div>
+              <div class="tt-title">
+                <div class="lt-img {{ahelpContentIconName}}"></div>
+                <div class="rt-text">{{ahelpContentTitle}}</div>
+              </div>
+              <div class="tt-desp">{{ahelpContentContent}}</div>              
+              <div class="tt-div tt-next-div" (click)="nextTooltip(ahelpContentId)"><span class="button-div button-next-div" ><span class="text">NEXT&nbsp;</span><img src="assets/images/common/next-tt.png" alt="next" /></span></div>
+              <div class="tt-div tt-skip-div" (click)="skipTooltip(ahelpContentId)"><span class="button-div button-skip-div"><span class="text">SKIP&nbsp;</span><img src="assets/images/common/skip-tt.png" alt="skip" /></span></div>
+            </div>
+          </ng-template>
+          <span><i class="pi hide pi-ellipsis-v"></i></span>
+        </div>
+      </div>
+      <div class="col col col-lg-6  col-md-6 col-xl-6 col-sm-6 landing-padding0">
+        <div class="rightside-menu-header">
+          <div (click)="taponDismissed($event)" class="see-more-text" *ngIf="anndismissed && noAcccheckURL != 'shops'"><span>Dismissed
+              Announcement</span> <span> <i class="pi pi-angle-double-right icon-size"></i></span></div>
+          <div (click)="taponMore($event)" class="see-more-text" *ngIf="annseemore"><span>View all announcements</span> <span>
+              <i class="pi pi-angle-double-right icon-size"></i></span></div>
+          <!-- <div (click)="taponseeMore($event)" class="see-more-text" *ngIf="annseemore"><span>See More</span> <span> <i class="pi pi-angle-double-right icon-size"></i></span></div> -->
+          <div class="ml-3 expand-icon"><i class="pi pi-chevron-up"></i></div>
+          <div class="ml-3 collapse-icon"><i class="pi pi-chevron-down"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,407 @@
+<div >
+    <div *ngIf="loading">
+        <div class="loader"><div class="post-loader-svg"></div></div>
+    </div>   
+    <div *ngIf="!loading && emptyData" class="view-ro-detail"> 
+        
+        <div style="padding:30px;text-align: center;" class="title-text">Deleted RO</div>
+
+    </div>
+    <div *ngIf="!loading && !emptyData" class="view-ro-detail">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center">
+                <img src='assets/images/repair-order/view-ro-info.png' alt=''/>
+                <span class="title-text">Repair Order</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row ">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <img  class="cont-div-lt" src='assets/images/repair-order/view-ro-number.png' alt=''/>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Repair Order#</p>
+                            <p class="cont-text">{{ROViewData.id}}</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <img  class="cont-div-lt" src='assets/images/repair-order/view-cal-info.png' alt=''/>
+                        <div class="cont-div-rt">
+                            <p class="label-text">RO Date</p>
+                            <p class="cont-text">{{ROViewData.requestedDate}}</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <img  class="cont-div-lt" src='assets/images/repair-order/view-status-info.png' alt=''/>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Status</p>
+                            <span class="status-text white-space-nowrap" [style.background-color]="ROViewData.techSupportStatusBgColorStr">{{ROViewData.techSupportStatusStr}}</span>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12 padding-left0 " > 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg"><img src="assets/images/thread-detail/problem.svg" alt="" onload="SVGInject(this)" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text white-space-nowrap">Thread ID</p>
+                            <p *ngIf="ROViewData.thread_id != '' && ROViewData.thread_id != '0'" class="cont-text blue-text" (click)="gotoThreadsPage(ROViewData.thread_id)">{{ROViewData.thread_id}}</p>
+                            <p *ngIf="ROViewData.thread_id == '' || ROViewData.thread_id == '0'" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12 padding-left0 service-type-div"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/service-type.svg" onload="SVGInject(this)" alt="Service Type" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text white-space-nowrap">Service Type</p>
+                            <p *ngIf="ROViewData.requestType != ''" class="cont-text service-type-text" style="text-transform:capitalize;">{{ROViewData.requestType}}</p>
+                            <p *ngIf="ROViewData.requestType == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center">
+                <img src="assets/images/repair-order/order-title-img-png.png" alt="" />
+                <span class="title-text">Order Details</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin" [ngClass]="{ 'order-cont-row-no' : diagnationDomain , 'order-cont-row' : !diagnationDomain }">
+                
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/order-number-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Order Number</p>
+                            <p class="cont-text">{{ROViewData.order_number}}</p>                           
+                        </div>                        
+                    </div>
+                </div>
+                <!--div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/products-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Products (Services)</p>
+                            <p class="cont-text">{{ROViewData.product_service}}</p> 
+                        </div>                        
+                    </div>
+                </div-->                
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt" style="top:0;"><img src="assets/images/repair-order/dn-invoice-img.png" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">DN Invoice#</p>
+                            <p *ngIf="ROViewData.dn_invoice != ''" class="cont-text">{{ROViewData.dn_invoice}}</p> 
+                            <p *ngIf="ROViewData.dn_invoice == ''" class="cont-text">-</p> 
+                        </div>                        
+                    </div>
+                </div>                
+            </div>
+
+            <div *ngIf="diagnationDomain" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row ">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <img  class="cont-div-lt" src='assets/images/repair-order/view-status-info.png' alt=''/>
+                        <div class="cont-div-rt">
+                            <p class="label-text">WooCommerce Status</p>
+                            <p class="cont-text" *ngIf="ROViewData.wooStatusText == ''">-</p>                            
+                            <span *ngIf="ROViewData.wooStatusText != ''" class="status-text white-space-nowrap" [style.background-color]="ROViewData.wooStatusTextColor">{{ROViewData.wooStatusText}}</span>                          
+                        </div>                        
+                    </div>
+                </div>                               
+                <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <img  class="cont-div-lt" src='assets/images/repair-order/view-cal-info.png' alt=''/>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Recent data sent on</p>
+                            <p class="cont-text"> 
+                                <span *ngIf="ROViewData.wooLastUpdatedOn != ''">{{ROViewData.wooLastUpdatedOn}}</span>
+                                <span *ngIf="wooHistoryResponse?.length>0"  class="recent-history-div cursor" (click)="viewHistorysideMenu()"><img class="image-1" src="assets/images/repair-order/green-cal-icon.png" alt="" />&nbsp;&nbsp;View History</span>
+                                <span *ngIf="wooHistoryResponse?.length>0" class="recent-history-div cursor" (click)="checkStatus()"><img class="image-2" src="assets/images/repair-order/order-detail-pl-icon.png" alt="" />&nbsp;&nbsp;Order Detail</span>                               
+                            </p>
+                            <p *ngIf="ROViewData.wooLastUpdatedOn == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center fill-black">
+                <img src="assets/images/repair-order/buss-info.svg" onload="SVGInject(this)" alt="" />
+                <span class="title-text">Business Info</span>
+                <span class="recent-history-div cursor" (click)="viewBusinessDetail(ROViewData.businessInfo.id)"><img class="image-2" src="assets/images/repair-order/order-detail-view-icon.png" alt="" />&nbsp;&nbsp;View Details</span>                 
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin" [ngClass]="{ 'order-cont-row-no' : diagnationDomain , 'order-cont-row' : !diagnationDomain }">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/buss-info.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Business Name</p>
+                            <p class="cont-text">{{ROViewData.businessInfo.name}}</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/map-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Address</p>
+                            <p *ngIf="ROViewData.businessInfo.addressLine1 !=''" class="cont-text">{{ROViewData.businessInfo.addressLine1}}<span *ngIf="ROViewData.businessInfo.addressLine2 !=''">, {{ROViewData.businessInfo.addressLine2}}</span></p>
+                            <p *ngIf="ROViewData.businessInfo.addressLine1 ==''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/email-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Email</p>
+                            <p *ngIf="ROViewData.businessInfo.email != ''" class="cont-text">{{ROViewData.businessInfo.email}}</p>
+                            <p *ngIf="ROViewData.businessInfo.email == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <img  class="cont-div-lt" src='assets/images/repair-order/phone-icon.png' alt=''/>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Phone</p>
+                            <p *ngIf="ROViewData.businessInfo.phone != ''" class="cont-text">{{ROViewData.businessInfo.phone}}</p>
+                            <p *ngIf="ROViewData.businessInfo.phone == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row " *ngIf="diagnationDomain">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/buss-cont-info-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Billing First Name</p>
+                            <p *ngIf="ROViewData.billingFirstName != ''" class="cont-text">{{ROViewData.billingFirstName}}</p>
+                            <p *ngIf="ROViewData.billingFirstName == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0" *ngIf="diagnationDomain"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/buss-cont-info-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Billing Last Name</p>
+                            <p *ngIf="ROViewData.billingLastName != ''" class="cont-text">{{ROViewData.billingLastName}}</p>
+                            <p *ngIf="ROViewData.billingLastName == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>                                
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center no-sub-title fill-black">
+                <img src="assets/images/repair-order/buss-cont-info.svg" onload="SVGInject(this)" alt="" />
+                <span class="title-text">Business Contact</span>                
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row "  style="padding-top: 10px !important;">                
+                <div class="col-xl-12 col-lg-12 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">     
+                        <span *ngIf="ROViewData.contactDetailInfoArr?.length == 0">
+                            <span style="padding-left: 20px;">-</span>   
+                        </span>  
+                        <span *ngIf="ROViewData.contactDetailInfoArr?.length > 0">
+                            <span *ngFor="let item of ROViewData.contactDetailInfoArr;"> 
+                                <span class="cont-info-text"><span>{{item}}</span></span>                                     
+                            </span>
+                        </span>                                                                  
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center fill-black">
+                <img src="assets/images/repair-order/vehicle-info.svg" onload="SVGInject(this)" alt="" />
+                <span class="title-text">Vehicle</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row ">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/vin-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">VIN</p>
+                            <p class="cont-text">{{ROViewData.vin}}</p>                           
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/model-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">Make</p>
+                            <p class="cont-text" [innerHTML]="ROViewData.makeVal"></p>
+                        </div>                        
+                    </div>
+                </div>                
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div">
+                        <div class="cont-div-lt-svg-fill"><img src="assets/images/repair-order/odo-img.svg" onload="SVGInject(this)" alt="" /></div>
+                        <div class="cont-div-rt">
+                            <p class="label-text">ODO</p>
+                            <p *ngIf="ROViewData.odometer != ''" class="cont-text">{{ROViewData.odometer}}
+                                <span *ngIf="ROViewData.unit == 'MI'"> Miles</span>
+                                <span *ngIf="ROViewData.unit != 'MI'"> KMs</span>                                
+                            </p>
+                            <p *ngIf="ROViewData.odometer == ''" class="cont-text">-</p>
+                        </div>                        
+                    </div>
+                </div>                
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center no-sub-title" *ngIf="diagnationDomain">
+                <img src="assets/images/repair-order/prob-desc.svg" onload="SVGInject(this)" alt="" />
+                <span class="title-text">Customer Complaint</span>
+                
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row " style="padding-top:0 !important;" *ngIf="diagnationDomain">                
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 padding-left0" style="padding-top:0 !important;"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div" style="padding-top: 0 !important; padding-left: 22px !important;">
+                        <p [innerHTML]="customerComplaint" style="padding-bottom: 10px;" *ngIf="customerComplaint != ''"></p>                                             
+                        <p style="padding-bottom: 10px;color: #a7a7a7;font-family: Roboto-Regular;font-style: italic;" *ngIf="customerComplaint == ''">None</p>                                             
+                    </div>
+                </div>
+            </div>
+           
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center no-sub-title fill-black">
+                <img src="assets/images/repair-order/tech-info.svg" onload="SVGInject(this)" alt="" />
+                <span class="title-text">Technician (The person who will service the vehicle)</span>                
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row "  style="padding-top: 10px !important;">                
+                <div class="col-xl-12 col-lg-12 col-md-6 col-sm-12 col-12 padding-left0"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div" *ngIf="ROViewData.technicanInfo?.length>0">
+                        <span class="cont-info-text" *ngFor="let item of ROViewData.technicanInfo;"> 
+                            <span>{{item.info}}</span>                                       
+                        </span>                               
+                    </div>
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div" *ngIf="ROViewData.technicanInfo?.length==0">                        
+                        <span class="cont-text" style="padding-left:25px !important">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center no-sub-title">
+                <img src="assets/images/repair-order/prob-desc.svg" onload="SVGInject(this)" alt="" />
+                <span class="title-text">Additional Problem Detail</span>
+                
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row " style="padding-top:0 !important;border: 0;">                
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 padding-left0" style="padding-top:0 !important;"> 
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div" style="padding-top: 0 !important; padding-left: 22px !important;">
+                        <p *ngIf="description != ''" [innerHTML]="description" style="padding-top:0 !important;"></p>                                             
+                        <p style="padding-bottom: 10px;color: #a7a7a7;font-family: Roboto-Regular;font-style: italic;" *ngIf="description == ''">None</p>                                            
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin cont-div" *ngIf="!attachmentLoading">                 
+                <div style="padding-left: 22px !important;">
+                    <div id="attachment-v3" class="reference-info ro-info">
+                        <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                    </div>
+                </div>                       
+            </div>
+
+            
+
+           
+
+            <div *ngIf="ROViewData.estimationData != ''" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-title-row flex-align-center">
+                
+                    <div class="estimation-head-div col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <img src="assets/images/repair-order/product-services-pl-icon.png" />
+                        <span class="estimation-text">Products and Services</span>
+                    </div>
+                
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin" style="padding-top: 0 !important;">                
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 padding-left0">
+                    <app-ro-estimation [roData]="roPageData" class="estimation-div estimation-detail-div"></app-ro-estimation>
+                </div>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin order-cont-row" style="padding-top: 0 !important;">                
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 padding-left0"> 
+                    <!-- Systemrmation -->
+                    <div id="system-v2" class="reference-info">
+                        <mat-accordion [multi]="true" #accordion="matAccordion">
+                            <mat-expansion-panel class="{{panel.class}}"
+                            [disabled]="panel.isDisabled"
+                            [expanded]="panel.isExpanded"
+                            [hideToggle]="false"
+                            (opened)="beforeParentPanelOpened(panel, emptyList)"
+                            (closed)="beforeParentPanelClosed(panel, emptyList)"
+                            (afterCollapse)="afterPanelClosed()"
+                            (afterExpand)="afterPanelOpened()"
+                            *ngFor="let panel of referenceAccordion"
+                            #mapanel="matExpansionPanel">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                    <b>{{panel.title}}</b>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                    <div class="app-accord">
+                                        <app-system-info-view [systemInfo]="systemInfo"></app-system-info-view>
+                                    </div>
+
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<p-dialog [(visible)]="repairOrderStatusModal" [modal]="true" [draggable]="false" [resizable]="false"
+    class="dispatch-modal dispatch-modal-width card-spacing  form-type-fields">
+
+
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Order Detail</span>            
+        </div>
+    </ng-template>
+    <div [style.height.px]="innerHeight">
+        <div class="ps" [perfectScrollbar]="sconfig">
+        <!--pre><p>{{commonOrderData | json}}</p></pre-->
+
+
+        <div *ngFor="let item of commonOrderData | keyvalue" class="obj-div">
+            <span class="obj-lt-div" [ngClass]="{ 'too-strong' : item.key=='billing' || item.key=='meta_data' || item.ke=='line_items' || item.key=='_links' }">{{item.key}}</span>
+            <span *ngIf="item.key!='billing' && item.key!='meta_data' && item.key!='line_items' && item.key!='_links'" class="obj-rt-div">&nbsp;:&nbsp;{{item.value}}</span>
+            <span *ngIf="item.key=='billing'" class="inner-obj-div"><span *ngFor="let billingData of item.value | keyvalue"> <span class="obj-lt-div">{{billingData.key}}</span><span  class="obj-rt-div">&nbsp;:&nbsp;{{billingData.value}}</span></span></span>
+            <span *ngIf="item.key=='meta_data'" class="inner-obj-div"><span *ngFor="let metaDataInfo of item.value  | keyvalue"> <span class="obj-div"><span *ngFor="let metaDataInfoLoop of metaDataInfo.value | keyvalue"><span class="obj-lt-div">{{metaDataInfoLoop.key}}</span><span class="obj-rt-div">&nbsp;:&nbsp;{{metaDataInfoLoop.value}}</span></span></span></span></span>
+            <span *ngIf="item.key=='line_items'" class="inner-obj-div"><span *ngFor="let lineItemsInfo of item.value | keyvalue"> <span class="obj-div set-border"><span *ngFor="let lineItemsInfoLoop of lineItemsInfo.value | keyvalue"><span class="obj-lt-div">{{lineItemsInfoLoop.key}}</span><span class="obj-rt-div">&nbsp;:&nbsp;{{lineItemsInfoLoop.value}}</span></span></span></span></span>
+            <span *ngIf="item.key=='_links'" class="inner-obj-div">
+                <span *ngFor="let linksItemsInfo of item.value | keyvalue">
+                    <span class="obj-div">
+                        <span class="obj-lt-div">{{linksItemsInfo.key}}</span>
+                        <span class="obj-rt-div" *ngFor="let linksItemsInfoLoop of linksItemsInfo.value | keyvalue">
+                            <span *ngFor="let linksItemsInfoInLoop of linksItemsInfoLoop.value | keyvalue">
+                                <span >&nbsp;:&nbsp;<a [href]="linksItemsInfoInLoop.value" target="_blank">{{linksItemsInfoInLoop.value}}</a></span>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>            
+        </div>
+         
+          </div>
+       
+    </div>
+</p-dialog>
+
+<p-dialog [header]="false" [modal]="true" [draggable]="false" [resizable]="false" [(visible)]="viewHistoryFlag"
+ [position]="dialogPosition">
+    <div class="history-update-div">
+        <h1 style="font-weight: normal">
+            <span class="head truncate">WooCommerce Update History</span>
+            <span class="sidebar-close-icon cursor text-right" (click)="closeSidebar()"></span>
+        </h1>    
+        <div class="items">
+            <div class="items-row" *ngFor="let item of wooHistoryResponse;">{{item}}</div>
+        </div>
+    </div>
+</p-dialog>
+

@@ -1,0 +1,375 @@
+<div class="custom-modal modal-container" id="wrapper">    
+    <div class="modal-header view-modal-header">
+        <div class="view-modal-title">
+            <img src="assets/images/training-popup-header-icon.png" >
+            <span class="view-modal-title-text">{{headTitle}}</span>            
+        </div>
+        <div class="view-modal-actions">
+            <span class="cursor close-btn" (click)="closeModal()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body view-modal-body">
+        <div [style.height.px]="innerHeight">
+            <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig"> 
+                <div *ngIf="loading">
+                    <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                </div>
+                <div *ngIf="!loading" >
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+                        
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin header-row">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+                               
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin background-gray">
+                                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding row no-margin" style="width: 510px !important; display: inline-block; flex: none;">
+                                            <div style="display: table; justify-content: center; z-index: 1; width: 100%;  vertical-align: middle;">
+                                                <div style="display: table-cell; max-width: 510px; max-height: 346px; text-align: center; vertical-align: middle;">
+                                                    <img [src]="trainingData?.bannerImageUrl ? trainingData?.bannerImageUrl : 'assets/images/service-provider/training-blank-1.png'" style="width: 100%; height: 100%; display: block; border-radius: 10px;"/>
+                                                </div>
+                                            </div>                                            
+                                        </div>
+                                        <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12  no-padding row no-margin padding-type-1" style="display: inline-block; flex: none;padding-left: 40px !important;">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+                                                <span class="inner-page-title">{{trainingData?.trainingName}}</span>
+                                            </div> 
+                                            
+                                            <div
+                                            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail flex-align-center"
+                                            style="margin-top: 20px;">
+
+                                            <div  >
+                                                <ng-container *ngIf="trainingData?.trainingMode == 'Recorded' ">
+                                                <img class="margin-right-10px" width="auto" height="16px" src="assets/images/service-provider/record-green.png" alt="training">
+                                                </ng-container>
+                                                <ng-container *ngIf="trainingData?.trainingMode == 'Seminar' ">
+                                                <img class="margin-right-10px" width="20px" height="15px" src="assets/images/service-provider/seminar-collabtic-detail.png" alt="training">
+                                                </ng-container>
+                                                <ng-container *ngIf="trainingData?.trainingMode == 'Webinar' ">
+                                                <img class="margin-right-10px" width="20px" height="15px" src="assets/images/service-provider/webinar-collabtic-detail.png" alt="training" >
+                                                </ng-container>
+                                            </div>
+
+                                        
+
+                                            <span class="training-text-style">Training mode - {{trainingData?.trainingMode}}</span>
+                                            </div>
+                                            <div
+                                            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1 flex-align-center"
+                                            *ngIf="trainingData?.trainingMode != 'Recorded'">
+                                            <img style="margin-right: 15px;" class="margin-right-10px" width="15px" height="15px"
+                                                src="assets/images/service-provider/calender-green.png" >
+                                                
+                                            <span *ngIf="trainingData?.startDate != trainingData?.endDate" class="custom-time-style"
+                                                style="font-size: 16px;">{{getStartDateFormat(trainingData?.startDate)}} -
+                                                {{getDateFormat(trainingData?.endDate)}}</span>
+                                            <span *ngIf="trainingData?.startDate == trainingData?.endDate" class="custom-time-style"
+                                                style="font-size: 16px;">{{getDateFormat(trainingData?.endDate)}}</span>
+                                            </div>
+                                            <div
+                                            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1 flex-align-center"
+                                            *ngIf="trainingData?.trainingMode == 'Recorded'">
+                                            <img style="margin-right: 15px;" class="margin-right-10px" width="15px" height="15px"
+                                                src="assets/images/service-provider/calender-green.png"  >
+                                            
+                                            <span class="custom-time-style" style="font-size: 16px;">Posted Date:
+                                                {{getDateFormat(trainingData?.startDate)}}</span>
+                                            </div>
+                                            <div
+                                            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1 flex-align-center"
+                                            *ngIf="trainingData?.trainingMode == 'Webinar' || trainingData?.trainingMode == 'Recorded'">
+                                            <i class="pi pi-clock custom-style-logo" style="margin-right: 15px;"></i>
+                                            <span class="custom-time-style" style="font-size: 16px;"
+                                                *ngIf="trainingData?.trainingMode != 'Recorded'">{{getHourFormat(trainingData?.startTime)}} -
+                                                {{getHourFormat(trainingData?.endTime)}} {{trainingData?.timeZone}}</span>
+                                            <span class="custom-time-style" style="font-size: 16px;"
+                                                *ngIf="trainingData?.trainingMode == 'Recorded'">{{trainingData?.hours}} hours</span>
+                                            </div>
+                                            <div
+                                            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1 flex-align-center"
+                                            *ngIf="trainingData?.trainingMode == 'Seminar'">
+                                            <img style="margin-right: 15px;" width="13px" height="17px"
+                                                src="assets/images/service-provider/map-pin-green.png" alt="map">
+                                                
+                                                <span class="custom-time-style" style="font-size: 16px;">{{trainingData?.city}},
+                                                {{trainingData?.state}}</span>
+                                            </div>
+
+                                            <div  class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1 flex-end margin-top-20">
+                                                <a  target="_blank" style="margin-top: 10px;" href="mailto:mohan.sethi@collabtic.com">
+                                                    <img  width="18px" height="18px" src="assets/images/service-provider/question.png" class="margin-right-10px ">
+                                                    <span  class="ask-question">Ask a Question</span>
+                                                </a>
+                                            </div>
+                                           
+                                            <hr class="custom-margin-hr" />
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-center"
+          style="flex-wrap: wrap;">
+          <div *ngIf="openTraining"
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+            <div
+              *ngIf="trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)"
+              class="custom-bird-price-design">
+              <div class="percentage-design">-{{trainingData?.birdPercentage | number}}%</div>
+              <div class="bird-price-design">{{trainingData?.birdPrice | currency: 'USD':true:'1.0-0'}}</div>
+            </div>
+            <div class="margin-right-30px"
+              *ngIf="trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)">
+              <div class="early-bird-price-discount-design">
+                Early bird discount price
+              </div>
+              <div class="early-bird-price-discount-design-valid-upto">
+                VALID UP TO {{getDateFormat(trainingData?.expiryDateBirdPrice)}}
+              </div>
+            </div>
+            <div
+              *ngIf="trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)"
+              class="custom-line-design"></div>
+            <span *ngIf="payablePrice && payablePrice != '0'" style="margin-right: 21px;"><span
+                class="{{trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice) ? 'custom-price-text-small' : 'custom-price-text'}}">{{payablePrice | currency: 'USD':true:'1.0-0'}}</span><br><span
+                class="curr-price" *ngIf="checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)">Regular
+                Price</span></span>
+            <span *ngIf="!payablePrice || payablePrice == '0'" class="custom-price-text"
+              style="margin-right: 50px;">Free</span>            
+            
+          </div>
+          <div
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center ask-question-parent {{openTraining ? 'text-align-left' : ''}}"
+            style="display: block; flex-wrap: wrap">
+
+          </div>
+        </div> 
+
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding padding20px">
+                                    
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center custom-design-venue-details background-white"
+                                        *ngIf="trainingData?.trainingMode == 'Seminar'">
+                                        <div class="width-100-perc">
+                                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 training-information-title-div">
+                                            <img src="assets/images/service-provider/training-title-icon.png">                                                  
+                                            <span class="training-information-title-class">Training Information</span>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; flex-wrap: wrap;">
+                                            <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12 no-padding">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-bottom-5px">
+                                                <span class="venue-title-style">Venue</span>
+                                            </div>
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-bottom-30px">
+                                                <div class="row no-margin">
+                                                <div class="venue-box-design margin-right-20px margin-top-5px">
+                                                    <img width="31px" height="31px" src="assets/images/service-provider/venueName-green.png" />
+                                                    
+                                                </div>
+                                                <div style="display: inline-block;width: calc(100% - 90px);">
+                                                    <div class="venue-name-design">{{trainingData?.venueName}}</div>
+                                                    <div class="venue-address-design">{{trainingData?.addressLine1}} , {{trainingData?.addressLine2}}</div>
+                                                    <div class="venue-address-design">{{trainingData?.city}}, {{trainingData?.state}},
+                                                    {{trainingData?.zipCode}}</div>
+                                                    <div *ngIf="trainingData?.venueLink" class="venue-address-design margin-top-5px">Venue Link: <a
+                                                        class="venue-link-design" href="{{trainingData?.venueLink}}"
+                                                        target="_blank">{{trainingData?.venueLink}}</a>
+                                                    <span *ngIf="!trainingData?.venueLink">-</span>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding">
+                                            <div #mapRef id="map" [ngStyle]="{'border-radius' : '16px' , 'width': '100%', 'height': dynamicHeight}">
+
+                                            </div>
+                                            <div *ngIf="defaultDynamicHeight && defaultDynamicHeight !='0px'" class="default-map-class"
+                                                [ngStyle]="{'width': '100%', 'height': defaultDynamicHeight}">
+                                                <div class="col-12 flex-justify-align-center">
+                                                <img width="49px" height="67px" src="assets/images/service-provider/map-pin-large.png" />
+                                                </div>
+                                                <div class="col-12 flex-justify-align-center">
+                                                <span class="default-map-text-class"><i>Map not available</i></span>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 simple-grey-border margin-bottom-20px"></div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                                            <span class="venue-title-style">Date and Time</span>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-5px no-padding">
+                                            <span *ngIf="trainingData?.startDate != trainingData?.endDate"
+                                            class="date-title-style">{{getStartDateFormat(trainingData?.startDate)}} -
+                                            {{getDateFormat(trainingData?.endDate)}}</span>
+                                            <span *ngIf="trainingData?.startDate == trainingData?.endDate"
+                                            class="date-title-style">{{getDateFormat(trainingData?.endDate)}}</span>
+                                        </div>
+
+                                        <div class="date-time-div-parent">
+                                            <div class="col-xl-12 date-time-div"
+                                            *ngFor="let inPerson of trainingData?.inPersonTrainingData; let dateIndex = index">
+                                            <div class="no-padding inner1 custom-first-part-width">
+                                                <div
+                                                style="border-radius: 6px; border: solid 1px #e0e0e0; width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; margin-right: 11px;">
+                                                <img width="16px" height="16px" src="assets/images/service-provider/calender-green.png" >
+                                                </div>
+                                                <div>
+                                                <p class="custom-date-style no-margin">{{inPerson?.day}}, {{addDateAndFormat(trainingData.startDate,
+                                                    dateIndex)}}</p>
+                                                <p class="custom-inperson-time-style no-margin">{{getHourFormat(inPerson?.startTime)}} -
+                                                    {{getHourFormat(inPerson?.endTime)}} {{inPerson?.timeZone}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="no-padding inner2 custom-second-part-width">
+                                                <span class="custom-inperson-notes-style" *ngIf="inPerson?.notes">{{inPerson?.notes}} &nbsp;</span>
+                                                <span class="custom-inperson-notes-style" *ngIf="!inPerson?.notes">- &nbsp;</span>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center custom-design-venue-details background-white"
+                                        *ngIf="trainingData?.trainingMode == 'Webinar'">
+                                        <div class="width-100-perc">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 training-information-title-div">
+                                            <img src="assets/images/service-provider/zoom-black-logo-title-icon.png">                                                  
+                                            <span class="training-information-title-class">Join Zoom Webinar</span>
+                                        </div>
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; flex-wrap: wrap;">
+                                            
+
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-padding-zoom-value">
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                                              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding zoom-text-1">
+                                                <span >Join from a PC, Mac, iPad, iPhone or Android devices</span>
+                                              </div>
+                                              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-justify-align-center">                                                
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-zoom-webinar-button cursor-pointer" (click)="redirectToZoomLink(trainingData?.zoomLink)">
+                                                  <img class="margin-right-9px" width="26px" height="26px" src="assets/images/service-provider/zoom-black-logo-icon.png">
+                                                  <span class="webinar-start-text">Click here to Join</span>
+                                                </div>                                                
+                                              </div>
+                                              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding zoom-text-1">
+                                                <span >Zoom Webinar ID: {{trainingData?.zoomWebinarId}}</span>
+                                              </div>
+                                              <ng-template #copy></ng-template>
+                                              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-justify-align-center cursor-pointer" style="margin-top: 10px;" (click)="copyLink(trainingData?.zoomLink)">
+                                                <img class="margin-right-5px margin-copy-link" width="24px" height="11px" src="assets/images/service-provider/chain-link-icon.png">
+                                                <span class="copy-link-text margin-copy-link">Copy Link</span>
+                                              </div>
+                                              
+                                            </div>
+                                          </div>
+                                          </div>
+                                          </div>
+                                       
+                                    </div>
+
+                                    
+                                   
+
+                                    <div
+                                      class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center background-white {{this.trainingData?.attachments?.length ? 'custom-design-description-old-details' : 'custom-design-description-details'}}"
+                                      *ngIf="!pageLoading">
+                                      <div class="width-100-perc">
+                                        <p-tabView styleClass="market-place-tab-panel" >
+                                          <p-tabPanel header="DESCRIPTION" [innerHtml]="trainingData?.description">
+                                            <ng-template pTemplate="header">
+                                              <img src="assets/images/service-provider/description-title-icon.png">&nbsp;&nbsp;&nbsp;
+                                              <span>DESCRIPTION</span>         
+                                          </ng-template>
+                                          </p-tabPanel>
+                                        </p-tabView>
+                                        <div *ngIf="this.trainingData?.attachments?.length"
+                                          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center background-white custom-design-description-details-attach">
+                                          <app-attachment-view style="width: 100%;" action="view" [dynamicGid]="1" [isStartGTSTest]="false"
+                                            [publicData]="this.trainingData" [attachments]="this.trainingData.attachments"
+                                            [hideLabel]="true"></app-attachment-view>
+                                        </div>
+                                        <div class="market-place-tab-panel p-tabview p-component" *ngIf="manualData">
+                                          <ul role="tablist" class="p-tabview-nav">
+                                            <li role="presentation" class="p-highlight ng-star-inserted">
+                                              <a role="tab" pripple="" class="p-tabview-nav-link p-ripple" id="p-tabpanel-0-label" aria-selected="true" aria-controls="p-tabpanel-0" tabindex="0">
+                                                <span class="p-tabview-title ng-star-inserted">Recommended Manual for this Training</span></a>
+                                            </li>
+                                            <li class="p-tabview-ink-bar" style="width: 132px; left: 0px;"></li>
+                                          </ul>
+                                          <div class="p-tabview-panels" style="padding-bottom: 0;">
+                                            <div id="{{manualData.id}}" class=" custom-masonry-margin" style="width:350px">
+                                              <p-card styleClass="p-card-shadow training-inner-card-new cursor-pointer" (click)="goToManual(manualData?.id)">
+                                                <div [style]="{height: '100%'}" style="  box-shadow: 0px 3px 7px 0 rgba(0, 0, 0, 0.04);  border: solid 1px #e4e4e4;" class="{{manualData?.isClosed == '1' || manualData?.isActive == '0' ? 'low-opacity' : ''}}">
+
+                                                  <div class="new-style-changes">
+                                                    <img *ngIf="manualData?.bannerImageUrl" class="header-style-1 {{manualData?.isClosed == '1' || manualData?.isActive == '0' ? 'low-opacity' : ''}}" [src]="manualData?.bannerImageUrl">
+                                                    <div *ngIf="!manualData?.bannerImageUrl" style="height: 138px;">
+                                                      <img src="assets/images/service-provider/manual-placeholder.png" />
+                                                    </div>
+                                                  </div>
+                                                  <div class="margin-bottom-10px custom-padding-l" style="display: flex;padding-top: 10px;padding-right: 5px;">
+                                                    <span title="{{manualData?.manualName}}" class="inner-card-heading">{{manualData?.manualName}}</span>
+                                                  </div>
+                                                  <div class="row no-margin custom-padding-l">
+                                                    <p class="custom-price-text" *ngIf="manualData?.price && manualData?.price != '0'">
+                                                      <span *ngIf="manualData.isDiscount && manualData.isDiscount != '0'">
+                                                        <span>
+                                                          {{manualData?.discountPrice | currency: 'USD':true:'1.0-0'}}
+                                                        </span>
+                                                        <span class="strike-text">
+                                                          {{manualData?.price | currency: 'USD':true:'1.0-0'}}
+                                                        </span>
+                                                        <span class="per-discount">
+                                                          {{manualData?.discountPercentage}}% off
+                                                        </span>
+                                                        <span>
+
+                                                        </span>
+                                                      </span>
+                                                      <span *ngIf="manualData.isDiscount == '0'">
+                                                      <span>
+                                                        {{manualData?.price | currency: 'USD':true:'1.0-0'}}
+                                                      </span>
+                                                    </span>
+                                                    </p>
+                                                    <p class="custom-price-text" *ngIf="manualData.price == '0'">Free</p>
+                                                  </div>
+                                                  <div style="border-top: 1px solid #eee; padding-left: 131px; padding-top: 2px;">
+                                                    <img src="{{domainData?.business_logo}}" style="height: 24px;">
+                                                  </div>
+                                                </div>
+                                              </p-card>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                            </div>
+                        </div>  
+                        
+                                                                      
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="copiedModal" [modal]="true" [draggable]="false" [resizable]="true" class="copied-modal">
+    <div class="text-center copied-txt">Copied</div>
+  </p-dialog>
+  <p-dialog styleClass="zoom-popup" header="Important Note: First Time User" [(visible)]="zoomWarning" [modal]="true">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-top-bottom-25px">
+        <img  width="59px" height="59px" src="assets/images/service-provider/warning.png">
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding display-flex">
+        <span class="create-zoom-account-new">Please make sure to create a <span (click)="openSigninLink()" class="zoom-account-link cursor-pointer">free Zoom account</span> to be able to start your webinar from here.</span>
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding display-flex margin-top-bottom-25px flex-center">
+        <p-checkbox styleClass="margin-right-10px" [(ngModel)]="doNotShowAgain" [binary]="true" (onChange)="storeInLocalhost()"></p-checkbox> <span class="dont-show-again">Don't show me again</span>
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center">
+        <button pButton class="custom-buttom-design" label="OK" type="button" (click)="redirectToLink(trainingData?.zoomLink)" icon="pi pi-check" iconPos="right"></button>
+      </div>
+    </div>
+  </p-dialog>

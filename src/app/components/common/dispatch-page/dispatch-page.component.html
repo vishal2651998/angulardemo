@@ -1,0 +1,1292 @@
+<div [ngClass]="{'service-card-list': view < 3, 'd-flex': view == 2, 'tech-list-container': view == 3}" cdkDropListGroup *ngIf="!loadingDispatch && !showMap || navTech">
+    <div style="min-height: 80vh;" [ngClass]="{'hide': !loadingDispatch}" *ngIf="navTech" class="col">
+        <div class="loading-small-screen-scroll trst" align="center" *ngIf="loadingDispatch"><img
+                src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+    </div>
+    <div *ngIf="(view < 3 && !emptyTech) || view == 4" class="row d-flex service-list" [ngClass]="{'service-tech-list': view == 2, 'service-status-list': view == 4, 'justify-content-center': view == 1}">
+        <div class="service-row" [ngClass]="{'hide': loadingDispatch, 'col': view == 1, 'service-tech-row': view == 2, 'status-row': view == 4}" *ngFor="let cardData of serviceList;let indexOfElement = index"
+            style="padding-left: 10px;padding-right: 10px;">
+            <p-card class="parts-card cursor parts-expand-card dispatch-card"
+                [ngClass]="{'today-background' : cardData.date == today}">
+                <ng-template pTemplate="header">
+                    <div class="view-header" style="padding-top: 10px;">
+                        <div class="row m-0" style="align-items: center;justify-content: center; position: relative;">
+                            <span *ngIf="view == 1" class="text-center">{{cardData.card_date}}</span>
+                            <span class="text-center ml-1" *ngIf="view == 1 && cardData.date == today">(TODAY)</span>
+                            <span *ngIf="view == 2" class="tech-head truncate text-center" title="{{cardData.display_date}}"><img src="{{cardData.profile}}" alt="Profile"/> {{cardData.display_date}}</span>
+                            <span *ngIf="view == 4" class="tech-head truncate text-center" title="{{cardData.display_date}}">
+                                <img *ngIf="cardData.id == 1" class="svg-status" src="assets/images/dispatch/svg/service-card/new-active.svg" onload="SVGInject(this)" alt="{{cardData.display_date}}" />
+                                <img *ngIf="cardData.id == 2" class="svg-status" src="assets/images/dispatch/svg/service-card/wait-on-call-active.svg" onload="SVGInject(this)" alt="{{cardData.display_date}}" />
+                                <img *ngIf="cardData.id == 3" class="svg-status" src="assets/images/dispatch/svg/service-card/call-enroute-active.svg" onload="SVGInject(this)" alt="{{cardData.display_date}}" />
+                                <img *ngIf="cardData.id == 4" class="svg-status" src="assets/images/dispatch/svg/service-card/completed-active.svg" onload="SVGInject(this)" alt="{{cardData.display_date}}" />
+                                {{cardData.display_date}} <span *ngIf="cardData.total > 0">({{cardData.total}})</span>
+                            </span>
+                            <span [ngClass]="{'status-map': view == 4}" (click)="callbackMap(cardData.body, cardData.display_date, cardData.id, 'all');" class="map-icon" *ngIf="cardData.body.length > 0 && cardData.mapFlag">
+                                <img src="assets/images/common/map-active-icon.png" class="map-icon" alt="Map" />
+                            </span>
+                            <span *ngIf="view < 3" [ngClass]="{'hide': view == 1 && ((roleId != 3 && isMobileTech) || (roleId == 3 && !isAdminView))}" (click)="displayModel(cardData.date);" class="new-icon">
+                                <img src="assets/images/dispatch/plus_i_svg.svg" onload="SVGInject(this)" alt="plus" />
+                            </span>
+                        </div>
+                        <hr class="solid">
+                    </div>
+                </ng-template>
+                <div class="div-scrollable11 example-list11">
+                    <div class="div-scrollable example-list" id="{{cardData.id}}" [attr.data-total]="cardData.total" cdkDropList #todoList="cdkDropList" [cdkDropListData]="cardData.body"
+                        (cdkDropListDropped)="drop($event)" [perfectScrollbar]="sconfig">
+                        <div class="div-card-body empty" *ngIf="cardData.body.length == 0">
+                            <div class="empty-card text-center">
+                                <table>
+                                    <tr><td><img src="assets/images/common/clock-placeholder-icon.png" alt="Clock" /><br/></td></tr>
+                                    <tr [ngClass]="{'hide': view == 2 && cardData.id == 'NA'}"><td><br/>No appointment <span *ngIf="view == 1">scheduled</span> <span *ngIf="view == 2">assigned</span></td></tr>
+                                    <tr *ngIf="view == 2 && cardData.id == 'NA'"><td><br/>NA</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="div-card-body" [ngClass]="{'card-item-active': item.isActive}" cdkDrag *ngFor="let item of cardData.body;let indexOfCard = index">
+                            <div class="card-div" (click)="openDetails(item);" [ngClass]="{'tech': view == 1 && ((roleId != 3 && isMobileTech) || (roleId == 3 && !isAdminView)), 'status-view': view == 4}"
+                                [ngStyle]="{'border-left-color': item.statusData.statusColor}">
+                                <div class="parts-image d-flex"
+                                    style="margin-bottom: 3px;align-items: center;justify-content: space-between;">
+                                    <div class="d-flex" style="align-items: center;">
+                                        <img *ngIf="view != 4" src="assets/images/dispatch/svg/service-card/v_i_service.svg"
+                                            onload="SVGInject(this)" class="svg-service fill-999">
+                                        <span style="font-size: 15px;" class="truncate">
+                                            {{item.shopData.name}}
+                                        </span>
+                                    </div>
+                                    <span class="actions">
+                                        <span  *ngIf="item.serviceStatus == 0" class="edit" [ngClass]="{'empty-note': !item.notes && view == 1}"
+                                            (click)="$event.stopPropagation();editServiceData(item,'edit',item.serviceDate);">
+                                            <img src="assets/images/dispatch/svg/service-card/h_edit_i.svg"
+                                                onload="SVGInject(this)" style="margin-right: 2px;">
+                                        </span>
+                                        <span class="notes"
+                                            (click)="$event.stopPropagation();displayNotesData(cardData.display_date,item);"
+                                            *ngIf="item.notes">
+                                            <img src="assets/images/dispatch/svg/service-card/h_notes_i.svg"
+                                                onload="SVGInject(this)" style="margin-left: 2px;">
+                                        </span>
+                                        <span *ngIf="view == 1" class="order">{{item.serviceOrder}}</span>
+                                        <span *ngIf="view == 2" class="order">{{item.techOrder}}</span>
+                                        <span *ngIf="view == 4 && item.serviceStatus < 1" class="order">{{item.statusOrder}}</span>
+                                        <span *ngIf="view == 4 && item.serviceStatus == 1" class="order">{{indexOfCard+1}}</span>
+                                    </span>
+                                </div>
+                                <div class="part-cont">
+                                    <div class="app-info">
+                                        <div *ngIf="view != 4" class="title-2 d-flex truncate" style="margin-bottom: 3px;align-items: center;">
+                                            <img src="assets/images/dispatch/svg/service-card/v_i_clock.svg"
+                                                onload="SVGInject(this)" class="svg-service fill-999">
+                                            <span *ngIf="view == 2" style="font-size: 13px;">
+                                                {{item.serviceDate}} &nbsp;
+                                            </span>
+                                            <span *ngIf="!item.anyTime" style="font-size: 13px;">
+                                                {{item.serviceTime}} {{item.timeZone}} 
+                                            </span>
+                                            <span *ngIf="item.anyTime" style="font-size: 13px;" class="truncate">
+                                                Flexible Time
+                                            </span>
+                                        </div>
+                                        <div *ngIf="item.make != '' || item.model != '' || item.year != ''" class="title-2 d-flex" style="margin-bottom: 3px;align-items: center;">
+                                            <img *ngIf="view != 4" src="assets/images/dispatch/svg/service-card/v_i_model.svg"
+                                                onload="SVGInject(this)" class="svg-service fill-999">
+                                            <span style="font-size: 14px;" class="truncate" *ngIf="item.make">
+                                                {{item.make}}<span *ngIf="item.model && view == 4">,</span> <i *ngIf="item.model && view != 4" class="pi pi-angle-right"
+                                                    style="vertical-align: middle;"></i>
+                                                {{item.model}}<span *ngIf="item.year && view == 4">,</span> <i *ngIf="item.year && view != 4" class="pi pi-angle-right"
+                                                    style="vertical-align: middle;"></i>
+                                                {{item.year}}
+                                            </span>
+                                        </div>
+                                        <div *ngIf="item.serviceCatg.length > 0" class="title-2 d-flex" style="margin-bottom: 3px;align-items: center;">
+                                            <img *ngIf="view != 4" src="assets/images/dispatch/svg/service-card/v_i_sct.svg"
+                                                onload="SVGInject(this)" class="fill-999" style="margin-top: -4px;width: 20px;height: 20px;">
+                                            <span style="font-size: 14px;" class="truncate">
+                                                {{item.serviceCatgName}}</span>
+                                        </div>
+                                        <div *ngIf="view != 4"  class="bottom-row">
+                                            <div class="parts-action parts-pin title-2 d-flex"
+                                                style="align-items: center;justify-content: space-between;">
+                                                <div [ngClass]="{'hidden': item.repairOrder == '', 'rowidth': item.repairOrder != '' && item.statusData.id == 1, 'redwidth': item.statusData.id > 1 || (item.statusData.id > 1 && item.repairOrder.length > 6)}" class="d-flex" style="align-items: center;">
+                                                    <img src="assets/images/dispatch/svg/service-card/v_i_ro_no.svg"
+                                                        onload="SVGInject(this)" style="width: 19px;height: 19px;">
+                                                    <span class="truncate" *ngIf="item.statusData.id == 1" style="font-size: 13px; padding-left: 5px;" title="RO# {{item.repairOrder}}">
+                                                        RO# {{(item.repairOrder.length>12)? (item.repairOrder | slice:0:12)+'..':(item.repairOrder)}}</span>
+                                                    <span class="truncate" *ngIf="item.statusData.id > 1" style="font-size: 13px; padding-left: 5px;" title="RO# {{item.repairOrder}}">
+                                                        RO# {{(item.repairOrder.length>6)? (item.repairOrder | slice:0:6)+'..':(item.repairOrder)}}</span>
+                                                </div>
+                                                <div class="service-status" (click)="$event.stopPropagation();">
+                                                    <div *ngIf="item.statusData.id == 1 && item.assignedTech.length == 0" id="cmenu-{{item.serviceId}}"  class="item-status"
+                                                     [ngStyle]="{'background-color': item.statusData.statusColor}">
+                                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}.svg" alt="star" />
+                                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new.svg" alt="star" />
+                                                        <span>{{item.statusData.name}}</span>
+                                                    </div>
+                                                    <div *ngIf="item.statusData.id > 0 && item.assignedTech.length > 0" id="cmenu-{{item.serviceId}}" class="item-status" [matMenuTriggerFor]="status"
+                                                        [ngStyle]="{'background-color': item.statusData.statusColor}">
+                                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}.svg" alt="star" />
+                                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new.svg" alt="star" />
+                                                        <span>{{item.statusData.name}}</span>
+                                                    </div>
+                                                    <mat-toolbar>
+                                                        <mat-menu #status="matMenu" backdropClass="ptabletmenu">
+                                                            <div class="part-menu">
+                                                                <p>Change Status</p>
+                                                                <ul>
+                                                                    <li *ngFor="let s of Status" mat-menu-item class="cursor {{s.icon}}" (click)="changeStatus(cardData.id, s, item)">{{s.label}}</li>
+                                                                </ul>
+                                                            </div>
+                                                        </mat-menu>
+                                                    </mat-toolbar>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="!isMobileTech || (roleId == 3 && isAdminView)" class="dropdown-div" [ngClass]="{'single': item.assignedTech.length < 2}" [ngStyle]="{'align-items': center, 'border-left-color': item.statusData.statusColor}">
+                                <span style="font-size: 12px; width: 100%;" (click)="item.serviceStatus == 0 ? getTechnician(item, cardData.id) : false">
+                                    <p-button *ngIf="item.assignedTech.length == 0" styleClass="p-button-text avatar-btn">
+                                        <img alt="logo" src="assets/images/common/user-thumb-red.png" style="width: 13px;height: 15px;border-radius: 50%;">
+                                        <span class="font-bold truncate text-left"
+                                            style="color: #e55554;margin-left: 0.25rem; width: 110px;" title="Select Technician">Assign Technician</span>
+                                    </p-button>
+                                    <p-button *ngIf="item.assignedTech.length != 0" styleClass="p-button-text avatar-btn">
+                                        <span class="assigned-list truncate" *ngFor="let techInfo of item.assignedTech; let ti=index" [ngClass]="{'hide': ti+1 > 2 || (view == 2 && cardData.id != techInfo.techId)}">
+                                            <img alt="logo" src="{{techInfo.img}}"
+                                                style="width: 24px;height: 24px;border-radius: 50%;" />
+                                            <span class="font-bold tech-field text-left" [ngClass]="{'tech-field-drop': (view == 1 && ti+1 == item.assignedTech.length) || (view == 2 && cardData.id == techInfo.techId)}"
+                                            style="color: #333333;margin-left: 0.25rem;" title="{{techInfo.techName}}">{{techInfo.userName}}</span>
+                                        </span>
+                                        <span *ngIf="item.assignedTech.length > 2 || (view == 2 && item.assignedTech.length > 1)" class="tech-count">{{item.assignedTech.length}}</span>
+                                    </p-button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- </ng-container> -->
+                </div>
+            </p-card>        
+        </div>
+    </div>
+    <!-- Tech List View -->
+    <div *ngIf="view == 3 && !emptyTech" class="tech-list div-scrollable example-list" [ngClass]="{'na-collapse': rightPanelCollapse, 'empty': serviceList?.length == 1 && serviceList[0].id == 'NA'}" [perfectScrollbar]="sconfig">
+        <div class="col tech-row text-left" *ngFor="let cardData of serviceList;let indexOfElement = index"
+            [ngClass]="{'hide': loadingDispatch, 'empty-tech': serviceList?.length == 1 && serviceList[0].id == 'NA', 'tech-row-last': serviceList?.length == indexOfElement+1}" >
+            <div class="col list-row">
+                <div class="list-col tech-col text-center">
+                    <div *ngIf="serviceList?.length >= 1 && serviceList[0].id != 'NA'" class="tech-head truncate" title="{{cardData.display_date}}">
+                        <img src="{{cardData.profile}}" alt="Profile"/>
+                        <span class="tech-head truncate" title="{{cardData.display_date}}">{{cardData.display_date}}</span>
+                    </div>
+                    <div *ngIf="serviceList?.length == 1 && serviceList[0].id == 'NA'" class="tech-head truncate" title="{{cardData.display_date}}">
+                        <div class="profile">
+                            <img src="{{cardData.profile}}" alt="Profile"/>
+                        </div>
+                        <div class="tech-head empty truncate" title="{{cardData.display_date}}">{{cardData.display_date}}</div>
+                    </div>
+                </div>
+                <div *ngIf="cardData.body.length > 0 && cardData.mapFlag" class="tech-actions">
+                    <span class="map-icon cursor text-center" (click)="callbackMap(cardData.body, cardData.display_date, cardData.id, 'all');">
+                        <img src="assets/images/dispatch/map-icon-circle.png" alt="Map" />
+                    </span>
+                </div>
+                <div class="list-col tech-item div-scrollable example-list" id="{{cardData.id}}" cdkDropList cdkDropListOrientation="horizontal" #todoList="cdkDropList" [cdkDropListData]="cardData.body" (cdkDropListDropped)="drop($event)" [perfectScrollbar]="sconfig">
+                    <div class="empty-card-body div-card-body empty" *ngIf="cardData.body.length == 0">
+                        <div *ngIf="serviceList?.length >= 1 && serviceList[0].id != 'NA'" class="empty-card text-center">
+                            <img src="assets/images/common/clock-placeholder-icon.png" alt="Clock" />
+                            <span>No appointment assigned</span>
+                        </div>
+                        <div *ngIf="serviceList?.length == 1 && serviceList[0].id == 'NA'" class="empty-card text-center">
+                            <div>
+                                <div class="profile">
+                                    <img src="assets/images/common/clock-placeholder-icon.png" alt="Clock" />
+                                </div>
+                                <div class="empty">{{cardData.display_date}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item" cdkDrag *ngFor="let item of cardData.body;let indexOfelement = index">
+                        <div class="card-item cursor" [ngClass]="{'card-item-active': item.isActive}" (click)="openDetails(item);" [ngStyle]="{'border-left-color': item.statusData.statusColor}">
+                            <div class="item-row item-row-1">
+                                <span class="shop truncate">
+                                    {{item.shopData.name}}
+                                </span>
+                                <span class="actions" [ngClass]="{'empty-note': !item.notes}">
+                                    <span class="edit"
+                                        (click)="$event.stopPropagation();editServiceData(item,'edit',item.serviceDate);">
+                                        <img src="assets/images/dispatch/svg/service-card/h_edit_active.svg"
+                                            onload="SVGInject(this)" style="margin-right: 2px;">
+                                    </span>
+                                    <span *ngIf="item.shopData.mapFlag" class="map-icon"(click)="$event.stopPropagation();callbackMap(item, cardData.display_date, cardData.id);">
+                                        <img src="assets/images/dispatch/map-icon-circle.png" alt="Map" />
+                                    </span>
+                                    <span class="notes"
+                                        (click)="$event.stopPropagation();displayNotesData(cardData.display_date,item);"
+                                        *ngIf="item.notes">
+                                        <img src="assets/images/dispatch/svg/service-card/h_notes_active.svg"
+                                            onload="SVGInject(this)" style="margin-left: 2px;">
+                                    </span>                                
+                                </span>
+                            </div>
+                            <div class="item-row item-row-2">
+                                <div *ngIf="item.make != '' || item.model != '' || item.year != ''" class="title-2 d-flex" style="align-items: center;margin-bottom: 3px;padding-top: 5px;">
+                                    <!--span style="font-size: 14px;" class="truncate" *ngIf="item.make" title="{{renderTitle('make', item)}}">
+                                        {{item.make | slice:0:5}}<span *ngIf="item.model" style="vertical-align: middle;">,</span>
+                                        {{item.model | slice:0:5}}<span *ngIf="item.year">{{item.year | date: 'yy'}}</span>
+                                    </span-->
+                                    <span style="font-size: 14px;" class="truncate" *ngIf="item.make" title="{{renderTitle('make', item)}}">
+                                        {{item.make}}<span *ngIf="item.model" style="vertical-align: middle;">,</span>
+                                        {{item.model}}<span *ngIf="item.year">, {{item.year | date: 'yyyy'}}</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="item-row item-row-3">
+                                <div class="title-2 d-flex" style="margin-bottom: 5px;align-items: center;">
+                                    <div class="truncate" title="{{renderTitle('catg', item)}}">
+                                        <span style="font-size: 14px;">{{renderTitle('catg', item)}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="item-row item-row-4">
+                                <div class="service-status" (click)="$event.stopPropagation();">
+                                    <div id="cmenu-{{item.serviceId}}" class="item-status" [matMenuTriggerFor]="status"
+                                        [ngStyle]="{'color': item.statusData.statusColor}">
+                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}-active.svg" alt="star" />
+                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new-active.svg" alt="star" />
+                                        <span>{{item.statusData.name}}</span>
+                                        <span class="order list-order">{{item.techOrder}}</span>
+                                    </div>
+                                    <mat-toolbar>
+                                        <mat-menu #status="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <p>Change Status</p>
+                                                <ul>
+                                                    <li *ngFor="let s of Status" mat-menu-item class="cursor {{s.icon}}" (click)="changeStatus(cardData.id, s, item)">{{s.label}}</li>
+                                                </ul>
+                                            </div>
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div *ngIf="view > 1 && view != 4 && !emptyTech && (!loadingDispatch || navTech)" class="col" [ngClass]="{'na-list' : view == 2,'tech-na': view == 3, 'na-expand': view == 3 && !rightPanelCollapse, 'na-collapse': view == 3 && rightPanelCollapse}">
+        <div *ngIf="view == 3" class="cursor panel-arrow" (click)="toggleNotCard()"></div>
+        <p-tabView class="tabview-custom dispatch-card na-dispatch-card" [ngClass]="{'hide': view == 3 && rightPanelCollapse, 'tna-dispatch-card': view == 3}">
+            <p-tabPanel *ngFor="let cardData of unassignedList;let indexOfElement = index">
+                <ng-template pTemplate="header">
+                    <span>{{cardData.status}}</span>
+                    <span (click)="callbackMap(cardData.body, cardData.display_date, cardData.id, 'all')" class="map-icon" [ngClass]="{'na-map-icon': view == 2, 'tna-map-icon': view == 3}" *ngIf="cardData.body.length > 0 && cardData.mapFlag">
+                        <img src="assets/images/common/map-active-icon.png" class="map-icon" alt="Map" />
+                    </span>
+                    <span (click)="displayModel(cardData.id);" class="new-icon" [ngClass]="{'na-new-icon': view == 2, 'tna-new-icon': view == 3}">
+                        <img src="assets/images/dispatch/plus_i_svg.svg" onload="SVGInject(this)" alt="plus" />
+                    </span>
+                </ng-template>
+                
+                <div class="div-scrollable11 example-list11">
+                    <div class="div-scrollable example-list unassigned-list" id="{{cardData.id}}" [attr.data-total]="cardData.total" cdkDropList #todoList="cdkDropList" [cdkDropListData]="cardData.body"
+                        (cdkDropListDropped)="drop($event)" [perfectScrollbar]="sconfig">
+                        <div class="div-card-body empty" *ngIf="cardData.body.length == 0">
+                            <div class="empty-card text-center">
+                                <table>
+                                    <tr><td><img src="assets/images/common/clock-placeholder-icon.png" alt="Clock" /><br/></td></tr>
+                                    <tr><td><br/>No appointment scheduled</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="div-card-body cursor" cdkDrag *ngFor="let item of cardData.body;let indexOfelement = index">
+                            <div class="card-div" [ngClass]="{'tech-card-div': view == 3}" (click)="openDetails(item);"
+                                [ngStyle]="{'border-left-color': item.statusData.statusColor}">
+                                <div class="parts-image d-flex"
+                                    style="margin-bottom: 3px;align-items: center;justify-content: space-between;">
+                                    <div class="d-flex" style="align-items: center;">
+                                        <img *ngIf="view == 2" src="assets/images/dispatch/svg/service-card/v_i_service.svg"
+                                            onload="SVGInject(this)" class="svg-service fill-999">
+                                        <span style="font-size: 15px;" class="truncate">
+                                            {{item.shopData.name}}
+                                        </span>
+                                    </div>
+                                    <span class="actions">
+                                        <span class="edit"
+                                            (click)="$event.stopPropagation();editServiceData(item,'edit',item.serviceDate);">
+                                            <img src="assets/images/dispatch/svg/service-card/h_edit_i.svg"
+                                                onload="SVGInject(this)" style="margin-right: 2px;">
+                                        </span>
+                                        <span class="notes"
+                                            (click)="$event.stopPropagation();displayNotesData(cardData.display_date,item);"
+                                            *ngIf="item.notes">
+                                            <img src="assets/images/dispatch/svg/service-card/h_notes_i.svg"
+                                                onload="SVGInject(this)" style="margin-left: 2px;">
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="part-cont">
+                                    <div class="app-info" [ngClass]="{'tech-app-info': view == 3}">
+                                        <div *ngIf="view == 2" class="title-2 d-flex truncate" style="margin-bottom: 3px;align-items: center;">
+                                            <img src="assets/images/dispatch/svg/service-card/v_i_clock.svg"
+                                                onload="SVGInject(this)" class="svg-service fill-999">
+                                            <span style="font-size: 13px;">
+                                                {{item.serviceDate}} &nbsp;
+                                            </span>
+                                            <span *ngIf="!item.anyTime" style="font-size: 13px;">
+                                                {{item.serviceTime}} {{item.timeZone}}
+                                            </span>
+                                            <span *ngIf="item.anyTime" style="font-size: 13px;" class="truncate">
+                                                Flexible Time
+                                            </span>
+                                        </div>
+                                        <div *ngIf="view == 3 && item.make == ''" style="height: 21px;"></div>
+                                        <div *ngIf="item.make != '' || item.model != '' || item.year != ''" class="title-2 d-flex" style="margin-bottom: 3px;align-items: center;">
+                                            <img *ngIf="view == 2" src="assets/images/dispatch/svg/service-card/v_i_model.svg"
+                                                onload="SVGInject(this)" class="svg-service fill-999">
+                                            <span style="font-size: 14px;" class="truncate" *ngIf="item.make" title="{{renderTitle('make', item)}}">
+                                                {{item.make}} <i *ngIf="item.model" class="pi pi-angle-right"
+                                                    style="vertical-align: middle;"></i>
+                                                {{item.model}} <i *ngIf="item.year" class="pi pi-angle-right"
+                                                    style="vertical-align: middle;"></i>
+                                                {{item.year}}
+                                            </span>
+                                        </div>
+                                        <div *ngIf="view == 2 && item.serviceCatg.length > 0" class="title-2 d-flex" style="margin-bottom: 3px;align-items: center;">
+                                            <img src="assets/images/dispatch/svg/service-card/v_i_sct.svg"
+                                                onload="SVGInject(this)" style="margin-top: -4px;width: 20px;height: 20px;">
+                                            <span style="font-size: 14px;" class="truncate">
+                                                {{item.serviceCatgName}}</span>
+                                        </div>
+                                        <div class="bottom-row">
+                                            <div class="parts-action parts-pin title-2 d-flex"
+                                                style="align-items: center;justify-content: space-between;">
+                                                <div *ngIf="view == 2" [ngClass]="{'hidden': item.repairOrder == '', 'rowidth': item.repairOrder != '' && item.statusData.id == 1, 'redwidth': item.statusData.id > 1 || (item.statusData.id > 1 && item.repairOrder.length > 6)}" class="d-flex" style="align-items: center;">
+                                                    <img src="assets/images/dispatch/svg/service-card/v_i_ro_no.svg"
+                                                        onload="SVGInject(this)" style="width: 19px;height: 19px;">
+                                                    <span *ngIf="item.statusData.id == 1" style="font-size: 13px; padding-left: 5px;" title="RO# {{item.repairOrder}}">
+                                                        RO# {{(item.repairOrder.length>12)? (item.repairOrder | slice:0:12)+'..':(item.repairOrder)}}</span>
+                                                    <span *ngIf="item.statusData.id > 1" style="font-size: 13px; padding-left: 5px;" title="RO# {{item.repairOrder}}">
+                                                        RO# {{(item.repairOrder.length>6)? (item.repairOrder | slice:0:6)+'..':(item.repairOrder)}}</span>
+                                                </div>
+                                                <div class="service-status" (click)="$event.stopPropagation();">
+                                                    <div *ngIf="view == 2 && item.statusData.id == 1 && item.assignedTech.length == 0" id="cmenu-{{item.serviceId}}"  class="item-status"
+                                                     [ngStyle]="{'background-color': item.statusData.statusColor}">
+                                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}.svg" alt="star" />
+                                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new.svg" alt="star" />
+                                                        <span>{{item.statusData.name}}</span>
+                                                    </div>
+                                                    <div *ngIf="view == 2 && item.statusData.id > 0 && item.assignedTech.length > 0" id="cmenu-{{item.serviceId}}" class="item-status" [matMenuTriggerFor]="nstatus"
+                                                        [ngStyle]="{'background-color': item.statusData.statusColor}">
+                                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}.svg" alt="star" />
+                                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new.svg" alt="star" />
+                                                        <span>{{item.statusData.name}}</span>
+                                                    </div>
+                                                    <div *ngIf="view == 3 && item.statusData.id == 1 && item.assignedTech.length == 0" id="cmenu-{{item.serviceId}}" class="item-status tech-item-status text-left" [matMenuTriggerFor]="nstatus"
+                                                        [ngStyle]="{'color': item.statusData.statusColor}">
+                                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}-active.svg" alt="star" />
+                                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new-active.svg" alt="star" />
+                                                        <span>{{item.statusData.name}}</span>
+                                                    </div>
+                                                    <div *ngIf="view == 3 && item.statusData.id > 0 && item.assignedTech.length > 0" id="cmenu-{{item.serviceId}}" class="item-status tech-item-status text-left" [matMenuTriggerFor]="nstatus"
+                                                        [ngStyle]="{'color': item.statusData.statusColor}">
+                                                        <img *ngIf="item.statusData.id <= 3" src="assets/images/dispatch/svg/service-card/{{item.statusData?.statusClass}}-active.svg" alt="star" />
+                                                        <img *ngIf="item.statusData.id > 3" src="assets/images/dispatch/svg/service-card/new-active.svg" alt="star" />
+                                                        <span>{{item.statusData.name}}</span>
+                                                    </div>
+                                                    <mat-toolbar>
+                                                        <mat-menu #nstatus="matMenu" backdropClass="ptabletmenu">
+                                                            <div class="part-menu">
+                                                                <p>Change Status</p>
+                                                                <ul>
+                                                                    <li *ngFor="let s of Status" [ngClass]="{'hide': s.id < 5}" mat-menu-item class="cursor {{s.icon}}" (click)="changeStatus(cardData.id, s, item)">{{s.label}}</li>
+                                                                    <!--li *ngFor="let s of Status" mat-menu-item class="cursor {{s.icon}}">{{s.label}}</li-->
+                                                                </ul>
+                                                            </div>
+                                                        </mat-menu>
+                                                    </mat-toolbar>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-div" [ngStyle]="{'align-items': center, 'border-left-color': item.statusData.statusColor}">
+                                <span style="font-size: 12px; width: 100%;" (click)="getTechnician(item, cardData.id)">
+                                    <p-button *ngIf="item.techInfo.length == 0" styleClass="p-button-text avatar-btn">
+                                        <img alt="logo" src="assets/images/common/user-thumb-red.png" style="width: 13px;height: 15px;border-radius: 50%;">
+                                        <span class="font-bold truncate text-left"
+                                            style="color: #e55554;margin-left: 0.25rem; width: 110px;" title="Select Technician">Assign Technician</span>
+                                    </p-button>
+                                    <p-button *ngIf="item.techInfo.length != 0" styleClass="p-button-text avatar-btn">
+                                        <img alt="logo" src="{{item.techInfo.img}}"
+                                            style="width: 24px;height: 24px;border-radius: 50%;" />
+                                        <span class="tech-field font-bold truncate text-left"
+                                            style="color: #333333;margin-left: 0.25rem;" title="{{item.techInfo.techName}}">{{item.techInfo.techName}}</span>
+                                    </p-button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- </ng-container> -->
+                </div>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+    <div *ngIf="emptyTech && !loadingDispatch" class="empty-dispatch">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="empty-data">
+                <div class="empty-banner"></div>
+                <div class="empty-content">
+                    <p class="empty-content-row row-1">Please assign 'Mobile Service' as Business Role for a user to see information on this page.</p>
+                    <p class="empty-content-row row-2">
+                        Only users with business role of 'Mobile Service' can be assigned appointments.
+                        Admin and Manager with business role of 'Mobile Service' can create and assign appointments.
+                    </p>
+                    <p class="empty-content-row row-3">
+                        Go to 'Manager Users' to change user's business role.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<p-card class="parts-card cursor parts-expand-card dispatch-card" [ngClass]="{'display-none': !showMap, 'today-background': isToday}" styleClass="map-card">
+    <ng-template pTemplate="header">
+        <div class="view-header" style="padding-top: 10px;">
+            <div class="row m-0" style="align-items: center;justify-content: center;">
+                <span class="text-center" *ngIf="view == 1 && mapHeaderDate != ''">{{(mapHeaderDate | date : 'EEE, MMMM dd')}}</span>
+                <span class="text-center" *ngIf="view > 1 && mapHeaderDate != ''">{{mapHeaderDate}}</span>
+                <span class="text-center ml-1" *ngIf="view == 1 && isToday">(TODAY)</span>
+                <span (click)="displayModel(today);" class="new-add-icon-position" 
+                    [ngClass]="{'hide': view == 1 && ((roleId != 3 && isMobileTech) || (roleId == 3 && !isAdminView))}">
+                    <img src="assets/images/dispatch/plus_i_svg.svg" onload="SVGInject(this)" alt="plus" />
+                </span>
+                <span class="new-cross-icon" (click)="hideMap();">
+                    <i class="pi pi-times vertical-align-middle icon-color"></i>
+                </span>
+            </div>
+            <hr class="solid">
+        </div>
+    </ng-template>
+    <div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': mapHeight}"></div>
+</p-card>
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal card-spacing">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': serviceFormValid}" (click)="saveService()"></button>
+            <!-- [disabled]="serviceForm.invalid" -->
+        </div>
+    </ng-template>
+    <form [formGroup]="serviceForm">
+        <div class="row my-3">
+            <div class="col-6">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="shop"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Shop</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <p-dropdown [options]="Shops" optionLabel="name" [filter]="true"  resetFilterOnHide="true" filterBy="name" [showClear]="showClear"
+                        placeholder="Select a Shop" (onChange)="shopChanged('change', $event)" optionValue="id"
+                        formControlName="shopId" [ngClass]="{ 'is-invalid': serviceSubmit && sf.shopId.errors }">
+                        <ng-template pTemplate="selectedItem">
+                            <div class="shop-item shop-item-value" *ngIf="selectedShop">
+                                <div>{{selectedShop.name}}</div>
+                            </div>
+                        </ng-template>
+                        <ng-template let-shop pTemplate="item">
+                            <div class="shop-item" *ngIf="shop.id == 0" (click)="$event.stopPropagation();serviceAction('new','shop');">
+                                <div><span style="color: red;">{{shop.label}}</span></div>
+                            </div>
+                            <hr *ngIf="shop.value == 0">
+                            <div class="option-item" *ngIf="!shop.value">{{shop.name}} <span *ngIf="shop.id > 0">ID#{{shop.id}}</span>
+                                <span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                    <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                </span>
+                            </div>  
+                        </ng-template>
+                    </p-dropdown>
+                    <div *ngIf="serviceSubmit && sf.shopId.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="sf.shopId.errors.required">Shop is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div>
+                    <span class="p-input-icon-left w-100" style="align-items: center;margin-top: 30px;">
+                        <img class="map-icon" src="assets/images/dispatch/svg/service-form/map.svg" alt="map" onload="SVGInject(this)"
+                            style="position: absolute;margin: 10px;" />
+                        <div *ngIf="serviceForm.value.mapValue == ''" class="address">Shop Address</div>
+                        <div *ngIf="serviceForm.value.mapValue != ''" class="address show">{{serviceForm.value.mapValue}}</div>
+                        <input type="text" pInputText class="input-bg map-input hide" placeholder="Shop Address"
+                            style="color: #de4640 !important;pointer-events: none;" formControlName="mapValue" />
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/contact.svg" alt="shop"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Contact Details</span>
+                    </label>
+                </div>
+                <div>
+                    <p-multiSelect class="split-col catg-col act-col-80" appendTo="body" [options]="contacts" [filter]="true" resetFilterOnHide="true" showClear="false" 
+                        [disabled]="contactDisable" formControlName="serviceContact" defaultLabel="Select Contacts" (onChange)="contactChanged($event)" optionLabel="name"
+                        [ngClass]="{ 'is-invalid': serviceSubmit && sf.serviceContact.errors }" optionValue="id" selectedItemsLabel="{0} contacts selected">
+                        <ng-template let-contact pTemplate="item">
+                            <div class="option-item" *ngIf="contact.id == 0" (click)="$event.stopPropagation();serviceAction('new','contact');">
+                                <div><span style="color: red;">{{contact.label}}</span></div>
+                            </div>
+                            <hr *ngIf="contact.value == 0">
+                            <div class="option-item">{{contact.name}}
+                                <span *ngIf="contact.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit','contact', contact);">
+                                    <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                    <div class="split-col act-col act-col-20 cursor">
+                        <button pButton pRipple type="button" icon="pi pi-plus" label="Add New Contact" class="ap-button-outlined p-button-rounded vin-btn" [ngClass]="{'setOpacity5': contactDisable}" (click)="serviceAction('new', 'contact');">
+                        </button>
+                    </div>
+                    <div *ngIf="selectedContact.length > 0" class="selected-items ws-selected-items">
+                        <div *ngFor="let item of selectedContact; let t=index" class="tag-text dispatch-tag-text">
+                            <span>{{item}}</span>
+                            <i class="material-icons tag-close" (click)="removeSelection('serviceForm', 'serviceContact', t);">close</i>
+                        </div>
+                    </div>
+                    <div *ngIf="serviceSubmit && sf.serviceContact.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="sf.serviceContact.errors.required">Contact detail is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/date_i.svg" alt="date"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Date</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <p-calendar id="date_picker" appendTo="body" formControlName="serviceDate" [(ngModel)]="serviceForm.value.serviceDate" [showIcon]="true" inputId="icon" [ngClass]="{'is-invalid': serviceSubmit && sf.serviceDate.errors}">
+                    </p-calendar>
+                    <div *ngIf="serviceSubmit && sf.serviceDate.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="sf.serviceDate.errors.required">Date is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="hide">
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div class="d-flex d-time-col">
+                    <div class="d-inblock d-col-1">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/clock_i.svg" alt="time"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Time</span>
+                        </label>
+                        <p-calendar id="time_picker" formControlName="serviceTime" placeholder="Select Time" [(ngModel)]="serviceForm.value.serviceTime" (onSelect)="timeChange($event)" [timeOnly]="true" showTime="true" [hourFormat]="12"
+                        [disabled]="serviceForm.value?.any_time" class="time-dd"></p-calendar>
+                    </div>
+                    <div class="d-inblock d-col-2">
+                        <p-dropdown class="time-zone" [options]="timeZoneList" optionLabel="name" formControlName="timeZone"  resetFilterOnHide="true"
+                            optionValue="name" placeholder="Time Zone" [virtualScroll]="false" [itemSize]="5" [filter]="true">
+                        </p-dropdown>
+                        <span class="split-or">(OR)</span>
+                        <p-checkbox id="anyTime_checkbox" formControlName="any_time" [binary]="true" inputId="binary"
+                            label="Flexible Time">
+                        </p-checkbox>
+                    </div>
+                    <div class="d-inblock d-col-3">
+                        <div class="duration">
+                            <label>
+                                <span>Duration</span>
+                            </label>
+                            <p-dropdown class="time-zone duration" [options]="durationList" optionLabel="value" formControlName="serviceDuration"  resetFilterOnHide="true"
+                                optionValue="id" placeholder="Duration" [virtualScroll]="false" [itemSize]="5" [filter]="true">
+                            </p-dropdown>
+                        </div>
+                        <p-checkbox id="parkingLot_checkbox" formControlName="parkingLot" [binary]="true" inputId="binary"
+                            label="Parking Lot" [disabled]="serviceForm.value.technicianId != ''">
+                        </p-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/repair_i.svg" alt="repair order#"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Repair Order#</span>
+                    </label>
+                </div>
+                <div>
+                    <input type="text" pInputText formControlName="repairOrder" class="input-bg" maxlength="15"
+                        placeholder="Enter Repair Order#" (blur)="duplicateCheck('ro', $event.target.value)" [ngClass]="{ 'is-invalid': (serviceSubmit && sf.repairOrder.errors) || roExist }">
+                    <div *ngIf="roExist" class="invalid-feedback">
+                        <div id="valid-error" class="field-err">{{existError}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/technician_i.svg" alt="technician"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Assignee</span>
+                    </label>
+                </div>
+                <div *ngIf="!techMultipleSelection">
+                    <p-dropdown [options]="Technician" optionLabel="userName" formControlName="technicianId" resetFilterOnHide="true"
+                        optionValue="userId" placeholder="Select" [virtualScroll]="false" [itemSize]="5" [filter]="true" (onChange)="change('tech', $event.value)">
+                    </p-dropdown>
+                </div>
+                <div *ngIf="techMultipleSelection">
+                    <p-multiSelect class="split-col catg-col" appendTo="body" [options]="Technician" [filter]="true" showClear="false"
+                        formControlName="technicianId" defaultLabel="Select Assignee" (onChange)="change('tech', $event.value)"
+                        optionLabel="userName" optionValue="userId" selectedItemsLabel="{0} technician selected">
+                        <ng-template let-tech pTemplate="item">
+                            <div class="option-item">{{tech.userName}}</div>
+                        </ng-template>
+                    </p-multiSelect>
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/status_i.svg" alt="status"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Status</span>
+                    </label>
+                </div>
+                <div>
+                    <p-dropdown [options]="Status" optionLabel="name" formControlName="statusId" optionValue="id"  resetFilterOnHide="true"
+                        placeholder="Select" [virtualScroll]="false" [itemSize]="2" [filter]="true" [disabled]="modalState == 'new' || (modalState == 'edit' && serviceData.assignedTech == '')"></p-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/vin_title_i.svg" alt="vin"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">VIN</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-12 pr-1 d-flex">
+                        <div class="p-inputgroup split-col catg-col act-col-80">
+                            <input type="text" pInputText formControlName="vin" [(ngModel)]="serviceForm.value.vin" class="input-bg vin-input text-uppercase" maxlength="17" (input)="vinChanged('change', $event.target.value)"
+                                placeholder="Enter VIN" [ngClass]="{'is-invalid': vinIsValid && !vinValid}">
+                            <button type="button" pButton pRipple icon="pi pi-check" (click)="vinChanged('api')"
+                                [disabled]="!vinIsValid" class="p-button-secondary" [ngClass]="{'p-button-danger vin-danger': vinIsValid, 'vin-check-btn': !vinIsValid}"></button>
+                            <!-- [ngClass]="{'p-button-success' : serviceForm.get('vin').valid}" -->
+                        </div>
+                        <div class="split-col act-col act-col-20">
+                            <button pButton pRipple type="button" class="p-button-outlined p-button-rounded vin-btn recent-vin" label="Recent VINs" (click)="getRecentVin()">
+                                <!-- this.miSpecialForm.get('miName').valid -->
+                                <img src="assets/images/dispatch/svg/service-form/vin_i.svg" />                                
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="vinIsValid && !vinValid" class="invalid-feedback invalid-field">
+                        <div id="valid-error" class="field-err">invalid VIN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/make_i.svg" alt="make"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Make</span>
+                    </label>
+                </div>
+                <div>
+                    <p-dropdown [options]="makeList" formControlName="make" placeholder="Select" [ngClass]="{'mvisible': serviceForm.value.make != ''}"
+                        [virtualScroll]="false" [filter]="true" optionLabel="makeName"  resetFilterOnHide="true"
+                        optionValue="makeName" [disabled]="vinDisable" (onChange)="getMakeModelsList($event.value)"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/model_i.svg" alt="model"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Model</span>
+                    </label>
+                </div>
+                <div>                    
+                    <div *ngIf="modelLoading && modalState == 'new'" class="cust-loader svcm-loader"><img
+                        src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                    <p-dropdown [options]="Models" formControlName="model" optionLabel="modelName" [ngClass]="{'mvisible': serviceForm.value.model != '' || modalState == 'edit'}"
+                        optionValue="modelName" placeholder="{{modelPlaceHoder}}" [disabled]="modelDisable" [virtualScroll]="false" [filter]="true"  resetFilterOnHide="true"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/year_i.svg" alt="year"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Year</span>
+                    </label>
+                </div>
+                <div>
+                    <p-dropdown [options]="Years" formControlName="year" placeholder="Select" [virtualScroll]="false"
+                        [itemSize]="2" [filter]="true" resetFilterOnHide="true" optionValue="name" optionLabel="name" [virtualScroll]="true"
+                        [itemSize]="31"></p-dropdown>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/service_to_perform_i.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Service to be Performed</span>
+                    </label>
+                </div>
+                <div>
+                    <p-multiSelect class="split-col catg-col act-col-80" appendTo="body" [options]="serviceCategory" [filter]="true" resetFilterOnHide="true" 
+                        showClear="false" formControlName="serviceCatg" defaultLabel="Select Service to be Performed"
+                        optionLabel="serviceName" optionValue="id" selectedItemsLabel="{0} service categories selected">
+                        <ng-template let-catg pTemplate="item">
+                            <div class="option-item">{{catg.serviceName}}
+                                <span *ngIf="catg.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'catg', catg);">
+                                    <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                </span>
+                            </div>
+                        </ng-template>
+                    </p-multiSelect>
+                    <div class="split-col act-col act-col-20 cursor">
+                        <button pButton pRipple type="button" icon="pi pi-plus" class="ap-button-outlined p-button-rounded vin-btn" label="Add New Service" (click)="serviceAction('new', 'catg');">
+                        </button>
+                    </div>                     
+                </div>                
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/add_notes_i.svg" alt="notes"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Additional Notes</span>
+                    </label>
+                    <!--span style="float: right;" class="range-text">{{serviceForm?.value?.serviceNotes?.length ?
+                        serviceForm?.value?.serviceNotes?.length : 0}} /500</span-->
+                </div>
+                <div>
+                    <!--textarea rows="7" pInputTextarea maxlength="500"
+                        formControlName="serviceNotes" placeholder="Enter Additional notes" style="font-size: 14px; resize: none;"
+                        class="input-bg"></textarea-->
+                    <ckeditor [editor]="Editor" [config]="configCke" formControlName="serviceNotes"></ckeditor>
+                </div>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+<p-dialog [(visible)]="displayDetails" *ngIf="displayDetails" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal request-details">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Service Request Details</span>
+        </div>
+        <div *ngIf="serviceData.serviceStatus == 0" class="edit-service cursor">
+            <span class=" text-center" (click)="editServiceData(serviceData,'edit',serviceData['serviceDate']);">Edit</span>
+        </div>
+    </ng-template>
+    <!-- <form> -->
+    <div class="row my-3" style="padding-top: 1rem !important;">
+        <div class="col-6">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="shop" onload="SVGInject(this)"
+                        class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Shop</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span>{{serviceData['shopData']?.name}}</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <label>
+                    <img class="map-icon" src="assets/images/dispatch/svg/service-form/map.svg" alt="map" onload="SVGInject(this)"
+                        class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Address</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span class="truncate" *ngIf="!serviceData['shopData']?.mapFlag">-</span>
+                <span class="truncate" *ngIf="serviceData['shopData']?.mapFlag" title="{{renderAdderss(serviceData['shopData'])}}">
+                    {{renderAdderss(serviceData['shopData'])}}
+                </span>
+            </div>
+        </div>
+    </div>
+    <hr style="color : #e3e5e8">
+    <div class="row my-3">
+        <div class="col-12">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/contact-active.svg" alt="contact"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Contact Details</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <ng-container *ngFor="let item of serviceData.serviceContacts">
+                    <p-tag id="pill_c" styleClass="mr-2 pill-color" value="{{renderContact(item)}}" [rounded]="true"></p-tag>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <hr style="color : #e3e5e8">
+    <div class="row my-3">
+        <div class="col-6">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/date_i.svg" alt="date" onload="SVGInject(this)"
+                        class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Date & Time</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span>{{serviceData.serviceDate}} {{serviceData.serviceTime}} {{serviceData.timeZone}}, {{serviceData.serviceDuration.value}}</span>
+                <span *ngIf="serviceData.anyTime">&nbsp; - Flexible Time</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/repair_i.svg" alt="repair"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Repair Order #</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span class="truncate">{{serviceData.repairOrder}}</span>
+            </div>
+        </div>
+    </div>
+    <hr style="color : #e3e5e8">
+    <div class="row my-3">
+        <div class="col-6">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/technician_i.svg" alt="technician"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Technician</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <ng-container *ngFor="let item of serviceData.assignedTech">
+                    <p-tag id="pill_c" styleClass="mr-2 pill-color" value="{{item.techName}}" [rounded]="true"></p-tag>
+                </ng-container>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/status_i.svg" alt="status"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Status</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span class="truncate">
+                    <p-tag styleClass="mr-2 status-pill" [ngStyle]="{'background-color': serviceData['statusData']?.statusColor, 'border-radius': '10rem', 'padding': '1px 0 4px 5px'}" value="{{serviceData['statusData']?.name}}" [rounded]="true">
+                    </p-tag>
+                </span>
+            </div>
+        </div>
+    </div>
+    <hr style="color : #e3e5e8">
+    <div class="row my-3">
+        <div class="col-6">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/vin_title_i.svg" alt="shop"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">VIN</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span>{{serviceData.vin}}</span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div>
+                <label>
+                    <img  class="map-icon" src="assets/images/dispatch/svg/service-form/map.svg" alt="map" onload="SVGInject(this)"
+                        class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Vehicle</span>
+                </label>
+            </div>
+            <div class="details-text" *ngIf="serviceData.make">
+                <span class="truncate">{{serviceData.make}} > {{serviceData.model}} > {{serviceData.year}}</span>
+            </div>
+        </div>
+    </div>
+    <hr style="color : #e3e5e8">
+    <div class="row my-3">
+        <div class="col-12">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/service_to_perform_i.svg" alt="shop"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Service to be Performed</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <ng-container *ngFor="let item of serviceData.serviceCatg">
+                    <p-tag id="pill_c" styleClass="mr-2 pill-color" value="{{item.name}}" [rounded]="true"></p-tag>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <hr style="color : #e3e5e8">
+    <div class="row my-3" style="padding-bottom: 1rem !important;">
+        <div class="col-12">
+            <div>
+                <label>
+                    <img src="assets/images/dispatch/svg/service-form/add_notes_i.svg" alt="shop"
+                        onload="SVGInject(this)" class="icons-size mr-2 request-details-icon" />
+                    <span style="color: #9b9a9a;">Additional Notes</span>
+                </label>
+            </div>
+            <div class="details-text">
+                <span [innerHTML]="serviceData.notes"></span>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog header="Notes - {{(notesDate.date)}} - {{notesDate.shopData.name}}"
+    *ngIf="displayNote && notesDate.notesFlag" [(visible)]="displayNote" [modal]="true" [style]="{width: '50vw'}"
+    [draggable]="false" [resizable]="false" class="dispatch-modal card-spacing">
+    <p class="m-0" style="padding-top: 0.75rem;" [innerHTML]="notesDate.notes"></p>
+</p-dialog>
+<div style="min-height: 80vh;" *ngIf="!navTech">
+    <div class="loading-small-screen-scroll trst" style="left: 50%; position: fixed;" align="center" *ngIf="loadingDispatch"><img
+            src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+</div>
+<p-sidebar class="sidebar-cont" [(visible)]="actionFlag" [baseZIndex]="100" position="right"
+    [ngClass]="{'overflow-hidden': actionForm == 'shop'}" [dismissible]="false">
+    <h1 style="font-weight: normal">
+        <span class="truncate">{{actionTitle}}</span>
+    </h1>
+    <div class="action-form" [ngClass]="{'shop-action-form': actionForm == 'shop'}">
+        <form *ngIf="actionForm == 'catg'" [formGroup]="serviceCatgForm">
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/service_to_perform_i.svg" alt="service"
+                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Category Name</span>
+                        <span class="split-col req-col">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="catgName"
+                    [ngClass]="{ 'is-invalid': (serviceCatgSubmit && sgf.catgName.errors) || catgExist }"
+                    placeholder="Enter Category Name" maxlength="50" />
+                    <div *ngIf="serviceCatgSubmit && sgf.catgName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="sgf.catgName.errors.required">Category Name is required</div>
+                    </div>
+                    <div *ngIf="catgExist" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="catgExist">{{existError}}</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="action-buttons">
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                    class="p-button-rounded button-save cursor" (click)="formAction('submit')"></button>
+                    <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                    class="p-button-rounded button-save button-spin"></button>
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                    class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>
+                </div>
+            </div>
+        </form>
+        <form *ngIf="actionForm == 'shop'" [formGroup]="serviceShopForm">
+            <div class="service-form-fields">
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Shop Name</span>
+                            <span class="split-col req-col">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="shopName"
+                        [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.shopName.errors) || shopExist }"
+                        placeholder="Enter Shop Name" maxlength="50" />
+                        <div *ngIf="serviceShopSubmit && shf.shopName.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.shopName.errors.required">Shop Name is required</div>
+                        </div>
+                        <div *ngIf="shopExist" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shopExist">{{existError}}</div>
+                        </div>
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Address1</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="addressLine1" placeholder="Enter Address1" maxlength="100" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="addressLine1" placeholder="Enter Address1" maxlength="100" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.addressLine1.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.addressLine1.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.addressLine1.errors.required">Address1 is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Address2</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="addressLine2" placeholder="Enter Address2" maxlength="100" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.shopName.errors)}" />
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">City</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="city" placeholder="Enter City" maxlength="50" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="city" placeholder="Enter City" maxlength="50" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.city.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.city.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.city.errors.required">City is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">State</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="state" placeholder="Enter State" maxlength="50" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="state" placeholder="Enter State" maxlength="50" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.state.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.state.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.state.errors.required">State is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Zip</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.zip.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.zip.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.zip.errors.required">Zip is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/common/tag-ref-icon.png" alt="service" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Customer ID</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="customerId" placeholder="Enter Customer ID" maxlength="10" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.zip.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.zip.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.zip.errors.required">Zip is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Phone</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                            formControlName="phone" minlength="12" [ngClass]="{ 'is-invalid': (serviceShopSubmit && (shf.phone.value.length == 0 || phoneNumberValid))}">
+                        <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                            <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                            <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                        </div>
+                        <div *ngIf="serviceShopSubmit" class="invalid-feedback">
+                            <!--div id="valid-error" class="field-err" *ngIf="shf.phone.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                            <div id="valid-error" class="field-err" *ngIf="shf.phone.value.length > 0 && phoneNumberValid">Invalid phone number</div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/email-icon.png" alt="service" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Email</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                            maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.email.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.email.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="scf.email.errors">Email is invalid</div>
+                        </div>
+                    </div>                
+                </div>
+            </div>
+            <div class="service-form-actions">
+                <div class="service-form-row">
+                    <div class="action-buttons">
+                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                        class="p-button-rounded button-save cursor" (click)="formAction('submit')"></button>
+                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                        class="p-button-rounded button-save button-spin"></button>
+                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                        class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form *ngIf="actionForm == 'contact'" [formGroup]="serviceContactForm">
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">First Name</span>
+                        <span class="split-col req-col">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="firstName"
+                        [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.firstName.errors) }"
+                        placeholder="Enter First Name" maxlength="50" />
+                    <div *ngIf="serviceContactSubmit && scf.firstName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="scf.firstName.errors.required">First name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Last Name</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="lastName" 
+                        placeholder="Enter Last Name" maxlength="50" [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.lastName.errors)}" />
+                    <div *ngIf="serviceContactSubmit && scf.lastName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="scf.lastName.errors.required">Last name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/email-icon.png" alt="Email" class="icons-size mr-2 new-request-icon mail" />
+                        <span class="split-col text-col">Email</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                        maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.email.errors)}" />
+                    <div *ngIf="serviceContactSubmit && scf.email.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="scf.email.errors">Email is invalid</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Phone</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                        formControlName="phoneNumber" minlength="12" [ngClass]="{ 'is-invalid': (serviceContactSubmit && (scf.phoneNumber.value.length == 0 || phoneNumberValid))}">
+                    <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                        <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                        <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                    </div>
+                    <div *ngIf="serviceContactSubmit" class="invalid-feedback">
+                        <!--div id="valid-error" class="field-err" *ngIf="scf.phoneNumber.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                        <div id="valid-error" class="field-err" *ngIf="scf.phoneNumber.value.length > 0 && phoneNumberValid">Invalid phone number</div>                        
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="action-buttons">
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                    class="p-button-rounded button-save cursor" (click)="formAction('submit')"></button>
+                    <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                    class="p-button-rounded button-save button-spin"></button>
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                    class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>                    
+                </div>
+            </div>
+        </form>
+    </div>
+</p-sidebar>

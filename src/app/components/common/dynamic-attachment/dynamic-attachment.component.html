@@ -1,0 +1,94 @@
+<!--div class="cursor" (click)="attachmentUpload()"><span>Upload</span></div-->
+
+<div align="center" class="upload-area gtsr-upload-area">
+    <div class="custom-upload cursor hide">
+        <div class="custom-upload-area" (click)="mediaUpload()">{{chooseLable}}</div>
+    </div>
+    <div class="upload-col attachment-file common-attachment-file media-attachment-file files cursor">
+        <p-fileUpload #uploader name="upload[]" customUpload="true"
+            [chooseLabel]="chooseLable" [chooseIcon]="chooseIcon"
+            [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+            (onSelect)="onUpload($event)"
+            multiple="multiple">
+            <ng-template pTemplate="content">
+                <p class="content-message placeholder text-center">Drag & Drop Files</p>
+            </ng-template>
+        </p-fileUpload>
+    </div>
+    <div class="upload-col cloud cursor" [ngClass]="{'cloud-hidden': tvsDomain, 'hide': hideCloud}" (click)="mediaUpload()">
+        <img src="{{mediaManagerPath}}/{{mediaIcon}}">
+        From Cloud
+    </div>
+    <div class="upload-col link common-link media-link cursor" [ngClass]="{'disable': !addLinkFlag}" (click)="addLink()">
+        <img src="{{mediaManagerPath}}/link-icon.png"
+             srcset="{{mediaManagerPath}}/link-icon@2x.png 2x, {{mediaManagerPath}}/link-icon@3x.png 3x">
+        Add Link
+    </div>
+    <div *ngIf="fileLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader instant-loader"></div>
+</div>
+
+<div role="alert" class="p-messages p-error-messages p-component">
+    <div class="ng-trigger ng-trigger-messageAnimation p-message p-message-error" *ngFor="let err of customError; let i=index">
+        <div class="p-message-wrapper">
+            <span class="p-message-icon pi pi-times-circle"></span>
+            <span class="p-message-summary">{{err.fileName}}: <span class="warning">{{invalidFileText}}</span></span><span *ngIf="err.maxSize != '-1'" class="p-message-detail">, {{maxUploadText}} {{err.maxSize}}.</span>
+            <button type="button" class="p-message-close" (click)="removeMessage(i)"><i class="p-message-close-icon pi pi-times"></i></button>
+        </div>
+    </div>
+</div>
+<div class="attachment-progress refer-info upload-info attachment-info">
+    <p-dialog *ngIf="attachmentProgress" class="attachment-uploading" header="{{successMsg}}" [(visible)]="attachmentProgress" [(closeOnEscape)]="closeDialog" [(modal)]="attachmentProgress" [modal]="true"  [baseZIndex]="10000" [draggable]="false" [resizable]="false">
+        <div class="attachment-cont">
+            <div class="upload-items attachment-row {{file.type}}" [ngClass]="{'hide': file.accessType == 'media'}" *ngFor="let file of attachments; let i = index;">
+                <div *ngIf="file.flagId < 6 && file.flagId != 2 || file.flagId == 7" class="{{file.type}}">
+                    <div class="attachment-col bg-col" [ngClass]="{'doc-bg' : (file.flagId > 2 && file.flagId < 6 && file.flagId != 2)}" [ngStyle]="{'background-image': 'url(' + file.thumbFilePath + ')'}"></div>
+                    <div class="attachment-col cont-col">
+                        <div class="caption" [ngClass]="{'active': file.progress > 100}">
+                            <span *ngIf="!file.audioDesc">{{file.originalFileName}}</span>
+                            <span *ngIf="file.audioDesc">{{file.audioCaption}}</span>
+                            <span *ngIf="file.progress == 0" class="cursor cancel" (click)="cancelUpload(i)"></span>
+                        </div>
+                        <p-progressBar *ngIf="file.progress <= 100" class="media-bar" [showValue]="true" [value]="file.progress"></p-progressBar>
+                        <div class="progress" *ngIf="file.progress <= 100">
+                            <span class="progress-col info">{{file.progress}}%</span>
+                            <span class="progress-col size text-right">{{file.fileSize}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="file.flagId == 2" class="{{file.type}}">
+                    <div class="attachment-col bg-col">
+                        <video  class="fillWidth" [src]="file.videoFilePath_att" width="90" height="90" controls preload="none">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="attachment-col cont-col">
+                        <div class="caption" [ngClass]="{'active': file.progress > 100 && !file.processFlag}">
+                            <span title="{{file.originalFileName}}">{{file.originalFileName}}</span>
+                            <span *ngIf="file.processFlag" class="media-process">{{processingTxt}}</span>
+                            <span *ngIf="file.progress == 0" class="cursor cancel" (click)="cancelUpload(i)"></span>
+                        </div>
+                        <p-progressBar *ngIf="file.progress <= 100" class="media-bar" mode="determinate" [showValue]="false" [value]="file.progress"></p-progressBar>
+                        <div class="progress" *ngIf="file.progress <= 100">
+                            <span class="progress-col info">{{file.progress}}%</span>
+                            <span class="progress-col size text-right">{{file.fileSize}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="file.flagId == 6" class="{{file.type}}">
+                    <div class="attachment-col bg-col" [ngStyle]="{'background-image': 'url(' + file.thumbFilePath + ')'}"></div>
+                    <div class="attachment-col cont-col">
+                        <div class="caption" [ngClass]="{'active': file.progress > 100}">
+                            <span>{{file.url}}</span>
+                            <span *ngIf="file.progress == 0" class="cursor cancel" (click)="cancelUpload(i)"></span>
+                        </div>
+                        <p-progressBar *ngIf="file.progress < 100" class="media-bar" mode="determinate" [showValue]="false" [value]="file.progress"></p-progressBar>
+                        <div class="progress" *ngIf="file.progress < 100">
+                            <span class="progress-col info">{{file.progress}}%</span>
+                            <span class="progress-col size text-right"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>

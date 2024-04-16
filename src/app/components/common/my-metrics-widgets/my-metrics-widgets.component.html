@@ -1,0 +1,131 @@
+<div class="main-contaier mb-4 {{optionsval.shortName}}">
+  <p-accordion [multiple]="true" (onClose)="onTabClose5($event)" (onOpen)="onTabOpen5($event)">
+    <p-accordionTab [selected]="true">
+      <p-header class="accordion-icon ">
+        <div class="container-fluid">
+          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+            <div class="menu-name-bar col col col-lg-9  col-md-9 col-xl-9 col-sm-8 landing-padding0">
+              <div>
+                <span class="bg-image {{optionsval.imageClass}}">
+                  <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                </span>
+                <span class="menu-name">{{optionsval.placeholder}}</span>
+                <span><i class="pi hide pi-ellipsis-v"></i></span>
+              </div>
+            </div>
+            <div class="col col col-lg-3  col-md-3 col-xl-3 col-sm-4 landing-padding0">
+              <div class="rightside-menu-header">
+                <div class="see-more-text" *ngIf="metricsseemore">
+                  <span>See More</span>
+                  <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                </div>
+                <div class="plusone50 showinline"><i class="pi pi-chevron-up"></i></div>
+                <div class="minusone50 hide"><i class="pi pi-chevron-down"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-header>
+      <div>
+        <div class="landing-metrics-container">
+          <div class="padding10">
+            <div class="container-fluid">
+              <div class="row col-lg-12 col-md-12 col-sm-12">
+                <div class="col col-lg-6">
+                  <div class="loading-small-screen" *ngIf="loadingmythreadsopencount">
+                    <img src="assets/images/loading.svg" alt="Loader" />
+                  </div>
+                  <div class="color-my-thread" [ngClass]="{'active-count': mythreadsopencount!=0}">My
+                    {{metricsThreadText}}- Open
+                    <span *ngIf="mythreadsopencount" class="color-count">({{mythreadsopencount}})</span>
+                    <span *ngIf="!mythreadsopencount" class="color-count">(-)</span>
+                  </div>
+                  <div id="mydonutchartopen"></div>
+
+                </div>
+                <div class="col col-lg-6">
+                  <div class="loading-small-screen" *ngIf="loadingmythreadsclosedcount"><img
+                      src="assets/images/loading.svg" alt="Loader" /></div>
+                  <div class="color-my-thread" [ngClass]="{'active-count': mythreadsclosedcount!=0}">My
+                    {{metricsThreadText}}- Closed
+                    <span *ngIf="mythreadsclosedcount" class="color-count">({{mythreadsclosedcount}})</span>
+                    <span *ngIf="!mythreadsclosedcount" class="color-count">(-)</span>
+                  </div>
+                  <div id="mydonutchartclosed"></div>
+                  <div *ngIf="!mythreadsclosedcount"></div>
+                </div>
+              </div>
+            </div>
+            <div class="chart-divder" *ngIf="isTeamChart=='1'">
+            </div>
+            <div class="container-fluid" *ngIf="isTeamChart=='1'">
+              <div class="row col-lg-12 col-md-12 col-sm-12">
+                <div class="col col-lg-6">
+                  <div *ngIf="loadingmyteamthreadsopencount"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                  <div class="color-my-thread" [ngClass]="{'active-count': myteamthreadsopencount!=0}">My
+                    Team {{metricsThreadText}}- Open
+                    <span *ngIf="myteamthreadsopencount" class="color-count">({{myteamthreadsopencount}})</span>
+                    <span *ngIf="!myteamthreadsopencount" class="color-count">(-)</span>
+                  </div>
+                  <div id="myTeamdonutchartopen"></div>
+                </div>
+                <div class="col col-lg-6">
+                  <div *ngIf="loadingmyteamthreadsclosedcount"><img src="assets/images/loading.svg" alt="Loader" />
+                  </div>
+                  <div class="color-my-thread" [ngClass]="{'active-count': myteamthreadsclosedcount!=0}">My
+                    Team {{metricsThreadText}}- Closed
+
+                    <span *ngIf="myteamthreadsclosedcount" class="color-count">({{myteamthreadsclosedcount}})</span>
+                    <span *ngIf="!myteamthreadsclosedcount" class="color-count">(-)</span>
+                  </div>
+                  <div id="myTeamdonutchartclosed"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="mydonutchartopen"></div>
+      </div>
+      <!--div class="col col-lg-6">
+        <div class="loading-small-screen" *ngIf="loadingmythreadsclosedcount">
+          <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+        <div class="color-my-thread" [ngClass]="{'active-count': mythreadsclosedcount!=0}">My Threads-
+          Closed
+          <span *ngIf="mythreadsclosedcount" class="color-count">({{mythreadsclosedcount}})</span>
+          <span *ngIf="!mythreadsclosedcount" class="color-count">(-)</span>
+        </div>
+        <div id="mydonutchartclosed"></div>
+        <div *ngIf="!mythreadsclosedcount">
+        </div>
+      </div-->
+      <div class="chart-divder" *ngIf="isTeamChart=='1'">
+      </div>
+      <div class="container-fluid" *ngIf="isTeamChart=='1'">
+        <div class="row col-lg-12 col-md-12 col-sm-12">
+          <div class="col col-lg-6">
+            <div *ngIf="loadingmyteamthreadsopencount"><img src="assets/images/loading.svg" alt="Loader" />
+            </div>
+            <div class="color-my-thread" [ngClass]="{'active-count': myteamthreadsopencount!=0}">My Team
+              Threads-
+              Open
+              <span *ngIf="myteamthreadsopencount" class="color-count">({{myteamthreadsopencount}})</span>
+              <span *ngIf="!myteamthreadsopencount" class="color-count">(-)</span>
+            </div>
+            <div id="myTeamdonutchartopen"></div>
+          </div>
+          <div class="col col-lg-6">
+            <div *ngIf="loadingmyteamthreadsclosedcount"><img src="assets/images/loading.svg" alt="Loader" />
+            </div>
+            <div class="color-my-thread" [ngClass]="{'active-count': myteamthreadsclosedcount!=0}">My Team
+              Threads- Closed
+              <span *ngIf="myteamthreadsclosedcount" class="color-count">({{myteamthreadsclosedcount}})</span>
+              <span *ngIf="!myteamthreadsclosedcount" class="color-count">(-)</span>
+            </div>
+            <div id="myTeamdonutchartclosed"></div>
+          </div>
+        </div>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>

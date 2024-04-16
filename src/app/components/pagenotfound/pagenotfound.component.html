@@ -1,0 +1,18 @@
+<div class="container page-404-container text-center" id="notfound">
+    <div class="notfound" *ngIf="showDefaultMsg">
+        <div class="notfound-404">
+            <h1>404</h1>
+        </div>
+        <h2>We are sorry, Page not found!</h2>
+        <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
+        <span class="btn-row"><a class="btn" routerlink="/" href="/">Back To Homepage</a></span>
+    </div>
+    <div class="notfound" *ngIf="!showDefaultMsg">
+        <br/>
+        <br/>
+        <br/>
+        <h4>Please update your bookmarks to <span style="font-size: 24px;font-weight: bold;text-align: center;color: #40aa8b;">{{originURL}} <a (click)="bookmarkURL()" >&nbsp;&nbsp;<img src="assets/images/login/bookmark.png" /></a></span></h4>
+        <br/>
+        <span class="btn-row"><a style="font-size:26px;" class="btn" routerlink="/" href="/">Continue to your account</a></span>
+    </div>
+</div>

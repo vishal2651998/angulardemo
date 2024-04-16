@@ -1,0 +1,144 @@
+<div *ngIf="!documentViewFlag">
+    <div id="header" class="detail-page-header" *ngIf="!fluid">
+        <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch($event, '')"></app-product-header>
+        <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch($event, '')"></app-product-header>
+    </div>
+    <div id="header" *ngIf="fluid">
+        <app-new-edit-header [pageData]="headerData"></app-new-edit-header>
+    </div>
+    <div class="left-section hide">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="prob-index split-sec1">
+        <div *ngIf="!fluid && !documentApprovalFlag" class="document-list-head"
+            [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+            <div class="prob-head-col head-col-1">
+                <span *ngIf="!msTeamAccess" class="head-txt part-head-txt doc-head-text">
+                    <span class="head-ic-img">
+                        <img src="assets/images/documents/document-gray-icon.svg" onload="SVGInject(this)">
+                    </span>
+                    {{title}}
+                </span>
+                <span *ngIf="msTeamAccess" class="head-txt part-head-txt"
+                    tooltipClass="help-content-tooltip sidebarTeam" container="body" triggers="manual"
+                    [autoClose]="false" placement="right-top" [ngbTooltip]="documentsTT"
+                    #ttdocuments="ngbTooltip">{{title}}</span>
+                <ng-template #documentsTT>
+                    <div class="tt-helpcontent-container">
+                        <div class="tt-bg-image {{thelpContentIconName}}"></div>
+                        <div class="tt-title">
+                            <div class="lt-img {{thelpContentIconName}}"></div>
+                            <div class="rt-text">{{thelpContentTitle}}</div>
+                        </div>
+                        <div class="tt-desp">{{thelpContentContent}}</div>
+                        <div class="tt-next-text" (click)="helpContent(thelpContentId)">DONE</div>
+                    </div>
+                </ng-template>                
+            </div>
+            <div class="prob-head-col head-col-2 text-right">
+                <span *ngIf="!loading && approvalEnableDomainFlag"><span (click)="approvalDocList()" class="doc-approve-button"><img src="assets/images/documents/doc-approval.png" ><span class="approval-text">Document Approval</span></span></span>
+                <span *ngIf="!loading" class="action-col pin-col cursor" class="{{pinClass}}"
+                    [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || itemEmpty)}"
+                    (click)="pinnedList(!pinFlag)"></span>
+                <span *ngIf="!loading" class="action-col thumb-col cursor"
+                    [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView, 'hide': (headerCheck == 'checked' || headerCheck == 'all' || displayNoRecords || itemEmpty)}"
+                    title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType(thumbView)"></span>
+            </div>
+        </div>
+        <div *ngIf="!fluid && documentApprovalFlag" class="document-list-head"
+        [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            <span *ngIf="!msTeamAccess" class="cursor head-txt part-head-txt doc-approval-head-text" (click)="backToDocList()" >
+                <span class="head-ic-img">
+                    <img src="assets/images/documents/doc-back.png" >
+                </span>                
+            </span>
+            <span *ngIf="!msTeamAccess" class="head-txt part-head-txt">
+                <span class="head-ic-img">
+                    <img src="assets/images/documents/approval-document-gray-icon.png" >
+                </span>
+                {{title}}
+            </span>
+            <span *ngIf="msTeamAccess" class="head-txt part-head-txt"
+                tooltipClass="help-content-tooltip sidebarTeam" container="body" triggers="manual"
+                [autoClose]="false" placement="right-top" [ngbTooltip]="documentsTT"
+                #ttdocuments="ngbTooltip">{{title}}</span>
+            <ng-template #documentsTT>
+                <div class="tt-helpcontent-container">
+                    <div class="tt-bg-image {{thelpContentIconName}}"></div>
+                    <div class="tt-title">
+                        <div class="lt-img {{thelpContentIconName}}"></div>
+                        <div class="rt-text">{{thelpContentTitle}}</div>
+                    </div>
+                    <div class="tt-desp">{{thelpContentContent}}</div>
+                    <div class="tt-next-text" (click)="helpContent(thelpContentId)">DONE</div>
+                </div>
+            </ng-template>
+            <!--span *ngIf="createAccess" class="new-prob" (click)="newfolderpopup()"
+                [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all')}">
+                <i class="pi pi-plus"></i>
+                {{pageCreateNew}}
+            </span-->
+            <!--span *ngIf="createAccess" class="new-prob"
+                [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all')}"
+                tooltipClass="doc-type-tooltip" triggers="click" [autoClose]="true" placement="right"
+                [ngbTooltip]="docTypes">
+                <i class="pi pi-plus"></i>
+                {{pageCreateNew}}
+            </span>
+            <ng-template #docTypes>
+                <ul class="doc-type">
+                    <li class="cursor doc-type-list {{type.class}}" [ngClass]="{'hide': type.hideFlag}"
+                        *ngFor="let type of docTypeLists;" (click)="navPage(type.class)">
+                        <div class="doc-type-info">
+                            <div class="title">{{type.title}}</div>
+                            <div class="desc">{{type.desc}}</div>
+                        </div>
+                    </li>
+                </ul>
+            </ng-template-->
+
+            <span class="select-order-option">
+                <p-dropdown class="select-ts-order" appendTo="body" [options]="selectedOrderOptions" [(ngModel)]="selectedOrder" placeholder="" optionLabel="name" (onChange)="selectEvent($event,'order')" ></p-dropdown>
+            </span> 
+
+            <span class="select-order-option" >               
+                <p-dropdown class="select-ts-order" appendTo="body" [options]="selectedStatusOptions" [(ngModel)]="selectedStatus" placeholder="" optionLabel="name" (onChange)="selectEvent($event,'status')" ></p-dropdown>               
+            </span>
+
+        </div>
+        <div class="prob-head-col head-col-2 text-right">
+            
+        </div>
+    </div>
+        <div *ngIf="!fluid && !documentApprovalFlag" class="cbt-filter"
+            [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+            <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                (filterAction)="applyFilter($event)"></app-filter>
+            <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                (filterAction)="applyFilter($event)"></app-filter>
+        </div>
+        <div *ngIf="!fluid && documentApprovalFlag" class="cbt-filter"
+            [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+            <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                (filterAction)="applyFilter($event)"></app-filter>
+            <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                (filterAction)="applyFilter($event)"></app-filter>
+        </div>
+        <div class="probing-content cbt-content part-content doc-content"
+            [ngClass]="{'filter-expand': expandFlag && !fluid, 'right-panel-expand': rightPanel && !fluid, 'right-panel-collapse': !rightPanel && !fluid, 'dynamic-form-content': fluid, 'filter-collapse': !expandFlag && !fluid}">
+            <app-documents-new *ngIf="!documentApprovalFlag" ></app-documents-new>
+            <app-document-approval *ngIf="documentApprovalFlag"></app-document-approval>
+        </div>
+        <div *ngIf="!fluid" class="cust-right-panel info-panel media-info"
+            [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+            <span *ngIf="!rightPanel && !emptyFlag" class="expand-icon cursor" (click)="toggleInfo(rightPanel)"></span>
+            <app-doc-info *ngIf="rightPanel" [infoLoading]="rightPanel" [docDetail]="docDetail"
+                (toggleAction)="toggleAction($event)"></app-doc-info>
+        </div>
+    </div>
+</div>

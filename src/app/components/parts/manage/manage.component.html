@@ -1,0 +1,861 @@
+<div id="header">
+    <!--<app-product-header [pageData]="headerData"></app-product-header>-->
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>  
+</div>
+
+<div class="prob-new">
+    <div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont"
+        [ngClass]="{'col-lg-8 step1': step1Action && !step2Action, 'col-lg-12 step2': step1Action && step2Action}">
+        <div *ngIf="step2Action" class="step2-info" [ngClass]="{'col-lg-3': step1Action && step2Action}"
+            [style.height]="'calc(100vh - '+rmsHeight+'px)'">
+            <div id="inner-step" class="ps form-values" [perfectScrollbar]="sconfig">
+                <div class="prob-form-info base-info">
+                    <div class="base-info-row">
+                        <span *ngIf="imgURL != null" class="image">
+                            <img src="{{imgURL}}" />
+                        </span>
+                        <span *ngIf="imgURL == null" class="default-banner-image" [ngStyle]="{'background': 'url(' + defImgURL + ') no-repeat center #fbfbfb'}">
+                        </span>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col active-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Status</span>
+                            <span class="value title">{{statusTxt}}</span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col part-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Part Name</span>
+                            <span class="value title">{{partName}}</span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col part-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Part Number</span>
+                            <span class="value title">{{partNumber}}</span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col info-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Part Description</span>
+                            <span class="value title">
+                                <div *ngIf="partDesc == ''" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="partDesc != ''">{{partDesc}}</div>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col part-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Alternative Part Number</span>
+                            <span class="value title">
+                                <div *ngIf="altPartNumber == ''" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="altPartNumber != ''">{{altPartNumber}}</div>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col type-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Part Type</span>
+                            <span class="value title">
+                                <div *ngIf="partType == 0" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="partType > 0">{{partTypeVal}}</div>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col type-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Part System</span>
+                            <span class="value title">
+                                <div *ngIf="partType == 0" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="partType > 0">{{partSystemVal}}</div>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col icon-col type-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Part Assembly</span>
+                            <span class="value title">
+                                <div *ngIf="partAssembly == 0" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="partAssembly > 0">{{partAssemblyVal}}</div>
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="platformId == 2 && domainId == 52" class="base-info-row">
+                        <div class="base-info-col icon-col type-icon ref-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Fig#</span>
+                            <span class="value title">
+                                <div *ngIf="figNo == ''" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="figNo != ''">{{figNo}}.</div>
+                            </span>
+                        </div>
+                    </div>
+                    <div *ngIf="platformId == 2 && domainId == 52" class="base-info-row">
+                        <div class="base-info-col icon-col type-icon ref-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Ref#</span>
+                            <span class="value title">
+                                <div *ngIf="refNo == ''" [innerHtml]="emptyCont"></div>
+                                <div *ngIf="refNo != ''">{{refNo}}.</div>
+                            </span>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="prob-form-info base-info">
+                    <div class="vehicle-info app-info app-view-info">
+                        <div *ngIf="tvsFlag" class="base-info-row">
+                            <div class="base-info-col icon-col type-icon pc-icon"></div>
+                            <div class="base-info-col cust-comp-cont">
+                                <span class="prod-code-items label">Product Codes
+                                    <ul>
+                                        <li *ngFor="let pc of filteredProdCodes">{{pc}}</li>
+                                    </ul>
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="!prodTypeFlag" class="all">All Models</div>
+                        <div *ngIf="prodTypeFlag" class="app-accord">
+                            <mat-accordion [multi]="true" #accordion="matAccordion">
+                                <mat-expansion-panel class="{{app.class}}" [disabled]="app.isDisabled"
+                                    [expanded]="app.isExpanded" [hideToggle]="false" (opened)="beforePanelOpened(app)"
+                                    (closed)="beforePanelClosed(app)" (afterCollapse)="afterPanelClosed()"
+                                    (afterExpand)="afterPanelOpened()" *ngFor="let app of appList; let i = index"
+                                    #mapanel="matExpansionPanel">
+                                    <mat-expansion-panel-header
+                                        class="mat-expansion-panel-header {{app.title | removeWhiteSpace | lowercase}}">
+                                        <mat-panel-title>
+                                            <div class="app-info app-preview-info">
+                                                <span class="title">{{app.title}}</span>
+                                            </div>
+                                        </mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <div class="app-list">
+                                        <span class="model-items">Models
+                                            <ul>
+                                                <li *ngFor="let m of partsForm.value.appInfo[i].model">{{m}}</li>
+                                            </ul>
+                                        </span>
+                                        <span class="year-items">Years
+                                            <ul>
+                                                <li *ngFor="let y of partsForm.value.appInfo[i].year">
+                                                    <div *ngIf="y == 0">All</div>
+                                                    <div *ngIf="y != 0">{{y}}</div>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </div>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </div>
+                        <div *ngIf="tvsFlag">
+                            <div class="base-info-row">
+                                <div class="base-info-col icon-col colour-icon"></div>
+                                <div class="base-info-col cust-comp-cont">
+                                    <span class="prod-code-items label">Colours
+                                        <ul *ngIf="filteredColourCodes?.length > 0">
+                                            <li *ngFor="let c of filteredColourCodes">{{c}}</li>
+                                        </ul>
+                                        <div *ngIf="filteredColourCodes?.length == 0" [innerHtml]="emptyCont"></div>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="base-info-row tvs-info-row">
+                                <div class="base-info-col icon-col info-icon"></div>
+                                <div class="base-info-col cust-comp-cont">
+                                    <span class="prod-code-items label">Additional Info</span>
+                                </div>
+                                <div class="base-info-col cust-comp-cont info-cont">
+                                    <table>
+                                        <tr>
+                                            <th bgcolor="#f6f6f6">Additional Model Info</th>
+                                            <th bgcolor="#f6f6f6" class="text-right">Part Quantity</th>
+                                        </tr>
+                                        <tr *ngFor="let item of addFormInfo;" [ngClass]="{'hide': item.infoItems.length == 0 || item.fieldName == 'colour'}">
+                                            <td>{{item.infoLists[0]}}</td>
+                                            <td class="text-center">{{item.qty}}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-cont part-cont"
+            [ngClass]="{'col-lg-12': step1Action && !step2Action, 'col-lg-8': step1Action && step2Action}">
+            <form class="form-horizontal" [formGroup]="partsForm" (ngSubmit)="onSubmit()">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="teamSystem && step1Action && !step2Action" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                        <span *ngIf="step1Action && step2Action" class="back-icon cursor" title="Back to Step1"
+                            (click)="backStep1()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>
+                        <button *ngIf="step1Action && !step2Action" class="btn next">Next <img
+                                src="assets/images/parts/next-icon.png" /></button>
+                        <div *ngIf="step1Action && step2Action && saveDraftFlag" class="btn next save"
+                            (click)="submitAction('save')">Save Draft <img src="assets/images/parts/save-draft.png" /></div>
+                        <div *ngIf="step1Action && step2Action" class="btn next publish disable"
+                            (click)="submitAction('publish')">{{saveText}} <img src="assets/images/parts/publish.png" />
+                        </div>
+                    </div>
+                </div>
+                <div [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                        <ul class="progressbar">
+                            <li [ngClass]="{'active': step1, 'selection': step2}">Parts Info</li>
+                            <li [ngClass]="{'active': step2}">More Details</li>
+                        </ul>
+                        <div class="form-items">
+                            <div *ngIf="step1Action && !step2Action">
+                                <div class="part-status-action">
+                                    <div class="part-status active-status cursor"
+                                        [ngClass]="{'active': partStatus == 1}"
+                                        (click)="changePartStatus('active', partStatus)">Active</div>
+                                    <div class="part-status discon-status cursor"
+                                        [ngClass]="{'active': partStatus == 2}"
+                                        (click)="changePartStatus('discon', partStatus)">Discontinued</div>
+                                </div>
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <span *ngIf="imgURL == null" class="prob-upload">
+                                            <a (click)="selectFile.click()" class="browse-button"></a>
+                                            <input style="display: none" type="file" accept='image/*'
+                                                (change)="onFileUpload($event)" #selectFile />
+                                            <span class="upload-txt">Upload Part Image</span>
+                                        </span>
+                                        <span *ngIf="imgURL != null" class="prob-upload upload-bg"
+                                            [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile()" class="action-btn delete-upload"></a>
+                                                <a (click)="selectFile.click()" class="action-btn edit-upload"></a>
+                                            </div>
+                                            <input style="display: none" type="file" accept='image/*'
+                                                (change)="onFileUpload($event)" #selectFile />
+                                        </span>
+                                        <div id="valid-error" class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}</div>
+                                    </div>
+                                    <div class="form-col field-col">
+                                        <div class="prob-form-control part-form-control split-control">
+                                            <div class="field-label split">
+                                                <span class="label-col part-label part-bg">Part Number</span>
+                                                <span class="label-col required">Required</span>
+                                            </div>
+                                            <!--span class="label-col required">Required</span-->
+                                            <input matInput placeholder="Enter part number" (blur)="processChange($event)"
+                                                formControlName="partNumber" [(ngModel)]="partNumber"
+                                                [ngClass]="{ 'is-invalid': step1Submitted && f.partNumber.errors }"
+                                                maxlength="{{nameMaxLen}}">
+                                            <mat-error id="valid-error" *ngIf="!validatePartNo" class="invalid-feedback">
+                                                {{validatePartMsg}}</mat-error>
+                                            <div *ngIf="step1Submitted && f.partNumber.errors" class="invalid-feedback">
+                                                <div  id="valid-error" class="field-err" *ngIf="f.partNumber.errors.required">Part Number
+                                                    is required</div>
+                                            </div>
+                                        </div>
+                                        <div class="prob-form-control part-form-control split-control end-control">
+                                            <div class="field-label split">
+                                                <span class="label-col part-label part-bg">Part Name</span>
+                                                <span class="label-col required">Required</span>
+                                            </div>
+                                            <!--span class="label-col required">Required</span-->
+                                            <input matInput placeholder="Enter part name" formControlName="partName"
+                                                [(ngModel)]="partName"
+                                                [ngClass]="{ 'is-invalid': step1Submitted && f.partName.errors }"
+                                                maxlength="{{maxLen}}">
+                                            <div *ngIf="step1Submitted && f.partName.errors" class="invalid-feedback">
+                                                <div  id="valid-error" class="field-err" *ngIf="f.partName.errors.required">Part Name is
+                                                    required</div>
+                                            </div>
+                                        </div>
+                                        <div class="prob-form-control cust-comp-control">
+                                            <div class="field-label no-pb">
+                                                <span class="label-col part-label desc-bg">Part Description</span>
+                                            </div>
+                                            <textarea placeholder="Enter description" formControlName="partDesc"
+                                                [(ngModel)]="partDesc" maxlength="{{descMaxLen}}"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row part-row">
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="cursor prob-form-control part-form-control">
+                                            <div class="field-col text-col alt-text">
+                                                <div class="field-label">
+                                                    <span class="label-col part-label part-bg">Alternate Part Number</span>
+                                                </div>
+                                                <input matInput placeholder="Enter alternate part number"
+                                                    formControlName="altPartNumber" [(ngModel)]="altPartNumber"
+                                                    maxlength="{{nameMaxLen}}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="cust-select gts-sel prob-catg part_type">
+                                            <div class="field-label">
+                                                <span class="label-col part-label part-type-bg">Part Type</span>
+                                            </div>
+                                            <mat-form-field class="custom-mat-sel prob-catg-sel full-mat-sel">
+                                                <mat-select #typeSelect placeholder="Select"
+                                                    [(ngModel)]="partType" formControlName="partType"
+                                                    (selectionChange)="selectChange('type', $event)"
+                                                    disableOptionCentering>
+                                                    <mat-option>
+                                                        <ngx-mat-select-search ngModel
+                                                            (ngModelChange)="filterOptions('type', $event)"
+                                                            [formControl]="typeInputFilter"
+                                                            placeholderLabel="Select"
+                                                            noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option [value]="0" [disabled]="disableSelection()">Select</mat-option>
+                                                    <mat-option class="create-option" [value]="-1">{{partTypeActionTxt}}
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let t of filteredPartTypes" [value]="t.id">
+                                                        {{ t.name }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row part-row">
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="cust-select gts-sel prob-catg">
+                                            <div class="field-label">
+                                                <span class="label-col part-label part-system-bg">System</span>
+                                            </div>
+                                            <mat-form-field class="custom-mat-sel prob-catg-sel full-mat-sel">
+                                                <mat-select #systemSelect placeholder="Select"
+                                                    [(ngModel)]="partSystem" formControlName="partSystem"
+                                                    (selectionChange)="selectChange('system', $event)"
+                                                    disableOptionCentering>
+                                                    <mat-option>
+                                                        <ngx-mat-select-search ngModel
+                                                            (ngModelChange)="filterOptions('system', $event)"
+                                                            [formControl]="systemInputFilter"
+                                                            placeholderLabel="Select"
+                                                            noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option [value]="0" [disabled]="disableSelection()">Select</mat-option>
+                                                    <mat-option class="create-option" [value]="-1">
+                                                        {{partSystemActionTxt}}</mat-option>
+                                                    <mat-option *ngFor="let t of filteredPartSystems" [value]="t.id">
+                                                        {{ t.name }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="cust-select gts-sel prob-catg">
+                                            <div class="field-label">
+                                                <span class="label-col part-label part-assembly-bg">Part Assembly</span>
+                                            </div>
+                                            <mat-form-field class="custom-mat-sel prob-catg-sel full-mat-sel">
+                                                <mat-select #assemblySelect placeholder="Select"
+                                                    [(ngModel)]="partAssembly" formControlName="partAssembly"
+                                                    (selectionChange)="selectChange('assembly', $event)"
+                                                    disableOptionCentering>
+                                                    <mat-option>
+                                                        <ngx-mat-select-search ngModel
+                                                            (ngModelChange)="filterOptions('assembly', $event)"
+                                                            [formControl]="assemblyInputFilter"
+                                                            placeholderLabel="Select"
+                                                            noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                    </mat-option>
+                                                    <mat-option [value]="0" [disabled]="disableSelection()">Select</mat-option>
+                                                    <mat-option class="create-option" [value]="-1">
+                                                        {{partAssemblyActionTxt}}</mat-option>
+                                                    <mat-option *ngFor="let t of filteredPartAssemblyItems"
+                                                        [value]="t.id">
+                                                        {{ t.name }}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="platformId == 2 && domainId == 52" class="row part-row">
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="cursor prob-form-control part-form-control ref">
+                                            <div class="field-label">
+                                                <span class="label-col part-label fig-bg">Fig#</span>
+                                            </div>
+                                            <div class="field-col text-col alt-text">
+                                                <input matInput placeholder=" Enter fig#" formControlName="figNo"
+                                                    [(ngModel)]="figNo" maxlength="{{nameMaxLen}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-12">
+                                        <div class="cursor prob-form-control part-form-control ref">
+                                            <div class="field-label">
+                                                <span class="label-col part-label ref-bg">Ref#</span>
+                                            </div>
+                                            <div class="field-col text-col alt-text">
+                                                <input matInput placeholder="Enter ref#" formControlName="refNo"
+                                                    [(ngModel)]="refNo" maxlength="{{nameMaxLen}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="prob-form-row">
+                                    <div class="app-info">Application</div>
+                                    <div *ngIf="!tvsFlag">
+                                        <div *ngIf="!prodTypeFlag">
+                                            <!--span class="text-right required">Required</span-->
+                                            <div class="prob-form-control prod-control cust-select gts-sel app-type">
+                                                <mat-icon class="material-icon prod-type-icon"></mat-icon>
+                                                <select #probTypeSelect [ngClass]="{'default': defProdType == ''}" formControlName="prodTypeVal"
+                                                    [(ngModel)]="defProdType"
+                                                    (change)="fieldChange(0, 'defProdType', probTypeSelect.value)">
+                                                    <optgroup>
+                                                        <option value="" disabled>Select Make</option>
+                                                        <option *ngFor="let pt of prodTypes" [value]="pt.id"
+                                                            class="{{pt.name | lowercase}}">
+                                                            {{ pt.name }}
+                                                        </option>
+                                                    </optgroup>
+                                                </select>
+                                                <!--div *ngIf="step1Submitted && f.prodTypeVal.errors" class="invalid-feedback">
+                                                    <div id="valid-error" *ngIf="f.prodTypeVal.errors.required">Please select make</div>
+                                                </div-->
+                                            </div>
+                                        </div>
+                                        <div *ngIf="prodTypeFlag" class="vehicle-form">
+                                            <span class="text-right required">Required</span>
+                                            <div *ngFor="let app of a.controls; let i = index">
+                                                <div [formGroup]="app">
+                                                    <div class="row col-lg-12 vehicle-row">
+                                                        <div class="col-lg-3 col-md-6">
+                                                            <div class="prob-form-control prod-control">
+                                                                <mat-form-field>
+                                                                    <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                        *ngIf="i == 0" placeholder="Select Make"
+                                                                        class="single-selection"
+                                                                        [(ngModel)]="appFormInfo[i].genericProductName"
+                                                                        formControlName="genericProductName"
+                                                                        (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                        disableOptionCentering>
+                                                                        <mat-option *ngFor="let pt of prodTypes"
+                                                                            [value]="pt.id">
+                                                                            {{ pt.name }}
+                                                                        </mat-option>
+                                                                    </mat-select>
+                                                                    <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                        *ngIf="i > 0" placeholder="Select Make"
+                                                                        class="single-selection"
+                                                                        [(ngModel)]="appFormInfo[i].genericProductName"
+                                                                        formControlName="genericProductName"
+                                                                        (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                        disableOptionCentering>
+                                                                        <mat-option *ngFor="let pt of appProdTypes"
+                                                                            [value]="pt.id">
+                                                                            {{ pt.name }}
+                                                                        </mat-option>
+                                                                    </mat-select>
+                                                                </mat-form-field>
+                                                                <mat-error id="valid-error" class="invalid-feedback page-error-text"
+                                                                    *ngIf="step1Submitted && !appFormInfo[i].prodTypeValid">
+                                                                    Select product type</mat-error>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-5 col-md-6">
+                                                            <div class="prob-form-control custom-form-control" [ngClass]="{'def-form-control': i > 0 && !appFormInfo[i].prodTypeValid, 'load-control': appFormInfo[i].modelLoading}">
+                                                                <div *ngIf="appFormInfo[i].modelLoading"
+                                                                    class="cursor def-select select-model">
+                                                                    <div class="tag-col tag-text">
+                                                                        Select Model <img
+                                                                            src="assets/images/dropdown_downarrow.png">
+                                                                    </div>
+                                                                </div>
+                                                                <app-models *ngIf="!appFormInfo[i].modelLoading"
+                                                                    [splitIcon]="splitIcon"
+                                                                    [filteredModels]="appFormInfo[i].models"
+                                                                    [models]="appFormInfo[i].modelList"
+                                                                    (selectedModels)="selectedModels(i, $event)">
+                                                                </app-models>
+                                                                <mat-error id="valid-error" class="invalid-feedback page-error-text"
+                                                                    *ngIf="step1Submitted && !appFormInfo[i].modelValid">
+                                                                    Select model</mat-error>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-6">
+                                                            <div class="prob-form-control custom-form-control">
+                                                                <app-years [splitIcon]="splitIcon"
+                                                                    [filteredYears]="appFormInfo[i].years" [years]="years"
+                                                                    (selectedYears)="selectedYears(i, $event)"></app-years>
+                                                                <mat-error id="valid-error" class="invalid-feedback page-error-text"
+                                                                    *ngIf="step1Submitted && !appFormInfo[i].yearValid">
+                                                                    Select year</mat-error>
+                                                            </div>
+                                                        </div>
+                                                        <div class="vehicle-row-actions">
+                                                            <div *ngIf="appFormInfo[i].actionFlag && appFormInfo[i].addFlag"
+                                                                class="action-icon add-icon"
+                                                                (click)="addAppFields(actionInit, i+1, '')"
+                                                                title="Add Applications"></div>
+                                                            <div class="action-icon remove-icon"
+                                                                (click)="removeAppFields(i)" title="Remove Appliction">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="tvsFlag" id="tvsField">
+                                        <div class="prob-form-control cust-comp-control">
+                                            <div class="field-label no-pb split">
+                                                <span class="label-col part-label prod-code-bg">Product Code</span>
+                                                <span class="text-right required">Required</span>
+                                            </div>
+                                            <div class="cursor def-select select-tags" (click)="manageProdCodes()">
+                                                <div class="tag-col tag-text">
+                                                    Select <img src="assets/images/dropdown_downarrow.png">
+                                                </div>
+                                            </div>
+                                            <div *ngIf="filteredProdCodes?.length > 0" class="selected-items">
+                                                <div *ngFor="let item of filteredProdCodes; let t=index" class="tag-text">
+                                                    <span>{{item}}</span>
+                                                </div>
+                                            </div>
+                                            <mat-error id="valid-error" class="invalid-feedback page-error-text" *ngIf="step1Submitted && filteredProdCodes?.length == 0">
+                                                Product code is required
+                                            </mat-error>
+                                        </div>
+                                    
+                                        <div *ngIf="prodTypeFlag">
+                                            <div class="vehicle-form">
+                                                <span class="text-right required">Required</span>
+                                                <div *ngFor="let app of a.controls; let i = index">
+                                                    <div [formGroup]="app">
+                                                        <div class="row col-lg-12 vehicle-row">
+                                                            <div class="col-lg-3 col-md-6">
+                                                                <div class="prob-form-control cust-comp-control tvs-form-control model">
+                                                                    <div class="cursor def-select select-tags">
+                                                                        <div class="tag-col tag-text">
+                                                                            Product Type <img src="assets/images/dropdown_downarrow.png">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="selected-items">
+                                                                        <div class="tag-text">
+                                                                            <span>{{appFormInfo[i].genericProductName}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-5 col-md-6">
+                                                                <div class="prob-form-control cust-comp-control tvs-form-control model">
+                                                                    <div class="cursor def-select select-tags">
+                                                                        <div class="tag-col tag-text">
+                                                                            Model <img src="assets/images/dropdown_downarrow.png">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="selected-items">
+                                                                        <div *ngFor="let item of appFormInfo[i].models; let t=index" class="tag-text">
+                                                                            <span>{{item}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6">
+                                                                <div class="prob-form-control custom-form-control">
+                                                                    <app-years [splitIcon]="splitIcon"
+                                                                        [filteredYears]="appFormInfo[i].years" [years]="years"
+                                                                        (selectedYears)="selectedYears(i, $event)"></app-years>
+                                                                    <mat-error id="valid-error" class="invalid-feedback page-error-text"
+                                                                        *ngIf="step1Submitted && !appFormInfo[i].yearValid">
+                                                                        Select year</mat-error>
+                                                                </div>
+                                                            </div>
+                                                            <div class="vehicle-row-actions">
+                                                                <div *ngIf="appFormInfo[i].actionFlag && appFormInfo[i].addFlag"
+                                                                    class="action-icon add-icon"
+                                                                    (click)="addAppFields(actionInit, i+1, '')"
+                                                                    title="Add Applications"></div>
+                                                                <div class="action-icon remove-icon"
+                                                                    (click)="removeAppFields(i)" title="Remove Appliction">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="vehicle-form">
+                                                <div *ngFor="let af of ai.controls; let i = index">
+                                                    <div [formGroup]="af">
+                                                        <div *ngIf="addFormInfo[i].fieldName == 'colour'" class="prob-form-control cust-comp-control">
+                                                            <div class="field-label no-pb">
+                                                                <span class="label-col part-label colour-bg">{{addFormInfo[i].infoLabel}}</span>
+                                                            </div>
+                                                            <div class="cursor def-select select-tags" (click)="manageTvsPartField(addFormInfo, i)">
+                                                                <div class="tag-col tag-text">
+                                                                    {{addFormInfo[i].placeholder}} <img src="assets/images/dropdown_downarrow.png">
+                                                                </div>
+                                                            </div>
+                                                            <div *ngIf="filteredColourCodes?.length > 0" class="selected-items">
+                                                                <div *ngFor="let item of filteredColourCodes; let t=index" class="tag-text">
+                                                                    <span>{{item}}</span>
+                                                                    <i class="material-icons tag-close"
+                                                                        (click)="disableItemSelection(i, t, 'colour')">close</i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="addFormInfo[i].fieldName != 'colour'" class="row additional-row">
+                                                            <div class="col-lg-8 col-md-6 col-sm-12">
+                                                                <div class="prob-form-control prod-control">
+                                                                    <div class="field-label" [ngClass]="{'disable': addFormInfo[i].infoDisabled}">
+                                                                        <span class="label-col part-label add-info-bg">{{addFormInfo[i].infoLabel}}</span>
+                                                                    </div>
+                                                                    <div class="cursor def-select select-tags tvs-popup-field" [ngClass]="{'disable': addFormInfo[i].infoDisabled}" (click)="manageTvsPartField(addFormInfo, i)">
+                                                                        <div class="tag-col tag-text" [ngClass]="{'disable': addFormInfo[i].infoDisabled}">
+                                                                            {{addFormInfo[i].placeholder}} <img src="assets/images/dropdown_downarrow.png">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div *ngIf="addFormInfo[i].infoLists?.length > 0" class="selected-items">
+                                                                        <div *ngFor="let item of addFormInfo[i].infoLists; let t=index" class="tag-text">
+                                                                            <span>{{item}}</span>
+                                                                            <i *ngIf="i > 0" class="material-icons tag-close" (click)="disableItemSelection(i, t, 'info')">close</i>
+                                                                        </div>
+                                                                    </div>
+                                                                    <mat-error id="valid-error" class="invalid-feedback page-error-text" *ngIf="step1Submitted && !addFormInfo[i].infoValid">
+                                                                        {{addFormInfo[i].infoLabel}} is required
+                                                                    </mat-error>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-6 col-sm-12">
+                                                                <div class="prob-form-control prod-control">
+                                                                    <div class="field-label" [ngClass]="{'disable': addFormInfo[i].qtyDisabled}">
+                                                                        <span class="label-col part-label qty-bg">{{addFormInfo[i].qtyLabel}}</span>
+                                                                    </div>
+                                                                    <mat-form-field>
+                                                                        <mat-select panelClass="mat-make-panel mat-bottom-panel"
+                                                                            placeholder="{{addFormInfo[i].placeholder}}"
+                                                                            class="single-selection"
+                                                                            [(ngModel)]="addFormInfo[i].qty"
+                                                                            formControlName="qty"
+                                                                            (selectionChange)="fieldChange(i, 'info', $event.value)"
+                                                                            [disabled] = "addFormInfo[i].qtyDisabled"
+                                                                            disableOptionCentering>
+                                                                            <mat-option *ngFor="let item of addFormInfo[i].qtyList"
+                                                                                [value]="item.id">
+                                                                                {{ item.name }}
+                                                                            </mat-option>
+                                                                        </mat-select>
+                                                                    </mat-form-field>
+                                                                    <mat-error id="valid-error" class="invalid-feedback page-error-text" *ngIf="step1Submitted && !addFormInfo[i].qtyValid">
+                                                                        {{addFormInfo[i].qtyLabel}} is required
+                                                                    </mat-error>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="step2Action">
+                                <div class="prob-form-row">
+                                    <div class="prob-form-control part-form-control custom-comp-control">
+                                        <div class="field-label split">
+                                            <span class="label-col part-label ws-bg">Workstream</span>
+                                            <span class="label-col required">Required</span>
+                                        </div>
+                                        <app-sec-workstreams [filteredWorkstreams]="filteredWorkstreamIds"
+                                            [workstreams]="workstreamItems" [split]="wsplit"
+                                            (selectedWorkstreams)="selectedWorkstreams($event)"></app-sec-workstreams>
+                                        <mat-error id="valid-error" class="invalid-feedback page-error-text"
+                                            *ngIf="step2Submitted && !workstreamValid">Select workstream</mat-error>
+                                    </div>
+                                </div>
+
+                                <div class="prob-form-row">
+                                <div class="prob-form-control cust-comp-control">
+                                    <div class="field-label no-pb split">
+                                        <span class="label-col part-label tag-bg">Tags</span>
+                                    </div>
+                                    <div class="cursor def-select select-tags" (click)="manageList('tag')">
+                                        <div class="tag-col tag-text">
+                                            Select <img src="assets/images/dropdown_downarrow.png">
+                                        </div>
+                                    </div>
+                                    <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                                        <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                                            <span>{{item}}</span>
+                                            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="prob-form-control cust-comp-control">
+                                    <div class="reference-info">
+                                        <div class="head">Reference Information</div>
+                                    </div>
+                                </div>
+
+                                <div class="prob-form-row">                                    
+                                    <div class="prob-form-control cust-comp-control">
+                                        <div class="field-label no-pb split">
+                                            <span class="label-col part-label error-code-bg">Error Codes</span>
+                                        </div>
+                                        <div class="cursor def-select select-tags" (click)="manageErrorCodes()">
+                                            <div class="tag-col tag-text">
+                                                Select <img src="assets/images/dropdown_downarrow.png">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="filteredErrorCodes?.length > 0" class="selected-items">
+                                            <div *ngFor="let item of filteredErrorCodes; let t=index" class="tag-text">
+                                                <span>{{item}}</span>
+                                                <i class="material-icons tag-close" (click)="disableErrorCodeSelection(t)">close</i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="prob-form-row attachment-row ">
+                                    <app-file-attachment *ngIf="partUpload" class="attachment-file"
+                                        [action]="manageAction" [apiData]="partApiData"  [attachmentItems]="attachmentItems"
+                                        (uploadedItems)="attachments($event)"></app-file-attachment>
+                                    <app-attachment-view *ngIf="attachmentFlag" [action]="EditAttachmentAction" [access]="pageAccess" [attachments]="attachmentItems"
+                                        (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                                </div>
+
+                                <div class="prob-form-row">
+                                    <div class="prob-form-control cust-comp-control">
+                                        <div class="field-label no-pb split">
+                                            <span class="label-col part-label thread-bg">Related Threads</span>
+                                        </div>
+                                        <div class="cursor def-select select-tags" (click)="getRelatedThreads()">
+                                            <div class="tag-col tag-text">
+                                                Select <img src="assets/images/dropdown_downarrow.png">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="filteredRelatedThreadIds?.length > 0" class="selected-items">
+                                            <div *ngFor="let item of filteredRelatedThreads; let t=index"
+                                                class="tag-text">
+                                                <span>{{item}}</span>
+                                                <i class="material-icons tag-close"
+                                                    (click)="disableRelatedThreadSelection(t)">close</i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="prob-form-row other-info">
+                                    <div class="head">Other Part Information</div>
+                                    <div class="row part-row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cursor part-form-control">
+                                                <div class="field-label split">
+                                                    <span class="label-col part-label comp-bg">Company</span>
+                                                </div>
+                                                <div class="field-col text-col comp-text">
+                                                    <input matInput placeholder="Enter company" formControlName="company"
+                                                        [(ngModel)]="company" maxlength="{{nameMaxLen}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cursor part-form-control">
+                                                <div class="field-label split">
+                                                    <span class="label-col part-label website-bg">Website</span>
+                                                </div>
+                                                <div class="field-col text-col website-text">
+                                                    <input matInput placeholder="Enter website" formControlName="website"
+                                                        [(ngModel)]="website" maxlength="{{nameMaxLen}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row part-row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cursor part-form-control">
+                                                <div class="field-label split">
+                                                    <span class="label-col part-label source-bg">Source</span>
+                                                </div>
+                                                <div class="field-col text-col source-text">
+                                                    <input matInput placeholder="Enter source" formControlName="source"
+                                                        [(ngModel)]="source" maxlength="{{nameMaxLen}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cursor part-form-control">
+                                                <div class="field-label split">
+                                                    <span class="label-col part-label phone-bg">Phone</span>
+                                                </div>
+                                                <div class="field-col text-col phone-text">
+                                                    <input matInput placeholder="Enter phone" formControlName="phone"
+                                                        [(ngModel)]="phone" maxlength="{{nameMaxLen}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row part-row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cursor part-form-control price-control">
+                                                <div class="field-label split">
+                                                    <span class="label-col part-label price-bg">Price</span>
+                                                </div>
+                                                <div class="field-col text-col price-text">
+                                                    <input matInput placeholder="Enter price" formControlName="price"
+                                                        [(ngModel)]="price" maxlength="{{nameMaxLen}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="field-label">
+                                                <span class="label-col part-label type-bg">Sold As</span>
+                                            </div>
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-form-field class="custom-mat-sel prob-catg-sel full-mat-sel">
+                                                    <mat-select #soldSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select" [(ngModel)]="sold"
+                                                        formControlName="sold"
+                                                        (selectionChange)="selectChange('sold', $event)"
+                                                        disableOptionCentering>
+                                                        <!--mat-option>
+                                                            <ngx-mat-select-search ngModel (ngModelChange)="filterOptions('sold', $event)" [formControl]="sold" 
+                                                                placeholderLabel="Search Sold" 
+                                                                noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                        </mat-option-->
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            Sold As</mat-option>
+                                                        <!--mat-option class="create-option" [value]="-1">{{mfgActionTxt}}</mat-option-->
+                                                        <mat-option *ngFor="let s of filteredSoldItems" [value]="s.id">
+                                                            {{ s.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,486 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+    <p-toast></p-toast>
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">{{headText}}</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button (click)="saveShop()" pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close"
+                (click)="activeModal.dismiss('Cross click')">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form [formGroup]="addShopForm" class="action-form">
+            <div class="container">
+                <div class="row mb-4">
+                    <div class="col-sm-12 d-flex align-items-center image-row">
+                        <div class="upper-image-row">
+                            <div *ngIf="!imageData?.show" class="upper-image-div"></div>
+                            <img *ngIf="imageData?.show" class="upper-image-div-new" [src]="imageData.show">
+                        </div>
+                        <div class="upper-image-text">
+                            <div class="txt-data text-center">Upload Logo/Image</div>
+                            <div (click)="uploadLogo()" class="add-action-btn cursor">
+                                <img  src="assets/images/hq/hq-media-green-upload-icon.png">
+                                <span>Upload</span>
+                            </div>
+                            <ng-template #uploadInfoContent>
+                                <div class="edit-history-div">Supported file types: .jpg, .png</div>    
+                            </ng-template> 
+                            <span class="cursor" style="margin-left:0px;"><img src="assets/images/thread-detail/trim-info.png" tooltipClass="upload-info-tooltip" container="body" triggers="hover" (click)="$event.stopPropagation();" [autoClose]="true" placement="bottom-right" [ngbTooltip]="uploadInfoContent"></span>
+                        </div>
+                        <div ><input style="visibility: hidden;height:0px !important;" formControlName="shopType" type="text" readonly="true" (click)="manageList()" pInputText class="input-bg map-input w-100"
+                            placeholder="Select Shop Type" /></div>
+                    </div>
+                </div>
+
+                <div class="row input-row mt-2 mb-30">
+                    <div class="col-sm-4"
+                        [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['name'] && !!this.addShopForm.controls['name'].errors && !!this.addShopForm.controls['name'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                                    onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Shop Name</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                                <input formControlName="name" type="text" readonly="true" (click)="manageShopList()" pInputText class="input-bg map-input w-100 cursor"
+                            placeholder="Select Shop Name" />        
+                                <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                        </div>
+                        <!-- <span class="text-danger small">Name is a required field.</span> -->
+
+                    </div>
+                    <div class="col-sm-4"
+                        [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['parentId'] && !!this.addShopForm.controls['parentId'].errors && !!this.addShopForm.controls['parentId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                                    onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <label class="mb-0">Parent</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <p-dropdown [options]="parent" formControlName="parentId" class="p-dropdown-servicetype" [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select Parent" optionLabel="name" optionValue="id">
+                                <ng-template let-group pTemplate="group">
+                                    <div class="p-d-flex p-ai-center">
+                                        <span>Penske</span>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['parent'] && !!this.addShopForm.controls['parent'].errors && !!this.addShopForm.controls['parent'].errors.required">Parent is a required field.</span> -->
+                        </div>
+                    </div>
+                    <div class="col-sm-4"
+                        [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['shopType'] && !!this.addShopForm.controls['shopType'].errors && !!this.addShopForm.controls['shopType'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img height="19" src="../../../../../assets/images/shop/stacked-rectangle.png"
+                                    alt="shop-type" class="icons-size mr-2 new-request-icon mail" />
+                                <label class="mb-0">Shop Type</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <!--p-dropdown formControlName="shopType" [options]="shopType" class="p-dropdown-servicetype" [filter]="true"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select Shop Type" optionLabel="name" optionValue="id" (click)="manageList()">                               
+                            </p-dropdown-->                            
+                            <input formControlName="shopTypeName" type="text" readonly="true" (click)="manageList()" pInputText class="input-bg map-input w-100 cursor"
+                            placeholder="Select Shop Type" />                            
+                            <div class="input-down-arrow-sh cursor"><span class="icon-sh"></span></div>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['type'] && !!this.addShopForm.controls['type'].errors && !!this.addShopForm.controls['type'].errors.required">Type is a required field.</span> -->
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <section class="input-row mb-30">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="assets/images/hq/network.png" class="mr-2 new-request-icon mail" height="19"
+                            width="26" />
+                        <h4 class="mb-0 fs-18 fw-medium">Network Details</h4>
+                    </div>
+
+                    <div class="row mb-23">
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['levelOneId'] && !!this.addShopForm.controls['levelOneId'].errors && !!this.addShopForm.controls['levelOneId'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/hq/network-light.png" alt="service" width="23" height="16"
+                                        class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">{{level1Data?.name}}</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown (onChange)="onLevel1Change()" formControlName="levelOneId" [options]="level1DropdownData" class="p-dropdown-servicetype"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['levelTwoId'] && !!this.addShopForm.controls['levelTwoId'].errors && !!this.addShopForm.controls['levelTwoId'].errors.required ? 'input-error': ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/hq/network-light.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">{{level2Data?.name}}</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown (onChange)="onLevel2Change()" formControlName="levelTwoId" [options]="level2DropdownData" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['levelThreeId'] && !!this.addShopForm.controls['levelThreeId'].errors && !!this.addShopForm.controls['levelThreeId'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/hq/network-light.png" alt="service"
+                                        class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">{{level3Data?.name}}</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown formControlName="levelThreeId" [options]="level3DropdownData" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3"
+                        [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="../../../../../assets/images/shop/dealer-code.png" alt="service" width="19"
+                                    height="19" class="mr-2 new-request-icon" />
+                                <label class="mb-0">Location Code</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input formControlName="dealerCode" type="text" pInputText class="input-bg map-input w-100"
+                                placeholder="Location Code" />
+                        </div>
+                        <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required">Dealer code is a required field.</span> -->
+                    </div>
+                    </div>
+
+                </section>
+
+                <section class="input-row">
+                    <div class="d-flex align-items-center mb-3">
+
+                        <img src="assets/images/shop/location-pin.png" class="mr-2 new-request-icon mail" height="21"
+                            width="21" />
+                        <h4 class="mb-0 fs-18 fw-medium">Location Details</h4>
+                    </div>
+
+                    <!-- <div class="row mb-23">
+                        <div class="col-sm-4" [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['region'] && !!this.addShopForm.controls['region'].errors && !!this.addShopForm.controls['region'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Region</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown [options]="regionsList" formControlName="region" class="p-dropdown-servicetype"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select Region" optionLabel="name" optionValue="code">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['zone'] && !!this.addShopForm.controls['zone'].errors && !!this.addShopForm.controls['zone'].errors.required ? 'input-error': ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Zone</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown formControlName="zone" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select Zone" optionLabel="name">
+                                    <ng-template let-group pTemplate="group">
+                                        <div class="p-d-flex p-ai-center">
+                                            <span>Penske</span>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['territory'] && !!this.addShopForm.controls['territory'].errors && !!this.addShopForm.controls['territory'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Territory</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown formControlName="territory" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select Territory" optionLabel="name">
+                                    <ng-template let-group pTemplate="group">
+                                        <div class="p-d-flex p-ai-center">
+                                            <span>Penske</span>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="row  mb-23">
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['address1'] && !!this.addShopForm.controls['address1'].errors && !!this.addShopForm.controls['address1'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Address 1</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="address1" type="text" pInputText
+                                    class="input-bg map-input w-100" placeholder="Enter Address 1" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['address2'] && !!this.addShopForm.controls['address2'].errors && !!this.addShopForm.controls['address2'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Address 2</label>
+                                </div>
+
+                                <!-- <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div> -->
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="address2" type="text" pInputText
+                                    class="input-bg map-input w-100" placeholder="Enter Address 2" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['city'] && !!this.addShopForm.controls['city'].errors && !!this.addShopForm.controls['city'].errors.required ? 'input-error'  : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">City</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="city" type="text" pInputText class="input-bg map-input w-100"
+                                    placeholder="City" />
+                            </div>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['city'] && !!this.addShopForm.controls['city'].errors && !!this.addShopForm.controls['city'].errors.required">City is a required field.</span> -->
+                        </div>
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['state'] && !!this.addShopForm.controls['state'].errors && !!this.addShopForm.controls['state'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">State</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown class="p-dropdown-servicetype" [ngStyle]="{'border': submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['state'] && !!this.addShopForm.controls['state'].errors && !!this.addShopForm.controls['state'].errors.required ? '0.5' : '1' }" [filter]="true" name="stateValue" formControlName="state" [options]="companyStateDropdownData" placeholder="Select State" optionLabel="name" optionValue="id" [style]="{'width':'100%', 'border': '1px solid #dbddde', 'background-color': '#fbfbfb'}" [group]="true">
+                                    <ng-template let-group pTemplate="group">
+                                    <div class="p-d-flex p-ai-center">
+                                        <span>{{group.name}}</span>
+                                    </div>
+                                    </ng-template>
+                                </p-dropdown>
+                            </div>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['state'] && !!this.addShopForm.controls['state'].errors && !!this.addShopForm.controls['state'].errors.required">State is a required field.</span> -->
+                        </div>
+                    </div>
+
+                    <div class="row mb-23">
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['zip'] && !!this.addShopForm.controls['zip'].errors && !!this.addShopForm.controls['zip'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                        onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Zip Code</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="zip" type="text" pInputText class="input-bg map-input w-100"
+                                    placeholder="Zip Code" />
+                            </div>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['zipcode'] && !!this.addShopForm.controls['zipcode'].errors && !!this.addShopForm.controls['zipcode'].errors.required">Zipcode is a required field.</span> -->
+                        </div>
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['timezone'] && !!this.addShopForm.controls['timezone'].errors && !!this.addShopForm.controls['timezone'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/timezone.png" alt="timezone" class="mr-2 new-request-icon"/>
+                                    <label class="mb-0">Timezone</label>
+                                </div>
+
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <p-dropdown [options]="timeZoneList" formControlName="timezone" class="p-dropdown-servicetype" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select Timezone" optionLabel="name" optionValue="id">
+                                    <ng-template let-group pTemplate="group">
+                                        <div class="p-d-flex p-ai-center">
+                                            <span>Penske</span>
+                                        </div>
+                                    </ng-template>
+                                </p-dropdown>
+                                <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['parent'] && !!this.addShopForm.controls['parent'].errors && !!this.addShopForm.controls['parent'].errors.required">Parent is a required field.</span> -->
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['emailAddress'] && !!this.addShopForm.controls['emailAddress'].errors && !!this.addShopForm.controls['emailAddress'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/email-icon.png" alt="Email"
+                                        class="icons-size mr-2 new-request-icon mail" />
+                                    <label class="mb-0">Email</label>
+                                </div>
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+
+                            <div class="input-filed">
+                                <input formControlName="emailAddress" type="text" pInputText class="input-bg map-input w-100"
+                                    placeholder="Email" />
+                            </div>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['email'] && !!this.addShopForm.controls['email'].errors && !!this.addShopForm.controls['email'].errors.required">Email is a required field.</span>
+                            <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['email'] && !!this.addShopForm.controls['email'].errors && !!this.addShopForm.controls['email'].errors.pattern">Please enter a valid email.</span> -->
+                        </div>
+
+                        <div class="col-sm-3"
+                            [ngClass]="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['phoneNo'] && !!this.addShopForm.controls['phoneNo'].errors && !!this.addShopForm.controls['phoneNo'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone"
+                                        class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Phone</label>
+                                </div>
+                                <div class="required">
+                                    <!-- <span class="required-txt">Required</span> -->
+                                </div>
+                            </div>
+                            <div [style.pointer-events]="isDisableImage ? 'none' : 'auto'" id="phonNumber" class="input-filed" *ngIf="!isUpdatePhonNo">
+                                <input type="text" class="hide form-control inputtext" matInput
+                                    placeholder="012-345-6789" formControlName="phoneNo" minlength="10">
+                                <div class="input-group">
+                                    <div class="input-group-prepend phone-img normal"></div>
+                                    <app-country-phonenumber [phoneNumberData]="phoneNumberData"
+                                        (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                                </div>
+                            </div>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['phoneNumber'] && !!this.addShopForm.controls['phoneNumber'].errors && !!this.addShopForm.controls['phoneNumber'].errors.required">Phone Number is a required field.</span> -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </form>
+    </div>
+</div>

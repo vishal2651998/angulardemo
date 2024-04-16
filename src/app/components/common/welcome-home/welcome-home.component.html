@@ -1,0 +1,125 @@
+<div *ngIf="!inviteUser" class="custom-modal modal-container login-modal" id="wrapper">
+    
+    <div class="modal-body">        
+       
+       <div class="page-load-container" >
+           <div class="page-load-lt" [ngClass] = "{ 'new-setup' : newAccountSetup }"></div>
+           <div class="page-load-rt" *ngIf="!newAccountSetup">
+               <div class="title-text">Welcome to your new service workspace</div>
+               <div class="desc-text">   
+                    <p>{{plaformText}} is a collaboration and knowledgebase platform for service organizations.</p>
+                    <p>Remember to also download the mobile apps.</p>
+                    <p>Here is an overview to get started.</p>
+               </div>
+               <div *ngIf="!startedButtonFlag" (click)="startedNext()" class="get-start-button cursor">Get Started&nbsp;&nbsp;<img src="assets/images/page-load-tt/double-arrows.png"></div>
+               <div *ngIf="startedButtonFlag" class="get-start-button">Get Started&nbsp;&nbsp;<img class="loading" src="assets/images/filter/filter-loading.svg"></div>
+           </div>
+           <div class="page-load-rt page-load-rt-new-setup" *ngIf="newAccountSetup">
+                <div *ngIf="loading" class="cust-loader-new"><img src="assets/images/loading.svg" alt="Loader" /></div>    
+                <div *ngIf="!loading">           
+                    <div class="title-text">{{displayData.title}}</div>
+                    <div class="head-text-small" [innerHTML]="displayData.heading1"></div>
+                    <div class="head-text-blue">{{displayData.heading2}}</div>
+                    <div class="container">
+                        <form [formGroup]="addForm1">
+                            <div class="container-row">
+                                <span class="lt-col lable-img"><img src="assets/images/landing-page/indus-icon.png" ></span>
+                                <span class="rt-col">
+                                    <span class="lable-text">Select your industry</span>
+                                    <div class="input-group" [ngClass]="{ 'setOpacity6' : openIndustryPopup, 'cursor': !openIndustryPopup }">
+                                        <input readonly type="text" class="cursor form-control inputtext" matInput placeholder="Select Industry" [(ngModel)]="industry" formControlName="industry" (click)="selectedType()" />                                                                    
+                                        <div class="input-group-postpend-arrow-welcome small-down"></div>                        
+                                    </div> 
+                                </span>                            
+                            </div>
+                            <div class="container-row">
+                                <span class="lt-col lable-img"><img src="assets/images/landing-page/business-setup-image.png" ></span>
+                                <span class="rt-col">
+                                    <span class="lable-text">Select business setup</span>                                 
+                                    <div class="checkbox-div cursor" *ngFor="let bs of businessSetup; let i = index;" (click)="selectBusinessSetup(bs.id,i)">
+                                        <span class="img-set-width">
+                                            <span *ngIf="bs.selectedFlag"><img src="assets/images/announcement/radiobox-selected.png" /></span>
+                                            <span *ngIf="!bs.selectedFlag"><img src="assets/images/announcement/radiobox-normal.png" /></span>
+                                        </span>
+                                        <span class="text-set-width">{{bs.name}}</span>
+                                    </div>                                
+                                </span>
+                            </div>
+                            <div class="container-row">
+                                <span class="lt-col lable-img"><img src="assets/images/landing-page/business-setup-email.png" ></span>
+                                <span class="rt-col">
+                                    <span class="lable-text">Invite your team members</span>                                 
+                                    <div class="textarea-row">                                        
+                                        <p-chips separator="," [allowDuplicate]="false" class="p-chips-text" [addOnBlur]="true" formControlName="emails" [(ngModel)]="multipleEmail" (onRemove)="removedEmail($event)" (onAdd)="addedEmail($event)"></p-chips>
+                                    </div>
+                                </span>
+                            </div>
+                            <div class="error-div" *ngIf="serverError">
+                                <span class="error-msg">{{serverErrorMsg}}</span>
+                            </div>  
+                            <div class="action-row">
+                                <div *ngIf="!industryInputFlag && !loading1 || (serverError)" class="action-button deactive"><span class="btn-text">DONE&nbsp;&nbsp;<span class="action-img"><img src="assets/images/landing-page/setup-tick.png" alt="" /></span></span></div>
+                                <div *ngIf="industryInputFlag && !loading1 && !serverError" class="action-button cursor" (click)="saveBusinessSetup()"><span class="btn-text">DONE&nbsp;&nbsp;<span class="action-img"><img src="assets/images/landing-page/setup-tick.png" alt="" /></span></span></div>
+                                <div *ngIf="industryInputFlag && loading1" class="action-button"><span class="btn-text">DONE&nbsp;&nbsp;<span class="loading-svg"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span></span></div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+       </div> 
+    </div>
+
+</div>
+
+
+
+<div *ngIf="inviteUser" class="custom-modal modal-container" id="wrapper">
+    
+    <div class="modal-header" style="padding:10px 20px 12px 0px !important">
+        <div class="modal-title">
+            <span class="preset-title-text"><img src="assets/images/user-dashboard/invite-user-white-dashboard.png"/>&nbsp;&nbsp;Invite User</span>            
+        </div>
+        
+        <div class="modal-actions">  
+            <span class="cursor close-btn" (click)="activeModal.dismiss('Cross click')">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div> 
+    <form [formGroup]="addForm2">
+    <div class="modal-body" style="width: 100%;padding: 2rem !important;">  
+        <div class="page-load-container" >            
+            <div class="container" style="padding: 0;">
+               
+                    <div class="container-row" style="padding:5px 0 25px 0;">
+                        <span class="lt-col lable-img"><img src="assets/images/landing-page/business-setup-email.png" ></span>
+                        <span class="rt-col">
+                            <span class="lable-text lable-text-lightcolor">Enter emails to invite users</span>                                 
+                            <div class="textarea-row newinviteuser">                                        
+                                <p-chips separator="," [allowDuplicate]="false" class="p-chips-text" [addOnBlur]="true" formControlName="emails" [(ngModel)]="multipleEmail" (onRemove)="removedEmail($event)" (onAdd)="addedEmail($event)"></p-chips>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="error-div" *ngIf="serverError" style="margin:-25px 0px 0 0;">
+                        <span class="error-msg">{{serverErrorMsg}}</span>
+                    </div>  
+                    
+
+               
+            </div>
+        </div> 
+     </div>
+     <div class="modal-footer">
+        <div class="confirm-actions">
+            <button class="btn action-btn cancel" (click)="activeModal.dismiss('Cross click')">Cancel<span class="cancel-btn"></span></button>
+            <button class="btn action-btn submit" *ngIf="inviteMemberFlag" (click)="saveUsers()">SEND&nbsp;<img src="assets/images/thread-detail/new-post.png" /></button>
+            <div class="btn action-btn submit deactive" *ngIf="!inviteMemberFlag" disabled >SEND&nbsp;<img src="assets/images/thread-detail/new-post.png" /></div>
+        </div>
+    </div>
+</form>
+    </div>
+
+
+
+

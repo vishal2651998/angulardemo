@@ -1,0 +1,81 @@
+<div class="documents-grid-row documents-grid-row-padd adas-grid-row" [ngClass]="{'thumb': thumbView}">
+    <div class="file-list" *ngIf="thumbView">
+        <ngx-masonry [options]="{ gutter: 10 }" [updateLayout]="updateMasonryLayout" [ordered]="true">
+            <ng-container *ngFor="let item of items; let i = index;">
+                <div ngxMasonryItem class="document-card masonry-item" id="{{item.adasIdInt}}" *ngIf="item" (click)="callbackClick(items, item)">
+                    <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                        <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.adasIdInt" [action]="fileAction" [attachments]="item.attachments"></app-attachment-view>
+                    </div>
+                    <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                    <ng-container *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6 ">
+                        <div class="document-card-top cover-image adas {{item.styleName}} {{item.class}}"
+                            [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                            <div class="doc-new-tap" title="Open new tap" (click)="fileClick(item.adasIdInt);$event.stopPropagation();"><img src="assets/images/documents/open-new-tap.png"></div>
+                            <div class="doc-id" title="ID# {{item.adasIdInt}}">ID# <span> {{item.adasIdInt}} </span></div>
+                            <!--div class="view-count">{{item.viewCount}}</div-->
+                            <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                        </div>
+                        <div class="document-card-bottom">
+                            <div class="text" title="{{item.titleStr}}">{{item.titleStr}}</div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 8 || item.flagId == 5 || item.flagId == 0">
+                        <div class="document-card-top adas {{item.styleName}}"  [ngStyle]="item.bannerImage != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                            <div class="doc-new-tap" title="Open new tap" (click)="fileClick(item.adasIdInt);$event.stopPropagation();"><img src="assets/images/documents/open-new-tap.png"></div>
+                            <div class="doc-id" title="ID# {{item.adasIdInt}}">ID# <span> {{item.adasIdInt}} </span></div>
+                            <!--div class="view-count">{{item.viewCount}}</div-->
+                            <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                        </div>
+                        <div class="document-card-bottom">
+                            <div class="text" title="{{item.title}}">{{item.title}}</div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </ngx-masonry>
+    </div>
+    <div class="table-view" *ngIf="!thumbView" [style.height]="'calc(100vh - '+secHeight+'px)'">
+        <div #top id="adasTable">
+            <p-table [scrollable]="true" [totalRecords]="items.length" id="file-datatable" class="file-datatable doc-file-table adas-file-table" [scrollHeight]="'calc(100vh - '+listHeight+'px)'" [value]="items" sortMode="multiple" (scroll)="scroll($event)">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="dw1">Name</th>
+                        <th class="dw2">&nbsp;</th>
+                        <th class="dw3 pdl text-left">Tag</th>
+                        <th class="dw4 pdl text-left">System</th>
+                        <th class="dw4 pdl text-left">Updated On</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-items>
+                    <tr id="{{items.adasIdInt}}" class="cursor {{items.styleName}}">
+                        <td class="dw1" title="{{items.title}}" (click)="callbackClick(items, items)">
+                            <div class="info-attachments" *ngIf="items?.attachments?.length > 0">
+                                <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="items.adasIdInt" [action]="fileAction" [attachments]="items.attachments"></app-attachment-view>
+                            </div>
+                            <div class="doc-name-col">
+                                <span class="split-col adas-banner banner-image banner-image-new">
+                                    <img *ngIf="items.contentPath != null" src="{{items.contentPath}}" width="42px" height="42px" />
+                                    <img *ngIf="items.contentPath == null && items.styleName != null" src="assets/images/common/adas-file-icon.png" width="42px" height="42px" />
+                                </span>
+                                <span class="title adas-title">
+                                    <span class="title-doc-list">
+                                        <span class="title-doc-list-in truncate" title="{{items.titleStr}}">{{items.titleStr}}</span>
+                                        <div class="list-id">ID# {{items.adasIdInt}}</div>
+                                    </span>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="dw2 doc-attach" (click)="callbackClick(items, items)">
+                            <div class="attchment-count" *ngIf="items?.attachments?.length > 1"><span>{{items?.attachments?.length}}</span></div>
+                        </td>
+                        <td class="dw3 pdl text-left" (click)="callbackClick(items, items)" title="{{items.tagList}}"><span class="wraptext truncate">{{items.tagList}}</span></td>
+                        <td class="dw4 pdl text-left" (click)="callbackClick(items, items)" title="{{items.systemList}}"><span class="wraptext truncate">{{items.systemList}}</span></td>
+                        <td class="dw4 pdl text-left" (click)="callbackClick(items, items)" title="{{items.updatedDate}}">
+                            <div class="wraptext"> {{items.updatedDate}} </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

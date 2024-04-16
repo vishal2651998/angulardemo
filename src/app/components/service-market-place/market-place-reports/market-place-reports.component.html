@@ -1,0 +1,445 @@
+<div id="header" *ngIf="!msTeamAccess">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData"
+    (search)="applySearch('emit', $event)"></app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData"
+    (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-marketplace-sidebar [activeMenuItem]="'market-place/reports'"
+        accessModule="{{bodyClass}}"></app-marketplace-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec1 right-section">
+  <div class="container-fluid">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 px-0" style="margin-bottom: 15px;margin-left: 15px;">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-padding page-title-design display-align-center px-0"
+        style="padding-right: 0;margin-right: 0; display: inline-block;">
+        <img _width="auto" height="auto" src="assets/images/service-provider/reports-title.png"
+          class="margin-right-8px">
+        <span style="margin-left: 13px;">{{headTitle}}</span>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-padding"
+        style="display: inline-block;justify-content: end; float: right;text-align: right;">
+        <div class="div-design-for-download-upload-customers position-relative-class" style="cursor: pointer;"
+          (click)="exportAsCSV()">
+          <img width="16px" height="17px" src="assets/images/service-provider/download.png" style="margin-right: 5px;">
+          <span class="customer-text-design">Export To Excel</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 py-0 landing-page thread-page-container card-parent-design-new"
+    style="margin-top: 0!important;background: #eff1f3;">
+    <div class="col-12 col-lg-12 col-md-12 col-xl-12 col-sm-12">
+      <div class="flex-align-center">
+        <!-- <div class="ellipse" style="margin-left: 0px !important">
+            <img width="10px" height="10px" style="top: -2px; position: relative;" src="assets/images/service-provider/filter-icon.png" />
+          </div>
+          <img src="assets/images/service-provider/reports-title.png" class="training-marketplace-head">
+          <span class="marketplace-text-design margin-right-11px">Reports</span> -->
+        <!-- report type Dropdown -->
+        <!-- <div class="ml-auto px-2">
+              <span class="head-txt header-usermanage-title pr-3">Choose Report Type</span>
+              <p-dropdown class="p-table-choose-types" appendTo="body" [options]="[{label: 'Training', value: 'training'}, {label: 'Manual', value: 'manual'}]"
+                [(ngModel)]="selectedreportType" optionLabel="label" placeholder=""
+                (onChange)="selectReportType($event)"></p-dropdown>
+            </div> -->
+        <!-- <div  class="div-design-for-download-upload-customers" style="cursor: pointer; margin-left: auto;" (click)="exportAsCSV()">
+            <img  width="16px" height="17px" src="assets/images/service-provider/download.png" style="margin-right: 5px;">
+            <span class="customer-text-design">Export To Excel</span>
+          </div> -->
+      </div>
+      <div *ngIf="loadingmarketplacemore" class="cust-loader" style="position: fixed;"><img
+          src="assets/images/loading.svg" alt="Loader"></div>
+      <div class="card marketplace-reports">
+        <p-table #marketReports styleClass="p-datatable-sm " [resizableColumns]="true" columnResizeMode="fit"
+          [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="reports" [scrollable]="true"
+          [scrollHeight]="'calc(100vh - '+ reportsHeight +'px)'" frozenWidth="300px" [lazy]="true"
+          (onLazyLoad)="lazyLoad($event)" (scroll)="scroll($event)">
+          <ng-template pTemplate="colgroup" let-columns>
+            <colgroup>
+              <col *ngFor="let col of columns" [style]="{width: col.width}">
+            </colgroup>
+          </ng-template>
+          <ng-template pTemplate="header" let-columns>
+            <tr class="custom-header">
+              <th class="custom-table-heading normalptabletow" *ngFor="let col of columns"
+                [pSortableColumn]="col.sortName" [style]="{width: col.width}">
+                {{col.header}}
+                <ng-container *ngIf="col.sortName">
+                <p-sortIcon [field]="col.sortName"></p-sortIcon> <p-columnFilter type="text" [field]="col.sortName"
+                  display="menu"></p-columnFilter>
+                  </ng-container>
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-customer let-columns="columns">
+            <tr (click)="setUserPaymentInfoData(customer)" class="hover-effect cursor-pointer" [class.color-red-row]="customer === highlighted" 
+              style="border-bottom: 1px solid #eaedee;">
+              <td *ngFor="let col of columns" [class.frozen-td]="['createdOnFormat','id'].includes(col.field)"
+                class="text-capitalize text-truncate"  data-toggle="toggle"
+                data-placement="top" title={{customer[col.field]}} (click)="rowColor(customer)">
+                {{customer[col.field]}}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+
+</div>
+<p-dialog [header]="downloadtextflag" [(visible)]="excelreportdiaLog" [closable]="false" [modal]="true"
+  [draggable]="false">
+  <br />
+  <br />
+  <p-progressBar styleClass="custom-progress-bar" [(value)]="progressbarCount"></p-progressBar>
+  <br />
+  <div class="cancel-div text-right">
+    <button (click)="cancelUpload()" type="button" class="btn btn-info text-right green-button-color">Cancel</button>
+  </div>
+</p-dialog>
+
+
+<p-dialog styleClass="update-user-payment-info-popup" [(visible)]="showPaymentUserDetailPopup"
+  *ngIf="showPaymentUserDetailPopup" (onHide)="showPaymentUserDetailPopup = false" [modal]="true" [draggable]="false">
+  <ng-template pTemplate="header">
+    <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin row">
+      <div class="col-6 no-padding flex-align-center">
+        <span class="heading-style-payment">Marketplace Transaction ID# {{transactionData?.id}}</span>
+      </div>
+      <div class="col-6 no-padding flex-end" style="padding: 0; right: -10px;">
+        <button *ngIf="transactionData?.status" type="button" class="pri-button green-btn transaction-button status-{{transactionData?.status == 'PAID' || (transactionData?.refundedDate && transactionData?.refundedBy && transactionData?.status == 'VOID')  ? 'paid' : 'declined'}}">
+          <img src="assets/images/service-provider/transaction-{{transactionData?.status == 'PAID' || (transactionData?.refundedDate && transactionData?.refundedBy && transactionData?.status == 'VOID') ? 'paid' : 'declined'}}.png" />
+          <span>{{transactionData?.status == 'PAID' || (transactionData?.refundedDate && transactionData?.refundedBy && transactionData?.status == 'VOID') ? (!transactionData.amount || transactionData.amount == '0')? 'FREE': 'PAID' :
+            'DECLINED'}}</span>
+        </button>
+        <div *ngIf="transactionData?.refundedDate && transactionData?.refundedBy"
+          class="refund-button-design cursor-default">
+          <img style="margin-right: 5px;" width="17px" height="17px" src="assets/images/service-provider/refund-white.png">
+          <span class="text-white">REFUNDED</span>
+        </div>
+        <button style="background: transparent; border: none; box-shadow: none; color: #fff; padding: 0; right: -25px; top: -6px;"
+          (click)="showPaymentUserDetailPopup = false" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+      </div>
+    </div>
+  </ng-template>
+  <div *ngIf="showLoader" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+  <div *ngIf="!showLoader">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-black-sidebar">
+          <ng-container *ngFor="let info of infoType; let i = index;">
+            <div *ngIf="info.isVisible" [ngClass]="SelectedInfoType == info.type ? 'select-nav-menu' : ''"
+              class="cursor-pointer custom-padding-nav-menu pr-0" (click)="getInfoData(info.type)">
+              <img style="margin-right: 10px;" *ngIf="SelectedInfoType != info.type" [src]="info.imgSrc">
+              <img style="margin-right: 10px;" *ngIf="SelectedInfoType == info.type" [src]="info.imgSrcSelected">
+              <span
+                class="{{SelectedInfoType == info.type ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">{{info.label}}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="col-md-8 height-80 payment-summary" *ngIf="SelectedInfoType=='paymentSummary'">
+        <!-- <ng-container *ngTemplateOutlet="displayContent; context: {content:{ heading:'Small Diesel Diagnostics',imgSrc: 'assets/images/service-provider/hands_electrical.png', data : trainingsListDetails}}"></ng-container> -->
+
+        <!-- training details start -->
+        <div *ngIf="trainingsData && trainingsData.length" class="heading py-3">
+          <span class="custom-header-black font17">Training Price Summary</span>
+        </div>
+        <ng-container *ngFor="let training of trainingsData; let ti = index;">
+          <div class="container">
+            <div class="heading py-2 mx-n3" (click)="redirectToInnerDetailPage(training?.trainingId, 'training')" style="cursor: pointer">
+              <img class="mr-3" width="18px" src="assets/images/service-provider/hands_electrical.png">
+              <span class="custom-header-black">{{training?.trainingName}}</span>
+            </div>
+            <div
+              class="col-12 custom-object-pair-padding border-bottom-1px summary-details-scale display-flex  justify-content-between training-summary">
+              <div class="col12">
+                <span class="value-label-class ">ID# {{training?.trainingId}}, {{training?.trainingMode}}
+                  <span *ngIf="training?.trainingMode == 'Seminar' || training?.trainingMode == 'Webinar'">,
+                    <span *ngIf="training?.startDate != training?.endDate">
+                    {{training?.startDate | date:'MMM dd'}} - {{training?.endDate | date:'MMM dd YYYY'}}
+                    </span>
+                    <span *ngIf="training?.startDate == training?.endDate">
+                    {{training?.endDate | date:'MMM dd YYYY'}}
+                    </span>
+                    <span *ngIf="training?.trainingMode == 'Seminar'">, {{training?.city}}, {{training?.state}}</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+            <div
+              class="col-12 custom-object-pair-padding border-bottom-1px summary-details-scale display-flex  justify-content-between">
+              <div class="col-6 summary-details-text">
+                <span class="key-label-class ">No. Of Participants</span>
+              </div>
+              <div class="col6">
+                <span class="value-label-class ">{{training.numberOfSeats}}</span>
+              </div>
+            </div>
+            <div
+              class="col-12 custom-object-pair-padding display-flex border-bottom-1px summary-details-scale justify-content-between">
+              <div class="col-6 summary-details-text">
+                <span class="key-label-class ">Regular Price</span>
+              </div>
+              <div class="col6">
+                <span class="value-label-class"
+                      [class.text-decoration-line-through]="training?.bird_price != ''"><span *ngIf="training?.bird_price == '' && training.numberOfSeats > 1">{{training.numberOfSeats}} X </span>{{training?.original_price
+                  | currency: 'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+            <div *ngIf="training?.bird_price != ''"
+              class="col-12 custom-object-pair-padding display-flex summary-details-scale justify-content-between">
+              <div class="col-6 summary-details-text">
+                <span class="key-label-class "><span
+                    *ngIf="training?.bird_price == training?.bird_price_original">Early Bird
+                  </span>{{'Discount Price (' + training?.bird_percentage + '%) off'}}</span>
+              </div>
+              <div class="col6">
+                <span class="value-label-class">{{training.numberOfSeats +' X '+ (training?.bird_price | currency:
+                  'USD':true:'1.2-2')}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- training summary -->
+          <div *ngIf="ti == trainingsData.length - 1">
+            <div class="row  summary-details-bg ">
+              <div class="col-6 custom-object-pair-padding flex-start">
+                <span class="key-label-class ">Training Sales Tax ({{(training?.salesTaxPercent || 0)}}%)</span>
+              </div>
+              <div class="col-6 custom-object-pair-padding flex-end">
+                <span class="value-label-class">{{(training?.salesTax || 0 ) | currency: 'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+            <div class="row border-bottom-1px summary-details-bg ">
+              <div class="col-6 custom-object-pair-padding flex-start">
+                <span class="key-label-class total-price-color">Total Training Price</span>
+              </div>
+              <div class="col-6 custom-object-pair-padding flex-end">
+                <span class="value-label-class total-price-color">{{((training?.bird_price ?
+                  training?.bird_price :
+                  training?.original_price )* training.numberOfSeats) | currency: 'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+
+          </div>
+        </ng-container>
+
+        <!-- Manual details start -->
+        <div *ngIf="manualsData.length  > 0" class="heading py-3">
+          <span class="custom-header-black font17">Manual Price Summary</span>
+        </div>
+        <ng-container *ngFor="let manual of manualsData; let mi = index;">
+          <div class="container">
+            <div class="heading py-2 mx-n3" (click)="redirectToInnerDetailPage(manual?.manualId, 'manual')" style="cursor: pointer">
+              <img class="mr-3" width="18px" src="assets/images/service-provider/manual-black.png">
+              <span class="custom-header-black">{{manual?.manualName}}</span>
+            </div>
+            <div class="col-12 display-flex  custom-object-pair-padding summary-details-scale justify-content-between">
+              <div class="col-6  summary-details-text">
+                <span class="key-label-class ">
+                  <!-- <span *ngIf="manual?.discountPrice != ''">Regular</span> -->
+                  Price</span>
+              </div>
+              <div class="col6">
+                <span class="value-label-class" [class.text-decoration-line-through]="(manual?.discountPrice && manual?.discountPrice != '0')"><span
+                    *ngIf="manual?.numberOfManuals > 1 && !(manual?.discountPrice && manual?.discountPrice != '0')">{{manual?.numberOfManuals
+                    +' X '}} </span>
+                    {{(manual?.originalPrice !='' && manual?.originalPrice != 0 ? manual?.originalPrice : 0 ) | currency: 'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+            <div
+              class="col-12 display-flex border-bottom-1px summary-details-scale custom-object-pair-padding justify-content-between">
+              <div class="col-6 summary-details-text">
+                <span class="key-label-class ">No. Of Manuals</span>
+              </div>
+              <div class="col6">
+                <span class="value-label-class">{{manual?.numberOfManuals}}</span>
+              </div>
+            </div>
+            <div *ngIf="(manual?.discountPrice && manual?.discountPrice != '0')"
+              class="col-12 display-flex  custom-object-pair-padding summary-details-scale justify-content-between">
+              <div class="col-6  summary-details-text">
+                <span class="key-label-class">{{'Discount Price (' + manual?.discountPercentage + '%)
+                  off'}}</span>
+              </div>
+              <div class="col6">
+                <span class="value-label-class">{{manual?.numberOfManuals +' X '+ (manual?.discountPrice |
+                  currency:
+                  'USD':true:'1.2-2')}}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- manual summary -->
+          <div *ngIf="mi == manualsData.length - 1">
+            <div class="row  summary-details-bg ">
+              <div class="col-6 custom-object-pair-padding flex-start">
+                <span class="key-label-class">Shipping Cost</span>
+              </div>
+              <div class="col-6 custom-object-pair-padding flex-end">
+                <span class="value-label-class">{{manual?.shippingCost | currency: 'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+            <div class="row  summary-details-bg ">
+              <div class="col-6 custom-object-pair-padding flex-start">
+                <span class="key-label-class">Manual Sales Tax ({{manual?.salesTaxPercent}}%)</span>
+              </div>
+              <div class="col-6 custom-object-pair-padding flex-end">
+                <span class="value-label-class">{{manual?.salesTax | currency: 'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+            <div class="row border-bottom-1px summary-details-bg ">
+              <div class="col-6 custom-object-pair-padding flex-start">
+                <span class="key-label-class total-price-color">Total Manual Price</span>
+              </div>
+              <div class="col-6 custom-object-pair-padding flex-end">
+                <span class="value-label-class total-price-color">{{totalManualPrice| currency:
+                  'USD':true:'1.2-2'}}</span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- total summary -->
+        <div class="bg-grey">
+          <div class="row heading border-bottom-1px summary-details-right-scale ">
+            <div class="col-6 custom-object-pair-padding flex-start">
+              <span class="key-label-class grand-total-color">Grand Total Amount</span>
+            </div>
+            <div class="col-6 custom-object-pair-padding flex-end">
+              <span class="value-label-class grand-total-color" *ngIf="transactionData?.amount">{{transactionData?.amount | currency:
+                'USD':true:'1.2-2'}}</span>
+              <span class="value-label-class grand-total-color" *ngIf="!transactionData?.amount">{{0 | currency:
+                'USD':true:'1.2-2'}}</span>
+            </div>
+          </div>
+
+          <div class="row border-bottom-1px grand-total-scale summary-details-right-scale " *ngIf="(transactionData.amount && transactionData.amount != '0')">
+            <div class="col-6 custom-object-pair-padding flex-start">
+              <span class="key-label-class">Payment Transaction ID:</span>
+            </div>
+            <div class="col-6 custom-object-pair-padding flex-end">
+              <span class="value-label-class">{{transactionData?.transaction_id }}</span>
+            </div>
+          </div>
+          <div class="row border-bottom-1px grand-total-scale summary-details-right-scale " *ngIf="(transactionData.amount && transactionData.amount != '0')">
+            <div class="col-6 custom-object-pair-padding flex-start">
+              <span class="key-label-class">Payment Type</span>
+            </div>
+            <div class="col-6 custom-object-pair-padding flex-end">
+              <span class="value-label-class">{{transactionData?.payment_method}}</span>
+            </div>
+          </div>
+          <div class="row grand-total-scale summary-details-right-scale ">
+            <div class="col-6 custom-object-pair-padding flex-start">
+              <span class="key-label-class">Date</span>
+            </div>
+            <div class="col-6 custom-object-pair-padding flex-end">
+              <span class="value-label-class">{{transactionData?.createdOn}}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-8 height-80 register-user-info"
+        *ngIf="SelectedInfoType=='RegisterUserInfo' && participantsData && participantsData.length > 0">
+        <ng-container *ngFor="let training of participantsData; let i= index">
+          <ng-container *ngTemplateOutlet="displayContent; context: {content: {heading: 'Participant', index: i+1, imgSrc: 'assets/images/service-provider/user-black.png',
+                    data : {'First Name':training?.firstName,
+                          'Last Name':training?.lastName,
+                          'Email':training?.email,
+                          'Phone Number':training?.phoneNumber} } }"></ng-container>
+        </ng-container>
+        <ng-container *ngTemplateOutlet="displayContent; context: {content: {heading: 'Company Info', imgSrc: 'assets/images/service-provider/company-black.png',
+      data : {'Company Name':transactionData?.companyName,
+            'Address 1':transactionData?.companyAddress1,
+            'Address 2':transactionData?.companyAddress2,
+            'State':transactionData?.companyState,
+            'City':transactionData?.companyCity,
+            'Zip':transactionData?.companyZip } } }"></ng-container>
+      </div>
+      <div class="col-md-8 height-80" style="padding-left: 30% !important;"
+        *ngIf="SelectedInfoType=='shippingInfo' && manualsData && manualsData.length > 0">
+        <ng-container
+          *ngTemplateOutlet="displayContent; context: {content:{data : shippingAddressDetails}}"></ng-container>
+      </div>
+      <div class="col-md-8 height-80" style="padding-left: 30% !important;" *ngIf="SelectedInfoType=='paymentUserInfo'">
+        <ng-container
+          *ngTemplateOutlet="displayContent; context: {content:{data : paymentAddressDetails}}"></ng-container>
+      </div>
+      <div class="col-md-8 height-80" style="padding-left: 30% !important;"
+        *ngIf="SelectedInfoType=='paymentDetails' && currentUserPaymentData != ''">
+        <ng-container
+          *ngTemplateOutlet="paymentContent; context: {content:{data : currentUserPaymentData}}"></ng-container>
+      </div>
+      <div class="col-md-8 height-80" style="padding-left: 30% !important;"
+        *ngIf="SelectedInfoType=='errorDetails' && errorDetails != ''">
+        <ng-container *ngTemplateOutlet="paymentContent; context: {content:{data : errorDetails}}"></ng-container>
+      </div>
+      <div class="col-md-8 height-80" style="padding-left: 30% !important;"
+        *ngIf="SelectedInfoType=='refundDetails' && refundDetails != ''">
+        <ng-container *ngTemplateOutlet="paymentContent; context: {content:{data : refundDetails}}"></ng-container>
+      </div>
+
+    </div>
+  </div>
+
+</p-dialog>
+
+<!-- common template for data display -->
+<ng-template #displayContent let-content="content">
+  <div class="container pb-2">
+    <div class="heading py-2 mx-n3" *ngIf="content && content.heading">
+      <img *ngIf="content.imgSrc" class="mr-3" width="18px" [src]="content.imgSrc">
+      <span [class]="content.HeadingClass ? content.HeadingClass : 'custom-header-black'">{{content.heading}}
+        {{content?.index}}</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex border-bottom-1px summary-details-scale"
+      *ngFor="let item of content?.data | keyvalue: unsorted">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 custom-object-pair-padding flex-start">
+        <span class="key-label-class">{{item?.key}}</span>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col -6 custom-object-pair-padding flex-end">
+        <span class="value-label-class">{{item?.value ? item?.value : '-'}}</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #paymentContent let-content="content">
+  <div class="container pb-2" style="height: 100%;">
+    <div class="heading py-2 mx-n3" *ngIf="content && content.heading">
+      <img *ngIf="content.imgSrc" class="mr-3" width="18px" [src]="content.imgSrc">
+      <span [class]="content.HeadingClass ? content.HeadingClass : 'custom-header-black'">{{content.heading}}
+        {{content?.index}}</span>
+    </div>
+    <ng-container *ngIf="content?.data">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex border-bottom-1px summary-details-scale"
+        *ngFor="let col of paymentCols; let i = index;">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 custom-object-pair-padding flex-start">
+          <span class="key-label-class">{{paymentColNames[i]}}</span>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col -6 custom-object-pair-padding flex-end">
+          <span class="value-label-class">{{(content?.data[col]) ? content?.data[col] : '-'}}</span>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="!content?.data">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex border-bottom-1px summary-details-scale" style="height: 100%;">
+        <div class="no-payment-response">
+          <div class="inner-div">
+            <img src="assets/images/service-provider/transaction-no-resp.png">
+          </div>
+          <div style="margin-top: 20px; color: #999;">No Payment Response</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

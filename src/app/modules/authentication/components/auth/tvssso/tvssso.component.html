@@ -1,0 +1,132 @@
+<div *ngIf="processStep1">
+    <form [formGroup]="addForm1">
+        <div class="input-group marginTop cursor" [ngClass]="{ 'active': userInputFlag}" (click)="addUserType()">
+            <div class="input-group-prepend user-img normal cursor"  [ngClass]="{ 'active': userInputFlag}"></div>
+            <input readonly type="text" class="cursor form-control inputtext" matInput placeholder="Select user type" [(ngModel)]="userType" formControlName="userType" maxlength="40" />                                                                    
+            <div class="input-group-postpend-arrow small-down"></div>                        
+        </div>                                        
+        <div *ngIf="serverError" class="login-invalid-feedback">
+            <img src="assets/images/login/error-img.png" /> <span>{{serverErrorMsg}}</span>
+        </div>   
+        <div *ngIf="!nextEnable && !loading1" class="action-button deactive"><button class="btn-text">NEXT</button></div>
+        <div *ngIf="nextEnable && !loading1" class="action-button" (click)="submitNextStep1()"><button class="btn-text">NEXT</button></div>    
+        <div *ngIf="nextEnable && loading1" class="action-button"><button class="btn-text"><span class="setOpacity3">NEXT&nbsp;&nbsp;</span><span class="loading-svg"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span></button></div>                                                    
+    </form>
+</div>
+<div *ngIf="processStep2">
+    <form [formGroup]="addForm2">                    
+        <div class="input-group" [ngClass]="{ 'active': userCodeInputFlag, 'error': addform2UserError }">
+            <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': userCodeInputFlag, 'setOpacity3' : loading2  }"></div>
+            <input #myInput1 type="text" class="form-control inputtext"  [ngClass]="{ 'setOpacity3' : loading2 }" matInput placeholder="Employee ID" formControlName="userCode" maxlength="40" (input)="inputChange(1,$event)" (keypress)="onKeypress(1,$event)" />                                                                                                    
+        </div>                       
+        <div class="input-group" [ngClass]="{ 'active': passwordInputFlag, 'error': addform2PwdError }">
+            <div class="input-group-prepend pass-img normal"  [ngClass]="{ 'active': passwordInputFlag, 'setOpacity3' : loading2 }"></div>
+            <input [type]="pwdFieldTextType ? 'text' : 'password'" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading2 }" matInput placeholder="Password" formControlName="password" maxlength="50" (input)="inputChange(2,$event)" (keypress)="onKeypress(2,$event)"/>
+            <div (click)="showPassword(pwdFieldTextType)" class="input-group-pwd normal" [ngClass]="{ 'active' : pwdFieldTextType }"></div>
+            <div *ngIf="!loading2" (click)="submitNextStep2()" class="input-group-postpend-arrow" [ngClass]="{ 'active': passwordInputArrowFlag }"></div>
+            <div *ngIf="loading2" class="input-group-postpend-arrow loading-img"></div>                        
+        </div>                    
+        <div class="login-invalid-feedback" *ngIf="addform2ServerError">
+            <img src="assets/images/login/error-img.png" /> <span>{{addform2ServerErrorMsg}}</span>
+        </div>
+        <div class="tvs-blue-bg">
+            <span>Use Attendance self service username and password</span>
+        </div>
+        <div class="line-row" >
+            <span class="line-col-1"><a class="back-text" (click)="gotoStep1()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>            
+        </div>
+    </form>
+</div>
+<div *ngIf="processStep3">
+    <form [formGroup]="addForm3">   
+        <div class="email-continue-text" >Enter your email ID to continue.</div>
+        <div class="input-group" [ngClass]="{ 'active': emailInputFlag, 'error': addform3Submitted && f3.email.errors }">
+            <div class="input-group-prepend email-img normal"  [ngClass]="{ 'active': emailInputFlag}"></div>
+            <input tabindex="1" #myInput1 type="text" class="form-control inputtext" matInput placeholder="Email" formControlName="email" maxlength="40" (input)="inputChange(3,$event)" (keypress)="onKeypress(3,$event)" />                                                                                                                           
+            <div *ngIf="!loading3" (click)="submitNextStep3()" class="input-group-postpend-arrow" [ngClass]="{ 'active': emailInputFlag }"></div>
+            <div *ngIf="loading3" class="input-group-postpend-arrow loading-img"></div>                        
+        </div>                    
+        <div class="login-invalid-feedback" *ngIf="addform3ServerError">
+            <img src="assets/images/login/error-img.png" /> <span>{{addform3ServerErrorMsg}}</span>
+        </div>
+        <div class="line-row" >
+            <span class="line-col-1"><a class="back-text" (click)="gotoStep1()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>            
+        </div>
+    </form>
+</div>
+<div *ngIf="processStep4" class="dealerContainer">
+    <form [formGroup]="addForm4" (ngSubmit)="submitNextStep4()" >  
+        <div class="input-group-col-new"> 
+            <div class="input-group input-group-col1 marginTop25" [ngClass]="{ 'active': dealerCodeInputFlag , 'error' : dealerCodeError }">
+                <div class="input-group-prepend dealer-img normal"  [ngClass]="{ 'active': dealerCodeInputFlag, 'error' : dealerCodeError }"></div>
+                <input type="text" #myInput1 class="form-control inputtext" matInput placeholder="Dealer Code" formControlName="dealerCode" maxlength="40" (input)="inputChange(4,$event)" (keypress)="onKeypress(4,$event)" />
+                <div *ngIf="!loading4" (click)="submitDealerCode()" class="input-group-postpend-arrow" [ngClass]="{ 'tick': dealerCodeInputTickFlag }"></div>
+                <div *ngIf="loading4" class="input-group-postpend-arrow loading-img"></div> 
+            </div>
+            <div class="input-group input-group-col2 marginTop25" [ngClass]="{ 'active': userRoleInputFlag, 'setOpacity3' : !enableCols, 'cursor' : enableCols}" (click)="selectedType('role')">
+                <div class="input-group-prepend role-img normal"  [ngClass]="{ 'active': userRoleInputFlag, 'cursor' : enableCols}"></div>
+                <input readonly type="text" class="form-control inputtext" [ngClass]="{'cursor' : enableCols}" matInput placeholder="Role" [title]="userRole" [(ngModel)]="userRole" formControlName="userRole" />                                                                    
+                <div class="input-group-postpend-arrow small-down"></div>                        
+            </div>
+        </div>
+        <div class="input-group-col-new"> 
+            <div class="input-group input-group-col1 marginTop25" [ngClass]="{ 'active': userBranchInputFlag, 'setOpacity3' : !enableCols, 'cursor' : enableCols}" (click)="selectedType('branch')">
+                <div class="input-group-prepend branch-img normal"  [ngClass]="{ 'active': userBranchInputFlag, 'cursor' : enableCols }"></div>
+                <input readonly type="text" class="form-control inputtext" [ngClass]="{'cursor' : enableCols}" matInput placeholder="Branch" [title]="userBranch" [(ngModel)]="userBranch" formControlName="userBranch" />                                                                    
+                <div class="input-group-postpend-arrow small-down"></div>                        
+            </div>
+            <div class="input-group input-group-col2 marginTop25" [ngClass]="{ 'active': userLanguageInputFlag , 'setOpacity3' : !enableCols, 'cursor' : enableCols}" (click)="selectedType('language')">
+                <div class="input-group-prepend language-img normal"  [ngClass]="{ 'active': userLanguageInputFlag, 'cursor' : enableCols }"></div> 
+                <input readonly type="text" class="form-control inputtext" [ngClass]="{'cursor' : enableCols}" matInput placeholder="Language" [title]="userLanguage" [(ngModel)]="userLanguage" formControlName="userLanguage" />                                                                    
+                <div class="input-group-postpend-arrow small-down"></div>                        
+            </div> 
+        </div> 
+        <div class="line-row-new"></div>
+        <div class="input-group-col-new"> 
+            <div class="input-group input-group-col1 marginTop25" [ngClass]="{ 'active': userCodeInputFlag, 'error': addform4ServerError, 'setOpacity3' : !enableCols }">
+                <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': userCodeInputFlag  }"></div>
+                <input type="text" class="form-control inputtext"  [ngClass]="{ 'setOpacity3' : loading2 }" matInput placeholder="User ID" formControlName="userCode" [(ngModel)]="userCodeDealer" maxlength="40" (input)="inputChange(5,$event)" (keypress)="onKeypress(5,$event)" />                                                                                                    
+            </div>                       
+            <div class="input-group input-group-col2 marginTop25" [ngClass]="{ 'active': passwordInputFlag, 'error': addform4ServerError, 'setOpacity3' : !enableCols }">
+                <div class="input-group-prepend pass-img normal"  [ngClass]="{ 'active': passwordInputFlag }"></div>
+                <input [type]="pwdFieldTextType ? 'text' : 'password'" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading4 }" matInput placeholder="Password" [(ngModel)]="passwordDealer" formControlName="password" maxlength="50" (input)="inputChange(6,$event)" (input)="onKeypress(6,$event)" />
+                <div (click)="showPassword(pwdFieldTextType)" class="input-group-pwd normal" [ngClass]="{ 'active' : pwdFieldTextType }"></div>
+                <div *ngIf="!loading41" (click)="submitNextStep4()" class="input-group-postpend-arrow" [ngClass]="{ 'active': passwordInputArrowFlag }"></div>
+                <div *ngIf="loading41" class="input-group-postpend-arrow loading-img"></div>                        
+            </div>   
+        </div>                 
+        <div class="login-invalid-feedback errormb10" *ngIf="addform4ServerError || dealerCodeError">
+            <img src="assets/images/login/error-img.png" /> <span>{{addform4ServerErrorMsg}}</span>
+        </div>
+        <div class="tvs-blue-bg bgdealer">
+            <span>Enter DMS Credentials</span>
+        </div>
+        <div class="line-row no-line-row" >
+            <span class="line-col-1"><a class="back-text" (click)="gotoStep1()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>            
+        </div>
+    </form>
+</div>
+<div *ngIf="processStep5">
+    <form [formGroup]="addForm5">
+        <div class="input-group marginTop cursor" [ngClass]="{ 'active': designationInputFlag}" (click)="addDesignation()">
+            <div class="input-group-prepend desg-img normal cursor"  [ngClass]="{ 'active': designationInputFlag}"></div>
+            <input readonly type="text" class="cursor form-control inputtext" matInput placeholder="Select designation" [(ngModel)]="designation" formControlName="designation" />                                                                    
+            <div class="input-group-postpend-arrow small-down"></div>                        
+        </div>
+        <div class="input-group marginTop" [ngClass]="{ 'active': userNameInputFlag , 'setOpacity3': !designationInputFlag }" (click)="addUserName()">
+            <div class="input-group-prepend user-img normal cursor"  [ngClass]="{ 'active': userNameInputFlag}"></div>
+            <input readonly type="text" class="cursor form-control inputtext" matInput placeholder="Select user name" [(ngModel)]="userName" formControlName="userName" />                                                                    
+            <div class="input-group-postpend-arrow small-down"></div>                        
+        </div>                                        
+        <div class="login-invalid-feedback errormb10" *ngIf="addform5ServerError">
+            <img src="assets/images/login/error-img.png" /> <span>{{addform5ServerErrorMsg}}</span>
+        </div>  
+        <div *ngIf="!userNameInputFlag && !loading5" class="action-button deactive"><button class="btn-text">CONTINUE&nbsp;&nbsp;<img class="c-img" src="assets/images/login/continue-arrow.png"></button></div>
+        <div *ngIf="userNameInputFlag && !loading5" class="action-button" (click)="submitNextStep5()"><button class="btn-text">CONTINUE&nbsp;&nbsp;<img class="c-img" src="assets/images/login/continue-arrow.png"></button></div>    
+        <div *ngIf="userNameInputFlag && loading5" class="action-button"><button class="btn-text"><span class="setOpacity3">CONTINUE&nbsp;&nbsp;</span><span class="loading-svg"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span></button></div>                                                    
+    </form>
+    <div class="line-row no-line-row mtop20" >
+        <span class="line-col-1"><a class="back-text" (click)="gotoStep4()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>            
+    </div>
+</div>
+

@@ -1,0 +1,61 @@
+<div class="right-section">
+    <div class="prob-index system-setting">
+        <div class="container-fluid">
+            <div class="center-middle-width-container">
+                <div class="center-middle-width">
+                    <div class="hq-head d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="hq-head-row-0" *ngIf="!user.data || !user.data.shopId">
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+                                <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span *ngIf="level && subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span>
+                                <img *ngIf="level && subLevel" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span *ngIf="level && subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('Region')">{{headQuarterService.sublevelName}}</span>
+                                <span *ngIf="!level && !subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('allShops')">All Shops</span>
+                                <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" >{{headQuarterService.currentShopName}}</span>
+                                <!-- <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+                                <!-- <span class="hq-head-breadcrumb-text">{{featuredActionName}}</span> -->
+                            </div>
+                            <div class="hq-head-row-1" *ngIf="!user.data || !user.data.shopId">
+                                <img class="hq-head-img" src="../../../../assets/images/shop/shop-icon.png" alt="" />
+                                <span class="hq-head-text">{{headQuarterService.currentShopName}} (ID #{{headQuarterService.currentShopId}})</span>
+                            </div>
+
+                            <div class="hq-head-row-1" *ngIf="user.data && user.data.shopId">
+                                <img class="hq-head-img" src="../../../../assets/images/shop/shop-icon.png" alt="" />
+                                <span class="hq-head-text">Facility Layout</span>
+                            </div>
+
+                        </div>
+                        <div>
+                            <div class="m-0 add-action-btn cursor">
+                                <img src="assets/images/hq/add-icon.png">
+                                <span>New Facility</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <app-shop-details-sidebar *ngIf="!user?.data || !user?.data?.shopId" [selectedTab]="'FACILITY'"></app-shop-details-sidebar>
+                        <div class="ts-list-rt transition filter-expand" [ngClass]="{'col-12':user.data && user.data.shopId,'pl-0':user?.data && user?.data?.shopId}">
+                            <div [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'" class="tool-banner d-flex justify-content-center align-items-center">
+                                <div class="ps" [perfectScrollbar]="sconfig">
+                                    <div class="d-flex flex-column align-items-center justify-content-center">
+                                        <div class="round-circle"></div>
+                                        <p class="nothing-to-show">Tap on the ‘Add Facility’ button to add Facility</p>
+                                        <div class="m-0 add-action-btn cursor" style="">
+                                            <img  src="assets/images/hq/add-icon.png">
+                                            <span>Add Facility</span>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>     
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,161 @@
+<div id="header">  
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch($event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch($event)"></app-product-header>
+</div>
+<div class="prob-index">
+    <div class="probing-content" [style.height]="divHeight">
+        <div *ngIf="loading" class="cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+
+
+        <div *ngIf="!loading"  class="main-wrapper">
+            <div class="d-flex align-items-center justify-content-between mbt-14">
+              <div class="d-flex align-items-center">
+                <div class="text-title text-title-hd">
+                  <span class="mr-2">
+                    <img class="pTop4" src="assets/images/roles.svg" onload="SVGInject(this)">
+                  </span>
+                  <span>Roles And Permissions</span>
+                </div>
+                <!--div class="cursor new-roles-permission mr-0" (click)="OpenNewRolePopup();">
+                  <i style="font-size: 13px;" class="pi pi-plus mr-2"></i>
+                  <span>New Role</span>
+                </div-->
+                <!-- <div class="cursor new-roles-permission"
+                  <img src='assets/images/custom-rule.svg' class="mr-2" alt='' onload='SVGInject(this)' />
+                  <span>Custom Permission</span>
+                </div> -->
+              </div>
+              <div class="right-part">
+                <span class="permission-right-info" *ngIf="!changedFlag">
+                  <i class="pi pi-info-circle mr-2"></i>
+                  Owner can always view and manage their own content
+                </span>
+                <div class="top-actions" *ngIf="changedFlag">
+                  <button type="button" class="btn" (click)="resetChanges();changedFlag = false;">
+                    <img src="assets/images/chat/popup-images/close.png" /> Cancel</button>
+                  <button type="button" (click)="saveChanges()" class="btn red-btn">
+                    <img src="assets/images/chat/popup-images/save.png" /> Save</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <table class="tb" width="100%" [style.height]="pTableHeight">
+                  <thead>
+                    <tr class="tb-header">
+                      <ng-container *ngFor="let header of tableHeader;let first = first;">
+                        <td [ngClass]="{'td-text-left': first, 'td-text-center': !first}">
+                          <div [ngClass]="{'d-flex align-items-center justify-content-center' : !first}">
+                            <span>{{header.name}}</span>
+                            <span *ngIf="header.is_custom_role == true"
+                              class="ml-2 px-2 cursor-pointer d-flex align-items-center text-uppercase" #p="ngbPopover" triggers="manual" (click)="p.toggle()" container="body" outsideClick="true" [ngbPopover]="options" placement="bottom" popoverClass="roles-popup">
+                              <i class="pi pi-ellipsis-v"></i>
+                            </span>
+                            <ng-template #options>
+                              <ul>
+                                <li class="d-flex align-items-center" (click)="OpenNewRolePopup(header)">
+                                  <span class="mr-3">
+                                    <i class="pi pi-pencil"></i>
+                                  </span>
+                                  <span>Edit</span>
+                                </li>
+                                <li class="d-flex align-items-center" (click)="deleteRole()">
+                                  <span class="mr-3">
+                                    <i class="pi pi-trash"></i>
+                                  </span>
+                                  <span>Delete</span>
+                                </li>
+                              </ul>
+                            </ng-template>
+          
+                          </div>
+                        </td>
+                      </ng-container>
+                      <td class="tb-empty-column" style="width: 50%;">&nbsp;</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngFor="let data of tableData">
+                      <tr *ngIf="data.title == true" class="tb-data-row">
+                        <td class="tb-section-title">
+                          <span class="mr-2 align-middle d-inline-block span-svg-width"><img src="assets/images/roles-permissions/{{data.imageName}}.svg" alt="" onload="SVGInject(this)"></span>
+                          <span class="align-middle d-inline-block">{{data.name}}</span>
+                        </td>
+                        <ng-container *ngFor="let dummy of [].constructor(tableHeader.length - 1)">
+                          <td class="tb-section-title dummy-placeholder-cell">&nbsp;</td>
+                        </ng-container>
+                        <td class="tb-empty-column" style="width: 50%;" class="dummy-placeholder-cell">&nbsp;</td>
+                      </tr>
+                      <tr *ngIf="data.title == false" class="tb-data-row">
+                        <td class="tb-first-column">
+                          <span class="ptop mr-2 align-middle d-inline-block"><img src="assets/images/roles-permissions/{{data.imageName}}" alt="" onload="SVGInject(this)"></span>
+                          <span *ngIf="data.accessId != 2" class="align-middle d-inline-block">{{data.name}}</span>
+                          <span *ngIf="data.accessId == 2" class="align-middle d-inline-block"><span class="data-name">{{data.name}}</span>&nbsp;&nbsp;<span class="data-img cursor-pointer" container="body" popoverClass="custom-tooltip menu-tooltip title-tooltip title-tooltip1" [ngbPopover]="infoTT" popoverTitle="Create applies to New, Uploads or Downloads." placement="right" triggers="hover"><img src="assets/images/roles-permissions/info-icon.svg" alt="" onload="SVGInject(this)"></span></span>
+                          <ng-template #infoTT></ng-template>
+                        </td>
+                        <ng-container *ngFor="let role of data.roles; let i = index;">
+                          <td class="tb-other-column" [style.background]="role?.is_changed ? '#f2e1e6' : ''">
+                            <!-- {{role.name}}-{{role.access}} -->
+                            <div class="cursor field-box toggle-box togglebox"
+                              [ngClass]="{'active': role.access, 'inactive': !role.access}">
+                              <span class="toggle-col field-label"></span>
+                              <span class="toggle-col toggle-option">
+                                <p-inputSwitch [(ngModel)]="role.access"
+                                  (onChange)="onToggleBoxChange(role,role.id,data.contentTypeId, data.accessId,role.access)">
+                                </p-inputSwitch>
+                              </span>
+                            </div>
+                          </td>
+                        </ng-container>
+                        <td class="tb-empty-column" style="width: 50%;">&nbsp;</td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+          
+          <section id="newRolePopup" class="add-role-popup overlay-modal">
+            <section class="modal-dialog small-pop-up">
+              <section class="modal-content">
+                <section class="modal-header">
+                  <h3>New Role</h3>
+                  <div class="actions">
+                    <span class="cursor close" (click)="CloseNewRolePopup()">
+                      <img src="assets/images/list-close.png" alt="Close" class="mb-1" />
+                    </span>
+                  </div>
+                </section>
+                <section class="modal-body content-pad">
+                  <div class="modal-body-inner">
+                    <section class="group-icon">
+                      <div class="group-icon-inner">
+                        <img src="assets/images/add-new-role.png" class="role-title-ic" />
+                        <span>Role Name</span>
+                      </div>
+                    </section>
+                    <section class="group-input">
+                      <div class="group-input-inner">
+                        <input type="text" placeholder="Enter Role Name" [(ngModel)]="roleName" [ngClass]="{'invalid-input': invalidName}" (input)="checkInput()" />
+                      </div>
+                      <div class="d-block invalid-feedback" *ngIf="invalidName">
+                        Please enter role name
+                      </div>
+                    </section>
+                  </div>
+                </section>
+                <section class="modal-footer">
+                  <button type="button" (click)="saveNewRole()" class="red-btn">Save <img
+                      src="assets/images/chat/popup-images/save.png" /></button>
+                  <button type="button" (click)="CloseNewRolePopup()">Cancel <img
+                      src="assets/images/chat/popup-images/close.png" /></button>
+                </section>
+              </section>
+            </section>
+          </section>
+
+    </div>
+</div>

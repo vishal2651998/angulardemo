@@ -1,0 +1,221 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div *ngIf="shopId && (!user.data || !user.data.shopId)" class="loading-small-screen-scroll trst" style="left:56% !important">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+
+    <div *ngIf="shopId && user.data && user.data.shopId" class="loading-small-screen-scroll trst">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+    <div *ngIf="!shopId  && (!user.data || !user.data.shopId) " class="loading-small-screen-scroll trst" style="">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+
+    <div *ngIf="!shopId && user.data && user.data.shopId" class="loading-small-screen-scroll trst" style="left:56% !important">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+    <div class="action-form prob-list-cont" [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'"> 
+        <!-- <form> -->
+            <div class="product-form d-flex align-items-center justify-content-between flex-wrap" style="z-index: 1;background-color: #f0f2f4;">
+                <div class="d-flex">
+                    <img src="assets/images/hq/tool-head-default.png" style="height: 24px;">
+                    <p class="mb-0 product-heading" style="font-family: Roboto-Bold;
+                    font-size: 24px;
+                    color: #000000;
+                    vertical-align: middle;
+                    padding-left: 10px;
+                    margin: 0;">Add Tool & Equipment to Shop</p>
+                    <span (click)="addTools()" class="orange-btn m-0 ml-3 text-white" style="border-radius: 30px;cursor: pointer;">
+                        <img src="assets/images/add-icon.png" alt=""
+                            style="margin-right: 10px;filter: brightness(4);">
+                            New
+                    </span>
+                </div>
+                <div class="d-flex align-items-center justify-content-end product-actions">
+                    <p-dropdown [(ngModel)]="selectedVendorId" (click)="manageList('10')" appendTo="body" [options]="vendorList"
+                        optionLabel="name" optionValue="id" class="p-dropdown-workflowtype" [showClear]="true" (onChange)="onClearVendor($event)"
+                        [style]="{'width':'200px', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                        placeholder="By Vendor">
+                    </p-dropdown>
+
+                    <p-dropdown [(ngModel)]="selectedCategoryId" (click)="manageList('14')" appendTo="body" [options]="categoryList"
+                        optionLabel="name" optionValue="id" class="p-dropdown-workflowtype" [showClear]="true" (onChange)="onClearCategory($event)"
+                        [style]="{'width':'200px', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                        placeholder="By Category">
+                    </p-dropdown>
+                    <div class="search">
+                        <a  class="search-icon">
+                            <img src="assets/images/search-icon.png" alt=""  width="15" height="15">
+                          </a>
+                          <input type="text" (keyup)="searchBrand()"  class="search-control" id="searchKey"  maxlength="50"
+                         placeholder="Search" [(ngModel)]="searchBrandName" />
+                    </div>
+                    <button  *ngIf="selectedProductIndex" style="padding-right: 30px;" pButton pRipple type="button" label="ADD & CLICK NEXT "
+                    class="p-button-rounded button-save button-save-hq cursor" (click)="selectProduct()"><img style="    right: 7px;position: absolute;filter: brightness(40);height: 14px;" src="assets/images/hq/hq-bc.png"></button>
+
+                    <button *ngIf="!selectedProductIndex" style="padding-right: 30px;opacity: 0.5;" pButton pRipple type="button" label="ADD & CLICK NEXT "
+                    class="p-button-rounded button-save button-save-hq cursor" ><img style="    right: 7px;position: absolute;filter: brightness(40);height: 14px;" src="assets/images/hq/hq-bc.png"></button>
+                    
+                    <!-- <span class="btn-close">
+                        <img  (click)="closeSelectProduct()" src="assets/images/hq/hq-popup-close-icon.png" alt="HQ"  role="button"/>
+                    </span> -->
+                </div>
+            </div>
+            <div class="documents-grid-row documents-grid-row-new">
+                <!-- height: calc(100vh - 63px); -->
+                <!-- <div *ngFor="let tool of toollist" class="row no-gutters"
+                    style="cursor: pointer;">
+                    <div style="width: 5%; display: flex; align-items: center; justify-content: center;">
+                                        <p-radioButton [value]="tool.id"  [(ngModel)]="selectedProductIndex" ></p-radioButton>
+                    </div>
+                    <div style="width: 95%;">
+                        <div class="d-flexdd align-items-center border-bottom  wrap-p row no-gutters">
+                            <div class="col-1">
+                            <span *ngIf="tool.uploadContents.length > 0 && tool.uploadContents[0]?.thumbFilePath"
+                                 class="toolImg product">
+                                <img [src]="tool.uploadContents[0]?.thumbFilePath">
+                                          </span>
+                            <span style="background-color: #abb2bd;" *ngIf="tool.uploadContents.length <= 0 "
+                                class="toolImg product">
+                                <img class="upper-image-div-new" src="assets/images/hq/tools-default-image.png">
+                            </span>
+                        </div>
+                            <div class="product-content col-11">
+                                <p class="mb-0 fw-bold pl-2">{{tool?.brandInfo?.name}}</p>
+                                <div class="d-flex product-details align-items-center " style="flex-wrap: nowrap !important;">
+                                <p class="fw-medium mb-0 product-detail-txt">Vendor:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.vendorInfo?.name}}</span></p>
+                                <p class="fw-medium mb-0 product-detail-txt">Model:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.modelInfo?.name}}</span></p>
+                                <p class="fw-medium mb-0 product-detail-txt">Brand:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.brandInfo?.name}}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                </div> -->
+                <div style="left:50%;" *ngIf="lazyLoading"
+                    class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{access}}-list-lazy-loader">
+                </div>
+                <p-table #table [columns]="toolsListColumns" [scrollable]="true"
+                    [totalRecords]="toollist.length" id="file-datatable" 
+                    class="file-datatable thread-list-table shop-list-table ro-list" [value]="toollist" [lazy]= 'true'
+                     [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'"
+                    >
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                          <col *ngFor="let col of columns" [style]="{width: col.width}">
+                        </colgroup>
+                      </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr>
+                            <th *ngFor="let col of columns"  [pSortableColumn]="col.field">
+                                <span [ngClass]="{'pl-3' : col.field == 'image'}">{{col.header}}</span>
+                                <span *ngIf="col.field == 'cert'">&nbsp;&nbsp;<img
+                                        src="assets/images/escalations/escalation-help-white.png" alt=""></span>
+                                        <p-sortIcon  *ngIf="col.field  !== ''" [field]="col.field"></p-sortIcon>
+                                        <p-columnFilter *ngIf="col.field  !== ''" type="text" [field]="col.field" display="menu"></p-columnFilter>
+                            </th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-toolsList let-i="rowIndex">
+                        <tr class="cursor">
+                            <td  class="px-0 pl-3">
+
+                                <span class="toolImg">
+                                    <span class="toolImg-span-lt" *ngIf="toolsList.cert">
+                                        <div class="" >
+                                            <img src="assets/images/hq/error-img-small.png" alt="">
+                                            <img src="assets/images/hq/success-tick-small.png" alt="">
+                                        </div>
+                                    </span>
+                                    <span class="toolImg-span-rt d-flex justify-content-between">
+                                        <div style="display: flex; align-items: center; justify-content: center;">
+                                            <p-radioButton [value]="toolsList.id"  [(ngModel)]="selectedProductIndex" ></p-radioButton>
+                                        </div>
+                                        <span
+                                            *ngIf="toolsList.uploadContents.length > 0 && toolsList.uploadContents[0]?.thumbFilePath"
+                                            class="upper-image-div-new" class="toolImg">
+                                            <img [src]="toolsList.uploadContents[0]?.thumbFilePath">
+                                        </span>
+                                        <span style="background-color: #abb2bd;"
+                                            *ngIf="toolsList.uploadContents.length <= 0 " class="toolImg">
+                                            <img class="upper-image-div-new"
+                                                src="assets/images/hq/tools-default-image.png">
+                                        </span>
+                                    </span>
+                                </span>
+
+                            </td>
+
+                            <td  class="px-0 pl-3">
+                                <span class="overflow-text-table"
+                                *ngIf="toolsList.id != ''">{{toolsList.id}}</span>
+                                <span *ngIf="toolsList.id == ''">-</span>
+                            </td>
+                            
+                            <!-- Category column -->
+                            <td class="px-0 ellip-word" >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.categoryInfo && toolsList.categoryInfo.name">{{toolsList.categoryInfo.name}}</span>
+                                <span *ngIf="!toolsList.categoryInfo || !toolsList.categoryInfo.name">-</span>
+                            </td>
+                            <!-- Vendor column -->
+                            <td  class="w3 tool-thl-col-3">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.vendorInfo?.name != ''">{{toolsList.vendorInfo?.name}}</span>
+                                <span *ngIf="toolsList.vendorInfo?.name == ''">-</span>
+                            </td>
+                            <!-- model column -->
+                            <td class="w7 tool-thl-col-7" >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.modelInfo && toolsList.modelInfo.name && toolsList.modelInfo.name != ''">{{toolsList.modelInfo.name}}</span>
+                                <span
+                                    *ngIf="!toolsList.modelInfo || !toolsList.modelInfo.name || toolsList.modelInfo.name == ''">-</span>
+                            </td>
+                             <!-- Brand column -->
+                             <td class="w2 tool-thl-col-2 ellip-word"  >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.productNameInfo && toolsList.productNameInfo.name">{{toolsList.productNameInfo.name}}</span>
+                                <span *ngIf="!toolsList.productNameInfo || !toolsList.productNameInfo.name">-</span>
+                            </td>
+                             <!-- Type column -->
+                             <td class="w2 tool-thl-col-2 ellip-word"  >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.toolTypeInfo && toolsList.toolTypeInfo.name">{{toolsList.toolTypeInfo.name}}</span>
+                                <span *ngIf="!toolsList.toolTypeInfo || !toolsList.toolTypeInfo.name">-</span>
+                            </td>
+                                 <!-- Entered By column -->
+                             <td class="w2 tool-thl-col-2 ellip-word"  >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList && toolsList.enteredBy">{{toolsList.enteredBy}}</span>
+                                <span *ngIf="!toolsList || !toolsList.enteredBy">-</span>
+                            </td>
+                            <td class="w10 tool-thl-col-10  col-sticky" style="text-align: end !important;">
+                                <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" class="list-menu-content active"
+                                        backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul (click)="addTools(toolsList.id)" class="more-actions">
+                                                <li class="cursor active" (click)="menuTrigger.closeMenu()"><img
+                                                        src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+
+
+                </p-table>
+            </div>
+
+        <!-- </form> -->
+    </div>

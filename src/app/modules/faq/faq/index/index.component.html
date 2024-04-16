@@ -1,0 +1,25 @@
+<div id="header" *ngIf="!msTeamAccess">
+    <app-thread-detail-header [pageData]="headerData" (threadDetailHeaderRef)="threadHeaderRef = $event" (callback)="headerCallback($event)" (search)="applySearch($event)"></app-thread-detail-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}" (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index">
+    <div class="part-list-head faq-list-head">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt standard-report-head-txt" *ngIf="!msTeamAccess">
+                <span class="parts-head-ic st-report-head-ic">
+                    <img src="assets/images/faq/faq-head-gray-icon.png">
+                </span>
+                {{headTitle}}
+            </span>
+        </div>
+    </div>
+    <div class="probing-content cbt-content part-content part-content-new faq-content-new">
+        <app-faq-list [apiInfo]="apiInfo" (faqComponentRef)="faqPageRef = $event" (callback)="faqCallback($event)"></app-faq-list>
+    </div>
+</div>

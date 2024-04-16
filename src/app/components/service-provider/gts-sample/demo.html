@@ -1,0 +1,220 @@
+<div class="container-fluid">
+    <div class="row header-main-div">
+      <div class="col-2">
+        <img width="35px" height="35px" src="assets/images/gts/sample/volkaswagon-logo.png" alt="" srcset="">
+      </div>
+      <div class="col-10">
+        <div class="d-flex align-items-center justify-content-between ">
+          <div class="d-flex align-items-center">
+            <div (click)="goBack()">
+              <img style="margin-right: 9px;cursor: pointer;" src="assets/images/gts/sample/back-arrow-black.png" alt=""
+                srcset="">
+            </div>
+            <span class="heading-right-start">
+              {{inspectionTitle}}
+              <span style="color: #469073;">ID# {{inspectionId}}</span>
+            </span>
+          </div>
+          <div style="width: 15%;" class="d-flex align-items-center">
+            <span
+              class="mr-4 mat-badge mat-badge-overlap mat-badge-above mat-badge-after mat-badge-medium notification-class-icon-header unseenColor">
+              <span class="notification-header-icon">
+                <img src="assets/images/landing-page/landing-notifications.svg" onload="SVGInject(this)" />
+              </span>
+              <span id="mat-badge-content-0" class="mat-badge-content mat-badge-active">4</span>
+  
+            </span>
+            <div class="d-flex align-items-center">
+              <img class="dummy-user" src="{{userData?.business_logo}}" alt="" srcset="">
+              <span class="ml-1">{{userData?.business_name}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2 left-section px-0">
+        <div class="section-one">
+          <ul class="section-one-items">
+            <div *ngFor="let item of sections; index as i"
+              class="d-flex align-items-center justify-content-between section-one-items-sec ">
+              <div class="d-flex align-items-center {{classArr.includes(i) ? 'selected-item' : ''}}"
+                (click)="leftSelection(i)" style="padding: 5px 13px;cursor: pointer;">
+                <img *ngIf="!classArr.includes(i)" style="display: inline;" src="assets/images/gts/sample/question.png"
+                  alt="" srcset="">
+                <img *ngIf="classArr.includes(i)" style="display: inline;"
+                  src="assets/images/gts/sample/white-question.png" alt="" srcset="">
+                <li style="margin-left: 9px;">{{(i + 1) | romanize}}. {{item?.sectionName}}</li>
+              </div>
+              <div class="left-section-percent">80%</div>
+            </div>
+          </ul>
+        </div>
+        <div class="section-two">
+          <span>Overall completion status</span>
+          <img width="58px" height="58px" src="assets/images/gts/sample/knob-green.png" alt="" srcset="">
+        </div>
+        <div class="section-third">
+          <div class="section-third-sec">
+            <div class="d-flex align-items-center ">
+              <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/hash-grey.png" alt="" srcset="">
+              <div>Location Name</div>
+            </div>
+            <div style="margin-left: 25px;">VW South</div>
+          </div>
+          <div class="section-third-sec">
+            <div class="d-flex align-items-center ">
+              <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/hash-grey.png" alt="" srcset="">
+              <div>Location Code</div>
+            </div>
+            <div style="margin-left: 25px;">3456</div>
+          </div>
+          <div class="section-third-sec">
+            <div class="d-flex align-items-center ">
+              <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/location-grey.png" alt=""
+                srcset="">
+              <div>Address</div>
+            </div>
+            <div style="margin-left: 25px;">3311 Squirrel Ct, Auburn Hills,
+              MI 48326</div>
+          </div>
+          <div class="section-third-sec">
+            <div class="d-flex align-items-center ">
+              <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/calendar.png" alt="" srcset="">
+              <div>Started on</div>
+            </div>
+            <div style="margin-left: 25px;">Dec 12, 2023</div>
+          </div>
+          <div class="section-third-sec">
+            <div class="d-flex align-items-center ">
+              <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/user-grey.png" alt="" srcset="">
+              <div>Assessor Name</div>
+            </div>
+            <div style="margin-left: 25px;">Reeza Hendricks</div>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="!loading" class="col-10 p-0 right-section">
+        <div *ngFor="let val of data; let outerIndex = index" class="right-section-one">
+          <div class="right-sec-heading cursor-pointer" (click)="openOuterContentBox(outerIndex)">
+            <div class="innerhtml-container">{{(classArr[0] + 1) | romanize}}. {{outerIndex+1}}. <div
+                [innerHTML]="val.heading"></div>
+            </div>
+            <div>
+              <img class="{{outerContentBox.includes(outerIndex) ? '' : 'outer-content-img' }}"
+                src="assets/images/gts/sample/arrow-up.png" alt="" srcset="">
+            </div>
+          </div>
+          <div *ngFor="let item of val.values; let innerIndex = index"
+            class="row p-0 m-0 right-sec-content {{outerContentBox.includes(outerIndex) ? '' : 'display-none' }}">
+            <div class="col-10 p-0 border-bottom content-box">
+  
+              <div class="d-flex justify-content-between align-items-center ">
+                <span class="innerhtml-container">
+                  <img src="assets/images/dashboard/right_arrow.png"
+                    class="mr-1 {{innerIndex == 2 ? 'right-arrow-rotate':''}} arrow-image" alt="" srcset="">
+                  <div class="inner-html" [innerHTML]="item.name"></div>
+                  <img style="width: 19px;height: 19px; margin-top: 5px; margin-left: 7px; "
+                    src="assets/images/gts/sample/info-grey.png" alt="" srcset="">
+                </span>
+                <!-- <span>
+                  <img src="assets/images/gts/sample/camera.png" alt="" srcset="">
+                  <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt="" srcset="">
+                </span> -->
+              </div>
+  
+  
+              
+              <!-- <div
+                class="content-box-inner-sec {{(innerIndex == 2 || innerIndex == 9) || (outerIndex == 1 && innerIndex == 1)  ? '':'display-none'}}">
+                <div class="d-flex align-items-center  ">
+                  <img class="mr-2" src="assets/images/hq/image-disable.png" alt="" srcset="">
+                  <div style="color: #9b9a9a;">Provide Attachments</div>
+                </div>
+                <div class="d-flex attachments-sec">
+                  <span class="d-flex attachments-sec-img">
+                    <img class="content-box-img" src="assets/images/gts/sample/blog.png" alt="" srcset="">
+                    <span class="attachment-dlt cursor-pointer">
+                      <img src="assets/images/gts/sample/delete-white.png" alt="" srcset="">
+                    </span>
+                  </span>
+                  <span class="img-add">
+                    <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt="" srcset="">
+                    <span>Add</span>
+                  </span>
+                </div>
+                <div class="row p-0 m-0">
+                  <div class="col-12">
+                    <div class="d-flex align-items-center py-2">
+                      <img class="mr-1" src="assets/images/gts/sample/circle-question.png" alt="" srcset="">
+                      <span class="grey-color">Select question from the below dropdown</span>
+                    </div>
+                    <div>
+                      <p-dropdown
+                        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum sollicitudin tempor."
+                        [disabled]="true" class="gts-sample-question-dropdown" appendTo="body"></p-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-7">
+                    <div class="d-flex align-items-center py-2">
+                      <img class="mr-1" src="assets/images/gts/sample/to-do-list.png" alt="" srcset="">
+                      <span class="grey-color">Notes</span>
+                    </div>
+                    <div>
+                      <input class="w-100" placeholder="Enter Notes" type="text" pInputText />
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="d-flex align-items-center py-2">
+                      <img class="mr-1" src="assets/images/gts/sample/user-profile.png" alt="" srcset="">
+                      <span class="grey-color">Who</span>
+                    </div>
+                    <div>
+                      <input class="w-100" placeholder="Enter Name" type="text" pInputText />
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <div class="d-flex align-items-center py-2">
+                      <img class="mr-1" src="assets/images/gts/sample/calendar.png" alt="" srcset="">
+                      <span class="grey-color">When</span>
+                    </div>
+                    <div>
+                      <p-calendar dateFormat="dd M yy" placeholder="Select Date" styleClass="gts-sample-calender"
+                        selectionMode="range" inputId="range" showIcon="true"></p-calendar>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="d-flex align-items-center py-2">
+                      <img class="mr-1" src="assets/images/gts/sample/to-do-list.png" alt="" srcset="">
+                      <span class="grey-color">General Notes</span>
+                    </div>
+                    <div>
+                      <input class="w-100" placeholder="Enter General Notes" type="text" pInputText />
+                    </div>
+                  </div>
+                </div>
+              </div> -->
+            </div>
+            <div class="col-1 p-0 border-left-right text-center">
+              <div class="yes-sec {{outerIndex == 0 && (innerIndex == 1 || innerIndex == 2) ? 'yes-sec-selected' : ''}}">
+                <i class="cursor-pointer pi pi-check" style="margin-right: 5px;"></i>
+                <span>YES</span>
+              </div>
+            </div>
+            <div class="col-1 p-0 border-right text-center">
+              <div class="no-sec {{innerIndex == 4 || (outerIndex == 1 && innerIndex == 1) ? 'no-sec-selected' : ''}} ">
+                <i class="cursor-pointer pi pi-times"></i>
+                <span>NO</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="loading" class="col-10 p-0 center-section">
+        <div class="loading-announcement">
+          <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+      </div>
+    </div>
+  </div>

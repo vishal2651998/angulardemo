@@ -1,0 +1,60 @@
+<div class="main-contaier {{optionsval.shortName}}">
+  <p-accordion [multiple]="true" (onClose)="onTabClose6($event)" (onOpen)="onTabOpen6($event)">
+    <p-accordionTab [selected]="true">
+      <p-header class="accordion-icon ">
+        <div class="container-fluid">
+          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+            <div class="menu-name-bar col col col-lg-9 col-md-9 col-xl-9 col-sm-8 landing-padding0">
+              <div>
+                <span class="bg-image {{optionsval.imageClass}}">
+                  <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                </span>
+                <span class="menu-name">{{optionsval.placeholder}}</span>
+                <span><i class="pi hide pi-ellipsis-v"></i></span>
+              </div>
+            </div>
+            <div class="col col col-lg-3 col-md-3 col-xl-3 col-sm-4 landing-padding0">
+              <div class="rightside-menu-header">
+                <div class="see-more-text" *ngIf="reportseemore">
+                  <span>See More</span>
+                  <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                </div>
+                <div class="plusone60 showinline"><i class="pi pi-chevron-up"></i></div>
+                <div class="minusone60 hide"><i class="pi pi-chevron-down"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-header>
+      <div class="landing-report-section">
+        <div class="padding10">
+          <div id="closedThread"></div>
+          <div class="container-fluid">
+            <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+              <div (click)="reportClick($event,reportsec.id,reportsec.access)" class="col col-lg-3 report-section-head"
+                *ngFor="let reportsec of reportArr">
+                <div class="report-section {{reportsec.imgClass}}"
+                  [ngClass]="{'no-cursor-report': reportsec.access == false}">
+                  <div class="container-fluid">
+                    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+                      <span *ngIf="!reportsec.access" class="landing-lock-report-img">
+                        <img src="assets/images/landing-page/lock-admin-access.svg">
+                      </span>
+                      <div class="report-sec-width11 col col-lg-auto landing-padding0 ">
+                        <img class="report-banner bg-color-{{reportsec.imgClass}} {{reportsec.imgClass}}"
+                          src="{{reportsec.imgUrl}}">
+                      </div>
+                      <div class="col col-lg-auto text-report-align">
+                        {{reportsec.name}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>

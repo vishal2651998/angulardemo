@@ -1,0 +1,38 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/loading.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+    <div [style.height.px]="innerHeight">
+        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+            <div class="section-container">
+                <div class="title-row">
+                    <span class="title-text">Thread</span>
+                </div>
+                <div class="content-row" *ngFor="let item of configData; let s = index;">
+                    <div class="row-item">
+                        <div class="row-item-col action-text">
+                            <span class="bg-img {{item.class}}"></span>
+                            <span class="action-cont">
+                                <div class="head">{{item.title}}</div>
+                                <div class="desc">{{item.description}}</div>
+                            </span>
+                        </div>
+                        <!-- toggle -->
+                        <div class="cursor row-item-col action-toggle">
+                            <span class="toggle-col field-label"></span>
+                            <span class="toggle-col toggle-option">
+                                <p-inputSwitch [(ngModel)]="item.isEnabled" (onChange)="onToggleBoxChange('toggle',item.id,$event.checked)">
+                                </p-inputSwitch>
+                            </span>
+                        </div>
+                    </div> 
+                    <div class="row-border">
+                        <span class="lt"></span>
+                        <span class="rt"></span>
+                    </div>                  
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

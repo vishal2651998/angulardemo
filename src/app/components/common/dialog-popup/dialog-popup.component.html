@@ -1,0 +1,26 @@
+<p-dialog [header]="false" [(visible)]="displayPopup" [modal]="true" styleClass="p-fluid logoutPopup-prime"
+  [style]="{width: '50vw'}">
+
+  <div class="row col-lg-12 col-md-12 col-sm-12 logout-dialog-main-container">
+    <div class="col col-lg-5 col-md-5 col-sm-5"
+      style="background-color: #332b3f;height:300px;position: relative;padding: 0px;">
+
+      <div class="vertical-center">
+        <img src="{{bannerPath}}">
+      </div>
+
+    </div>
+    <div class="col col-lg-7 col-md-7 col-sm-7" style="background-color: #fff;height:300px;">
+      <div class="logout-right-container">
+        <div class="inner-border-container vertical-center">
+          <div class="right-side-text-container">
+            {{content}}
+          </div>
+          <div (click)="closewindowPopup()" class="btn-logout-output">{{buttonName}}</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</p-dialog>

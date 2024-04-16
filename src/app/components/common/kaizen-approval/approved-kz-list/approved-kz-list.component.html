@@ -1,0 +1,110 @@
+<div class="approved-list-container">
+    
+    <div class="approved-list">
+
+        <div class="approved-list-row row" *ngFor="let item of items">
+            <div  class="row col-lg-12 col-md-12 col-sm-12  margin0 padding0" (click)="actionClick(item.docData.id)">
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <div class="col-kz-1">
+                        <span class="profile-img">
+                            <img onerror="this.src='assets/images/thumb_profile_image.png'" [src]="item.docData.createdByProfileImg" >
+                        </span>
+                        <span class="name-text overflow-text">{{item.docData.createdBy}}</span>
+                        <span class="desg-text overflow-text">{{item.docData.kaizenArea}}</span>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <div class=" col-kz-2">
+                        <div class="inner-row">
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-name-gray-icon.png" ></div>
+                                <div class="kz-col-rt place-title">Kaizen Name</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-lt">&nbsp;</div>
+                                <div class="kz-col-rt cont-text">{{item.docData.title}}</div>                           
+                            </div>                        
+                        </div>
+                        <div class="inner-row">
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-unit-gray-icon.png" ></div>
+                                <div class="kz-col-rt place-title">Unit</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-lt">&nbsp;</div>
+                                <div *ngIf="item.docData.kaizenUnit ==''" class="kz-col-rt cont-text">-</div>                           
+                                <div *ngIf="item.docData.kaizenUnit !=''" class="kz-col-rt cont-text">{{item.docData.kaizenUnit}}</div>                           
+                            </div>                        
+                        </div>  
+                    </div>                      
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <div class=" col-kz-3">
+                        <div class="inner-row">
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-model-gray-icon.png" ></div>
+                                <div class="kz-col-rt place-title">Model</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-lt">&nbsp;</div>
+                                <div *ngIf="item.docData.modelName ==''" class="kz-col-lt">-</div>
+                                <div *ngIf="item.docData.modelName !=''" class="kz-col-rt cont-text">{{item.docData.modelName}}</div>                           
+                            </div>                        
+                        </div>
+                        <div class="inner-row">
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-reg-gray-icon.png" ></div>
+                                <div class="kz-col-rt place-title">SI. No.</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-lt">&nbsp;</div>
+                                <div *ngIf="item.docData.kaizenSiNo ==''" class="kz-col-rt cont-text">-</div>                           
+                                <div *ngIf="item.docData.kaizenSiNo !=''" class="kz-col-rt cont-text">{{item.docData.kaizenSiNo}}</div>                           
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <div class=" col-kz-4">
+                        <div class="inner-row">
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-reg-gray-icon.png" ></div>
+                                <div class="kz-col-rt place-title">Reg# .NIA</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-lt">&nbsp;</div>
+                                <div *ngIf="item.docData.regNoNia ==''" class="kz-col-rt cont-text">-</div>                           
+                                <div *ngIf="item.docData.regNoNia !=''" class="kz-col-rt cont-text">{{item.docData.regNoNia}}</div>                           
+                            </div>                        
+                        </div>
+                        <div class="inner-row">
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-territory-gray-icon.png" ></div>
+                                <div class="kz-col-rt place-title">Territory</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-lt">&nbsp;</div>
+                                <div *ngIf="item.docData.territory ==''" class="kz-col-rt cont-text">-</div>                           
+                                <div *ngIf="item.docData.territory !=''" class="kz-col-rt cont-text">{{item.docData.territory}}</div>                           
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-4"> 
+                    <div class="col-kz-5">
+                        <div class="notes-row">                   
+                            <div class="kz-row-one">
+                                <div class="kz-col-lt"><img src="assets/images/kaizen/k-notes-icon.png" ></div>
+                                <div class="kz-col-rt title-text-1">Head office notes</div>
+                            </div>
+                            <div class="kz-row-two">
+                                <div class="kz-col-rt title-text-2" [innerHTML]="item.docData.commentNotes"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

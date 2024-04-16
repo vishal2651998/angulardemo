@@ -1,0 +1,1498 @@
+
+
+
+<div class="landing-page-container" id="parts">
+    <div class="container-fluid">
+      <div class=" wrapper-threadpage">
+        <div class="container-fluid" id="content" style="height: 100vh;">
+            <div *ngIf="!hideNavs" id="header">
+                <app-header [pageData]="headerData"></app-header>
+            </div>
+<div *ngIf="!hideNavs" class="left-section">
+    <div class="first-left-width">
+        <nav id="nav-sidebar">
+            <app-sidebar [pageData]="sidebarActiveClass" accessModule="headquarters"
+                (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+        </nav>
+    </div>
+</div>
+
+<div class="prob-index split-sec1 right-section custom-font-size">
+    <div class="hq-head" style="padding-left: 25px;" >
+        <div class="hq-head-row-0" *ngIf="!hideBreadCrumbs">
+            <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="level && subLevel && hideNavs" class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span>
+            <img *ngIf="level && subLevel && hideNavs" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="level && subLevel && hideNavs" class="hq-head-breadcrumb-text cursor" (click)="back('Region')">{{headQuarterService.sublevelName}}</span>
+            <span *ngIf="!level && !subLevel && hideNavs" class="hq-head-breadcrumb-text cursor" (click)="back('allShops')">All Shops</span>
+            <img class="hq-head-breadcrumb-img" *ngIf="hideNavs" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="hideNavs && hideNavs" class="hq-head-breadcrumb-text cursor">{{headQuarterService.currentShopName | titlecase}}</span>
+            <!-- <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+            <!-- <span class="hq-head-breadcrumb-text">{{featuredActionName}}</span> -->
+            <img class="hq-head-breadcrumb-img" *ngIf="hideNavs" src="assets/images/hq/hq-bc.png" alt="" />
+            <!-- <span *ngIf="!hideNavs" class="breadcrumb-item" style="cursor: pointer;" routerLink="../../"><a>Headquarters</a></span>
+            <img *ngIf="!hideNavs" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+            <span *ngIf="!hideNavs" class="hq-head-breadcrumb-text cursor" style="cursor: pointer;" routerLink="../../all-users">Users</span>
+            <img *ngIf="!hideNavs" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="hideNavs" class="hq-head-breadcrumb-text cursor" style="cursor: pointer;" routerLink="../../users">Users</span>
+            <img *ngIf="hideNavs" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <!-- <span class="hq-head-breadcrumb-text cursor" style="cursor: pointer;" aria-current="page">User Profile</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+            <span class="hq-head-breadcrumb-text cursor" style="cursor: pointer;" aria-current="page">{{userData?.firstName}} {{userData?.lastName}}</span>
+        </div>
+        <div class="hq-head-row-0" *ngIf="hideBreadCrumbs">
+            <span class="hq-head-breadcrumb-text cursor" style="cursor: pointer;" routerLink="../../all-users">Users</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span class="hq-head-breadcrumb-text cursor" style="cursor: pointer;" aria-current="page">{{userData?.firstName}} {{userData?.lastName}}</span>
+        </div>
+        <!-- <div class="hq-head-row-1">
+            <img class="hq-head-img" src="../../../../assets/images/shop/shop-icon.png" alt="" />
+            <span class="hq-head-text">{{headQuarterService.currentShopName | titlecase}} (ID #{{headQuarterService.currentShopId}})</span>
+        </div> -->
+
+    </div>
+    <!-- <nav aria-label="breadcrumb">
+        <ol [ngClass]="{'pl-0':hideNavs}" class="breadcrumb">
+         
+        </ol>
+    </nav> -->
+    <div [ngClass]="{'pl-0':hideNavs}" class="policies-head d-flex align-items-center justify-content-between">
+        <div class="main-title">
+            <img width="20px" height="21px" src="assets/images/service-provider/user-black.png" alt="">
+            <h3 class="page-title">User Profile</h3>
+        </div>
+        <!-- <div *ngIf="selectedSectionId == 1" class="ahr-col list-map text-right cursor">
+            <span (click)="shopView('map')" [ngClass]="{'active' : !listView}" class="map"></span>
+      <span (click)="shopView('list')" [ngClass]="{ 'active' : listView}" class="list"></span>
+        </div> -->
+        <div class="">
+                <span style="font-size: 14px;"><span style="color: #999999;margin-right: 4px;">Active date:</span><span style="font-weight: 600;">March 8, 2024</span></span>
+                <span style="font-size: 14px;padding-left: 20px;"><span style="color: #999999;">Status</span>
+                    <span *ngIf="userData?.isActive" style="padding: 5px;border-radius: 35px;padding: 4px;padding-left: 10px;padding-right: 10px;background-color: green;margin-left: 7px;color:white">
+                        <img style="margin-bottom: 2px; margin-right: 4px;" src="assets/images/hq/white-check.png"><span>Active</span>
+                    </span>
+
+                    <span *ngIf="userData && !userData?.isActive" style="padding: 5px;border-radius: 35px;padding: 4px;padding-left: 10px;padding-right: 10px;background-color: #ff2e2e;margin-left: 7px;color:white">
+                        <img style="margin-bottom: 2px; margin-right: 4px;" src="assets/images/hq/white-cross.png"><span>Inactive</span>
+                    </span>
+                </span>
+        </div>
+    </div>
+    <div class="loading-small-screen-scroll center" align="center" *ngIf="loading"><img
+        src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+    <div *ngIf="pageLoading" class="loading-small-screen-scroll trst" align="center" style="position: fixed;">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+    <div class="prob-new" style="display: flex; flex-wrap: wrap;">
+        <ng-container>
+            <div class="col-lg-2" [ngClass]="{'pl-0':hideNavs}" style="padding-left: 24px;padding-right: 25px;">
+                <div style="height: calc(100vh - 130px ); padding-top:17px !important;" [perfectScrollbar]="sconfig"
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black custom-margin-gallery p-0 w-100">
+                    <div *ngFor="let sec of sections; let i = index;"
+                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+                        <div [ngClass]="selectedSectionId == sec.id ? 'select-nav-menu' : 'hover-effect'" [ngStyle]="{'pointer-events': sec.name == 'Work Orders' ? 'none':''}"
+                            class="d-flex justify-content-between align-items-center cursor-pointer custom-padding-nav-menu"
+                            (click)="getSectionData(sec.id)">
+                            <div class="d-flex" style="width:90%;">
+                                <img style="object-fit: contain;margin: 1px 5px 0px 2px;" width="17px" height="17px"
+                                    [src]="selectedSectionId == sec.id ? sec.imgSeleted : sec.img ">
+                                <span
+                                    class="text-truncate {{selectedSectionId == sec.id ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}"
+                                    style="width:85%" data-toggle="tooltip" data-placement="top"
+                                    title="{{sec.name  | titlecase}}">{{sec.name
+                                    | titlecase}} </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row new-pro-cont user-profile-right-div col-lg-10 step1 mt-0" style="padding-left: 0;padding-right: 0;">
+                <div #container class="form-cont col-lg-12 w-100 ps" [perfectScrollbar]="sconfig" style="height: calc(100vh - 130px )!important;padding-right:20px;"  [ngStyle]="{'overflow-y': listView ? 'auto' : 'hidden' }" >
+                    <div *ngIf="selectedSectionId == 10 && listView">
+                        <div class="row p-0 custom-margin">
+                            <div class="col-sm-12 p-bottom-20 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple mt-0">
+                                            <div class="d-flex align-items-center job-activity-main">
+                                                <span class="bg-image pr-2">
+                                                    <img src="assets/images/user-profile/electric-circle.png" >&nbsp;
+                                                </span>
+                                                <span class="menu-name pr-2">Total Job Activity</span>
+                                                <p-dropdown class="p-drop-type4 ml-auto"  appendTo="body" [options]="orderOptions" [(ngModel)]="selectedOptions4" placeholder="" optionLabel="name" ></p-dropdown>
+                                            </div>
+                                            <!-- <div class="ahr-col list-map text-right cursor">
+                                                <span class="map"></span>
+                                                <span class="list"></span>
+                                              </div> -->
+                                        </div>
+                                        <div class="row m-0 p-0">
+                                            <div class="activity-custom-box">
+                                                <div class="d-flex align-items-center job-activity-box">
+                                                <div class="completed-box">
+                                                   <img src="assets/images/user-profile/tick-circle.png" alt="" srcset="">
+                                                </div>
+                                                   <div>
+                                                    <p class="completed-text">6</p>
+                                                    <p>Completed</p>
+                                                   </div>
+                                                </div>
+                                            </div>
+                                            <div class="activity-custom-box">
+                                                <div class="d-flex align-items-center job-activity-box">
+                                                    <div class="planner-box">
+                                                        <img src="assets/images/user-profile/board.png" alt="" srcset="">
+                                                    </div>
+                                                       <div>
+                                                        <p class="planned-text">5</p>
+                                                        <p>Planned</p>
+                                                       </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+            
+            
+                        <div class="row p-0 custom-margin">
+                            <div class="col-sm-12 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple">
+                                            <div>
+                                                <div class="menu-name-bar">
+                                                    <div class="d-flex">
+                                                        <span class="bg-image pr-2">
+                                                            <img src="assets/images/user-profile/clock-grey.png" alt="">
+                                                        </span>
+                                                        <span class="menu-name pr-2">Today's schedule</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div>
+                                                <span class="see-more-txt pr-1 cursor">VIEW MORE</span>
+                                                <span class="see-more-img">
+                                                    <img src="assets/images/user-profile/view-more.png" alt="">
+                                                </span>
+                                            </div> -->
+                                        </div>
+                                        <div class="icon-content-wrap d-flex">
+                                            <div class="icon-left-div">
+                                                <div class="img-div">
+                                                    <img src="assets/images/user-profile/ev-station-green.png">
+                                                </div>
+                                            </div>
+                                            <div class="right-content-div">
+                                                <div class="row m-0 p-0 pt-0 pt-3 border-bottom-bottom">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Post Date/Time" class="grey-text">Post Date/Time</p>
+                                                                <p title="Jan 4, 2024 4:24 PM">Jan 4, 2024 4:24 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/map.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Location" class="grey-text">Location</p>
+                                                                <p title="3070 Merk Rd SW, Atlanta, GA 30349" class="blue-text">3070 Merk Rd SW, Atlanta, GA 30349</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/ev-station-grey.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Make/Model" class="grey-text">Make/Model</p>
+                                                                <p title="EVBox, Troniq Modular">EVBox, Troniq Modular</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/setting-hand.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Facility Name" class="grey-text">Facility Name</p>
+                                                                <p title="Facility 1">Facility 1</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/problem-chat.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Problem" class="grey-text">Problem</p>
+                                                                <p title="Power issues while charging">Power issues while charging</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 pt-0 p-0">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quote due date" class="grey-text">Quote due date</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Service needed by" class="grey-text">Service needed by</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quoted on" class="grey-text">Quoted on</p>
+                                                                <p title="Jan 5 2024 5:26 PM">Jan 5 2024 5:26 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/sheild-tick.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="NEVI Funded" class="grey-text">NEVI Funded</p>
+                                                                <p title="No">No</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/status.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Status" class="grey-text">Status</p>
+                                                                <p title="Planned"><a class="main-btn status-btn status-bg">Planned</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6 only-view-btn">
+                                                        <div class="content-col">
+                                                            <div class="view-button-div"><a class="main-btn">View<img
+                                                                        src="assets/images/user-profile/eye-white.png" alt=""></a>
+                                                            </div>
+                                                        </div>
+            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-0 custom-margin">
+                            <div class="col-sm-12 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple">
+                                            <div>
+                                                <div class="menu-name-bar">
+                                                    <div class="d-flex">
+                                                        <span class="bg-image pr-2">
+                                                            <img src="assets/images/user-profile/calender-black.png" alt="">
+                                                        </span>
+                                                        <span class="menu-name pr-2">Rest of the week (Jan 9 - Jan 12, 2024)</span>
+            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span class="see-more-txt pr-1 cursor">VIEW MORE</span>
+                                                <span class="see-more-img">
+                                                    <img src="assets/images/user-profile/view-more.png" alt="">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div *ngFor="let a of ['1','2']; index as index" class="icon-content-wrap d-flex">
+                                            <div class="icon-left-div">
+                                                <div class="img-div">
+                                                    <img src="assets/images/user-profile/ev-station-green.png">
+                                                </div>
+                                            </div>
+                                            <div class="right-content-div">
+                                                <div class="row m-0 p-0 pt-0 pt-3 border-bottom-bottom">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Post Date/Time" class="grey-text">Post Date/Time</p>
+                                                                <p title="Jan 4, 2024 4:24 PM">Jan 4, 2024 4:24 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/map.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Location" class="grey-text">Location</p>
+                                                                <p title="3070 Merk Rd SW, Atlanta, GA 30349" class="blue-text">3070 Merk Rd SW, Atlanta, GA 30349</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/ev-station-grey.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Make/Model" class="grey-text">Make/Model</p>
+                                                                <p title="EVBox, Troniq Modular">EVBox, Troniq Modular</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/setting-hand.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Facility Name" class="grey-text">Facility Name</p>
+                                                                <p title="Facility 1">Facility 1</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/problem-chat.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Problem" class="grey-text">Problem</p>
+                                                                <p title="Power issues while charging">Power issues while charging</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 pt-0 p-0">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quote due date" class="grey-text">Quote due date</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Service needed by" class="grey-text">Service needed by</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quoted on" class="grey-text">Quoted on</p>
+                                                                <p title="Jan 5 2024 5:26 PM">Jan 5 2024 5:26 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/sheild-tick.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="NEVI Funded" class="grey-text">NEVI Funded</p>
+                                                                <p title="No">No</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/status.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Status" class="grey-text">Status</p>
+                                                                <p title="Planned"><a class="main-btn status-btn status-bg">Planned</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4 only-view-btn">
+                                                        <div class="content-col">
+                                                            <div class="view-button-div"><a class="main-btn">View<img
+                                                                        src="assets/images/user-profile/eye-white.png" alt=""></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-0 custom-margin">
+                            <div class="col-sm-12 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple">
+                                            <div>
+                                                <div class="menu-name-bar">
+                                                    <div class="d-flex">
+                                                        <span class="bg-image pr-2">
+                                                            <img src="assets/images/user-profile/calender-black.png" alt="">
+                                                        </span>
+                                                        <span class="menu-name pr-2">Next Week (Jan 15 - Jan 19, 2024)</span>
+            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span class="see-more-txt pr-1 cursor">VIEW MORE</span>
+                                                <span class="see-more-img">
+                                                    <img src="assets/images/user-profile/view-more.png" alt="">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div *ngFor="let a of ['1','2']; index as index" class="icon-content-wrap d-flex">
+                                            <div class="icon-left-div">
+                                                <div class="img-div">
+                                                    <img src="assets/images/user-profile/ev-station-green.png">
+                                                </div>
+                                            </div>
+                                            <div class="right-content-div">
+                                                <div class="row m-0 p-0 pt-0 pt-3 border-bottom-bottom">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Post Date/Time" class="grey-text">Post Date/Time</p>
+                                                                <p title="Jan 4, 2024 4:24 PM">Jan 4, 2024 4:24 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/map.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Location" class="grey-text">Location</p>
+                                                                <p title="3070 Merk Rd SW, Atlanta, GA 30349" class="blue-text">3070 Merk Rd SW, Atlanta, GA 30349</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/ev-station-grey.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Make/Model" class="grey-text">Make/Model</p>
+                                                                <p title="EVBox, Troniq Modular">EVBox, Troniq Modular</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/setting-hand.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Facility Name" class="grey-text">Facility Name</p>
+                                                                <p title="Facility 1">Facility 1</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/problem-chat.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Problem" class="grey-text">Problem</p>
+                                                                <p title="Power issues while charging">Power issues while charging</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 pt-0 p-0">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quote due date" class="grey-text">Quote due date</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Service needed by" class="grey-text">Service needed by</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quoted on" class="grey-text">Quoted on</p>
+                                                                <p title="Jan 5 2024 5:26 PM">Jan 5 2024 5:26 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/sheild-tick.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="NEVI Funded" class="grey-text">NEVI Funded</p>
+                                                                <p title="No">No</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/status.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Status" class="grey-text">Status</p>
+                                                                <p title="Planned" ><a class="main-btn status-btn status-bg">Planned</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2 only-view-btn">
+                                                        <div class="content-col">
+                                                            <div class="view-button-div"><a class="main-btn">View<img
+                                                                        src="assets/images/user-profile/eye-white.png" alt=""></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-0 custom-margin">
+                            <div class="col-sm-12 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple">
+                                            <div>
+                                                <div class="menu-name-bar">
+                                                    <div class="d-flex">
+                                                        <span class="bg-image pr-2">
+                                                            <img src="assets/images/user-profile/calender-black.png" alt="">
+                                                        </span>
+                                                        <span class="menu-name pr-2">Beyond next week</span>
+            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <span class="see-more-txt pr-1 cursor">VIEW MORE</span>
+                                                <span class="see-more-img">
+                                                    <img src="assets/images/user-profile/view-more.png" alt="">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div *ngFor="let a of ['1','2']; index as index" class="icon-content-wrap d-flex">
+                                            <div class="icon-left-div">
+                                                <div class="img-div">
+                                                    <img src="assets/images/user-profile/ev-station-green.png">
+                                                </div>
+                                            </div>
+                                            <div class="right-content-div">
+                                                <div class="row m-0 p-0 pt-0 pt-3 border-bottom-bottom">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Post Date/Time" class="grey-text">Post Date/Time</p>
+                                                                <p title="Jan 4, 2024 4:24 PM">Jan 4, 2024 4:24 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/map.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Location" class="grey-text">Location</p>
+                                                                <p title="3070 Merk Rd SW, Atlanta, GA 30349" class="blue-text">3070 Merk Rd SW, Atlanta, GA 30349</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/ev-station-grey.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Make/Model" class="grey-text">Make/Model</p>
+                                                                <p title="EVBox, Troniq Modular">EVBox, Troniq Modular</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/setting-hand.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Facility Name" class="grey-text">Facility Name</p>
+                                                                <p title="Facility 1">Facility 1</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/problem-chat.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Problem" class="grey-text">Problem</p>
+                                                                <p title="Power issues while charging">Power issues while charging</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row m-0 pt-0 p-0">
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quote due date" class="grey-text">Quote due date</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Service needed by" class="grey-text">Service needed by</p>
+                                                                <p title="Jan 6, 2024">Jan 6, 2024</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/calender-small-dark.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Quoted on" class="grey-text">Quoted on</p>
+                                                                <p title="Jan 5 2024 5:26 PM">Jan 5 2024 5:26 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/sheild-tick.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="NEVI Funded" class="grey-text">NEVI Funded</p>
+                                                                <p title="No">No</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="content-col">
+                                                            <div class="img-div">
+                                                                <img src="assets/images/user-profile/status.png">
+                                                            </div>
+                                                            <div class="content-div">
+                                                                <p title="Status" class="grey-text">Status</p>
+                                                                <p title="Planned"><a class="main-btn status-btn status-bg">Planned</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-1 only-view-btn">
+                                                        <div class="content-col">
+                                                            <div class="view-button-div"><a class="main-btn">View<img
+                                                                        src="assets/images/user-profile/eye-white.png" alt=""></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-0 custom-margin">
+                            <div class="col-sm-12 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple">
+                                            <div>
+                                                <div class="menu-name-bar">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="bg-image pr-2">
+                                                            <img src="assets/images/user-profile/training.png" alt="">
+                                                        </span>
+                                                        <span class="menu-name pr-2">Subscribed Training</span>
+            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div>
+                                                <span class="see-more-txt pr-1 cursor">VIEW MORE</span>
+                                                <span class="see-more-img">
+                                                    <img src="assets/images/user-profile/view-more.png" alt="">
+                                                </span>
+                                            </div> -->
+                                        </div>
+                                        <div>
+                                            <div class="d-flex flex-wrap">
+                                                <div class="information-col">
+                                                    <h6><b>ABB DC Fast Charger Product Line</b></h6>
+                                                    <ul> 
+                                                        <li><img class="training-type"
+                                                                src="assets/images/service-provider/seminar-collabtic.png"><span
+                                                                class="grey-text">Training Type:</span> Product</li>
+                                                        <li><img src="assets/images/user-profile/calender-small-dark.png"><span
+                                                                class="grey-text">Date:</span> Dec 28, 2023</li>
+                                                        <li><img src="assets/images/user-profile/course.png"><span
+                                                                class="grey-text">Course:</span> 1 of 2</li>
+                                                        <li><img src="assets/images/user-profile/stack-grey.png"><span
+                                                                class="grey-text">Track:</span> EV Chargers</li>
+                                                    </ul>
+                                                </div>
+                                                <div class="information-col">
+                                                    <h6><b>Software Related Challenges</b></h6>
+                                                    <ul>
+                                                        <li><img class="training-type"
+                                                                src="assets/images/service-provider/seminar-collabtic.png"><span
+                                                                class="grey-text">Training Type:</span> Product</li>
+                                                        <li><img src="assets/images/user-profile/calender-small-dark.png"><span
+                                                                class="grey-text">Date:</span> Dec 28, 2023</li>
+                                                        <li><img src="assets/images/user-profile/course.png"><span
+                                                                class="grey-text">Course:</span> 1 of 2</li>
+                                                        <li><img src="assets/images/user-profile/stack-grey.png"><span
+                                                                class="grey-text">Track:</span> EV Chargers</li>
+                                                    </ul>
+                                                </div>
+                                             </div>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-0 events-sec">
+                            <div class="col-sm-12 px-0">
+                                <div class="example-headers-align" multi>
+                                    <div class="custom-panel">
+                                        <div class="disable_ripple">
+                                            <div>
+                                                <div class="menu-name-bar">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="bg-image pr-2">
+                                                            <img src="assets/images/user-profile/event-star.png" alt="">
+                                                        </span>
+                                                        <span class="menu-name pr-2">Events</span>
+            
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- <div>
+                                                <span class="see-more-txt pr-1 cursor">VIEW MORE</span>
+                                                <span class="see-more-img">
+                                                    <img src="assets/images/user-profile/view-more.png" alt="">
+                                                </span>
+                                            </div> -->
+                                        </div>
+                                        <div>
+                                            <div class="d-flex flex-wrap">
+                                                <div class="information-col mb-0">
+                                                    <h6><b>New V2X technology and Ultra-Fast innovations</b></h6>
+                                                    <ul>
+                                                        <li><img class="training-type"
+                                                                src="assets/images/service-provider/seminar-collabtic.png">Jan 2, 2023</li>
+                                                        <li><img src="assets/images/user-profile/calender-small-dark.png">10 AM - 12 PM</li>
+                                                        <li><img src="assets/images/user-profile/course.png">3070 Merk Rd SW, Atlanta, GA 30349</li>
+                                                    </ul>
+                                                </div>
+                                               
+                                             </div>
+                                       </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="selectedSectionId == 2 && userData" >
+                    <div class="info-card-wrap">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img src="assets/images/user-profile/personal-info.png" alt="">Personal
+                                Info (ID# {{userData?.userId}}) </h5>
+                            <a (click)="openUserPOPUP('edit')"  class="edit-btn"><img src="assets/images/customers/edit-icon.png">Edit</a>
+                        </div>
+                        <div class="info-card-content pt-4 pb-3">
+                            <div class="row p-0 m-0 d-flex">
+                                <div class="col-md-5 user-info">
+                                    <div class="user-info-inner pl-2 d-flex align-items-center">
+                                        <div class="user-img-div">
+                                            <div class="img-div">
+                                                <img [src]="userData?.profileImage" alt="">
+                                            </div>
+                                            <span class="small-img cursor-pointer" (click)="updateGrapic()">
+                                                <img src="assets/images/profile/camera.png" alt="">
+                                            </span>
+                                        </div> 
+                                        <div class="user-content-div">
+                                            <h6 class="name">{{userData?.firstName}} {{userData?.lastName}}</h6>
+
+                                            <div class="col-md-12 contact-info m-0 p-0">
+                                                <ul class="contact-ul  w-100">
+                                                    <li>
+                                                        <img src="assets/images/user-profile/home-green.png" alt="">
+                                                        <span style="display: inline-block;vertical-align: top;width: calc(100% - 37px);" *ngIf="userData?.address1 != '' || userData?.address2 != '' || userData?.city != '' || userData?.state != '' || userData?.zip != '' ">
+                                                            <div>
+                                                                {{userData?.address1 ? userData?.address1 : ''}}{{userData?.address1 && userData?.address2 ? ',' : ''}} {{userData?.address2 ? userData?.address2 : ''}} 
+                                                            </div>
+                                                            <div>
+                                                                {{userData?.city ? userData?.city  : ''}}{{userData?.city && userData?.state ? ',' : ''}} {{' ' + userData?.state ? userData?.state : ''}}{{userData?.zip ? ' ' + userData?.zip: ''}} 
+                                                            </div>
+                                                        </span>
+                                                        <span *ngIf="userData?.address1 == '' && userData?.address2 == '' && userData?.city == '' && userData?.state == '' && userData?.zip == '' ">-</span>
+                                                    </li>
+                                                    <li><img src="assets/images/customers/cemail-circle-icon.png"
+                                                            alt=""><span style="display: inline-block;vertical-align: top;width: calc(100% - 37px);">{{userData?.email ? userData?.email : "-"}}</span><i *ngIf="false"
+                                                            class="grey-text">None</i></li>
+                                                    <li><img src="assets/images/customers/cphone-circle-icon.png" alt="">{{userData?.dialCode ? userData?.dialCode : ""}}{{userData?.phoneNo ? userData?.phoneNo : "-"}}</li>
+                                                </ul>
+                                            </div>
+
+                                            <!--<p  style="margin-bottom: 10px;"class="grey-text">{{userData?.businessRoleStr ? userData?.businessRoleStr : "-"}}</p>
+                                            <p style="margin-bottom: 10px;">Job Type: {{userData?.businessRoleStr ? userData?.businessRoleStr : "-"}}</p>
+                                            <p style="margin-bottom: 10px;">Department: {{userData?.deptName ? userData?.deptName : "-"}}</p>
+                                            <p style="margin-bottom: 10px;">Member since: <span class="purple-text">{{userData?.createdOn | date: 'MMMM  y'}}</span></p>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-2 map-info p-0">
+                                    <div class="map-div" *ngIf="!isBlank">
+                                        <iframe width="100%" height="140px" id="gmap_canvas" [src]="googleMapInfo"
+                                            frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                                    </div>
+                                    <div  *ngIf="isBlank" class="map-div d-flex align-content-center justify-content-center border-round" style="width: 100%;height: 140px;">
+                                       <div class="d-flex justify-content-center align-items-center">
+                                           <img style="height: 37px;" src="assets/images/user-profile/grey-loc.png" alt="">
+                                       </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5 contact-info">
+                                    <div class="d-flex col-12 p-0">
+                                    <div class="d-flex col-6 pl-1 pr-1">
+                                        <div class="position-relative">
+                                            <div class="d-flex align-items-center">
+                                                <img class="p-2 img-class" src="assets/images/user-profile/network.png">
+                                                <span style="color: #9b9a9a;">{{level1?.name}}</span>
+                                            </div>
+                                            <div class="box-data">
+                                                <span style="margin-left: 38px;color: black;">{{userData?.levelOneName ? userData?.levelOneName : "-" }}</span>
+                                            </div>
+                                
+                                        </div>
+                                    </div>
+        
+                                    <div class="d-flex col-6 pr-0 pl-1">
+                                        <div class="position-relative">
+                                            <div class="d-flex align-items-center">
+                                                <img class="p-2 img-class" src="assets/images/user-profile/network.png">
+                                                <span style="color: #9b9a9a;">{{level2?.name}}</span>
+                                            </div>
+                                            <div class="box-data">
+                                                <span style="margin-left: 38px;color: black;">{{userData?.levelTwoName ? userData?.levelTwoName : "-" }}</span>
+                                            </div>
+                                
+                                        </div>
+                                    </div>
+                                    </div>
+                                    <div class="d-flex col-12 p-0">
+                                    <div class="d-flex col-6 pl-1 pr-1">
+                                        <div class="position-relative">
+                                            <div class="d-flex align-items-center">
+                                                <img class="p-2 img-class" src="assets/images/user-profile/network.png">
+                                                <span style="color: #9b9a9a;">{{level3?.name}}</span>
+                                            </div>
+                                            <div class="box-data">
+                                                <span style="margin-left: 38px;color: black;">{{userData?.levelThreeName ? userData?.levelThreeName : "-" }}</span>
+                                            </div>
+                                
+                                        </div>
+                                    </div>
+        
+                                    <div class="d-flex col-6 pr-0 pl-1">
+                                        <div class="position-relative">
+                                            <div class="d-flex align-items-center">
+                                                <img class="p-2 img-class" src="assets/images/user-profile/location.png">
+                                                <span style="color: #9b9a9a;">Shop Name</span>
+                                            </div>
+                                            <div class="box-data">
+                                                <span class="shop-name-overlap" style="margin-left: 30px;color: black;" title="{{userData?.shopName}}">{{userData?.shopName ? userData?.shopName : "-" }}</span>
+                                            </div>
+                                
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <!--div class="row py-3 m-0 d-flex" style="border-top: solid #e3e3e3 1px;">
+                           
+                            <div class="d-flex col-3">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/network.png">
+                                        <span style="color: #9b9a9a;">{{level1?.name}}</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 36px;color: black;">{{userData?.levelOneName ? userData?.levelOneName : "-" }}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+
+                            <div class="d-flex col-3">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/network.png">
+                                        <span style="color: #9b9a9a;">{{level2?.name}}</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 36px;color: black;">{{userData?.levelTwoName ? userData?.levelTwoName : "-" }}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+
+                            <div class="d-flex col-3">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/network.png">
+                                        <span style="color: #9b9a9a;">{{level3?.name}}</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 36px;color: black;">{{userData?.levelThreeName ? userData?.levelThreeName : "-" }}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+
+                            <div class="d-flex col-3">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/location.png">
+                                        <span style="color: #9b9a9a;">Shop Name</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 36px;color: black;">{{userData?.shopName ? userData?.shopName : "-" }}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                        </div-->
+                    </div>
+
+                    <div class="info-card-wrap">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img src="assets/images/user-profile/profile-more-info.png" alt="">More User Info</h5>
+                            <a (click)="openUserPOPUP('edit', 'more')"  class="edit-btn"><img src="assets/images/customers/edit-icon.png">Edit</a>
+                        </div>                        
+                        <div class="row pt-3 pb-4 m-0 d-flex" style="border-top: solid #e3e3e3 1px;">
+                            <div class="d-flex col-12">
+                            <div class="d-flex col-3 pl-0">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/p-title.png">
+                                        <span style="color: #9b9a9a;">Title</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 36px;color: black;">{{userData?.title ? userData?.title : "-"}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            <div class="d-flex col-3">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/role.png">
+                                        <span style="color: #9b9a9a;">Business Role</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 36px;color: black;">{{userData?.businessRoleStr ? userData?.businessRoleStr : "-"}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            <div class="d-flex col-2">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/hq/Dept.png">
+                                        <span style="color: #9b9a9a;">Dept</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 35px;color: black;">{{userData?.deptName ? userData?.deptName : "-"}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            <div class="d-flex col-2">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center"> 
+                                        <img class="p-2 img-class" src="assets/images/shop/dealer-code.png">
+                                        <span style="color: #9b9a9a;">Emp ID#</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 35px;color: black;">{{userData?.empId ? userData?.empId : "-"}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            <div class="d-flex col-2">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/shop/stacked-rectangle.png">
+                                        <span style="color: #9b9a9a;">Account Type</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 34px;color: black;">{{userData?.userTypeStr ? userData?.userTypeStr : "-"}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            </div>
+                            <div class="d-flex col-12 mt-2">
+                            <div class="d-flex col-3 pl-0">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/manager.png">
+                                        <span style="color: #9b9a9a;">Manager</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 28px;color: black;">{{userData?.managerStr ? userData?.managerStr : "-"}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            <div class="d-flex col-3">
+                                <div class="position-relative">
+                                    <div class="d-flex align-items-center">
+                                        <img class="p-2 img-class" src="assets/images/user-profile/pro-date.png">
+                                        <span style="color: #9b9a9a;">Member Since</span>
+                                    </div>
+                                    <div class="box-data">
+                                        <span style="margin-left: 32px;color: black;">{{userData?.createdOn | date: 'MMMM  y'}}</span>
+                                    </div>
+                        
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card-wrap d-none">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img src="assets/images/user-profile/license.png" alt="">State License
+                            </h5>
+                            <a  class="edit-btn"><img src="assets/images/customers/edit-icon.png" alt="">Edit</a>
+                        </div>
+                        <div *ngIf="true" class="info-card-content" [perfectScrollbar]="sconfig">
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> Michigan</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> Florida</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> Massachusetts</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> Pennsylvania</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> North Carolina</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> Tennessee</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> San Diego</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">State Name:</span> New York</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Commercial</li>
+                                <li class="State"><span class="grey-text">Expiration date:</span> Feb 26, 2024</li>
+                            </ul>
+                        </div>
+                        <div *ngIf="false" class="info-card-content">
+                            <div class="listing-content state-listing  d-flex justify-content-center">
+                                <i class="grey-text nothing-show">Nothing to show</i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card-wrap d-none">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img class="membership-img"
+                                    src="assets/images/user-profile/membership.png" alt="">Memberships</h5>
+                            <a  class="edit-btn"><img src="assets/images/customers/edit-icon.png" alt="">Edit</a>
+                        </div>
+                        <div *ngIf="true" class="info-card-content" [perfectScrollbar]="sconfig">
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">Name:</span> Quality Council</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Basic</li>
+                                <li class="State"><span class="grey-text">Member Since:</span> Apr 22, 2023</li>
+                            </ul>
+                        </div>
+                        <div *ngIf="false" class="info-card-content">
+                            <div class="listing-content state-listing  d-flex justify-content-center">
+                                <i class="grey-text nothing-show">Nothing to show</i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="mb-3" *ngIf="domainId == '1'">
+                        <mat-accordion class="example-headers-align anouncement-panel" multi>
+                            <mat-expansion-panel expanded="true" class="custom-panel" style="border: 0; box-shadow: unset !important;border-radius: 15px ">
+                                <mat-expansion-panel-header class="disable_ripple border-0 py-0" style="height: unset;">
+                                    <mat-panel-title>
+                                        <div class="menu-name-bar">
+                                            <div class="d-flex align-items-center" style="padding-left: 8px;margin-top: 10px; ">
+                                                <span class="bg-image pr-2">
+                                                    <img src="assets/images/inspection-home/contact-list.png" class="bg-img"
+                                                        alt="">
+                                                </span>
+                                                <span class="pr-2 bold-20px" style="font-family: Roboto-Regular;">Contact for following Assessments</span>
+                                                <span class="announce-tooltip-icon" [autoClose]="true"
+                                                    placement="right" tooltipClass="announce-tooltip"
+                                                    triggers="click" ngbTooltip="Tooltip on right">
+                                                    <i class="pi pi-ellipsis-v"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                        <span class="see-more-txt pr-1" style="margin-top: 10px;">See More</span>
+                                        <span class="see-more-img" style="margin-top: 10px;">
+                                            <img src="assets/images/landing-page/see-more-ann-icon.png" alt="">
+                                        </span>
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                            
+                                <div class="attention-panel pt-0 pl-0 mb-3" style="border: 0;">
+                                    <div *ngIf="!isBlank" id="matrixTable"
+                                                  class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs box-table">
+                                                  <p-table #table [scrollable]="true" id="file-datatable"
+                                                  [columns]="gridStatusColumns" [value]="shopList"
+                                                  Class="thread-list-table shop-list-table"
+                                                  >
+                                                  <ng-template pTemplate="header" let-columns>
+                                                  </ng-template>
+                                                  <ng-template pTemplate="body" let-InspectionsList let-i="rowIndex">
+                                                      <tr routerLink="./detail/{{InspectionsList?.id}}" class="cursor">
+                                                          <td class="thl-col-1" style=" padding-left: 1rem !important;">
+                                                              <div class="p-table-col">
+                                                                  <div class="p-table-col">
+                                                                      <div class="d-flex align-items-center">
+                                                                             <img src="assets/images/landing-page/{{InspectionsList?.img}}" alt="">
+                                                                          <p style="    margin-left: 15px;font-size: 14px;font-weight: bold;" class="mb-1 loc-heading">{{InspectionsList?.name}}</p>
+                                                                      </div>
+                                                                      </div>
+                                                                     
+                                                              </div>
+                                                          </td>
+         
+                                                          <td class=" thl-col-3">
+                                                             <div class="d-flex align-items-center">
+                                                                 <div class="box-3 mt-1 blue-bg">
+                                                                 </div>
+                                                                 <div class=""  style="max-width: 60%;">
+                                                                            <p class="shop-id mb-2" style="font-weight: 700;font-size: 14px;">{{InspectionsList.laststatus}}</p>
+                                                                             <p style="font-size: 13px;color: #444444;margin:0">{{InspectionsList.id}}</p>
+                                                                 </div>
+                                                             </div>
+                                                         </td>
+         
+                                                        
+         
+                                                          
+                                                      </tr>
+                                                  </ng-template>
+         
+                                                  </p-table>
+                                              </div>
+                                    <div *ngIf="isBlank">
+                                    <div class="d-flex align-items-center justify-content-center " >
+                                        <div class="text-center py-3">
+                                            <img src="assets/images/landing-page/blank-croc.png" alt="">
+                                            <i>
+                                                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                                            </i> 
+                                        </div>
+                                    </div>
+                                </div>          
+                                 </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div> -->
+                    
+                    <div class="info-card-wrap card-ht "> 
+                        <app-user-profile-section [profileSectionData] = "profileCertificationData"></app-user-profile-section>
+                    </div>
+
+                    <div class="info-card-wrap "> 
+                        <app-user-profile-section [profileSectionData] = "profileTraningData"></app-user-profile-section>
+                    </div>
+
+                    <div class="info-card-wrap " style="margin-bottom: 50px;"> 
+                        <app-user-profile-section [profileSectionData] = "profileOrgData"></app-user-profile-section>
+                    </div>
+                    
+                    <div class="info-card-wrap d-none">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img src="assets/images/user-profile/union.png" alt="">Union</h5>
+                            <a  class="edit-btn"><img src="assets/images/customers/edit-icon.png" alt="">Edit</a>
+                        </div>
+                        <div *ngIf="true" class="info-card-content" [perfectScrollbar]="sconfig">
+                            <ul class="listing-content state-listing  d-flex">
+                                <li class="State-name"><span class="grey-text">Name:</span> Quality Council
+                                    Contractors</li>
+                                <li class="License"><span class="grey-text">License Type:</span> Basic</li>
+                                <li class="State"><span class="grey-text">Since:</span> Jul 19, 2023</li>
+                            </ul>
+                        </div>
+                        <div *ngIf="false" class="info-card-content">
+                            <div class="listing-content state-listing  d-flex justify-content-center">
+                                <i class="grey-text nothing-show">Nothing to show</i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-card-wrap training-info-card-wrap d-none">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img src="assets/images/user-profile/training.png" alt="">Training</h5>
+                            <a  class="edit-btn"><img src="assets/images/customers/edit-icon.png" alt="">Edit</a>
+                        </div>
+                        <div *ngIf="!isBlank" class="info-card-content pt-4">
+                            <div class="d-flex flex-wrap" style="    margin-left: 20px;" >
+                                <div class="information-col">
+                                    <h6><b>Volvo Company</b></h6>
+                                    <ul>
+                                        <li><img class="training-type"
+                                                src="assets/images/service-provider/seminar-collabtic.png"><span
+                                                class="grey-text">Training Type: </span> <span class="ml-1" >Product</span> </li>
+                                        <li><img src="assets/images/user-profile/calender-small-dark.png"><span
+                                                class="grey-text">Date: </span> <span class="ml-1">Dec 28, 2023</span></li>
+                                        <li><img src="assets/images/user-profile/course.png"><span
+                                                class="grey-text">Course: </span> <span class="ml-1">1 of 2</span></li>
+                                        <li><img src="assets/images/user-profile/stack-grey.png"><span
+                                                class="grey-text">Track: </span> <span class="ml-1">EV Chargers</span></li>
+                                    </ul>
+                                </div>
+                                <div class="information-col">
+                                    <h6><b>Software Related Challenges</b></h6>
+                                    <ul>
+                                        <li><img class="training-type"
+                                                src="assets/images/service-provider/seminar-collabtic.png"><span
+                                                class="grey-text">Training Type: </span> <span class="ml-1">Product</span></li>
+                                        <li><img src="assets/images/user-profile/calender-small-dark.png"><span
+                                                class="grey-text">Date: </span> <span class="ml-1">Dec 28, 2023</span></li>
+                                        <li><img src="assets/images/user-profile/course.png"><span
+                                                class="grey-text">Course: </span> <span class="ml-1">1 of 2</span></li>
+                                        <li><img src="assets/images/user-profile/stack-grey.png"><span
+                                                class="grey-text">Track: </span> <span class="ml-1">EV Chargers</span></li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div *ngIf="isBlank">
+                            <div class="d-flex align-items-center justify-content-center " >
+                                <div class="text-center py-3">
+                                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                                    <i>
+                                            <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                                    </i> 
+                                </div>
+                            </div>
+                        </div>  
+                    </div>
+
+                    <div class="info-card-wrap References-card-wrap table-card-wrap mb-0 d-none">
+                        <div class="info-card-ttl d-flex justify-content-between">
+                            <h5 class="ttl"><img src="assets/images/user-profile/references.png" alt="">References
+                            </h5>
+                            <a  class="edit-btn"><img src="assets/images/customers/edit-icon.png" alt="">Edit</a>
+                        </div>
+                        <div *ngIf="!isBlank" class="info-card-content" [perfectScrollbar]="sconfig">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Business Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Phone Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><b>Gareth Delany</b></td>
+                                        <td><a >Charge Zone</a></td>
+                                        <td>support@chargezone.com</td>
+                                        <td>+1 (634) 456-4573</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Andrew Balbirnie</b></td>
+                                        <td><a >Ather Energy</a></td>
+                                        <td>support@ather.energy.com</td>
+                                        <td>+1 (213) 444-8722</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Paul Stirling</b></td>
+                                        <td><a >EV Connect</a></td>
+                                        <td>support@evconnect.com</td>
+                                        <td>+1 (233) 456-1515</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Aaron Jones</b></td>
+                                        <td><a >BTCPower</a></td>
+                                        <td>support@btc.power.com</td>
+                                        <td>+1 (247) 456-1718</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Steven Taylor</b></td>
+                                        <td><a >Cloninger Automotive</a></td>
+                                        <td>support@cloninger.automotive.com</td>
+                                        <td>+1 (353) 456-6768</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="isBlank">
+                            <div class="d-flex align-items-center justify-content-center " >
+                                <div class="text-center py-3">
+                                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                                    <i>
+                                            <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                                    </i> 
+                                </div>
+                            </div>
+                        </div>  
+                    </div>
+                    </div>
+                    <div class="map-list-cont" [ngClass]="{ 'hide' : selectedSectionId != 1 || listView}">
+                        <div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': '100%'}"></div>
+                      </div>
+                </div>
+            </div>
+        </ng-container>
+
+    </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+</div>
+
+<div *ngIf="addUserVisible">
+    <!-- add user sidebar -->
+    <p-sidebar class="sidebar-cont form-type-fields" [(visible)]="addUserVisible" [baseZIndex]="100" position="right"
+        [dismissible]="false" modal="true">
+        <app-user-add *ngIf="addUserVisible" [userData] = "userModalData" (saveUser)="closeDrawer()"></app-user-add>
+    </p-sidebar>
+</div>
+
+
+    
+    
+    
+    
+    

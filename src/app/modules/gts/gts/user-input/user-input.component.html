@@ -1,0 +1,46 @@
+<div class="heading d-flex align-items-center">
+  <img src="assets/images/gts/input.png" class="mr-2" alt="Input">
+  <span>User Provided Inputs</span>
+</div>
+
+<p-card id="step" *ngFor="let input of userInputs">
+  <div class="field">
+    <div class="w-100 d-flex justify-content-between">
+      <label for="username1" class="text-dark">{{ input.authorInput }}</label>
+      <i style="color: #b5b5b5;" *ngIf="input.isRequired">Required</i>
+    </div>
+
+    <div *ngIf="input.userInput == 1">
+      <input id="username1" *ngIf="!input.minValue || !input.maxValue" type="text"
+        [(ngModel)]="input.userActionValue" (blur)="validateInputValue($event, input)" pInputText />
+
+      <span class="w-100 p-inputnumber p-component">
+        <div class="inputNumber">
+          <!--<div class="prebutton" *ngIf="input.unitValue != '' && input.unitValue == 'Volts'">
+            <img src="assets/images/gts/bolt.png" alt="">
+          </div>-->
+          <input placeholder="Enter {{input.unitValue}}" class="p-inputnumber-input p-inputtext p-component p-filled"
+            *ngIf="input.minValue || input.maxValue" (blur)="validateInputValue($event, input)"
+            [(ngModel)]="input.userActionValue" inputId="minmaxfraction" type="tel" />
+          <div class="afterButton" *ngIf="input.unitValue != ''">
+            {{input.unitValue}}
+          </div>
+        </div>
+      </span>
+      <span *ngIf="processSteps.isValidate == false">
+        <p class="text-danger">
+          Please enter a valid value between {{input.minValue}} and {{input.maxValue}}
+        </p>
+      </span>
+    </div>
+
+    <p-dropdown appendTo="body" *ngIf="input.userInput == 2" [options]="input.dropDownValues" placeholder="Select"
+      [(ngModel)]="input.userActionValue" (onChange)="updateValue($event, input)" styleClass="w-100">
+    </p-dropdown>
+
+    <div *ngIf="input.userInput == 3">
+      <app-dynamic-attachment class="attachment-file" [hideCloud] ="true" [dataId]="processSteps.contentId" [fieldId]="input.userInputId" [action]="manageAction" [apiData]="gtsApi.postApiData" (uploadedItems)="attachments($event, input)" (processStepsEnableUpdate)="setUpdateProcessStepEnable($event)"></app-dynamic-attachment>
+      <app-dynamic-attachment-view *ngIf="input.view" [dataId]="processSteps.contentId" [fieldId]="input.userInputId" [apiData]="gtsApi.postApiData" [action]="EditAttachmentAction" [access]="pageAccess" [attachments]="input.userAttachments" (setProcessStepEnable)="setUpdateProcessStepEnable($event)"></app-dynamic-attachment-view>
+    </div>
+  </div>
+</p-card>

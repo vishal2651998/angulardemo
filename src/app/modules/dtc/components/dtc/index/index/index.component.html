@@ -1,0 +1,95 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="prob-index split-sec1">
+    <div class="part-list-head sib-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt dtc-head-txt" *ngIf="!msTeamAccess">{{title}}</span>
+        </div>
+        <div class="prob-head-col download-head-col cursor" (click)="downloadDTC(empty, 'template')">Download Template</div>
+    </div>
+    <div class="probing-content cbt-content part-content dtc-content-new part-right-side-none">
+        <div *ngIf="loading" class="cust-loader dtc-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        <div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader"></div>
+        <div class="prob-list-cont">
+            <div class="documents-grid-row documents-grid-row-new" [style.height]="'calc(100vh - 145px)'">
+                <div *ngIf="!loading" id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+                    <p-table #table [columns]="dtcListColumns" [scrollable]="true" [totalRecords]="dtcList.length" id="file-datatable" class="file-datatable thread-list-table dtc-list-table kb-list-table" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" [value]="dtcList" [scrollHeight]="'calc(100vh - 225px)'" (scroll)="scroll($event)">
+                        <ng-template pTemplate="header" let-columns>
+                            <tr *ngIf="!displayNoRecords" >
+                                <th *ngFor="let col of columns" class="{{col.columnpclass}}">    
+                                    {{col.header}}
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-dtcList let-i="rowIndex">
+                            <tr class="cursor" id="{{dtcList.id}}">
+                                <td class="w1 thl-col-1 col-sticky">
+                                    <div class="p-table-col">
+                                        <span class="dtc-type" title="{{dtcList.name}">{{dtcList.name}}</span>        
+                                    </div>
+                                </td>
+                                <td class="w2 thl-col-2">
+                                    <div class="p-table-col"><span class="dtc-count">{{dtcList.dtc_count}}</span></div>
+                                </td>
+                                <td class="dw3 thl-col-3">
+                                    <div class="p-table-col">
+                                        <span class="action-dtc upload hide">Upload DTC File (xls)</span>
+                                        <div class="upload-col attachment-file media-attachment-file files action-dtc upload cursor">
+                                            <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                                                [chooseLabel]="chooseLable"
+                                                [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                                                accept=".xls,.xlsx"
+                                                (onSelect)="onUpload($event, dtcList, i)" 
+                                                >
+                                            </p-fileUpload>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="dw4 thl-col-4">
+                                    <div class="p-table-col">
+                                        <span *ngIf="dtcList.download_flag" class="action-dtc download" (click)="downloadDTC(dtcList, 'emission')">Download DTC</span>
+                                        <span *ngIf="!dtcList.download_flag" class="empty-dtc">No File Present</span>
+                                    </div>
+                                </td>
+                                <td class="w5 thl-col-5">
+                                    <div class="p-table-col">
+                                        <span class="action-dtc view" [ngClass]="{'active': dtcList.view_flag, 'inactive': !dtcList.view_flag}" (click)="manageErrorCodes(dtcList)">View DTC</span>
+                                    </div>
+                                </td>
+                                <td class="w6 thl-col-6">
+                                    <div class="p-table-col"><span class="uploaded-by">{{dtcList.uploaded_by}}</span></div>
+                                </td>
+                                <td class="w7 thl-col-7">
+                                    <div class="p-table-col"><span class="uploaded-on">{{dtcList.uploaded_on}}</span></div>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="attachment-progress  refer-info upload-info attachment-info">   
+    <p-dialog *ngIf="attachmentProgress" class="attachment-uploading" header="{{successMsg}}" [(visible)]="attachmentProgress" [(closeOnEscape)]="closeDialog" [(modal)]="attachmentProgress">
+        <div class="attachment-cont">
+            <div class="upload-items attachment-row {{file.fileExtn}}" *ngFor="let file of attachments; let i = index;">
+                <div class="{{file.fileExtn}}">
+                    <div class="attachment-col bg-col doc-bg" [ngStyle]="{'background-image': 'url(' + file.thumbFilePath + ')'}"></div>
+                    <div class="attachment-col cont-col">
+                        <div class="caption" [ngClass]="{'active': progress == 100}">
+                            <span>{{file.name}}</span>
+                        </div>
+                        <p-progressBar class="media-bar" mode="determinate" [showValue]="false" [value]="progress"></p-progressBar>
+                        <div class="progress">
+                            <span class="progress-col info">{{progress}}%</span>
+                            <span class="progress-col size text-right">{{file.fileSize}}</span>
+                        </div>                        
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>

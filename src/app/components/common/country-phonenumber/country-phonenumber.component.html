@@ -1,0 +1,66 @@
+<div class="c-form-phone" *ngIf="loading && access == 'phone'">
+	<form [formGroup]="phoneForm">
+		<div class="wrapper phoneInput">
+			<ngx-intl-tel-input matInput [class]="custom" 
+				[preferredCountries]="preferredCountries"
+				[enableAutoCountrySelect]="true" 
+				[enablePlaceholder]="true" 
+				[searchCountryFlag]="true"
+				[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" 
+				[selectFirstCountry]="false"
+				[selectedCountryISO]="selectedCountryISO" 
+				[phoneValidation]="true"							
+				[separateDialCode]="true"
+				[maxLength]="15"					
+				(countryChange)="onCountryChange($event)"
+				[numberFormat]="PhoneNumberFormat.National" 
+				name="phone" #phone formControlName="phone" >
+			</ngx-intl-tel-input>
+		</div>	
+	</form>
+</div>
+<div class="c-form-phone" *ngIf="loading && access == 'business'">
+	<form  [formGroup]="businessForm">
+		<div class="wrapper businessInput">
+			<ngx-intl-tel-input matInput [class]="custom" 
+				[preferredCountries]="preferredCountries"
+				[enableAutoCountrySelect]="true" 
+				[enablePlaceholder]="true" 
+				[searchCountryFlag]="true"
+				[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" 
+				[selectFirstCountry]="false"
+				[selectedCountryISO]="selectedCountryISO" 
+				[phoneValidation]="true"							
+				[separateDialCode]="true"
+				[maxLength]="15"					
+				(countryChange)="onCountryChange($event)"
+				[numberFormat]="PhoneNumberFormat.National" 
+				name="business" #business formControlName="business" >
+			</ngx-intl-tel-input>
+		</div>	
+	</form>
+</div>
+<div class="c-form-phone" *ngIf="loading && access == 'landline'">
+	<form  [formGroup]="landlineForm">
+		<div class="wrapper landlineInput">
+			<ngx-intl-tel-input matInput [class]="custom" 
+				[preferredCountries]="preferredCountries"
+				[enableAutoCountrySelect]="true" 
+				[enablePlaceholder]="true" 
+				[searchCountryFlag]="true"
+				[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" 
+				[selectFirstCountry]="false"
+				[selectedCountryISO]="selectedCountryISO" 
+				[phoneValidation]="true"							
+				[separateDialCode]="true"
+				[maxLength]="15"					
+				(countryChange)="onCountryChange($event)"
+				[numberFormat]="PhoneNumberFormat.National" 
+				name="landline" #landline formControlName="landline" >
+			</ngx-intl-tel-input>
+		</div>	
+	</form>
+</div>
+
+
+

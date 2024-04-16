@@ -1,0 +1,1472 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$collabtic-primary: mat-palette($mat-indigo);
+$collabtic-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$collabtic-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$collabtic-theme: mat-light-theme($collabtic-primary, $collabtic-accent, $collabtic-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($collabtic-theme);
+
+// Screen size variables
+$screen-xs-max: 424px;  // Tiny phones
+$screen-sm-max: 575px;  // Small tablets and large smartphones (landscape view)
+$screen-md-max: 767px;  // Small tablets (portrait view)
+$screen-lg-max: 991px;  // Tablets and small desktops
+$screen-xl-max: 1279px; // Large tablets and desktops
+
+// Mixins
+@mixin xs { @media (max-width: #{$screen-xs-max}) { @content;} } // Tiny devices
+@mixin sm { @media (max-width: #{$screen-sm-max}) { @content;} } // Small devices
+@mixin md { @media (max-width: #{$screen-md-max}) { @content;} } // Medium devices
+@mixin lg { @media (max-width: #{$screen-lg-max}) { @content;} } // Large devices
+@mixin xlm { @media (min-width: #{$screen-lg-max}) and (max-width: #{$screen-xl-max}) { @content;} } // Between Large & Extra large devices
+@mixin cxlm { @media (min-width: #{$screen-xs-max}) and (max-width: #{$screen-xl-max}) { @content;} }
+@mixin xl { @media (max-width: #{$screen-xl-max}) { @content;} } // Extra large devices
+
+body {
+&.misdashboard{
+    .filter-widgets .selected-items {
+      max-height: 90px !important;
+    }
+    &.dashboard {
+        background-color: #1d1d1f !important;
+    }
+    &.scroll-hidden {
+        overflow-y: scroll;
+    }
+
+    .wrapper{
+        #sidebar{
+            background-color: #29282b !important;
+        }
+    }
+
+     /** Perfect Scrollbar */
+     .ps {
+        scroll-behavior: auto;
+        max-height: 100% !important;
+        position: relative;
+        &.ps--active-y {
+            .ps__rail-x {
+                z-index: 999;
+            }
+            .ps__rail-y {
+                background: transparent !important;
+                left: unset !important;
+                right: 0;
+                z-index: 1000;
+                &:hover {
+                    width: 10px;
+                }
+            }
+        }
+    }
+
+    .container {
+        max-width: 1280px;
+        padding: 0px 40px;
+
+        &.forbidden-container, &.page-404-container {
+            color: #FFF;
+            padding: 40px 0px;
+            position: relative;
+            height: 100vh;
+            .forbidden-cont, .notfound {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
+                max-width: 920px;
+                width: 100%;
+                line-height: 1.4;
+                padding-left: 15px;
+                padding-right: 15px;
+                .title, .notfound-404 {
+                    font-family: Roboto-Bold;
+                    font-size: 60px;
+                }
+                h2 {
+                    font-family: Roboto-Light;
+                    font-size: 24px;
+                }
+                p {
+                    color: #aca6a6;
+                }
+                .desc {
+                    color: #aca6a6;
+                    font-family: Roboto-Light;
+                    font-size: 24px;
+                }
+                .btn-row {
+                    display: inline-block;
+                    .btn {
+                        font-size: 13px;
+                        padding: 5px;
+                        max-width: 170px;
+                        height: 30px;
+                        text-align: center;
+                        border: 1px solid #030e19;
+                        width: 160px;
+                        border-radius: 50px;
+                        text-transform: uppercase;
+                        display: block;
+                        background-color: #fff;
+                        color: #364655 !important;
+                        box-shadow: none;
+                    }
+                }
+            }
+        }
+    }
+
+    #dashboard {
+        /*background-color: #1D212D;*/
+        color: #D3D8E4;
+        height: 100%;
+        .wrapper {
+            #content {
+                .dashboard-header {
+                    background-color: #212735;
+                    display: block;
+                    width: 100%;
+                    padding: 15px 15px 15px 40px;
+                    .dashboard-header-table{
+                        display: table;
+                        width: 100%;
+                    }
+                    .dash-header-col {
+                        display: table-cell;
+                        &.dash-head-left {
+                            font-family: Roboto-Medium;
+                            font-size: 18px;
+                            width: 60%;
+                            &.dash-head-search-left {
+                                width: 60%;
+                                &.export {
+                                    width: 60%;
+                                }
+                            }
+                        }
+                        &.dash-head-right {
+                            width: 40%;
+                            text-align: right;
+                            &.dash-head-search-right {
+                                text-align: right;
+                                width: 40%;
+                                &.export {
+                                    width: 40%;
+                                    text-align: right;
+                                }
+                            }
+                            .search-col {
+                                display: inline-block;
+                                margin-right: 15px;
+                                position: relative;
+                                .search-div {
+                                    background-color: #293041;
+                                    border-radius: 15px;
+                                    display: block;
+                                    padding: 5px 8px;
+                                    width:100% !important;
+                                    /*position: absolute;
+                                    top: -5px;
+                                    right: 0;
+                                    width: 300px;*/
+                                    .search-icon {
+                                        display: inline-block;
+                                        position: relative;
+                                        top: -1px;
+                                        left: 6px;
+                                        width: 15px;
+                                        height: 15px;
+                                    }
+                                    input {
+                                        background-color: transparent;
+                                        border: none;
+                                        border-radius: unset;
+                                        box-shadow: none;
+                                        color: #c4cbdb;
+                                        display: inline-block;
+                                        font-size: 14px;
+                                        padding: 0;
+                                        height: 22px;
+                                        max-width: 200px;
+                                        min-width: 200px;
+                                        margin: 0 10px;
+                                    }
+                                    &.search-btn {
+                                        input {
+                                            max-width: 240px;
+                                            min-width: 240px;
+                                        }
+                                    }
+                                    .search-actions {
+                                        float: right;
+                                        padding: 0!important;
+                                        position: relative;
+                                        top: -1px;
+                                        right: 15px;
+                                        width: 15px;
+                                        height: 15px;
+                                        &.search-close {
+                                            right: 10px;
+                                        }
+                                    }
+                                }
+                                .search-result {
+                                    background-color: #2f3645;
+                                    border: solid 1px #2f3645;
+                                    border-radius: 6px;
+                                    height: auto;
+                                    margin-top: 4px;
+                                    padding: 5px 0px;
+                                    position: absolute;
+                                    text-align: left;
+                                    width: 100%;
+                                    z-index: 100;
+                                    .search-loader {
+                                        position: initial;
+                                        width: 20px;
+                                        height: 60px;
+                                        margin: 0 auto;
+                                    }
+                                    ul {
+                                        padding: 0;
+                                        margin: 0;
+                                        height: 200px;
+                                        overflow-y: scroll;
+                                        li {
+                                            border-bottom: solid 1px #595757;
+                                            cursor: pointer;
+                                            font-family: Roboto-Light;
+                                            font-size: 14px;
+                                            padding: 5px 15px;
+                                            &:first-child {
+                                                padding-top: 0px;
+                                            }
+                                            &:last-child {
+                                                padding-bottom: 0px;
+                                                border: 0 none;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .dashboard-export-cont {
+                                display: inline-block;
+                                padding: 5px 15px 5px 35px;
+                                &.dashboard-export  {
+                                    border: solid 1px #808395;
+                                    border-radius: 6px;
+                                    color: #808395;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    background: url('assets/images/dashboard/download-icon-1.png') no-repeat 16px 7px;
+                                    width: 90px;
+                                    display:inline-block;
+                                    margin-left:10px;
+
+
+                                    &.export-loading {
+                                        background: url('assets/images/dashboard/export-download-icon.gif') no-repeat 16px 7px;
+                                        cursor: progress;
+                                    }
+                                }
+                                &.dashboard-export-thread  {
+                                    border: solid 1px #4F5670;
+                                    border-radius: 6px;
+                                    color: #616683;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    background: url('assets/images/dashboard/download-icon.png') no-repeat 16px 7px;
+                                    width: 120px;
+                                    display:inline-block;
+
+                                    &.export-loading {
+                                        background: url('assets/images/dashboard/export-download-icon.gif') no-repeat 16px 7px;
+                                        cursor: progress;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    &.dashboard-menu-header {
+                        .dashboard-sub-menus {
+                            ul {
+                                margin: 0;
+                                padding: 0px;
+                                li {
+                                    display: inline;
+                                    padding: 0px 10px;
+                                    &:first-child {
+                                        padding-left: 0px;
+                                    }
+                                    a {
+                                        font-size: 12px;
+                                        color: #616683 !important;
+                                        padding-bottom: 18px;
+                                        &.active, &:hover {
+                                            color: #C3C7D3 !important;
+                                            border-bottom: solid 2px #C3C7D3;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .dashboard-content  {
+                    display: inline-block;
+                    padding: 25px 15px 25px 15px;
+                    width: 98%;
+                    &.filter-expand {
+                        display: inline-block;
+                        transition: all 0.3s;
+                        width: 84%;
+                    }
+                    .dash-counts {
+                        .row{
+                            padding: 0;
+                            margin: 0;
+                        }
+                        .dash-counts-col {
+                            .dash-loader {
+                                position: relative;
+                                height: 100px;
+                                img {
+                                    width: 30px;
+                                    height: 30px;
+                                }
+                            }
+                        }
+                        .dashboard-col {
+                            background-color: #242a3a;
+                            border-radius: 6px;
+                            display: table;
+                            padding: 15px 20px;
+                            height: 100%;
+                            width: 100%;
+                            &.new-dashboard-col {
+                                background-color: #29282b;
+                            }
+                            .cnt-col {
+                                display: table-cell;
+                                height: 100%;
+                                vertical-align: middle;
+                                &.cnt-col-left {
+                                    width: 28%;
+                                }
+                                &.cnt-col-right {
+                                    padding-left: 10px;
+                                }
+                                .dash-row {
+                                    display: table-header-group;
+                                    &.cnt-row {
+                                        font-family: Roboto-Medium;
+                                        font-size: 18px;
+                                    }
+                                    &.txt-row {
+                                        font-family: 'Roboto-Regular';
+                                        color: #76859c;
+                                        font-size: 14px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    .chart-row {
+                        padding: 20px 0 0px 0;
+                        margin: 0;
+                        .chart-col, .thread-chart-col {
+                            background-color: #242a3a;
+                            border-radius: 6px;
+                            color: #D3D8E4;
+                            height: 100%;
+                            &.new-cahrt-col {
+                                background-color: #29282b;
+                            }
+                            .dash-loader {
+                                position: absolute;
+                            }
+                            .chart-head {
+                                font-size: 14px;
+                                border-bottom: solid 2px #1F2535;
+                                padding: 10px 0px 10px 20px;
+                                &.thread-chart-head {
+                                    display: table;
+                                    width: 100%;
+                                    .thread-head-col {
+                                        display: table-cell;
+                                        &.all-thread {
+                                            color: #4E576A;
+                                            cursor: pointer;
+                                            padding-right: 20px;
+                                            &.active {
+                                                color: #FFFFFF;
+                                                cursor: inherit;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .chart-cont {
+                                height: 210px;
+                            }
+                            .chart-cont, .useract-cont {
+                                font-family: 'Roboto-Medium';
+                                font-size: 16px;
+                                padding: 5px 20px;
+                                .chart-area {
+                                    position: relative;
+                                    .dash-loader {
+                                        position: absolute;
+                                        top: 75px;
+                                        margin: 0 auto;
+                                    }
+                                    path {
+                                        cursor: pointer;
+                                    }
+                                    .empty-chart {
+                                        color: #7b849b;
+                                        font-size: 13px;
+                                        margin: 0 auto;
+                                        position: absolute;
+                                        top: 65px;
+                                        width: 100%;
+                                        img {
+                                            position: relative;
+                                            top: 30%;
+                                        }
+                                    }
+                                }
+                                &.guage-cont {
+                                    padding: 15px 0 0;
+                                    .chart-area {
+                                        &.guage-chart {
+                                            #guageChart {
+                                                width: 100%;
+                                                height: 100%;
+                                            }
+                                            /* Outer-ring */
+                                            circle:nth-child(1) {
+                                                stroke-width: 5;
+                                                stroke: #197FCD;
+                                                fill: #C13A4D;
+                                            }
+                                            /* Main background */
+                                            circle:nth-child(2) {
+                                                fill: #242A3A;
+                                                stroke: transparent;
+                                                stroke-width: 5;
+                                            }
+
+                                            /* Circle of the pointer */
+                                            circle:nth-child(3) {
+                                                fill: #C13A4D;
+                                                stroke: #44A4EE;
+                                                stroke-width: 6px;
+                                            }
+
+                                            /* Main text of the gauge */
+                                            text {
+                                                fill: #44A4EE;
+                                                font-family: Roboto-Medium;;
+                                            }
+
+                                            /* Current value text */
+                                            text:nth-child(1) {
+                                                fill: #44A4EE;
+                                                font-size: 18px;
+                                            }
+
+                                            /* Ticks */
+                                            path {
+                                                stroke: white;
+                                            }
+
+                                            /* Circle */
+                                            path:nth-child(2) {
+                                                fill: #C13A4D;
+                                                stroke: white;
+                                                stroke-width: 2px;
+                                                fill-opacity: 1;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .no-data {
+                                padding-top: 120px;
+                            }
+                        }
+                    }
+
+                    .detail-chart {
+                        margin: -25px -6px 0px 0px;
+                        .chart-row {
+                            .chart-col {
+                                min-height: 560px !important;
+                                &.thread-chart-col {
+                                    padding: 0px;
+                                }
+                            }
+                            .thread-chart-col {
+                                padding: 0px;
+                                .thread-cont {
+                                    height: 260px;
+                                    padding: 0px 20px;
+                                }
+                                .esc-cont {
+                                    padding: 0px 20px;
+                                }
+                            }
+                        }
+                    }
+                    .thread-table {
+                        padding: 25px 15px 20px 14px;
+                        .thread-title {
+                            display: table;
+                            font-size: 14px;
+                            padding: 0px 0px 20px;
+                            width: 100%;
+                            .thread-search-col {
+                                display: table-cell;
+                                position: relative;
+                                width: 50%;
+                                .search-div {
+                                    background-color: #293041;
+                                    border-radius: 15px;
+                                    display: block;
+                                    padding: 5px 0px;
+                                    position: absolute;
+                                    top: -5px;
+                                    right: 0;
+                                    width: 300px;
+                                    text-align: left;
+                                    .search-icon {
+                                        display: inline-block;
+                                        position: relative;
+                                        left: 6px;
+                                        width: 15px;
+                                        height: 15px;
+                                    }
+                                    input {
+                                        background-color: transparent;
+                                        border: none;
+                                        border-radius: unset;
+                                        box-shadow: none;
+                                        color: #c4cbdb;
+                                        display: inline-block;
+                                        font-size: 14px;
+                                        padding: 0;
+                                        height: 22px;
+                                        max-width: 260px;
+                                        min-width: 260px;
+                                        margin: 0 10px;
+                                        position: relative;
+                                        top: 1px;
+                                    }
+                                    &.search-btn {
+                                        input {
+                                            max-width: 240px;
+                                            min-width: 240px;
+                                        }
+                                    }
+                                    .search-actions {
+                                        float: right;
+                                        padding: 0!important;
+                                        position: relative;
+                                        top: 1px;
+                                        right: 15px;
+                                        width: 15px;
+                                        height: 15px;
+                                        &.search-close {
+                                            right: 10px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        .thread-list {
+                            background-color: #242A3A;
+                            border-radius: 6px;
+                            color: #D3D8E4;
+                            overflow: hidden;
+                            padding: 0px 5.5px 10px 0px;
+                            &.thread-list-loading {
+                                height: 240px;
+                            }
+                            .empty-chart {
+                                position: relative;
+                                top: 40%;
+                            }
+                            table {
+                                display: block;
+                                font-size: 12px;
+                                width: 175%;
+                                position: relative;
+                                .thread-header {
+                                    background-color: #242A3A;
+                                    th {
+                                        background-color: #242A3A;
+                                        border-bottom: solid 3px #313848;
+                                        box-shadow: 0 2px 2px -1px #313848;
+                                        color: #697080;
+                                        padding: 10px 5px;
+                                        position: sticky;
+                                        top: 0;
+                                        width: 6%;
+                                        z-index: 10;
+                                        &.sticky {
+                                            background-color: #242A3A;
+                                            position: sticky;
+                                            left: 0;
+                                            z-index: 110;
+                                        }
+                                        &.td-sticky {
+                                            left: 13%;
+                                        }
+                                        &.dealer-name {
+                                            width: 8%;
+                                            padding-left: 20px;
+                                        }
+                                        &.dealer-code {
+                                            width: 5%;
+                                        }
+                                        &.zone {
+                                            width: 5%;
+                                        }
+                                        &.area {
+                                            width: 4%;
+                                        }
+                                        &.tty {
+                                            width: 5%;
+                                        }
+                                        &.prod-owner {
+                                            width: 8%;
+                                            padding-left: 20px;
+                                        }
+                                        &.tm-name {
+                                            width: 7%;
+                                        }
+                                        &.creation-time {
+                                            width: 8%;
+                                        }
+                                        &.model-year {
+                                            width: 8%;
+                                        }
+                                        &.title {
+                                            width: 5%;
+                                        }
+                                        &.error-code {
+                                            width: 6%;
+                                        }
+                                        &.status {
+                                            width: 6%;
+                                        }
+                                        &.esc-level {
+                                            width: 5%;
+                                            padding-left: 20px;
+                                        }
+                                        &.proposed-fix {
+                                            width: 7%;
+                                            padding-left: 20px;
+                                        }
+                                        &.thread-id {
+                                            width: 5%;
+                                            padding-left: 20px;
+                                        }
+                                        &.respond-time {
+                                            width: 6%;
+                                            padding-left: 20px;
+                                        }
+                                        span {
+                                            display: inline-block;
+                                            &:last-child {
+                                                cursor: pointer;
+                                                padding-left: 5px;
+                                            }
+                                        }
+                                    }
+                                }
+                                .thread-items {
+                                    color: #8994A8;
+                                    tr {
+                                        border-bottom: solid 1px #2F3444;
+                                        th {
+                                            background-color: #242A3A;
+                                            &.sticky {
+                                                background-color: #242A3A;
+                                                padding: 0;
+                                                position: sticky;
+                                                left: 0;
+                                                z-index: 100;
+                                            }
+                                            .dealer-name {
+                                                border-left-width: 3px !important;
+                                                padding: 20px 0px 20px 20px;
+                                            }
+                                        }
+                                        td {
+                                            padding-left: 10px;
+                                            &.td-sticky {
+                                                background-color: #242A3A;
+                                                position: sticky;
+                                                left: 13%;
+                                            }
+                                            &.thread-id {
+                                                color: #1A6DC8;
+                                                padding-left: 0px;
+                                            }
+                                            span {
+                                                border-radius: 12px;
+                                                color: #FFFFFF;
+                                                display: inline-block;
+                                                padding: 4px 10px;
+                                            }
+                                            .text-elipse {
+                                                display: -webkit-box;
+                                                -webkit-line-clamp: 2;
+                                                -webkit-box-orient: vertical;
+                                                overflow: hidden;
+                                            }
+                                            .custom-pop {
+                                                &:hover, &:visited {
+                                                    color: #177CEC;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .thread-loader {
+                                position: relative;
+                                top: 40%;
+                            }
+                        }
+                        .thread-list:hover {
+                            overflow: auto;
+                            padding-right: 0px;
+                        }
+                    }
+                }
+                .cbt-filter{
+                    #filter {
+                        background-color: #29282b !important;
+                       // height: 807px;
+                        margin-top: 10px;
+                        .filter-toggle{
+                            background-color: #29282b !important;
+                        }
+                    }
+                }
+                .dash-filter {
+                    padding: 10px;
+                    transition: all 0.4s;
+                    #filter {
+                        position: sticky;
+                        top: 0;
+                        .filter-toggle {
+                            background-color: #242A3A;
+                            background-position: 12px 10px;
+                            background-repeat: no-repeat;
+                            border-radius: 25px 0px 0px 25px;
+                            cursor: pointer;
+                            padding: 15px 15px;
+                            position: relative;
+                            top: 0px;
+                            left: 8px;
+                            width: 16px;
+                            height: 13px;
+                            &.expand-arrow {
+                                background-image: url('assets/images/dashboard/filter/dash-expand-arrow.png');
+                            }
+                            &.collapse-arrow {
+                                background-image: url('assets/images/dashboard/filter/collapse-arrow.png');
+                            }
+                        }
+                        .filter-widgets {
+                            display: none;
+                        }
+                        &.active-filter {
+                            .filter-toggle {
+                                &.expand-arrow {
+                                    background-image: url('assets/images/filter/expand-arrow-active.png');
+                                }
+                            }
+                        }
+                    }
+                    &.filter-collapse {
+                        position: absolute;
+                        right: 0px;
+                        top: 63px;
+                        width: 48px;
+                    }
+                    &.filter-expand {
+                        background-color: #242A3A;
+                        display: inline-block;
+                        padding: 10px 6px 0px 0px;
+                        width: 16%;
+                        /*width: 285px;*/
+                        height: 92%;
+                        vertical-align: top;
+                        #filter {
+                            .filter-toggle {
+                                background-position: 8px;
+                                left: -20px;
+                                padding: 15px 12px;
+                            }
+                            .filter-widgets {
+                                display: block;
+                                margin-top: -26px;
+                                font-family: Roboto-Regular;
+                                .filter-title {
+                                    background: url('assets/images/dashboard/filter/dash-expand-arrow.png') no-repeat 18px 6px;
+                                    color: #B4BdC4;
+                                    padding: 0px 10px 0px 35px;
+
+                                    .filter-reset {
+                                        background: url('assets/images/filter/filter-reset.png') no-repeat;
+                                        cursor: pointer;
+                                        position: absolute;
+                                        top: 9px;
+                                        right: 10px;
+                                        width: 19px;
+                                        height: 18px;
+                                    }
+
+                                }
+                                .filter-loading {
+                                    position: relative;
+                                    .loader {
+                                        position: absolute;
+                                        top: 100px;
+                                        img {
+                                            width: 40px;
+                                        }
+                                    }
+                                }
+                                .filter-area {
+                                    .filter-field {
+                                        border-bottom: solid 1px #1D242F;
+                                        padding: 5px 0px 10px 15px !important;
+                                        label.labeltext {
+                                            color: #7A89A0;
+                                            display: block;
+                                            margin-bottom: 0px;
+                                            font-family: "Roboto-Medium";
+                                            font-size: 14px;
+                                        }
+                                        &.date-field{
+                                            .mat-form-field {
+                                                /*border-bottom:#5B626C solid 1px;*/
+                                                border-bottom: #454c62 solid 1px;
+                                            }
+                                        }
+                                        .mat-form-field {
+                                            font-family: Roboto-Regular !important;
+                                            width: 96%;
+                                            .mat-form-field-wrapper {
+                                                padding-bottom: 0;
+                                            }
+                                        }
+                                        .mat-form-field.mat-focused .mat-form-field-ripple.mat-accent{
+                                            /* background:#239AA2; */
+                                            background:none !important;
+                                        }
+                                        .mat-form-field-underline::before{
+                                            background-color: transparent !important;
+                                        }
+                                        .mat-form-field-underline:focus{
+                                            background-color: transparent !important;
+                                        }
+                                        &.filter-select {
+                                            .mat-form-field, .mat-select {
+                                                font-family: Roboto-Regular !important;
+                                            }
+                                            .mat-form-field-hide-placeholder .mat-select-placeholder {
+                                                color: transparent !important;
+                                                -webkit-text-fill-color: transparent;
+                                            }
+                                            .mat-select-value-text{
+                                                font-size: 14px;
+                                                color: #B4BdC4;
+                                                white-space: nowrap;
+                                                overflow: hidden;
+                                                text-overflow: ellipsis;
+                                                font-family: Roboto-Regular !important;
+                                            }
+                                            .mat-form-field.mat-focused .mat-form-field-ripple{
+                                                /* background:#239AA2; */
+                                                background:none !important;
+                                            }
+                                            .mat-select-arrow{
+                                                border-top-color:#454C62;
+                                            }
+                                            .mat-option-text {
+                                                color:#239AA2 !important;
+                                                color: #B4BdC4 !important;
+                                                overflow: initial !important;
+                                                text-transform: capitalize !important;
+                                            }
+                                            .mat-form-field-appearance-legacy {
+                                                .mat-select-value, .mat-form-field-hide-placeholder .mat-select-placeholder {
+                                                    color:#485067 !important;
+                                                }
+                                                .mat-form-field-underline {
+                                                    background-color: #454C62;
+                                                    width: 100%;
+                                                }
+                                            }
+                                            &.model-select{
+                                                .selected-items{
+                                                    padding-top: 20px;
+                                                }
+                                            }
+                                            .selected-items {
+                                                .tag-text {
+                                                    &.ws-tag-text{
+                                                        background: #3F4F92;
+                                                        color: #BAC0E2 !important;
+                                                    }
+                                                    border-radius: 20px;
+                                                    display: inline-block;
+                                                    font-size: 12px !important;
+                                                    padding: 3px 20px 3px 10px;
+                                                    position: relative;
+                                                    margin: 0 6px 15px 0;
+                                                    text-align: left;
+                                                    text-transform: none;
+                                                    .tag-close {
+                                                        cursor: pointer;
+                                                        font-size: 12px;
+                                                        position: absolute;
+                                                        top: 7px;
+                                                        right: 6px;
+                                                    }
+                                                    .dealer-tag-text {
+                                                        max-width: 140px;
+                                                        min-width: 140px;
+                                                        margin-bottom: -2px;
+                                                        padding-top: 2px;
+                                                        .tag-close {
+                                                            top: 8px;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        .field-error {
+                                            color: #f44336;
+                                            font-size: 12px;
+                                            position: relative;
+                                            top: -10px;
+                                        }
+                                    }
+                                    .filter-list {
+                                        .filter-field {
+                                            border-bottom:#212734 solid 1px;
+                                            padding: 5px 0px 15px 15px;
+                                            label {
+                                                color: #5B626C;
+                                                font-family: 'Roboto-Medium';
+                                                font-size: 14px;
+                                                &.labeltext {
+                                                    margin-bottom: 0px;
+                                                }
+                                            }
+                                            &.tag-select {
+                                                padding-bottom: 10px;
+                                            }
+                                            .field-error {
+                                                color: #dca651;
+                                                font-size: 12px;
+                                                font-style: italic;
+                                                padding: 6px 0px 0px;
+                                            }
+                                        }
+                                        &:last-child {
+                                            .filter-field {
+                                                border-bottom: 0;
+                                            }
+                                        }
+                                    }
+                                    .filter-action {
+                                        padding: 20px 0px;
+                                        .mat-button {
+                                            cursor: pointer;
+                                        }
+                                        .mat-raised-button {
+                                            background-color: #0861C7;
+                                            box-shadow: none;
+                                            color: #FFFFFF;
+                                            outline: none;
+                                            text-transform: uppercase;
+                                            width: 80%;
+                                            &.mat-warn {
+                                                background-color: transparent;
+                                                border: solid 1px #636a81;
+                                                color: #636a81;
+                                                margin: 20px 0px;
+                                            }
+                                        }
+                                        .mat-button.mat-button-base[disabled] {
+                                            background: #6a6a6a;
+                                            color: #FFF;
+                                            outline: none;
+                                            text-transform: uppercase;
+                                            width: 80%;
+                                        }
+                                    }
+                                }
+                            }
+                            &.active-filter {
+                                .filter-widgets {
+                                    .filter-title {
+                                        //background: url('assets/images/dashboard/filter/expand-arrow-active.png') no-repeat 18px 6px;
+                                        background: url('assets/images/filter/expand-arrow-active.png') no-repeat 18px 6px;
+                                        //color: #0A73EB;
+                                        color:#edb800;
+                                        padding: 0px 10px 0px 35px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #footer {
+            position: relative;
+            .footer-content {
+                background-color: #29282b;
+                a{
+                    color: white !important;
+                }
+            }
+        }
+    }
+
+    .cdk-overlay-container, .cdk-global-overlay-wrapper {
+        width: 100%;
+    }
+    .mat-select-panel {
+        background: #ffffff;
+       /* max-width: 220px !important;
+        min-width: 180px !important;*/
+        max-width: 100% !important;
+        min-width: 100% !important;
+        top: 28px;
+        left: 28px;
+        position: relative;
+        &.dealer-select-panel {
+            max-width: 270px !important;
+            min-width: 230px !important;
+        }
+    }
+    .mat-optgroup-label {
+        color: #B4BdC4;
+    }
+    .mat-input-element {
+        color: #B4BdC4;
+    }
+    .mat-form-field-appearance-legacy .mat-form-field-prefix .mat-icon-button, .mat-form-field-appearance-legacy .mat-form-field-suffix .mat-icon-button {
+        position: relative;
+        left: -10px;
+    }
+    .mat-option.mat-selected:not(.mat-option-multiple):not(.mat-option-disabled), .mat-option:hover:not(.mat-option-disabled), .mat-option:focus:not(.mat-option-disabled) {
+        background-color: transparent;
+        color: #3f51b5 !important;
+    }
+    .mat-option-multiple:hover:not(.mat-option-disabled), .mat-option-multiple:focus:not(.mat-option-disabled) {
+        background: transparent;
+    }
+    .mat-option[aria-disabled=true] {
+        color: #4c4c4c !important;
+    }
+    .mat-slider-track-background, .mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb {
+        background-color: #484E5E !important;
+    }
+    .mat-accent .mat-slider-track-fill, .mat-accent .mat-slider-thumb, .mat-accent .mat-slider-thumb-label {
+        background-color: #5561E9;
+    }
+    .mat-accent .mat-slider-thumb-label {
+        background-color: transparent;
+        color: #5561E9 !important;
+    }
+    .mat-accent .mat-input-element {
+        color: #B4BdC4 !important;
+        caret-color:#B4BdC4 !important;
+        font-size: 14px;
+    }
+    .mat-slider:not(.mat-slider-disabled).cdk-focused .mat-slider-thumb-label {
+        border-radius: 0 !important;
+        background: transparent;
+    }
+    .mat-slider-horizontal .mat-slider-thumb-label {
+        right: -20px !important;
+        top: 4px !important;
+        width: auto;
+    }
+    .mat-slider-thumb-label-text {
+        font-family: Roboto-Regular;
+        font-size: 14px;
+    }
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        background-color: transparent;
+        padding: 5px 0px 0px !important;
+    }
+    .mat-form-field-appearance-fill .mat-form-field-infix {
+        padding: 0;
+        top: -5px;
+    }
+    .mat-form-field-ripple, .mat-form-field-appearance-fill .mat-form-field-underline::before {
+        background-color: transparent;
+    }
+    .mat-datepicker-content .mat-calendar {
+        background: #151920;
+    }
+    .mat-calendar-header {
+        padding-top: 2px;
+    }
+    .mat-calendar-period-button {
+        color: #EDEEFD;
+        font-family: Roboto-Medium;
+        font-size: 18px;
+        margin: 0 auto !important;
+    }
+    .mat-calendar-arrow {
+        border-top-color: #fff;
+    }
+    .mat-calendar-spacer {
+        display: none;
+    }
+    .mat-datepicker-content .mat-calendar-next-button, .mat-datepicker-content .mat-calendar-previous-button {
+        color: #7A89A0;
+        outline: none !important;
+        position: absolute;
+    }
+    .mat-datepicker-content .mat-calendar-next-button {
+        right: 0;
+    }
+    .mat-datepicker-content .mat-calendar-previous-button {
+        left: 0;
+    }
+    .mat-datepicker-toggle {
+        color: #7F838D !important;
+    }
+    .mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-prefix .mat-icon-button, .mat-form-field:not(.mat-form-field-appearance-legacy) .mat-form-field-suffix .mat-icon-button {
+        outline: none !important;
+    }
+    .mat-calendar-table-header th {
+        color: #48567D;
+        font-family: Roboto-Bold;
+        font-size: 14px;
+    }
+    .mat-calendar-table-header-divider::after {
+        background: transparent;
+    }
+    .mat-calendar-body-label {
+        color: #FFFFFF;
+        visibility: hidden;
+    }
+    .mat-calendar-body-cell-content {
+        color: #9DAABD;
+    }
+    .mat-calendar-body-disabled > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+        color: #373D4E;
+    }
+    .mat-calendar-body-today:not(.mat-calendar-body-selected), .mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-keyboard-focused .mat-calendar-body-active > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected), .cdk-program-focused .mat-calendar-body-active > .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+        background: #5760EE;
+        border-color: #5760EE;
+        color: #fff;
+    }
+    .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label, .mat-form-field-empty.mat-form-field-label {
+        font-size: 14px;
+    }
+    .mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label, .mat-form-field-empty.mat-form-field-label, .mat-form-field-appearance-legacy .mat-form-field-label {
+        color: #4E5C71;
+        display:none;
+    }
+    .ngdialog-close {
+        color: #4E5C71;
+        display: block;
+        font-size: 14px;
+        float: right;
+        position: absolute;
+        right: 16px;
+        text-align: right;
+        top: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+        z-index: 1000;
+    }
+    .mat-form-field-appearance-legacy .mat-form-field-underline {
+        background: #454C62 !important;
+        height: 0px !important;
+    }
+    .mat-pseudo-checkbox {
+        color: #485464;
+    }
+    .mat-option {
+        color: #ABB3C0 !important;
+        font-size: 14px !important;
+        line-height: 20px !important;
+        height: auto !important;
+        padding: 10px 16px 5px;
+    }
+    .mat-option:last-child {
+        padding-bottom: 10px;
+    }
+    .mat-primary .mat-option-multiple.mat-selected:not(.mat-option-disabled), .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate, .mat-option-multiple:hover:not(.mat-option-disabled), .mat-option-multiple:focus:not(.mat-option-disabled) {
+        color: #5760EE !important;
+    }
+
+
+// Filter custom Select Box
+.dashb-filter-widgets {
+    display: block;
+    .mat-input-element {
+        background-color: transparent !important;
+        border-radius: 0 !important;
+        //color: red !important;
+        width: 100% !important;
+        &::placeholder {
+            color: #7F838D !important;
+        }
+    }
+    .material-icon {
+        background-color: #F3F3F3;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: solid 1px #DbDDDE;
+        border-radius: 8px 0px 0px 8px;
+        display: inline-block;
+        height: 38px;
+        padding: 0px 0px 17px;
+        vertical-align: middle;
+        width: 8%;
+
+    }
+    .areas{
+        margin-top: 20px;
+    }
+    .territories{
+        margin: 20px 0 15px 0;
+    }
+    .custom-mat-sel {
+        display: inline-block;
+        width: 96% !important;
+        .mat-select-value {
+            color: #7F838D;
+        }
+        .mat-form-field-infix {
+            border: 0px none !important;
+            border-radius: 0px !important;
+            /*border-bottom: #5B626C 1px solid !important;*/
+            border-bottom: #454c62 solid 1px !important;
+            padding: 10px 0px !important;
+            margin-bottom: 15px;
+        }
+        &.prob-catg-sel {
+            .mat-form-field-infix {
+                padding: 8px 0px 9px 0px !important;
+            }
+        }
+        .mat-form-field-empty.mat-form-field-label {
+            left: 0px;
+        }
+    }
+    &.gts-sel {
+        margin-top: 15px;
+        .material-icon {
+            width: 5.45%;
+            padding: 18px 0px;
+            &.system-icon, &.tag-icon, &.split-icon {
+                width: 11%;
+            }
+        }
+        .custom-mat-sel {
+            width: 94.5% !important;
+            &.system-sel, &.tag-sel, &.split-sel {
+                width: 89% !important;
+            }
+        }
+        select {
+            border-left: 0 !important;
+            border-radius: 0px 8px 8px 0px !important;
+            padding: 7px 0px 8px 10px !important;
+            width: 94% !important;
+        }
+        .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+            padding-bottom: 0;
+        }
+    }
+    .mat-select-arrow-wrapper {
+        position: relative;
+        left: 0px;
+        top: 2px;
+    }
+    .mat-select-arrow {
+        // background: url("assets/images/filter/filter-drop-down.png") no-repeat;
+        border: 0;
+        color: transparent;
+        width: 0px;
+        height: 4px;
+        &:before {
+            content: "";
+            position: absolute;
+            top: -4px;
+            left: -16px;
+            border-top: 7px solid #242A3A;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            z-index: 1;
+          }
+          &:after {
+            content: "";
+            position: absolute;
+            left: -18px;
+            top: -3px;
+            border-top: 8px solid #5f646e;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+        }
+    }
+    .mat-select-value {
+        color: #5E6980;
+        font-size: 14px;
+    }
+    .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+        padding-bottom: 0px;
+    }
+    .mat-form-field-empty.mat-form-field-label{
+        display: none;
+    }
+}
+
+.modal-dialog{
+    .exportprogressbar {
+        padding: 10px;
+        .download-header {
+            padding-bottom: 10px;
+            font-size: 16px;
+        }
+        .progress {
+            display: flex;
+            height: 30px;
+            overflow: hidden;
+            line-height: 0;
+            font-size: .75rem;
+            background-color: #e9ecef;
+            border-radius: .25rem;
+            .progress-bar {
+                height: 30px;
+                transition: width 2s;
+                -webkit-transition: width 2s;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                overflow: hidden;
+                color: #fff;
+                text-align: center;
+                white-space: nowrap;
+                background-color: #007bff;
+                transition: width .6s ease;
+            }
+        }
+        .cancel-div {
+            padding-top: 10px;
+            text-align: right;
+        }
+    }
+}
+
+
+    @include xlm {
+        #dashboard {
+            .wrapper {
+                #content {
+                    .dashboard-content {
+                        border: solid 0px green;
+                    }
+                }
+            }
+        }
+    }
+
+    @include lg {
+        #dashboard {
+            .wrapper {
+                #content {
+                    .dashboard-content {
+                        .dash-counts {
+                            .dash-counts-col {
+                                padding-bottom: 40px;
+                            }
+                        }
+                        .dashboard-charts {
+                            .chart-row {
+                                padding-top: 0px;
+                                .dash-chart-col {
+                                    padding-bottom: 40px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @include md {
+        #dashboard {
+            .wrapper {
+                #content {
+                    .dashboard-content {
+                        .dash-counts {
+                            .dash-counts-col {
+                                &:last-child {
+                                    padding-bottom: 10px;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+}
+.content-pad.h-100.p-card.p-component.show-scroller-on-hover {
+    overflow: hidden;
+    padding: 0 8px 0 0;
+}
+
+.content-pad.h-100.p-card.p-component.show-scroller-on-hover:hover {
+    overflow: auto;
+    padding: 0px;
+}
+.no-padding .p-toggleable-content .p-panel-content {
+    padding: 0px!important;
+}

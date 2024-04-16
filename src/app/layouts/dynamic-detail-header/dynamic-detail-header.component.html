@@ -1,0 +1,53 @@
+<div class="tdd-head row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0">
+    <div class="left-panel-head col-12 col-lg-6 col-md-6 col-xl-6 col-sm-12 padding0 margin0">
+        <span class="title-text">
+            <span *ngIf="teamSystem" class="cursor team-back-icon" (click)="closeWindow()"></span>
+            <span>{{pageData.pageHeaderText}}</span>
+            <span class="red-text">&nbsp;ID#&nbsp;{{pageData.dataId}}</span>
+        </span>
+    </div>
+    <div class="right-panel-head col-12 col-lg-6 col-md-6 col-xl-6 col-sm-12 padding0 margin0">
+        <ul>
+            <li class="paddingR30 " *ngIf="pageData.editAccess">
+                <a title="Edit" (click)="editPage(pageData.dataId)"><img
+                        src="assets/images/thread-detail/thread-edit.png"><span>Edit</span></a>
+            </li>
+            <li class="paddingR30 " *ngIf="pageData.deleteAccess">
+                <a title="Delete" (click)="threadHeaderEvent('delete')"><img
+                        src="assets/images/thread-detail/thread-delete.png"><span>Delete</span></a>
+            </li>
+            <li class="paddingL30">
+                <a title="Close" (click)="closeWindow()"><img
+                        src="assets/images/thread-detail/thread-window-close.png"></a>
+            </li>
+        </ul>        
+    </div>
+</div>
+
+<app-dialog-popup *ngIf="displayLogoutPopup" [dialogData]="dialogData" (closewindow)="closewindowPopup($event)"></app-dialog-popup>
+<!--p-dialog [header]="false" [(visible)]="displayLogoutPopup" [modal]="true" styleClass="p-fluid logoutPopup-prime"
+    [style]="{width: '50vw'}">
+
+    <div class="row col-lg-12 col-md-12 col-sm-12 logout-dialog-main-container">
+        <div class="col col-lg-5 col-md-5 col-sm-5"
+            style="background-color: #332b3f;height:300px;position: relative;padding: 0px;">
+
+            <div class="vertical-center">
+                <img src="assets/images/landing-page/logout-dialog-icon.png">
+            </div>
+
+        </div>
+        <div class="col col-lg-7 col-md-7 col-sm-7" style="background-color: #fff;height:300px;">
+            <div class="logout-right-container">
+                <div class="inner-border-container vertical-center">
+                    <div class="right-side-text-container">
+                        You are logged out of {{platformName}}
+                    </div>
+                    <div (click)="closewindowPopup()" class="btn-logout-output">OK</div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</p-dialog-->

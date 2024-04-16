@@ -1,0 +1,495 @@
+<div class="prob-header header-class-domain flex-align-justify-center col-12 no-padding" style="z-index: 10;">
+    <div class="flex-align-justify-center" style="width: 97%;">
+        <div class="form-view-class flex-align-justify-center margin-right-40px cursor-pointer" (click)="showForm()">
+            <img class="margin-right-10px" width="40px" height="40px"
+                src="{{!showViewChanges ? 'assets/images/service-provider/form-view-orange.png' : 'assets/images/service-provider/form-view.png'}}" />
+            <span [ngClass]="!showViewChanges ? 'color-orange' : ''" class="form-view-text">Form View</span>
+        </div>
+        <div class="web-view-class flex-align-justify-center margin-right-40px cursor-pointer"
+            (click)="showResponsive('web')">
+            <img class="margin-right-10px" width="40px" height="40px"
+                src="{{showViewChanges && !isMobileView ? 'assets/images/service-provider/web-view-orange.png' : 'assets/images/service-provider/web-view.png'}}" />
+            <span [ngClass]="showViewChanges && !isMobileView ? 'color-orange' : ''" class="form-view-text">Web
+                View</span>
+        </div>
+        <div class="mobile-view-class flex-align-justify-center cursor-pointer" (click)="showResponsive('mobile')">
+            <img [ngClass]="showViewChanges && isMobileView ? 'color-orange' : ''" class="margin-right-10px"
+                width="40px" height="40px"
+                src="{{showViewChanges && isMobileView ? 'assets/images/service-provider/mobile-view-orange.png' : 'assets/images/service-provider/mobile-view.png'}}" />
+            <span [ngClass]="showViewChanges && isMobileView ? 'color-orange' : ''" class="form-view-text">Mobile
+                View</span>
+        </div>
+    </div>
+    <div style="width: 3%;" *ngIf="showViewChanges">
+        <a title="Close" (click)="showForm()">
+            <img src="assets/images/thread-detail/thread-window-close.svg" alt="Close" onload="SVGInject(this)">
+        </a>
+    </div>
+</div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-marketplace-sidebar [activeMenuItem]="'market-place/domain'" accessModule="{{bodyClass}}"></app-marketplace-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec1 right-section">
+<div *ngIf="!showViewChanges" class="prob-new" style="display: flex; flex-wrap: wrap;">
+    <div class="col-lg-2">
+        <div style="height: calc(100vh - 95px); padding: 30px 0 0 0;"
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black custom-margin-gallery">
+            <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+                <div [ngClass]="showCompanyInfo ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu"
+                    (click)="loadDomainData()">
+                    <img style="margin-right: 5px;" width="19px" height="19px"
+                        src="{{showCompanyInfo ? 'assets/images/service-provider/info-white.png' : 'assets/images/service-provider/info-grey.png'}}">
+                    <span class="{{showCompanyInfo ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Company
+                        Info</span>
+                </div>
+            </div>
+            <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+                <div [ngClass]="showBannerInfo ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu"
+                    (click)="loadBannerData()">
+                    <img style="margin-right: 5px;" width="17px" height="15px"
+                        src="{{showBannerInfo ? 'assets/images/service-provider/bgImage-white.png' : 'assets/images/service-provider/bgImage.png'}}">
+                    <span
+                        class="{{showBannerInfo ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Banners</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row new-pro-cont col-lg-8 step1">
+        <div class="form-cont col-lg-12" style="height: calc(100vh - 95px) !important; overflow: hidden;">
+            <form class="form-horizontal" [formGroup]="showCompanyInfo ? domainForm : bannerForm"
+                (ngSubmit)="onSubmit()">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        {{showCompanyInfo ? 'Company Info' : 'Banners'}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel">
+                            <button (click)="closeWindow()" class="cancelBtn"> Cancel
+                                <img src="assets/images/parts/cancel-icon.png" />
+                            </button>
+                        </div>
+                        <div [ngClass]="{'disabled': showCompanyInfo ? !domainForm.valid : !bannerForm.valid}"
+                            class="btn next publish disable"
+                            (click)="showCompanyInfo ? submitAction('publish') : submitBannerAction()">
+                            {{saveText}} <img src="assets/images/service-provider/save.png" />
+                        </div>
+                    </div>
+                </div>
+                <div [style.height]="'85vh'">
+                    <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading"><img
+                            src="assets/images/loading.svg" alt="Loader" /></div>
+                    <div *ngIf="!loading && showCompanyInfo" id="step" #step class="ps form-fields"
+                        [perfectScrollbar]="sconfig">
+                        <div class="form-items" style="margin-bottom: 70px;">
+                            <div>
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <div class="banner-fit text-right">
+                                            <span class="banner-label">Banner image fit:</span>
+                                            <p-checkbox id="bannerfit_checkbox" formControlName="bannerFit"
+                                                [(ngModel)]="bannerFit" [binary]="true" inputId="binary"
+                                                label="Fill"></p-checkbox>
+                                        </div>
+                                        <div
+                                            class="field-label item-label custom-field-margin-padding-new banner-new-bg">
+                                            Background Image</div>
+                                        <span *ngIf="imgURL == null" class="prob-upload ka-upload">
+                                            <a (click)="updateLogo('banner')" class="browse-button"></a>
+                                            <span class="upload-txt">Upload Banner Image</span>
+                                        </span>
+                                        <span *ngIf="imgURL != null" class="prob-upload upload-bg knw-banner"
+                                            [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}"
+                                            [ngClass]="{'cover': domainForm.value.bannerFit, 'contain': !domainForm.value.bannerFit}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile('banner')"
+                                                    class="action-btn delete-upload"></a>
+                                                <a (click)="updateLogo('banner')" class="action-btn edit-upload"></a>
+                                            </div>
+                                        </span>
+                                        <div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 flex-end size-text-design">
+                                    Banner Size: 1920X230px <span>Supported file types: .jpg, .png</span>
+                                </div>
+                                <div class="col-12 margin-bottom-20px no-padding">
+                                    <div class="prob-form-row">
+                                        <div class="app-info">Company Info</div>
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new companyName-new-bg">
+                                                Company Name</div>
+                                            <div class="count-text-style custom-padding-for-count width-128px">
+                                                Required &nbsp; {{companyNameDomain?.length ? companyNameDomain?.length
+                                                : '0'}}/30
+                                            </div>
+                                        </div>
+                                        <div class="col-12 no-padding ab">
+                                            <input class="KA_input_text" [(ngModel)]="companyNameDomain" matInput
+                                                placeholder="Company Name" formControlName="companyName" maxlength="30"
+                                                autocomplete="off" />
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-12 margin-bottom-20px no-padding">
+                                    <div class="prob-form-row">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new serviceOffered-new-bg">
+                                                Summary of services offered</div>
+                                            <div class="count-text-style custom-padding-for-count">
+                                                {{summaryServiceDomain?.length ? summaryServiceDomain?.length : '0'}}/50
+                                            </div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <input class="KA_input_text" [(ngModel)]="summaryServiceDomain" matInput
+                                                placeholder="Summary of services offered"
+                                                formControlName="serviceOffered" maxlength="50" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 display-flex margin-bottom-20px no-padding">
+                                    <div class="prob-form-row col-4 padding-left-0px">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new phone-new-bg">
+                                                Phone#</div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <ngx-intl-tel-input [cssClass]="'custom'" class="KA_input_text_Phone"
+                                                [preferredCountries]="preferredCountries" [(ngModel)]="phoneValue"
+                                                [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                                                [searchCountryFlag]="true" [phoneValidation]="true"
+                                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                                [selectFirstCountry]="true" [selectedCountryISO]="selectedCountryIS0"
+                                                [maxLength]="15" [phoneValidation]="false"
+                                                [separateDialCode]="separateDialCode"
+                                                [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                                formControlName="phone">
+                                            </ngx-intl-tel-input>
+                                        </div>
+                                    </div>
+                                    <div class="prob-form-row col-4">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new website-new-bg">
+                                                Website</div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <input class="KA_input_text" [(ngModel)]="websiteValue" matInput
+                                                placeholder="Website" formControlName="website" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div class="prob-form-row col-4 padding-right-0px">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new email-new-bg">
+                                                Email</div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <input class="KA_input_text" [(ngModel)]="emailValue" matInput
+                                                placeholder="Email" formControlName="email" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 display-flex margin-bottom-20px no-padding">
+                                    <div class="prob-form-row col-6 padding-left-0px">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new city-new-bg">
+                                                City</div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <input class="KA_input_text" [(ngModel)]="cityValue" matInput
+                                                placeholder="City" formControlName="city" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                    <div class="prob-form-row col-6 padding-right-0px">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new state-new-bg">
+                                                State</div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <input class="KA_input_text" [(ngModel)]="stateValue" matInput
+                                                placeholder="State" formControlName="state" autocomplete="off" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 margin-bottom-20px no-padding">
+                                    <div class="prob-form-row col-12 no-padding">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new description-new-bg">
+                                                Description about services</div>
+                                            <div class="count-text-style custom-padding-for-count">
+                                                {{descriptionDomain?.length ? descriptionDomain?.length : '0'}}/300
+                                            </div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <textarea class="KA2_input_text" [(ngModel)]="descriptionDomain" matInput
+                                                placeholder="Description about services" formControlName="description"
+                                                maxlength="300" autocomplete="off" rows="4" cols="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 margin-bottom-20px no-padding">
+                                    <!-- <div class="prob-form-row col-12 no-padding">
+                                        <div class="display-flex">
+                                            <div class="field-label item-label custom-field-margin-padding-new keywords-new-bg">Keywords about the business</div>
+                                        </div>
+                                        <div class="col-12 no-padding">
+                                            <div class="multi-select" [ngClass]="{'empty': keywordValue?.length == 0}">
+                                                <p-multiSelect styleClass="KA_input_text" #multi class="drop-col dropdown" [options]="keywordOptions" formControlName="keywords" [(ngModel)]="keywordValue" selectedItemsLabel="Keywords about the business" placeholder="Keywords about the business" autoWidth="true" filter="true" optionLabel="name" optionValue="id" resetFilterOnHide="true" filterPlaceHolder="Search Keywords about the business">
+                                                    <ng-template let-keywords pTemplate="selectedItems">
+                                                        <ng-container *ngFor="let item of keywordValue; let i = index;">{{item}}<span *ngIf="keywordValue?.length > i+1">, </span>
+                                                        </ng-container>
+                                                        <span class="p-placeholder" *ngIf="!keywordValue || keywordValue?.length == 0">Keywords about the business</span>
+                                                    </ng-template>
+                                                </p-multiSelect>
+                                            </div>
+                                            <div class="dynmic-selected-items" *ngIf="keywordValue?.length > 0">
+                                                <div class="selected-items ws-selected-items mr-top-10">
+                                                    <div *ngFor="let item of keywordValue; let t=index" class="tag-text ws-tag-text">
+                                                        <span>{{item}}</span>
+                                                        <i class="material-icons tag-close" (click)="removeValue(item)">close</i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                    <div class="prob-form-control cust-comp-control">
+                                        <div class="display-flex">
+                                            <div
+                                                class="field-label item-label custom-field-margin-padding-new keywords-new-bg">
+                                                Keywords about the business</div>
+                                        </div>
+                                        <div class="cursor def-select select-tags" (click)="manageList()">
+                                            <div class="tag-col tag-bg media-tag-bg"></div>
+                                            <div class="tag-col tag-text media-tag-text">
+                                                Select Keywords <img src="assets/images/dropdown_downarrow.png">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="keywordValue?.length > 0" class="selected-items">
+                                            <div *ngFor="let item of keywordValue; let t=index" class="tag-text">
+                                                <span>{{item?.name}}</span>
+                                                <i class="material-icons tag-close"
+                                                    (click)="removeValue(item?.name)">close</i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="!loading && showBannerInfo" id="step2" #step2 class="ps form-fields"
+                        [perfectScrollbar]="sconfig">
+                        <div class="form-items" style="margin-bottom: 70px;">
+                            <div>
+                                <div class="prob-form-row">
+                                    <div class="landing-banner" style="margin-bottom: 0 !important;">Landing Page Banner
+                                    </div>
+                                </div>
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <div class="banner-fit text-right" style="float: right; color: #9b9a9a;">
+                                            Banner image fit:<p-checkbox id="bannerfit_checkbox2"
+                                                formControlName="landingBannerFit" [(ngModel)]="landingBannerFit"
+                                                [binary]="true" inputId="binary" label="Fill"></p-checkbox>
+                                        </div>
+                                        <div style="display: flex; align-items: baseline; float: left">
+                                            <p-radioButton formControlName="showResponsiveView"
+                                                styleClass="margin-right-10px" name="showResponsiveView" value="landing"
+                                                [(ngModel)]="showResponsiveView"></p-radioButton>
+                                            <div class="field-label item-label custom-field-margin-padding-new pad-0">
+                                                Landing Page Preview Selection</div>
+                                        </div>
+                                        <span *ngIf="landingImgUrl == null" class="prob-upload ka-upload mr-top-30">
+                                            <a (click)="updateLogo('landing')" class="browse-button"></a>
+                                            <span class="upload-txt">Upload Banner Image</span>
+                                        </span>
+                                        <span *ngIf="landingImgUrl != null"
+                                            class="prob-upload upload-bg knw-banner mr-top-30"
+                                            [ngStyle]="{'background': 'url(' + landingImgUrl + ') no-repeat'}"
+                                            [ngClass]="{'cover': bannerForm.value.landingBannerFit, 'contain': !bannerForm.value.landingBannerFit}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile('landing')"
+                                                    class="action-btn delete-upload"></a>
+                                                <a (click)="updateLogo('landing')" class="action-btn edit-upload"></a>
+                                            </div>
+                                        </span>
+                                        <div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 flex-end size-text-design">
+                                    Banner Size: 1920X230px <span>Supported file types: .jpg, .png</span>
+                                </div>
+                                <div class="prob-form-row">
+                                    <div class="email-banner" style="margin-bottom: 0 !important;">Email Banner</div>
+                                </div>
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <div class="col-8 banner-fit text-right" style="float: right; color: #9b9a9a;">
+                                            Banner image fit:<p-checkbox id="bannerfit_checkbox1"
+                                                formControlName="emailBannerFit" [(ngModel)]="emailBannerFit"
+                                                [binary]="true" inputId="binary" label="Fill"></p-checkbox>
+                                        </div>
+                                        <div style="display: flex; align-items: baseline; float:left;">
+                                            <p-radioButton formControlName="showResponsiveView"
+                                                styleClass="margin-right-10px" name="showResponsiveView" value="email"
+                                                [(ngModel)]="showResponsiveView"></p-radioButton>
+                                            <div class="field-label item-label custom-field-margin-padding-new pad-0">
+                                                Email Preview Selection</div>
+                                        </div>
+                                        <span *ngIf="emailImgUrl == null"
+                                            class="prob-upload ka-upload custom-browse-parent-class mr-top-30">
+                                            <a (click)="updateLogo('email')"
+                                                class="browse-button custom-browse-class"></a>
+                                            <span class="upload-txt">Upload Banner Image</span>
+                                        </span>
+                                        <span *ngIf="emailImgUrl != null"
+                                            class="prob-upload upload-bg knw-banner custom-browse-parent-class mr-top-30"
+                                            [ngStyle]="{'background': 'url(' + emailImgUrl + ') no-repeat'}"
+                                            [ngClass]="{'cover': bannerForm.value.emailBannerFit, 'contain': !bannerForm.value.emailBannerFit}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile('email')"
+                                                    class="action-btn delete-upload"></a>
+                                                <a (click)="updateLogo('email')" class="action-btn edit-upload"></a>
+                                            </div>
+                                        </span>
+                                        <div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-8 flex-end size-text-design">
+                                    Banner Size: 600X70px <span>Supported file types: .jpg, .png</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div *ngIf="showViewChanges && showCompanyInfo"
+    [ngClass]="isMobileView ? 'width-426px col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 no-padding margin-0-auto' : 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin'">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin">
+        <img *ngIf="imgURL" [ngStyle]="{'height': isMobileView ? '170px' : '230px', 'width':'100%'}" src="{{imgURL}}" />
+        <img *ngIf="!imgURL" [ngStyle]="{'height': isMobileView ? '170px' : '230px', 'width':'100%'}"
+            src="assets/images/service-provider/inner-detail.jpg" />
+    </div>
+    <div class="col-xl-12 col-lg-12 no-padding col-md-12 col-sm-12 col-12 font-family-lato">
+        <div [ngClass]="isMobileView ? 'top-image-section-new-1' : 'top-image-section-new'"
+            class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row custom-padding-heading">
+            <div class="width-80-perc custom-width">
+                <div class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                    <div [ngClass]="isMobileView ? 'col-xl-5 col-lg-5 col-md-6 col-sm-6 col-6' : 'col-xl-3 col-lg-3 col-md-4 col-sm-4 col-4'"
+                        class="new-header-image image-section">
+                        <div class="img-parent">
+                            <img src="{{businessDomainData?.business_logo}}" alt="logo" />
+                        </div>
+                    </div>
+                    <div [ngClass]="isMobileView ? 'col-xl-7 col-lg-7 col-md-6 col-sm-6 col-6 custom-position-text' : 'col-xl-9 col-lg-9 col-md-8 col-sm-8 col-8'"
+                        class="no-margin image-right-section padding-right-0px">
+                        <div class="col-lg-12 col-md-12 col-sm-12 no-padding custom-margin-heading">
+                            <span class="text-heading-section-right">{{companyNameDomain}}</span>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 no-padding margin-top-5px">
+                            <span class="text-subheading-section-right"
+                                *ngIf="summaryServiceDomain">{{summaryServiceDomain}}</span>
+                            <span class="text-subheading-section-right" *ngIf="!summaryServiceDomain">Summary of
+                                services offered</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div [ngClass]="isMobileView ? 'height-55-vh' : ''"
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center row new-top-image-section new-top-custom-style">
+            <div class="width-80-perc custom-width">
+                <div [ngClass]="isMobileView ? 'custom-position-3' : ''"
+                    class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                    <div
+                        [ngClass]="isMobileView ? 'col-xl-0 col-lg-0 col-md-0 col-sm-0 col-0' : 'col-xl-3 col-lg-3 col-md-4 col-sm-4 col-0'">
+                    </div>
+                    <div [ngClass]="isMobileView ? 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12' : 'col-xl-9 col-lg-9 col-md-8 col-sm-8 col-12 margin-bottom-20px margin-right-left-0'"
+                        class="row no-padding custom-padding-detail-section">
+                        <div
+                            [ngClass]="isMobileView ? 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-10px' : 'col-xl-3 col-lg-5 col-md-5 col-sm-6 col-6'">
+                            <p *ngIf="websiteValue" class="no-margin flex-align-center"><i
+                                    class="pi pi-globe icon-color"></i><a href="http://{{websiteValue}}" target="_blank"
+                                    class="website-text">{{websiteValue}} &nbsp;</a></p>
+                            <p *ngIf="!websiteValue" class="no-margin flex-align-center"><i
+                                    class="pi pi-globe icon-color"></i><a href="{{websiteValue}}" target="_blank"
+                                    class="website-text">Website URL</a></p>
+                        </div>
+                        <div
+                            [ngClass]="isMobileView ? 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-10px' : 'col-xl-3 col-lg-5 col-md-5 col-sm-6 col-6'">
+                            <p *ngIf="emailValue" class="no-margin flex-align-center"><i
+                                    class="pi pi-envelope icon-color"></i><a href="mailto:{{emailValue}}"
+                                    target="_blank" class="website-text">{{emailValue}} &nbsp;</a></p>
+                            <p *ngIf="!emailValue" class="no-margin flex-align-center"><i
+                                    class="pi pi-envelope icon-color"></i><a href="mailto:{{emailValue}}"
+                                    target="_blank" class="website-text">Email</a></p>
+                        </div>
+                        <div
+                            [ngClass]="isMobileView ? 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-10px' : 'col-xl-3 col-lg-5 col-md-5 col-sm-6 col-6 no-padding'">
+                            <p class="no-margin flex-align-center"><i class="pi pi-phone icon-new-color"></i>
+                                <a *ngIf="phoneValue" href="tel:{{phoneValue}}" target="_blank"
+                                    class="website-text">{{phoneValue?.nationalNumber}} &nbsp;</a>
+                                <a *ngIf="!phoneValue" target="_blank" style="width: auto !important;"
+                                    class="website-text">Phone Number</a>
+                                <span *ngIf="!phoneValue" class="website-text">&nbsp;</span>
+                            </p>
+                        </div>
+                        <div
+                            [ngClass]="isMobileView ? 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-10px' : 'col-xl-3 col-lg-5 col-md-5 col-sm-6 col-6'">
+                            <p class="no-margin flex-align-center"><i class="pi pi-map-marker icon-new-color"></i>
+                                <span *ngIf="cityValue" class="website-text">{{cityValue}}{{stateValue ? ', '+stateValue
+                                    : ''}}</span>
+                                <span *ngIf="!cityValue" class="website-text">City, State</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div [ngClass]="isMobileView ? 'custom-position-4' : ''"
+                    class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row no-margin no-padding custom-margin-inner-detail-top">
+                    <div
+                        [ngClass]="isMobileView ? 'col-xl-0 col-lg-0 col-md-0 col-sm-0 col-0' : 'col-xl-3 col-lg-3 col-md-4 col-sm-4 col-0'">
+                    </div>
+                    <div [ngClass]="isMobileView ? 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12' : 'col-xl-9 col-lg-9 col-md-8 col-sm-8 col-12'"
+                        class="no-margin row no-padding custom-padding-detail-section">
+                        <p *ngIf="descriptionDomain" class="descrition-style flex-align-center">
+                            {{descriptionDomain}}
+                        </p>
+                        <p *ngIf="!descriptionDomain" class="descrition-style flex-align-center">
+                            Description about services
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="showViewChanges && showBannerInfo"
+    [ngClass]="isMobileView ? 'width-426px col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 no-padding margin-0-auto' : 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin'">
+    <div
+        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin {{showResponsiveView == 'email' ? 'flex-center' : ''}}">
+        <img *ngIf="(showResponsiveView == 'landing' && landingImgUrl) || (showResponsiveView == 'email' && emailImgUrl)"
+            [ngStyle]="{'height': isMobileView ? showResponsiveView == 'email' ? '35px' : '170px' : showResponsiveView == 'email' ? '70px' : '230px', 'width':showResponsiveView == 'email' ? isMobileView ? '300px' : '600px' : '100%'}"
+            src="{{showResponsiveView == 'landing' ? landingImgUrl : emailImgUrl}}" />
+    </div>
+</div>
+</div>

@@ -1,0 +1,77 @@
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading">
+    <div *ngIf="access == 'page'">
+        <div id="header">
+            <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+        </div>
+        <div class="detail" [style.height.px]="innerHeight">           
+            <div class="thread-post-detail" [style.height.px]="innerHeight">
+                <div class="ps thread-post" [perfectScrollbar]="sconfig">
+                    <div class="thread-detail-section">
+                        <div class="repair-order-detail-info">
+                            <app-adas-view [fileData]="fileData" [newPage]="newPage"></app-adas-view>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="adas-modal" *ngIf="access == 'popup'">
+        <div class="custom-modal modal-container" tabindex="0" id="wrapper">
+            <div class="modal-header view-modal-header">
+                <div class="view-modal-title">
+                    <span class="view-modal-title-text text-center">{{title}}</span>
+                </div>
+                <div class="view-modal-actions">
+                    <div class="view-more-actions cursor" title="New Tab" (click)="threadHeaderAction('newtab')">
+                        <img class="newtab" src='assets/images/common/detail-view-newtab.png' alt=''/><span></span>
+                    </div>
+                    <div class="view-more-actions cursor" title="Copy Link" (click)="threadHeaderAction('copy')">
+                        <img class="copy" src='assets/images/common/detail-view-copy.png' alt=''/><span></span>
+                        <div *ngIf="copiedModal" class="copied-txt-div">
+                            <div class="copied-txt-inner-div">Link Copied</div>
+                        </div>
+                    </div>
+                    <div *ngIf="threadOwner || accessLevel.edit || accessLevel.delete" class="view-more-actions cursor" title="More" tooltipClass="post-submit-tooltip more-tooltip more-tooltip-new" triggers="click" [autoClose]="true"
+                        placement="bottom-right" [ngbTooltip]="more">
+                        <img class="more" src='assets/images/common/detail-view-more-icon.png' alt=''/><span></span>
+                    </div>
+                    <ng-template #more>
+                        <div *ngIf="threadOwner || accessLevel.edit" class="thread-owner-reply cursor" (click)="threadHeaderAction('edit')">                  
+                            <div class="label-tt-cont moreDiv">
+                                <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/edit.png"></span>
+                                <span class="label-tt-cont-rt moreDivRt">
+                                    <p class="more-cont">Edit</p>
+                                </span>
+                            </div>
+                        </div>
+                        <div *ngIf="threadOwner || accessLevel.delete" class="thread-owner-reply cursor" (click)="threadHeaderAction('delete')">                  
+                            <div class="label-tt-cont moreDiv">
+                                <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/delete.png"></span>
+                                <span class="label-tt-cont-rt moreDivRt">
+                                    <p class="more-cont">Delete</p>
+                                </span>
+                            </div>
+                        </div>
+                    </ng-template>
+                    <span class="cursor close-btn" (click)="closeModal()">
+                        <img src="assets/images/list-close.png" alt="Close" />
+                    </span>
+                </div>
+            </div>
+            <div class="modal-body view-modal-body">
+                <div [style.height.px]="innerHeight">           
+                    <div class="thread-post-detail" [style.height.px]="innerHeight">
+                        <div class="ps thread-post" [perfectScrollbar]="sconfig">
+                            <div class="thread-detail-section popup">
+                                <div class="repair-order-detail-info">
+                                    <app-adas-view [accessType]="access" [fileData]="fileData" [newPage]="newPage"></app-adas-view>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

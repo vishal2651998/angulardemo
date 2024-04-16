@@ -1,0 +1,34 @@
+<div id="header" >
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index split-sec1">
+    <div *ngIf="!itemEmpty" class="part-list-head kb-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt kb-head-txt" ><img src="assets/images/knowledge-base/knowledge-base-icon.png">&nbsp;&nbsp;{{title}}</span>
+            <span *ngIf="createAccess" class="new-prob" [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all')}" (click)="navkb('new', 0)">{{pageCreateNew}}</span>                        
+        </div>
+        <div class="prob-head-col head-col-2 text-right">  
+            <span *ngIf="!loading" class="action-col pin-col cursor" class="{{pinClass}}" [ngClass]="{'hide': itemEmpty}" (click)="pinnedKBList(!pinFlag)"></span>                      
+            <span *ngIf="!loading" class="action-col thumb-col cursor" [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView, 'hide': (headerCheck == 'checked' || headerCheck == 'all' || displayNoRecords || itemEmpty)}" title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType(thumbView)"></span>
+        </div>
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+      </div>
+    <div class="probing-content cbt-content part-content part-content-new" [ngClass]="{'filter-expand': expandFlag, 'right-panel-expand part-right-side-none': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-knowledge-base-list [pageDataInfo]="pageData" (filterOutput)="filterOutput($event)" ></app-knowledge-base-list>
+    </div>
+    <!--div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div-->
+</div>
+

@@ -1,0 +1,188 @@
+<div *ngIf="viewDocument" class="custom-modal modal-container" id="wrapper">    
+    <div class="modal-header view-modal-header">
+        <div class="view-modal-title">
+            <!--<img src="assets/images/training-popup-header-icon.png" >-->
+            <span class="view-modal-title-text text-center">{{title}}</span>            
+        </div>
+        <div class="view-modal-actions" >
+            <div class="view-more-actions cursor" title="More" tooltipClass="post-submit-tooltip more-tooltip more-tooltip-new" triggers="click" [autoClose]="true"
+                placement="bottom-right" [ngbTooltip]="more">
+                <img src='assets/images/detail-view-more-icon.png' alt=''/><span></span>
+            </div>
+                <ng-template #more>
+                <div class="thread-owner-reply cursor" *ngIf="editAccess" (click)="threadHeaderAction('edit')">                  
+                    <div class="label-tt-cont moreDiv">
+                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/edit.png"></span>
+                    <span class="label-tt-cont-rt moreDivRt">
+                        <p class="more-cont">Edit</p>
+                    </span>
+                    </div>
+                </div>
+                <div class="thread-owner-reply cursor" *ngIf="deleteAccess" (click)="threadHeaderAction('delete')">                  
+                    <div class="label-tt-cont moreDiv">
+                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/delete.png" ></span>
+                    <span class="label-tt-cont-rt moreDivRt">
+                        <p class="more-cont">Delete</p>
+                    </span>
+                    </div>
+                </div> 
+                
+                <div class="thread-owner-reply cursor" (click)="threadHeaderAction('copylink')">                  
+                    <div class="label-tt-cont moreDiv">
+                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/detail-view-copy-icon.png" ></span>
+                    <span class="label-tt-cont-rt moreDivRt">
+                        <p class="more-cont">Copy Link</p>
+                    </span>
+                    </div>
+                </div> 
+                </ng-template>
+            <span class="cursor close-btn" (click)="closeModal()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body view-modal-body">
+        <div [style.height.px]="innerHeight">
+            <!--div style="max-height: 87vh"-->
+            <div >  
+                <div *ngIf="loading">
+                    <div class="loader"><div class="post-loader-svg"></div></div>
+                </div>   
+                <div *ngIf="!loading" >
+                    <div class="th-error-div" *ngIf="knowledgeViewError">
+                        <div class="error-msg">{{knowledgeViewErrorMsg}}</div>
+                    </div>
+                    <div *ngIf="!knowledgeViewError">
+                                                
+                        <div class="thread-post-hover" [style.height.px]="innerHeight">
+                            <div class="ps thread-post" [perfectScrollbar]="sconfig">
+                                <div class="thread-detail-section">
+                                    <div class="left-section" [ngClass]="{ 'setWidth-type1' : !attachmentLoading, 'setWidth-type2' :attachmentLoading }">
+                                        <div class="left__view" >
+                                            <div class="ps_relative">
+                                                <div *ngIf="knowledgeViewData.isDefaultImgStr=='1'">
+                                                    <div class="bg__img"></div>
+                                                    <img class="baner_img" src="assets/images/knowledge-article-view-title.png">
+                                                </div>
+                                                <div *ngIf="knowledgeViewData.isDefaultImgStr!='1'">
+                                                    <img [src]="knowledgeViewData.bannerImage" class="knowledge_bannerImg" [ngClass]="{'cover': knowledgeViewData.bannerOption == 1, 'contain': knowledgeViewData.bannerOption == 0}">
+                                                </div>
+                                                <div class="knowledge_profileImgDiv" (click)="taponprofileclick(knowledgeViewData.userId)">
+                                                    <img [src]="knowledgeViewData.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" class="knowledge_profileImg">
+                                                </div>
+                                                <div class="ka_user_details">
+                                                    <span class="ka_username" (click)="taponprofileclick(knowledgeViewData.userId)"> {{knowledgeViewData.userName}},</span>
+                                                    <span class="ka_userRole"> {{knowledgeViewData.userRole}}</span>
+                                                </div>
+                                            </div>
+                                            <!--div class="created_date">
+                                                {{knowledgeViewData.createdOn}}
+                                            </div-->
+                                            <div class="knowledge_article_title">
+                                                {{knowledgeViewData.threadTitle}}
+                                            </div>
+                                            <div class="knowledge_view__description">                                
+                                                <div class="desc_main desc_main-text" [innerHTML]="knowledgeViewData.description"></div>
+                                            </div>
+                                            <div *ngIf="tagList?.length>0">
+                                                <div class="tag-info" style="padding-left: 0px;">
+                                                    <div class="tags">
+                                                        <span class="list-txt tag-txt">Tag</span>
+                                                        <div class="tag-list-div">
+                                                            <span class="tag-list" *ngFor="let tag of tagList">{{tag}}</span>                                            
+                                                        </div>                                         
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="appln-v2">
+                                            <app-application [accordionList]="accordionList" [applicationList]="appList"
+                                                *ngIf="showApplication">
+                                            </app-application>
+                                            </div>
+
+                                            <!-- System Information -->
+                                            <div id="system-v2" class="reference-info">
+                                                <mat-accordion [multi]="true" #accordion="matAccordion">
+                                                    <mat-expansion-panel class="{{panel.class}}"
+                                                    [disabled]="panel.isDisabled"
+                                                    [expanded]="panel.isExpanded"
+                                                    [hideToggle]="false"
+                                                    (opened)="beforeParentPanelOpened(panel, emptyList)"
+                                                    (closed)="beforeParentPanelClosed(panel, emptyList)"
+                                                    (afterCollapse)="afterPanelClosed()"
+                                                    (afterExpand)="afterPanelOpened()"
+                                                    *ngFor="let panel of referenceAccordion"
+                                                    #mapanel="matExpansionPanel">
+                                                        <mat-expansion-panel-header>
+                                                            <mat-panel-title>
+                                                            <b>{{panel.title}}</b>
+                                                            </mat-panel-title>
+                                                        </mat-expansion-panel-header>
+                                                            <div class="app-accord">
+                                                                <app-system-info-view [systemInfo]="systemInfo"></app-system-info-view>
+                                                            </div>
+                    
+                                                    </mat-expansion-panel>
+                                                </mat-accordion>
+                                            </div>
+
+                                            <div class="knowledge_view__icons">
+                                                <div class="footer-selection">
+                                                    <div class="flex-row">
+                                                        <div class="lft like-small pl-1r" style="padding-left: 0;">
+                                                            <span class="lft footer-icon" >
+                                                                <img [ngClass]="{'disable': disableLikeFlag}" (click)="socialAction('like', likeStatus)" src="{{assetPartPath}}{{likeImg}}" alt="Loader" />
+                                                            </span>
+                                                            <span class="lft text-color-footer" *ngIf="knowledgeViewData.likeCount">{{knowledgeViewData.likeCount}}</span>
+                                                            <span class="lft text-color-footer" *ngIf="!knowledgeViewData.likeCount">-</span>
+                    
+                                                        </div>
+                                                        <div class="lft pin-small pl-1r" >
+                                                            <span class="lft footer-icon" >
+                                                                <img src="{{assetPartPath}}{{pinImg}}" (click)="socialAction('pin', pinStatus)" alt="Loader" />
+                                                            </span>
+                                                            <span class="lft text-color-footer" *ngIf="knowledgeViewData.pinCount">{{knowledgeViewData.pinCount}}</span>
+                                                            <span class="lft text-color-footer" *ngIf="!knowledgeViewData.pinCount"> -</span>
+                                                        </div>
+                                                        <div class="lft view-small pl-1r" *ngIf="knowledgeViewData.viewCount">
+                                                            <span class="lft footer-icon">
+                                                                <img src="assets/images/workstreams-page/view-icon.svg" alt="Loader" />
+                                                            </span>
+                                                            <span class="lft text-color-footer" *ngIf="knowledgeViewData.viewCount">{{knowledgeViewData.viewCount}}</span>
+                                                            <span class="lft text-color-footer" *ngIf="!knowledgeViewData.viewCount">-</span>
+                    
+                                                        </div>
+                                                        
+                    
+                    
+                                                        <div class="rht close-small" *ngIf="knowledgeViewData.closeStatus">
+                                                            <span class="lft footer-icon">
+                                                                <img class="footer-bulb-icon"
+                                                                    src="assets/images/workstreams-page/close_icon.svg" alt="Loader" />
+                                                            </span>
+                    
+                                                        </div>
+                    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="right-section" [ngClass]="{ 'setWidth-type1' : !attachmentLoading, 'setWidth-type2' :attachmentLoading }">
+                                        <div id="attachment-v2" class="reference-info ka-info">
+                                            <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<p-dialog [(visible)]="copiedModal" [modal]="true" [draggable]="false" [resizable]="true" class="copied-modal">
+    <div class="text-center copied-txt">Copied</div>
+    </p-dialog>

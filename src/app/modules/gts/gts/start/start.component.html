@@ -1,0 +1,65 @@
+<div style="position: relative;" class="h-100">
+  <p-card id="startcomponent" styleClass="h-90" [style]="{borderRadius:'10px'}">
+
+    <ng-template pTemplate="content">
+      <div
+        style="position: absolute; top:0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center;">
+        <div style="display: flex; justify-content: center; place-items: center; height: inherit;">
+          <div class="w-100">
+            <p-panel>
+              <ng-template pTemplate="header">
+                <img src="./assets/images/gts/gts-img-new.png" class="img img-fluid mr-2">
+                <span>
+                  Enter the following information to start GTS
+                </span>
+              </ng-template>
+              <ng-template pTemplate="content">
+                <form [formGroup]="gtsForm">
+
+                  <div class="p-field mb-3">
+                    <div class="d-flex align-items-center justify-content-between">
+                      <label for="" class="d-flex align-items-center">
+                        <img src="./assets/images/gts/barcode.png" alt="" class="img-img-fluid mr-2">
+                        <span>{{pageData.vinNoTitle}}</span>
+                      </label>
+                      <div class="button d-flex align-items-center" *ngIf="recentBin[0].slug != 'printing' ">
+                        <img src="./assets/images/gts/history.png" alt="History" width="15">
+                        <p pButton class="p-button-text p-button-warning py-0 px-1" label="Recent VINs"
+                          (click)="openRecentSelection()"></p>
+                      </div>
+                    </div>
+                    <input [placeholder]="pageData.vinPlaceHolder" pInputText formControlName="frameNo"
+                      (input)="updateSerialno()" class="w-100 py-2" [ngStyle]="{height: '60px',fontSize: '20px'}" />
+
+
+                  </div>
+                  <div class="p-field">
+                    <label for="" class="m-0 d-flex align-items-center">
+                      <img src="./assets/images/gts/group.png" alt="" class="img-img-fluid mr-2">
+                      <span>{{pageData.OdoTitle}}</span>
+                    </label>
+                    <div class="d-flex spacing">
+                      <input [placeholder]="pageData.OdoPlaceHolder" pInputText formControlName="odometerNo"
+                        class="w-100 flex-grow-1" />
+                      <p-dropdown class="w-100" [options]="odoFields" optionLabel="name"></p-dropdown>
+                    </div>
+                  </div>
+                </form>
+              </ng-template>
+              <ng-template pTemplate="footer">
+                <div class="d-flex justify-content-center align-items-center spacing">
+                  <button pButton pRipple iconPos="right" icon="pi pi-angle-double-right" *ngIf="!pageData.isVinDecode"
+                    (click)="startGTS()" type="button" label="Skip" class="p-button-outlined p-button-danger"></button>
+                  <button pButton pRipple type="button" (click)="startGTS()" iconPos="right" icon="pi pi-angle-right"
+                    styleClass="p-button-lg" label="Start" class="p-button-danger"></button>
+                </div>
+              </ng-template>
+            </p-panel>
+          </div>
+        </div>
+      </div>
+
+    </ng-template>
+
+  </p-card>
+</div>

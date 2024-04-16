@@ -1,0 +1,73 @@
+<div *ngIf="!isMobile" class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+  <ngx-masonry [options]="{ gutter: 10,isFitWidth: true }" class="masonry-item-container-2" [updateLayout]="updateMasonryDomainLayout" [ordered]="true">
+    <div ngxMasonryItem id="{{domain?.id}}" class="masonry-item" data-masonry='{ "columnWidth": 200, "itemSelector": ".grid-item" }' *ngFor="let domain of domainData; let i=index;">
+        <p-card (click)="redirectToDomainTrainingByRouter(domain?.id)" [style]="{width: '100%'}" styleClass="p-card-shadow service-provider-card cursor-pointer">
+          <ng-template pTemplate="header">
+            <div class="custom-domain-width-height">
+              <img class="width-height-100-perc" alt="Card" src="{{domain?.business_logo}}">
+            </div>
+          </ng-template>
+          <p class="heading-text">{{domain?.market_place_company_name}} <span *ngIf="!domain?.market_place_company_name">-</span></p>
+          <p class="sub-heading-text"  title="{{domain?.market_place_summary_service_offered}}">{{domain?.market_place_summary_service_offered}} &nbsp;</p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-globe icon-color"></i>
+            <a *ngIf="domain.market_place_website" class="cursor-pointer" class="website-text">{{domain?.market_place_website}} &nbsp;</a>
+            <span *ngIf="!domain?.market_place_website">-</span>
+          </p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-envelope icon-color"></i>
+            <a *ngIf="domain?.market_place_email" class="website-text">{{domain?.market_place_email}}</a>
+            <span *ngIf="!domain?.market_place_email">-</span>
+          </p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-phone icon-new-color"></i><a class="website-new-text">{{domain?.market_place_phone_number}} <span *ngIf="!domain?.market_place_phone_number">-</span></a></p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-map-marker icon-new-color"></i><span class="website-new-text" *ngIf="domain.market_place_city">{{domain?.market_place_city}}<span *ngIf="domain?.market_place_state">,</span>&nbsp;{{domain?.market_place_state}}</span> <span *ngIf="!domain?.market_place_city">-</span></p>
+          <ng-template pTemplate="footer">
+            <div class="col-12 row no-padding no-margin">
+              <div class="col-12 row custom-footer-padding no-margin flex-evenly">
+                <!-- <span class="margin-right-5px flex-align-center"><i class="pi pi-eye icon-new"></i><span class="new-text">2k</span></span>
+                <span class="margin-right-5px flex-align-center"><i class="pi pi-thumbs-up icon-new"></i><span class="new-text">567</span></span>
+                <span class="flex-align-center"><i class="pi pi-share-alt icon-new"></i></span> -->
+              </div>
+            </div>
+          </ng-template>
+        </p-card>
+    </div>
+  </ngx-masonry>
+</div>
+<div *ngIf="isMobile" class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+  <!-- <div class="loading-small-screen-scroll trst" align="center" *ngIf="loadingDomain" ><img src="assets/images/loading.svg" alt="Loader" /></div> -->
+    <div id="{{domain?.id}}" style="margin: 20px 0px 20px 0px; width: 100% !important;" class="masonry-item" *ngFor="let domain of domainData; let i=index;">
+        <p-card (click)="redirectToDomainTrainingByRouter(domain?.id)" [style]="{width: '100%'}" styleClass="p-card-shadow service-provider-card cursor-pointer">
+          <ng-template pTemplate="header">
+            <div class="custom-domain-width-height">
+              <img class="width-height-100-perc" alt="Card" src="{{domain?.business_logo}}">
+            </div>
+          </ng-template>
+          <p class="heading-text">{{domain?.market_place_company_name}} <span *ngIf="!domain?.market_place_company_name">-</span></p>
+          <p class="sub-heading-text" title="{{domain?.market_place_summary_service_offered}}">{{domain?.market_place_summary_service_offered}} &nbsp;</p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-globe icon-color"></i>
+            <a *ngIf="domain.market_place_website" class="cursor-pointer" class="website-text">{{domain?.market_place_website}} &nbsp;</a>
+            <span *ngIf="!domain?.market_place_website">-</span>
+          </p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-envelope icon-color"></i>
+            <a *ngIf="domain?.market_place_email" class="website-text">{{domain?.market_place_email}}</a>
+            <span *ngIf="!domain?.market_place_email">-</span>
+          </p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-phone icon-new-color"></i><a class="website-new-text">{{domain?.market_place_phone_number}} <span *ngIf="!domain?.market_place_phone_number">-</span></a></p>
+          <p class="margin-bottom-10px flex-align-center"><i class="pi pi-map-marker icon-new-color"></i><span class="website-new-text" *ngIf="domain.market_place_city">{{domain?.market_place_city}}<span *ngIf="domain?.market_place_state">,</span>&nbsp;{{domain?.market_place_state}}</span> <span *ngIf="!domain?.market_place_city">-</span></p>
+          <ng-template pTemplate="footer">
+            <div class="col-12 row no-padding no-margin">
+              <div class="col-12 row custom-footer-padding no-margin flex-evenly">
+                <!-- <span class="margin-right-5px flex-align-center"><i class="pi pi-eye icon-new"></i><span class="new-text">2k</span></span>
+                <span class="margin-right-5px flex-align-center"><i class="pi pi-thumbs-up icon-new"></i><span class="new-text">567</span></span>
+                <span class="flex-align-center"><i class="pi pi-share-alt icon-new"></i></span> -->
+              </div>
+            </div>
+          </ng-template>
+        </p-card>
+    </div>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 no-padding no-margin" *ngIf="!loadingDomain && loadDomain">
+  <div class="flex-center">
+    <span class="load-more" (click)="loadMoreDomainData()"><span>LOAD MORE</span> <i class="pi pi-angle-double-down"></i></span>
+  </div>
+  <div class="grey-line"></div>
+</div>

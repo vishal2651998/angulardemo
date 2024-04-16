@@ -1,0 +1,29 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+    </app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+    </app-product-header>
+</div>
+<div class="prob-index split-sec1">
+    <div>
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+            <div class="bug-part-head">
+                <span class="Report-a-Bug-or-a-Feature-text">Report a Bug or a Feature</span>
+                <span class="tabs tabs-1 cursor" [ngClass]="{'active': bugflag}" (click)="bugs()">BUGS</span>
+                <span class="tabs tabs-2 cursor" [ngClass]="{'active': !bugflag}" (click)="feature()">FEATURES</span>
+                <span class="New-button" (click)="newBugorFeature()">New Bug or Feature</span>
+            </div>
+        </div>
+    </div>
+    <div class="probing-contents part-contents part-contents-new" [ngClass]="{'cbt-contents':!toggleon, 'cbt-content-hide':toggleon}">
+        <app-bug-and-feature [apiData]="apiFormData" [buglist]="buglist" [parentData]="dataDetails">
+        </app-bug-and-feature>
+    </div>
+    <div class="cust-right-panel info-panel media-info"
+    [ngClass]="{'right-panel-expand': !expandToggle, 'right-panel-collapse': expandToggle}">
+        <span *ngIf="!expandToggle && !emptyFlag" class="expands-icon cursor" (click)="toggleAction()"></span>
+        <app-bug-fea-details *ngIf="toggleon" [docData]="docData"></app-bug-fea-details>
+    </div>
+</div>
+
+

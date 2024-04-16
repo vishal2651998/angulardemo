@@ -1,0 +1,226 @@
+<div *ngIf="loading || (accessFrom == 'search' && searchLoading)" [ngClass]="{'hide': solrApi}" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading && ((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading ))" class="cust-loader esc-loader lazy-loader cust-lazy-loader {{accessFrom}}" [ngClass]="{'part-thumb-lazy-loader': thumbView, 'part-list-lazy-loader': !thumbView}"></div>
+<div *ngIf="thumbView" class="parts-thumb-view" [style.height]="'calc(100vh - '+rmHeight+'px)'">
+    <div #top *ngIf="!loading" [ngClass]="{'empty': displayNoRecords, 'opacity': opacityFlag}" id="partList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+        <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row masonry-item-container {{accessFrom}}" [ngClass]="{'parts-empty': displayNoRecords}" [updateLayout]="updateMasonryLayout" [ordered]="true">
+            <div ngxMasonryItem class="parts-grid-col masonry-item" *ngFor="let item of partsList">
+                <p-card class="parts-card cursor" [ngClass]="{'parts-expand-card': expandFlag}" (click)="viewParts(navAction, item.id)">
+                    <div class="card-content part-card-content">
+                        <div class="parts-image card-image" [ngClass]="{'default-img': item.isDefaultImg}"
+                            [ngStyle]="{'background-image': 'url(' + item.partBannerImg + ')'}">
+                            <span>ID# {{item.id}}</span> 
+                        </div>
+                        <div class="part-cont">						
+                            <div class="card-title" title="Part #{{item.partNumber}}">Part #{{item.partNumber}}</div>
+                            <div class="card-subtitle" [ngClass]="{'empty-card': item.likeCount == 0 && item.pinCount == 0 && item.viewCount == 0}">
+                                <div class="app-info">
+                                    <div class="title truncate" title="{{item.partName}}">{{item.partName}}</div>
+                                    <div class="info truncate hidden" *ngIf="item.make == '-'">{{item.make}}</div>
+                                    <div class="info truncate" *ngIf="item.make == 'All Makes'" title="{{item.make}} > {{item.model}} > {{item.year}}">{{item.make}}</div>
+                                    <div class="info truncate" *ngIf="item.make !='-' && item.make != 'All Makes'" title="{{item.make}} > {{item.model}} > {{item.year}}">{{item.make}} <img
+                                            src="{{chevronImg}}" /> {{item.model}} <span
+                                            *ngIf="item.year != '-' && item.year != ''"><img src="{{chevronImg}}" />
+                                            {{item.year}}</span>
+                                    </div>
+                                </div>
+                                <div class="parts-count">
+                                    <div *ngIf="item.likeCount > 0" class="parts-action parts-like">
+                                        {{item.likeCount}}
+                                        <span *ngIf="item.likeCount <= 1">Like</span>
+                                        <span *ngIf="item.likeCount > 1">Likes</span>
+                                    </div>
+                                    <div *ngIf="item.pinCount > 0" class="parts-action parts-pin">
+                                        {{item.pinCount}}
+                                        <span *ngIf="item.pinCount <= 1">Pin</span>
+                                        <span *ngIf="item.pinCount > 1">Pins</span>
+                                    </div>
+                                    <div *ngIf="item.viewCount > 0" class="parts-action parts-view">
+                                        {{item.viewCount}}
+                                        <span *ngIf="item.viewCount <= 1">View</span>
+                                        <span *ngIf="item.viewCount > 1">views</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p-card>
+            </div>            
+            <div class="thumb" *ngIf="((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading )) && (displayNoRecords || displayNoRecordsDefault)" [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="partsUrl"></app-empty-container>
+            </div>
+        </ngx-masonry>
+    </div>
+</div>
+<div *ngIf="!thumbView" class="prob-list-cont">
+    <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new" [style.height]="'calc(100vh - '+rmlHeight+'px)'">
+        <div *ngIf="!loading" id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table #table [columns]="partsListColumns" [scrollable]="true" [totalRecords]="partsList.length" id="file-datatable" class="file-datatable thread-list-table parts-list-table" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" [value]="partsList" [scrollHeight]="'calc(100vh - '+rmlHeight+'px)'" (scroll)="scroll($event)">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th *ngFor="let col of columns" class="{{col.columnpclass}}">    
+                            <span *ngIf="col.checkbox" class="checkbox {{headercheckDisplay}} {{headerCheck}}" (click)="partsSelection('all', 0, 0, headerCheck)"></span>
+                            {{col.header}}
+                            <!--span *ngIf="col.field == 'createdOn' || col.field == 'id'"><p-sortIcon [field]="col.field"></p-sortIcon></span-->
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-partsList let-i="rowIndex">
+                    <tr class="cursor" id="{{partsList.id}}" [ngClass]="{'active': partsList.checkFlag}">                                                        
+                        <td class="w1 thl-col-1">
+                            <div class="thread-bg p-table-col">
+                                <span class="checkbox" [ngClass]="{'active': partsList.checkFlag, 'inactive': !partsList.checkFlag}" (click)="partsSelection('single', i, partsList.id, !partsList.checkFlag)"></span>
+                                <span class="part-img" [ngClass]="{'default-img': partsList.isDefaultImg}" [ngStyle]="{'background-image': 'url(' + partsList.partBannerImg + ')'}" (click)="viewParts(navAction, partsList.id)"></span>         
+                            </div>
+                        </td>
+                        <td class="w2 thl-col-2 col-sticky" (click)="viewParts(navAction, partsList.id)">
+                            <span class="p-table-col" title="{{partsList.partNumber}}">{{partsList.partNumber}}</span>
+                        </td>
+                        <td class="w3 thl-col-3 col-sticky" (click)="viewParts(navAction, partsList.id)">
+                            <span class="p-table-col" title="{{partsList.partName}}">{{partsList.partName}}</span>
+                        </td>
+                        <td class="w4 thl-col-4" (click)="viewParts(navAction, partsList.id)"><span class="p-table-col" title="{{partsList.idId}}">{{partsList.id}}</span></td>
+                        <td class="w5 thl-col-5">
+                            <span class="make-name" [ngClass]="{'multiple-items': partsList.make == 'Multiple Makes'}">
+                                <div *ngIf="partsList.make == 'Multiple Makes'" class="cursor multiple custom-pop" [matMenuTriggerFor]="make">{{partsList.make}}</div>
+                                <div title="{{partsList.make}}" *ngIf="partsList.make != 'Multiple Makes'" class="makename" (click)="viewParts(navAction, partsList.id)">{{partsList.make}}</div>
+                            </span>
+                            <mat-toolbar color="primary">
+                                <mat-menu #make="matMenu" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul>
+                                            <li *ngFor="let m of partsList.makeList">{{m.genericProductName}}</li>
+                                        </ul>
+                                    </div> 
+                                </mat-menu>
+                            </mat-toolbar>
+                        </td>
+                        <td class="w6 thl-col-6">
+                            <span class="model" [ngClass]="{'multiple-items': partsList.model == 'Multiple Models'}">
+                                <div *ngIf="partsList.model == 'Multiple Models'" class="cursor multiple custom-pop" [matMenuTriggerFor]="partModel">{{partsList.model}}</div>
+                                <div title="{{partsList.model}}" *ngIf="partsList.model != 'Multiple Models'" class="model" (click)="viewParts(navAction, partsList.id)">{{partsList.model}}</div>
+                            </span>
+                            <mat-toolbar color="primary">
+                                <mat-menu #partModel="matMenu" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul *ngIf="partsList.makeList.length == 0">
+                                            <li>{{partsList.make}}
+                                                <ul class="inner-list">
+                                                    <li *ngFor="let model of partsList.modelList">
+                                                        {{model}}
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul *ngIf="partsList.makeList.length > 0">
+                                            <li *ngFor="let m of partsList.makeList">{{m.genericProductName}}
+                                                <ul class="inner-list">
+                                                    <li *ngFor="let model of m.model">
+                                                        {{model}}
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>
+                        </td>
+                        <td class="w7 thl-col-7">
+                            <span class="year" *ngIf="partsList.year?.length > 0" [ngClass]="{'multiple-items': partsList.year == 'Multiple Years', 'empty': partsList.year == '-'}">
+                                <div *ngIf="partsList.year == 'Multiple Years'" class="cursor multiple custom-pop" [matMenuTriggerFor]="year">{{partsList.year}}</div>
+                                <div *ngIf="partsList.year != 'Multiple Years'" class="year" (click)="viewParts(navAction, partsList.id)">{{partsList.year}}</div>
+                            </span>
+                            <mat-toolbar color="primary">
+                                <mat-menu #year="matMenu" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul *ngIf="partsList.makeList.length == 0">
+                                            <li>{{partsList.make}}
+                                                <ul class="inner-list">
+                                                    <li *ngFor="let y of partsList.yearList">
+                                                        {{y}}
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul *ngIf="partsList.makeList.length > 0">
+                                            <li *ngFor="let m of partsList.makeList">{{m.genericProductName}}
+                                                <ul class="inner-list">
+                                                    <li *ngFor="let y of m.year">
+                                                        {{y}}
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>                 
+                                </mat-menu>
+                            </mat-toolbar>
+                        </td>
+                        <td class="w8 thl-col-8" (click)="viewParts(navAction, partsList.id)">
+                            <span class="p-table-col">{{partsList.createdOn}}</span>
+                        </td>
+                        <td class="w9 thl-col-9" (click)="viewParts(navAction, partsList.id)">
+                            <span class="p-table-col">{{partsList.createdBy}}</span>
+                        </td>
+                        <td class="w10 thl-col-10" (click)="viewParts(navAction, partsList.id)">
+                            <span class="p-table-col">{{partsList.modifiedOn}}</span>
+                        </td>
+                        <td class="w8 thl-col-8" (click)="viewParts(navAction, partsList.id)">
+                            <span class="p-table-col">{{partsList.modifiedBy}}</span>
+                        </td>
+                        <td class="w12 thl-col-12 status-col col-sticky">
+                            <div class="status thread-status" [style.background-color]="partsList.statusColor">
+                                <div [ngStyle]="{'color': '#FFFFFF'}" align="center">{{partsList.status}}</div>
+                            </div> 
+                            <div id="more" class="more-icon" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                            </div>
+                            <mat-toolbar color="primary">
+                                <mat-menu #more="matMenu" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="cursor active" (click)="navPart('view', partsList.id)"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                            <li *ngIf="(partsList.isPublishedFlag && (partsList.access || accessLevel?.edit)) || (!partsList.isPublishedFlag && partsList.access)" class="cursor active" (click)="navPart('edit', partsList.id,partsList.createdById)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            <li *ngIf="(partsList.isPublishedFlag && (accessLevel?.create))" class="cursor active" (click)="navPart('duplicate', partsList.id,partsList.createdById)"><img src="assets/images/duplicate.png" alt="Duplicate"><span class="duplicate">Duplicate</span></li>
+                                            <li *ngIf="(partsList.isPublishedFlag && (partsList.access || accessLevel?.delete)) || (!partsList.isPublishedFlag && partsList.access)" class="cursor active" (click)="delete(partsList.id,partsList.createdById)"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>                                    
+                                            <li *ngIf="partsList.isPublishedFlag && partsList.access && partsList.pinStatus == 1" class="cursor active" (click)="socialAction(i+1, partsList.pinStatus)"><img src="{{assetPartPath}}pin-active-red.png" alt="Pin" />&nbsp;&nbsp;Pinned</li>
+                                            <li *ngIf="partsList.isPublishedFlag && partsList.access && partsList.pinStatus != 1" class="cursor active" (click)="socialAction(i+1, partsList.pinStatus)"><img src="{{assetPartPath}}pin-normal-white.png" alt="Pin" />&nbsp;&nbsp;Pin</li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <div class="list" *ngIf="displayNoRecords || displayNoRecordsDefault" [style.height.px]="innerHeight">                                     
+                <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="partsUrl"></app-empty-container>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="itemEmpty" class="no-item-list">
+        <div class="item-empty-container">
+            <p class="item-empty-para padd-top-20">No PartS have been created.</p>
+        </div>
+    </div>
+</div>
+<div class="popover prob-tooltip {{partActionPosition}}" [ngClass]="{'show' : partTooltip, 'hide': !partTooltip}" id="ng-popover" [style.top.px]="positionTop" [style.left.px]="positionLeft">
+    <div class="arrow"></div>
+    <div class="popover-body" id="ng-popover-cont" (clickOutside)="onClickedOutside()" (mouseleave)="onClickedOutside()">
+        <ul class="more-actions">
+            <li class="cursor active" (click)="navPart('view', partId)"><img src="assets/images/view.png" alt="View">View</li>
+            <li *ngIf="editAccess" class="cursor active" (click)="navPart('edit', partId)"><img src="assets/images/edit.png" alt="Edit">Edit</li>
+            <li *ngIf="editAccess" class="cursor active" (click)="navPart('duplicate', partId)"><img src="assets/images/duplicate.png" alt="Duplicate">Duplicate</li>
+            <li *ngIf="editAccess" class="cursor active" (click)="delete(partId)"><img src="assets/images/delete.png" alt="Delete">Delete</li>
+            <li *ngIf="editAccess" class="cursor active" (click)="socialAction(partIndex, pinStatus)"><img src="{{assetPartPath}}{{pinImg}}" alt="Pin" />{{pinTxt}}</li>
+        </ul>        
+    </div>
+</div>
+
+<div class="popover prob-tooltip make-ws-tooltip {{partActionPosition}}" [ngClass]="{'show': wsTooltip, 'hide': !wsTooltip}" id="ng-popover" [style.top.px]="positionTop" [style.left.px]="positionLeft" (mouseleave)="onClickedOutside()">
+    <div class="arrow"></div>
+    <div class="popover-body" id="ng-popover-cont" (clickOutside)="onClickedOutside()">
+        <ul *ngIf="wsTooltip" class="more-actions ws-list mod-ws-list scrollbar scrollbar-primary thin" [ngClass]="{'custom-height': partsList[partIndex]['workstreamArr']?.length > 6}">
+            <li *ngFor="let ws of partsList[partIndex]['workstreamList'];">{{ws.name}}</li>
+        </ul>
+    </div>    
+</div>

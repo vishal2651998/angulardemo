@@ -1,0 +1,30 @@
+<div class="dash-head">
+    <app-dashboard-header [pageData]="headerData"></app-dashboard-header>
+</div>
+
+<div class="dashboard-content" [ngClass]="{'filter-collapse': !expandFlag, 'filter-expand':expandFlag }">
+    <div class="dashboard-charts detail-chart da-chart">
+        <div class="row col-lg-12 col-md-12 col-sm-12 chart-row">
+            <div class="col-lg-12 col-md-12 col-sm-12 dash-chart-col">
+                <div class="thread-chart-col">
+                    <div class="chart-head">{{headTitle}}</div>
+                    <div class="chart-cont area-cont" [style.height.px]="innerHeight">
+                        <div class="chart-area open-thread-chart">
+                            <div *ngIf="areaLoading" class="loader dash-loader"><img src="assets/images/blue-loading.svg" alt="Loader" /></div>
+                            <div *ngIf="!areaLoading && noDataFlag" class="empty-chart text-center">
+                                <img src="assets/images/dashboard/empty-chart.png" alt="Empty Chart" /><br>
+                                No Data
+                            </div>
+                            <app-area-activity-chart *ngIf="!areaLoading && !noDataFlag" [chartData]="areaData" [chartOptions]="areaOptions"></app-area-activity-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dash-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+    <app-dash-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-dash-filter>
+    <app-dash-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-dash-filter>
+</div>

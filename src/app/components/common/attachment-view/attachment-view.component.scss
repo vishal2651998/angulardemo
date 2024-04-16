@@ -1,0 +1,214 @@
+.cdk-drag-preview, .attachment-row {
+    border-bottom: solid 1px #E1E1E1;
+    position: relative;
+    padding: 15px 0 15px 0;
+    &.action-row {
+        cursor: move;
+    }
+    .attachment-col {
+        display: inline-block;
+        vertical-align: middle;
+        &.bg-col {
+            background-color: #c0c3c5;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border: solid 1px #E1E1E1;
+            border-radius: 8px;
+            height: 80px;
+            margin: 15px;
+            position: relative;
+            width: 10%;
+            .drag-icon {
+                background: url('../../../../assets/images/drag.png') no-repeat;
+                height: 19px;
+                width: 19px;
+                display: inline-block;
+                position: absolute;
+                left: -25px;
+                top: 28px;
+            }
+            .poster {
+                background-color: rgba(0, 0, 0, 0.1);
+                bottom: 0;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 0;
+                img {
+                    opacity: 1;
+                    left: 50%;
+                    margin-left: -15px;
+                    margin-top: -15px;
+                    position: absolute;
+                    top: 50%;
+                }
+            }
+        }
+        &.doc-bg {
+            background-color: transparent;
+            background-size: auto !important;
+        }
+        &.cont-col {
+            font-family: Roboto-Regular;
+            /*width: 85%;*/
+            width: calc(100% - 70px);
+            .caption {
+                color: #000;
+                padding-bottom: 5px;
+                .link, &.link {
+                    /*color: #0962C6;*/
+                    color: #e55554;
+                }
+                .caption-val {
+                    display: inline-block;
+                    width: auto;
+                    word-break: break-all;
+                    padding: 5px 0px;
+                    span {
+                        padding-right: 5px;
+                    }
+                    &.empty-caption {
+                        color: #9B9A9A;
+                    }
+                    img {
+                        display: none;
+                        width: 15px;
+                    }
+                    &:hover {
+                        img {
+                            display: inline;
+                        }
+                    }
+                }
+                .caption-control {
+                    background: transparent;
+                    border: solid 1px #E6E9Ef;
+                    padding: 5px 10px 4px;
+                    margin-right: 10px;
+                    vertical-align: middle;
+                    /*width: 100%;*/
+                    width: calc(100% - 35px);
+                }
+                .action {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    vertical-align: top;
+                }
+                .cancel {
+                    background: url('../../../../assets/images/delete-circle.png') no-repeat;
+                    position: absolute;
+                    top: 8px;
+                    right: 20px;
+                    width: 30px;
+                    height: 30px;
+                    &.media-cancel {
+                        background: url('../../../../assets/images/media/manager/delete-upload1.png') no-repeat;
+                        top: 10px;
+                        right: 12px;
+                    }
+                }
+            }
+            .desc {
+                color: #6F6F6F;
+                word-break: break-all;
+                .dot {
+                    background-color: #6F6F6F;
+                    border-radius: 8px;
+                    display: inline-block;
+                    margin: 0 2px;
+                    position: relative;
+                    top: -3px;
+                    width: 3px;
+                    height: 3px;
+                }
+            }
+        }
+        &.action-col {
+            margin-left: 30px;
+            &.video {
+                background-color: transparent;
+                background-size: cover;
+            }
+            &.link, &.cont-col {
+                width: auto;
+                margin-left: 0px;
+            }
+        }
+    }
+    &.audio, &.doc {
+        .attachment-col {
+            &.bg-col {
+                background-color: transparent;
+                background-size: cover;
+            }
+        }
+    }
+
+    &.link, .link {
+        .attachment-col {
+            &.bg-col {
+                background-image: url('../../../../assets/images/parts/link-bg.png');
+            }
+            &.site {
+                background-color: transparent;
+                background-size: cover;
+            }
+            &.cont-col {
+                .caption {
+                    .caption-control {
+                        margin: 15px 0px;
+                        padding: 5px 10px 4px;
+                        position: relative;
+                        top: 10px;
+                        &.link-control {
+                            border-radius: 0;
+                            border: 0 none !important;
+                            border-bottom: solid 1px #E6E9Ef !important;
+                            padding: 5px 10px 5px !important;
+                            margin-top: 0px;
+                            top: 0;
+                            &.not-valid {
+                                border-bottom: solid 1px #FF0000 !important;
+                                &::placeholder {
+                                    color: #FF0000;
+                                }
+                            }
+                        }
+                        &.edit-control {
+                            margin: 15px 0px 0px;
+                            padding: 2px 10px 2px !important;
+                            top: 0;
+                            &.link-edit-control {
+                                margin: 0;
+                                padding: 0px 10px 4px !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    &:last-child {
+        border: 0 none !important;
+    }
+}
+
+.image-width-margin {
+    margin: 0 10px 0 0!important;
+    width: 30%!important;
+}
+.word-break {
+    word-break: break-word!important
+}
+
+.width-64-perc {
+    width: 64% !important;
+    font-size: 14px!important;
+}
+.refer-info.no-padding {
+    padding: 0px !important;
+}

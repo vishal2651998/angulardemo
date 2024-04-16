@@ -1,0 +1,31 @@
+<div *ngIf="mdLoading" class="models">
+    <mat-form-field>
+        <mat-select #selectopt (openedChange)="openedChange($event)" panelClass="mat-gts-panel" placeholder="Emissions" [formControl]="mdFormControl" [(ngModel)]="dbSelectedMd" multiple disableOptionCentering>
+            <div class="select-container select-container-gts" *ngIf="mdLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" class="model-search-input" placeholder="Search Emissions" aria-label="Search Emissions" matInput [formControl]="mdSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(mdFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="setSelectedValues();selectopt.close()">Close</div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of mdFilteredOptions | async" title="{{option}}" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="mdLoadingSelect">
+    <div *ngIf="mdFormControl.value != ''" class="selected-items">
+        <div *ngFor="let item of modelItems; let t=index" class="tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,209 @@
+<div class="modal-container custom-modal manage-modal" id="wrapper">
+    <div class="modal-header modal-follow-header">
+        <h6 *ngIf="titleFlag" class="modal-title"><span *ngIf="!loading">{{title}}</span></h6>
+        <h6 *ngIf="!titleFlag" class="modal-title"><span *ngIf="!loading">{{title}} ({{count}})</span></h6>
+        <div class="actions">           
+            <span (click)="close()" class="cursor close follow-close">
+                <img *ngIf="!loading" src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body">       
+        <div class="center-scroll-to scrollbar scrollbar-primary thin"  [style.height.px]="innerHeight">   
+            <div class="modal-cert modal-follow">
+                <div class="search-user" *ngIf="!dashboardFlag">
+                    <form *ngIf="!loading" class="search-form user-search" [formGroup]="searchForm" (ngSubmit)="submitSearch()">
+                        <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/search-icon.png"></a>
+                        <input *ngIf="!actionFlag" type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                        <input *ngIf="actionFlag" type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" disabled="true">
+                        <a *ngIf="searchClose && !actionFlag" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                        <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/search-icon.png"></a>
+                    </form>
+                </div>
+
+                <div *ngIf="!loading && dashboardFlag">  
+                    <div *ngIf="type == 'thread-dashboard'">
+                        <div class="dashboard-header" *ngIf="dashboardData.ismain==1">
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !viewTab, 'active-tab': viewTab  }" (click)="dashboardListView('views')" >
+                                <div class="img db-view"></div>
+                                <div class="text">VIEWED BY</div>
+                                <div *ngIf="viewCount>0" class="count">({{viewCount}})</div>
+                                <div *ngIf="viewCount==0" class="count">(-)</div>
+                            </div>
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !contriTab, 'active-tab': contriTab  }" (click)="dashboardListView('contributors')">
+                                <div class="img db-contri"></div>
+                                <div class="text">CONTRIBUTORS</div>
+                                <div *ngIf="contriCount>0" class="count">({{contriCount}})</div>
+                                <div *ngIf="contriCount==0" class="count">(-)</div>
+                            </div>
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !solvedTab, 'active-tab': solvedTab  }" (click)="dashboardListView('solvedby')">
+                                <div class="img db-solved"></div>
+                                <div class="text">solved by</div>
+                                <div *ngIf="solvedbyCount>0" class="count">({{solvedbyCount}})</div>
+                                <div *ngIf="solvedbyCount==0" class="count">(-)</div>
+                            </div>
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !likeTab, 'active-tab': likeTab  }" (click)="dashboardListView('like')">
+                                <div class="img db-like"></div>
+                                <div class="text">like</div>
+                                <div *ngIf="likeCount>0" class="count">({{likeCount}})</div>
+                                <div *ngIf="likeCount==0" class="count">(-)</div>
+                            </div>
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !pinTab, 'active-tab': pinTab  }" (click)="dashboardListView('pin')">
+                                <div class="img db-pin"></div>
+                                <div class="text">pin</div>
+                                <div *ngIf="pinCount>0" class="count">({{pinCount}})</div>
+                                <div *ngIf="pinCount==0" class="count">(-)</div>
+                            </div>
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !metooTab, 'active-tab': metooTab  }" (click)="dashboardListView('metoo')">
+                                <div class="img db-metoo"></div>
+                                <div class="text">SAME FOR ME</div>
+                                <div *ngIf="metooCount>0" class="count">({{metooCount}})</div>
+                                <div *ngIf="metooCount==0" class="count">(-)</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-header" *ngIf="dashboardData.ismain==0">
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !likeTab, 'active-tab': likeTab  }" (click)="dashboardListView('like')">
+                                <div class="img db-like"></div>
+                                <div class="text">like</div>
+                                <div *ngIf="likeCount>0" class="count">({{likeCount}})</div>
+                                <div *ngIf="likeCount==0" class="count">(-)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="type == 'announcement-dashboard'">
+                        <div class="dashboard-header">
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !viewTab, 'active-tab': viewTab  }" (click)="annDashboardListView('views')" >
+                                <div class="img db-view"></div>
+                                <div class="text">VIEWED BY</div>
+                                <div *ngIf="viewCount>0" class="count">({{viewCount}})</div>
+                                <div *ngIf="viewCount==0" class="count">(-)</div>
+                            </div>                       
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !likeTab, 'active-tab': likeTab  }" (click)="annDashboardListView('like')">
+                                <div class="img db-like"></div>
+                                <div class="text">like</div>
+                                <div *ngIf="likeCount>0" class="count">({{likeCount}})</div>
+                                <div *ngIf="likeCount==0" class="count">(-)</div>
+                            </div>
+                            <!--div class="dashboard-tab" [ngClass]="{'normal-tab': !pinTab, 'active-tab': pinTab  }" (click)="annDashboardListView('pin')">
+                                <div class="img db-pin"></div>
+                                <div class="text">pin</div>
+                                <div *ngIf="likeCount>0" class="count">({{pinCount}})</div>
+                                <div *ngIf="likeCount==0" class="count">(-)</div>
+                            </div-->
+                        </div>
+                    </div>
+                    <div *ngIf="type == 'document-dashboard'">
+                        <div class="dashboard-header">
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !viewTab, 'active-tab': viewTab  }" (click)="annDashboardListView('views')" >
+                                <div class="img db-view"></div>
+                                <div class="text">VIEWED BY</div>
+                                <div *ngIf="viewCount>0" class="count">({{viewCount}})</div>
+                                <div *ngIf="viewCount==0" class="count">(-)</div>
+                            </div>                       
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !likeTab, 'active-tab': likeTab  }" (click)="annDashboardListView('like')">
+                                <div class="img db-like"></div>
+                                <div class="text">like</div>
+                                <div *ngIf="likeCount>0" class="count">({{likeCount}})</div>
+                                <div *ngIf="likeCount==0" class="count">(-)</div>
+                            </div>
+                            <div class="dashboard-tab" [ngClass]="{'normal-tab': !pinTab, 'active-tab': pinTab  }" (click)="annDashboardListView('pin')">
+                                <div class="img db-pin"></div>
+                                <div class="text">pin</div>
+                                <div *ngIf="pinCount>0" class="count">({{pinCount}})</div>
+                                <div *ngIf="pinCount==0" class="count">(-)</div>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="loading" class="loading-image"><img src="assets/images/loading.svg" alt="Loader" width="60"/></div>     
+                <div *ngIf="!loading && !empty" id="manageTable">  
+                    <table class="manage-table split-table">  
+                        <tbody *ngIf="followingFlag" class="manage-items">
+                            <tr *ngIf="fError"><td colspan="2"><span class="profile-invalid-feedback sname-error">{{fErrorMsg}}</span></td></tr>
+                            <tr class="item-list user-list {{item.itemClass}}" *ngFor="let item of listItems; let i = index;" [ngClass]="{'hide': !item.displayFlag}">                                   
+                                <td class="cont setMargin col1">
+                                    <span (click)="tapfrompopup(item.userId)" class="profile-info profile-img-icon cursor" [ngClass]="{'init': !item.checkDisplayFlag}" >
+                                        <img class="" [src]="item.profileimage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                        <span class="avail avail-pos" [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                    </span>
+                                    <span (click)="tapfrompopup(item.userId)" class="profile-info user-name cursor">
+                                        <span class="name">{{item.userName}}</span>
+                                        <span class="role">{{item.title}}</span>
+                                    </span>                                        
+                                </td>
+                                <td class="cont col2">
+                                    <div class="p4" *ngIf="editIconFlag">                                        
+                                        <a [attr.id]="'follow-'+item.userId" (click)="followORUnfollow('follow', item.userId)" class="button1 cursor hideButton"><label class="p4-button">FOLLOW</label></a>
+                                        <a [attr.id]="'unfollow-'+item.userId" (click)="followORUnfollow('unfollow', item.userId)" class="button1 button2 cursor showButton"><label class="p4-button">UNFOLLOW</label></a>                                        
+                                    </div>
+                                </td>
+                            </tr>                                                           
+                        </tbody>
+                        <tbody *ngIf="followerFlag" class="manage-items">                            
+                            <tr class="item-list user-list {{item.itemClass}}" *ngFor="let item of listItems; let i = index;" [ngClass]="{'hide': !item.displayFlag}">                                   
+                                <td class="cont setMargin">
+                                    <span (click)="tapfrompopup(item.userId)" class="profile-info profile-img-icon cursor" [ngClass]="{'init': !item.checkDisplayFlag}" >
+                                        <img class="" [src]="item.profileimage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                        <span class="avail avail-pos" [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                    </span>
+                                    <span (click)="tapfrompopup(item.userId)" class="profile-info user-name cursor">
+                                        <span class="name">{{item.userName}}</span>
+                                        <span class="role">{{item.title}}</span>
+                                    </span>                                        
+                                </td>
+                            </tr>                                 
+                        </tbody>
+                        <tbody *ngIf="managerFlag" class="manage-items"> 
+                            <tr class="item-list user-list {{item.itemClass}} cursor" *ngFor="let item of listItems; let i = index;" [ngClass]="{'hide': !item.displayFlag}" (click)="itemSelection(item.userId, item.userName)">
+                                <td class="cont setMargin">
+                                    <span class="profile-info profile-img-icon cursor" [ngClass]="{'init': !item.checkDisplayFlag}" >
+                                        <img class="" [src]="item.profileimage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                        <span class="avail avail-pos" [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                    </span>
+                                    <span class="profile-info user-name cursor">
+                                        <span class="name">{{item.userName}}</span>
+                                        <span class="role">{{item.title}}</span>
+                                    </span>                                        
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="dashboardFlag" class="manage-items">
+                            <tr *ngIf="fError"><td colspan="2"><span class="profile-invalid-feedback sname-error">{{fErrorMsg}}</span></td></tr>
+                            <tr class="item-list user-list {{item.itemClass}}" *ngFor="let item of listItems; let i = index;" [ngClass]="{'hide': !item.displayFlag}">                                   
+                                <td class="cont setMargin col1">
+                                    <span (click)="tapfrompopup(item.userid)" class="profile-info profile-img-icon cursor" [ngClass]="{'init': !item.checkDisplayFlag}" >
+                                        <img class="" [src]="item.profile" onerror="this.src='assets/images/thumb_profile_image.png'" />                                
+                                        <span class="avail avail-pos" [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                    </span>
+                                    <span (click)="tapfrompopup(item.userid)" class="profile-info user-name cursor">
+                                        <span class="name" *ngIf="dashboardData.userId == item.userid">You</span>
+                                        <span class="name" *ngIf="dashboardData.userId != item.userid">{{item.username}}</span>
+                                        <span class="role">{{item.badgestatus}}</span>
+                                    </span>                                        
+                                </td>
+                                <td class="cont col2">
+                                    <div class="p4 mR" *ngIf="dashboardData.userId != item.userid">                                        
+                                        <a [attr.id]="'follow-'+item.userid" (click)="followORUnfollow('follow', item.userid)" class="button1 cursor" [ngClass]="{'hideButton': item.following != 0, 'showButton': item.following == 0}"><label class="p4-button">FOLLOW</label></a>
+                                        <a [attr.id]="'unfollow-'+item.userid" (click)="followORUnfollow('unfollow', item.userid)" class="button1 button2 cursor" [ngClass]="{'hideButton': item.following == 0, 'showButton': item.following != 0}"><label class="p4-button">UNFOLLOW</label></a>                                        
+                                    </div>
+                                </td>
+                            </tr>  
+                        </tbody>
+                    </table>                
+                </div>
+                <div *ngIf="!loading && empty" class="no-item-list">
+                    <div class="item-empty-container" [style.height.px]="innerHeight-110">
+                        <div class="empty-cont">
+                            <div class="text-center empty-res">
+                                <div class="empty-bg"></div>
+                                <div>{{successMsg}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

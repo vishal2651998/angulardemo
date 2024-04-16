@@ -1,0 +1,66 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">  
+     <div class="modal-header"> 
+        <h6 class="modal-title">{{title}} <span *ngIf="type=='Edit'">Edit</span></h6>
+        <div *ngIf="showCropper && !uploadReady" (click)="uploadFileNew()" class="red-btn">
+            <img class="img2" src="assets/images/profile/profile-user-white.png"/>
+            <span>Crop & Save</span>
+        </div>
+        <div *ngIf="showCropper && uploadReady" class="red-btn setOpacity3">
+            <img class="img2" src="assets/images/profile/profile-user-white.png"/>
+            <span>Crop & Save</span>
+        </div>
+        <img  class="close-icon" aria-label="Close" (click)="activeModal.dismiss('Cross click')" src="assets/images/login/popup-close.png" />
+    </div>
+    <div class="modal-body">        
+        <div class="image-cropper-div">
+            <div class="center-scroll-to scrollbar scrollbar-primary thin"  [style.height.px]="innerHeight"> 
+                <div *ngIf="loading" class="loading-image"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" width="60"/></div>     
+                <div class="image-cropper-inner-div" [ngClass]="{ 'setOpacity3' : loading }" > 
+                    <div *ngIf="!cropImgLoad" class="image-div" [style.height.px]="innerHeight-10">  
+                        <div class="responsive-pimg">
+                            <img src="assets/images/profile/profile-crop-default.png" />
+                            <span (click)="fileUpload.click()" class="red-btn">
+                                <img class="img1" src="assets/images/profile/profile-upload.png"/>
+                                <span class="choose-text">Choose File</span>
+                            </span>
+                            <input type="file" class="file-input hide" (change)="fileChangeEvent($event)" #fileUpload accept='image/*' >
+                            <span *ngIf="!invalidFile" class="placeHolderText">Max. upload file size 2MB</span> 
+                            <div *ngIf="selectImgError && !invalidFile" class="error-div"><span class="error-msg">{{selectImgErrorMsg}}</span></div>
+                            <div *ngIf="invalidFile" class="error-div"><span class="error-msg">{{invalidFileErr}}</span></div>                   
+                        </div>                                               
+                    </div>                   
+                    <div *ngIf="cropImgLoad" class="crop-special-iocns-div row">
+                        <a (click)="rotateRight()" title="Rotate Right" ><img src="assets/images/profile/rotate-right.png" /></a>
+                        <a (click)="rotateLeft()"  title="Rotate Left"><img src="assets/images/profile/rotate-left.png" /></a>
+                        <a (click)="toggleContainWithinAspectRatio()" title="Aspect Ratio"><img src="assets/images/profile/ratio.png" /></a>
+                        <a (click)="zoomIn()" title="Zoom In"><img src="assets/images/profile/zoom-in.png" /></a>
+                        <a (click)="zoomOut()" title="Zoom In"><img src="assets/images/profile/zoom-out.png" /></a>
+                        <a (click)="resetImage()" title="Reset"><img src="assets/images/profile/profile-refresh.png" /></a>
+                    </div>
+                    <div class="load-image">
+                        <image-cropper
+                        [imageChangedEvent]="imageChangedEvent"
+                        [maintainAspectRatio]="false"
+                        [containWithinAspectRatio]="containWithinAspectRatio"                       
+                        [onlyScaleDown]="true"
+                        [roundCropper]="false"
+                        [canvasRotation]="canvasRotation"
+                        [transform]="transform"
+                        [alignImage]="'left'"
+                        [style.display]="showCropper ? null : 'none'"
+                        format="png"
+                        (imageCropped)="imageCropped($event)"
+                        (imageLoaded)="imageLoaded()"
+                        (cropperReady)="cropperReady($event)"
+                        (loadImageFailed)="loadImageFailed()"
+                        ></image-cropper>
+                    </div>
+                    <div class="row" *ngIf="cropImgLoad">
+                        <span class="profile-preview-text">PROFILE PREVIEW</span>
+                        <span  class="cropped-image"><img [src]="croppedImage" /></span>
+                    </div>                    
+                </div>
+            </div> 
+        </div> 
+    </div>       
+</div>

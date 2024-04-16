@@ -1,0 +1,951 @@
+<div *ngIf="showHeader" class="d-flex align-items-center justify-content-between upper-head">
+    <div class="hq-head pt-0 ng-star-inserted d-flex justify-content-between">
+        <!-- <div class="hq-head-row-0">
+            <span class="hq-head-breadcrumb-text cursor">Headquarters</span>
+            <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+            <span class="hq-head-breadcrumb-text cursor">Tools & Equipments</span>
+            <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+            <span class="hq-head-breadcrumb-text cursor">{{selectedProduct?.productName}}</span>
+        </div> -->
+        <div class="hq-head-row-1" style="padding-right: 16px;">
+            <div class="left-heading d-flex align-items-center">
+                <img src="assets/images/inspection-home/marketing.png" alt="" class="hq-head-img" width="21" height="22">
+                <span class="hq-head-text">{{selectedProduct?.vendorInfo?.name}}</span>
+            </div>
+
+        </div>    
+    </div>
+    <span class="d-flex align-items-center" style="margin-right: 25px;"> <img src="assets/images/hq/user-grey.png" alt="" width="19" height="18" style="min-width: 19px;">
+        <span class="mx-1" style="color: #93989d;font-size: 14px;">Entered by:</span><span style="font-size: 14px;font-weight: 700">{{selectedProduct?.enteredBy}}</span>
+    </span>
+    <!-- <div class="network-head">
+        <div class="d-flex align-items-center">
+            <span class="ntwk">Select Network</span>
+            <p-dropdown optionLabel="name" placeholder="General Overview"
+            class="ass-date"
+            [style]="{'width':'100%', 'border': 'solid 1px #d0d0d0', 'border-radius': '6px', 'box-shadow': 'none'}"></p-dropdown>
+        </div>
+    </div> -->
+</div>
+
+<div [style.height]="'calc(100vh - '+emptyHeight+'px)'" style="padding-top: 5px;" class="position-relative d-flex">
+    <div class="ps w-100" [perfectScrollbar]="sconfig">
+        <div class="container pl-0">
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="outer-hq-container pb-3">
+                        <div class="d-flex" style="padding-top: 22px;">
+                            <div class="col-sm-4 product-detail" style="padding-top: 13px;padding-bottom: 17px;padding-left: 29px;">
+                                <div class="products">
+                                    <p-galleria *ngIf="carouselLinks && carouselLinks.length > 0" [autoPlay]="false" [(activeIndex)]="activeIndex" [value]="carouselLinks"
+                                        [showThumbnails]="true" [showIndicators]="false" [showIndicatorsOnItem]="false">
+                                        <ng-template pTemplate="item" let-item>
+                                            <img [src]="item.src"
+                                                style="border-radius: 0 !important; background-color: transparent !important;" />
+                                        </ng-template>
+                                        <ng-template pTemplate="thumbnail" let-i>
+                                            <img style="margin:0 " [src]="i.src">
+                                        </ng-template>
+                                    </p-galleria>
+                                    <div style="border: 1px solid #e0e3e5;border-radius: 10px;height: 50vh;display: flex;align-items: center;justify-content: center;width:100%" *ngIf="!carouselLinks || carouselLinks.length == 0">
+                                        <div style="height: 100%;width: 100%;">
+                                            <img src="assets/images/hq/tool-blank.png" style="height: 100%;width: 100%;border-radius: 10px;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-8 pr-0">
+                                <div class="f-bold ml-3 mb-25 d-flex justify-content-between " style="padding-bottom: 18px;border-bottom: 1px solid #e0e3e5;">
+                                    <span style="display: flex;align-items: center;gap: 8px;">{{selectedProduct?.vendorInfo?.name}} <img src="assets/images/landing-page/black-chevron.png"> {{selectedProduct?.modelInfo?.name}}</span>
+                                    <span class="d-flex align-items-center" style="margin-right: 25px;"><img  title="Edit" class="loc-head-edit-img cursor"
+                                    src="assets/images/hq/hq-edit-icon.png" (click)="editTools()" style="margin-left: 10px;"></span>
+                                   
+                                </div>
+                                <div class="d-flex justify-content-between px-3" style="padding-right: 22px !important;">
+                                    <div class="model-col">
+                                        <div class="d-flex">
+                                            <span>
+                                                <img src="assets/images/hq/model-icon.png" alt="" width="22px" height="21px" style="min-width: 22px;">
+                                            </span>
+                                            <div style="margin-left: 12px;">
+                                                <p class="mb-0 f-medium grey-txt">Product Name</p>
+                                                <p class="mb-0 f-regular lh-12">{{selectedProduct?.productNameInfo?.name ? selectedProduct?.productNameInfo?.name : '-'}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="model-col">
+                                        <div class="d-flex">
+                                            <span>
+                                                <img src="assets/images/inspection-home/category.png" alt="" width="19" height="18" style="min-width: 19px;">
+                                            </span>
+                                            <div style="margin-left: 12px;">
+                                                <p class="mb-0 f-medium grey-txt">Category</p>
+                                                <p class="mb-0 f-regular lh-12">{{selectedProduct?.categoryInfo?.name ? selectedProduct?.categoryInfo?.name : '-'}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="model-col">
+                                        <div class="d-flex">
+                                            <span>
+                                                <img src="assets/images/inspection-home/type.png" alt="" width="19" height="19" style="min-width: 19px;">
+                                            </span>
+                                            <div style="margin-left: 12px;">
+                                                <p class="mb-0 f-medium grey-txt">Type</p>
+                                                <p class="mb-0 f-regular lh-12">{{selectedProduct?.toolTypeInfo?.name ? selectedProduct?.toolTypeInfo?.name : '-'}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="model-col">
+                                        <div class="d-flex">
+                                            <span>
+                                                <img src="assets/images/inspection-home/brand.png" alt="" width="22px" height="21px" style="min-width: 22px;">
+                                            </span>
+                                            <div style="margin-left: 12px;">
+                                                <p class="mb-0 f-medium grey-txt">Brand</p>
+                                                <p class="mb-0 f-regular lh-12">{{selectedProduct?.brandInfo?.name ? selectedProduct?.brandInfo?.name : '-'}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                   
+                                    <div class="model-col">
+                                        <div class="d-flex">
+                                            <span>
+                                                <img src="assets/images/inspection-home/manufacture.png" alt="" width="20" height="20" style="min-width: 20px;">
+                                            </span>
+                                            <div style="margin-left: 12px;">
+                                                <p class="mb-0 f-medium grey-txt">Manufacturer</p>
+                                                <p class="mb-0 f-regular lh-12">{{selectedProduct?.mfgInfo?.name ? selectedProduct?.mfgInfo?.name : '-'}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+
+
+                                <div class="col-sm-12" style="margin-top: 21px;">
+                                    <div class="d-flex">
+                                        <span>
+                                            <img src="assets/images/inspection-home/notes.png" alt="" width="19" height="19" style="min-width: 19px;">
+                                        </span>
+
+                                        <div style="margin-left: 12px;">
+                                            <p class="mb-0 f-medium grey-txt">Description</p>
+                                            <p class="mb-0 f-regular dark-blues">
+                                                {{selectedProduct?.description ? selectedProduct?.description : '-'}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SPEC TOOLS COLUMN -->
+                                <div class="col-12" style="">
+                                    <div class="left-heading d-flex align-items-center mt-4 mb-2">
+                                        <img src="assets/images/hq/spec-icon.png" alt="" class="hq-head-img mr-1" width="17" height="22">
+                                        <span style="font-size: 18px;padding-left: 5px;font-weight: 700;" class="hq-head-text">Specifications</span>
+                                    </div>
+                                    <div *ngIf="selectedProduct?.toolsSpec && selectedProduct?.toolsSpec.length > 0" class="row">
+                                        <div class="col-12 row flex-pa mx-1 px-1">
+                                            <div *ngFor="let spec of selectedProduct.toolsSpec" class="col-4 p-0 d-flex justify-content-between " >
+                                                <div class="m-2  d-flex justify-content-between w-100" style="border-radius: 10px;border: solid #e0e3e5 1px;padding: 14px;">
+                                                    <span>{{spec.labelName}}</span>
+                                                    <span><span style="padding-right: 6px;">{{spec.value}}</span> <span>{{spec.unitName}}</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!selectedProduct?.toolsSpec || selectedProduct?.toolsSpec.length == 0" class="row mx-1 col-12">
+                                        <div >
+                                            <div class="d-flex align-items-center " >
+                                                <div class=" py-1">
+                                                    <!-- <img style="height: 60px;width: 65px;" src="assets/images/landing-page/blank-croc.png" alt=""> -->
+                                                    <i>
+                                                            <p style="color: #777777;" class="m-0 description">No data</p>
+                                                    </i> 
+                                                </div>
+                                            </div>
+                                        </div>          
+                                    </div>
+                                </div>
+
+                                 <!-- OEM COLUMN -->
+                                 <div class="col-12" style="">
+                                    <div class="left-heading d-flex align-items-center mt-4 mb-2">
+                                        <img src="assets/images/hq/oem-icon.png" alt="" class="hq-head-img" width="23" height="21">
+                                        <span style="font-size: 18px;padding-left: 5px;font-weight: 700;" class="hq-head-text">OE Certification and OE Model</span>
+                                    </div> 
+                                    <div  *ngIf="selectedProduct?.oemInfo && selectedProduct?.oemInfo.length > 0" class="row">
+                                        <div class="col-12 row flex-pa mx-1 px-1">
+                                            <div *ngFor="let oem of selectedProduct?.oemInfo" class="col-4 p-0 d-flex" >
+                                                <div class="m-2 w-100 d-flex" style="border-radius: 10px;border: solid #e0e3e5 1px;padding: 14px;">
+                                                    <span style="display:flex ;align-items: center;"><span style="padding-right: 4px;">{{oem?.oemName}}</span>  <span style="display: flex;" class="mx-1"> <img style="height: 14px;" src="assets/images/landing-page/black-chevron.png"> </span> <span style="padding-left: 4px;">{{oem?.modelName}}</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!selectedProduct?.oemInfo || selectedProduct?.oemInfo.length == 0" class="row mx-1 col-12">
+                                        <div >
+                                            <div class="d-flex align-items-center " >
+                                                <div class=" py-1">
+                                                    <!-- <img style="height: 60px;width: 65px;" src="assets/images/landing-page/blank-croc.png" alt=""> -->
+                                                    <i>
+                                                            <p style="color: #777777;" class="m-0 description">No data</p>
+                                                    </i> 
+                                                </div>
+                                            </div>
+                                        </div>          
+                                    </div>
+                                </div>
+
+                                <!-- LINKS COLUMN -->
+                                <div class="col-12" style="">
+                                    <div class="left-heading d-flex align-items-center mt-4 mb-2">
+                                        <img src="assets/images/hq/link-icon.png" alt="" class="hq-head-img" width="21" height="21">
+                                        <span style="font-size: 18px;padding-left: 5px;font-weight: 700;" class="hq-head-text">Links</span>
+                                    </div>
+                                    <div *ngIf="selectedProduct?.webLinks && selectedProduct?.webLinks.length > 0" class="row">
+                                        <div class="col-12 row flex-pa mx-1 px-1">
+                                            <div *ngFor="let oem of selectedProduct?.webLinks" class="col-4 p-0 d-flex" >
+                                                <div class="m-2 w-100 d-flex" style="border-radius: 10px;border: solid #e0e3e5 1px;padding: 8px;">
+                                                    <span class="d-flex align-items-center"><span style="border-radius: 10px;border: solid #e0e3e5 1px;"><img style="height: 40px;width: 40px;padding: 5px;" [src]="oem.logoUrl"></span>  <a style="padding-left: 4px;">{{oem.name}}</a></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="!selectedProduct?.webLinks || selectedProduct?.webLinks.length == 0" class="row mx-1 col-12">
+                                        <div >
+                                            <div class="d-flex align-items-center " >
+                                                <div class=" py-1">
+                                                    <!-- <img style="height: 60px;width: 65px;" src="assets/images/landing-page/blank-croc.png" alt=""> -->
+                                                    <i>
+                                                            <p style="color: #777777;" class="m-0 description">No links</p>
+                                                    </i> 
+                                                </div>
+                                            </div>
+                                        </div>           
+                                    </div>
+                                </div>
+
+
+
+
+                                <!-- COMMENTED OLD UI -->
+
+
+                                <!-- <div class="col-sm-12 ">
+                                    <div class="d-flex product ps" [perfectScrollbar]="sconfig">
+                                        <div class="product-box">
+                                            <div class="d-flex">
+                                                <span>
+                                                    <img src="assets/images/inspection-home/green-setting.png" alt=""
+                                                        width="19" height="19" style="min-width: 19px;">
+                                                </span>
+
+                                                <div class="product-content">
+                                                    <p class="mb-0 pro-title">Part# EELR501APKG: Surface Mount</p>
+                                                    <p class="mb-0 f-regular lh">Lorem ipsum dolor sit amet, consectetur
+                                                        adipiscing
+                                                        elit. Mauris at quam ut diam.</p>
+                                                    <a href="" target="_blank">Network 1</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-box">
+                                            <div class="d-flex">
+                                                <span >
+                                                    <img src="assets/images/inspection-home/green-setting.png" alt=""
+                                                        width="19" height="19" style="min-width: 19px;">
+                                                </span>
+
+                                                <div class="product-content">
+                                                    <p class="mb-0 pro-title">Part# EELR525APKG: Flush Mount</p>
+                                                    <p class="mb-0 f-regular lh">Lorem ipsum dolor sit amet, consectetur
+                                                        adipiscing
+                                                        elit. Mauris at quam ut diam.</p>
+                                                    <a href="" target="_blank">Network 2</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-box">
+                                            <div class="d-flex">
+                                                <span >
+                                                    <img src="assets/images/inspection-home/green-setting.png" alt=""
+                                                        width="19" height="19" style="min-width: 19px;">
+                                                </span>
+
+                                                <div class="product-content">
+                                                    <p class="mb-0 pro-title">Part# EELR525APKG: Flush Mount</p>
+                                                    <p class="mb-0 f-regular lh">Lorem ipsum dolor sit amet, consectetur
+                                                        adipiscing
+                                                        elit. Mauris at quam ut diam.</p>
+                                                    <a href="" target="_blank">Network 3</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="product-box">
+                                            <div class="d-flex">
+                                                <span >
+                                                    <img src="assets/images/inspection-home/green-setting.png" alt=""
+                                                        width="19" height="19" style="min-width: 19px;">
+                                                </span>
+
+                                                <div class="product-content">
+                                                    <p class="mb-0 pro-title">Part# EELR525APKG: Flush Mount</p>
+                                                    <p class="mb-0 f-regular lh">Lorem ipsum dolor sit amet, consectetur
+                                                        adipiscing
+                                                        elit. Mauris at quam ut diam.</p>
+                                                    <a href="" target="_blank">Network 4</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="col-sm-6">
+                                        <div class="buy-box">
+                                            <p class="mb-1 buy-txt">Where to buy</p>
+                                            <p class="mb-1 buy-head">John Bean</p>
+                                            <a href="https://www.johnbean.com/us/auto-lifts/12k-scissor/" target="_blank"
+                                                class="mb-1">https://www.johnbean.com/us/auto-lifts/12k-scissor/</a>
+                                            <p class="mb-0 f-regular lh">Lorem ipsum dolor sit amet, consectetur
+                                                adipiscing elit. Mauris at quam ut diam.</p>
+                                            <div class="d-flex mt-1" style="gap: 13px;">
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/empty-star.png"
+                                                        alt=""></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="buy-box">
+                                            <p class="mb-1 buy-txt">Service Company</p>
+                                            <p class="mb-1 buy-head">Alignment Lift Service</p>
+                                            <a href="https://www.alignmentliftservices.com/us/auto-lifts/12k-scissor/" target="_blank"
+                                                class="mb-1">https://www.alignmentliftservices.com/us/auto-lifts/12k-scissor/</a>
+                                            <p class="mb-0 f-regular lh">Lorem ipsum dolor sit amet, consectetur
+                                                adipiscing elit. Mauris at quam ut diam.</p>
+                                            <div class="d-flex mt-1" style="gap: 13px;">
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/fill-star.png"
+                                                        alt=""></span>
+                                                <span><img src="assets/images/inspection-home/empty-star.png"
+                                                        alt=""></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="row mb-32">
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt">
+                                   <img src="assets/images/inspection-home/certified.png" alt="" width="22" height="21" style="min-width: 22px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Certified for following programs</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="data-container">
+                                <p class="mb-0 f-regular">Light and medium duty vehicles</p>
+                                <p class="mb-0 certified">Certified on: <span class="cer-date">Mar 15, 2023</span></p>
+                            </div>
+
+                            <div class="data-container">
+                                <p class="mb-0 f-regular">Electrical System Diagnostics and Repairs</p>
+                                <p class="mb-0 certified">Certified on: <span class="cer-date">Mar 15, 2023</span></p>
+                            </div>
+
+                            <div class="data-container">
+                                <p class="mb-0 f-regular">Hydraulic and Specialty Systems Repairs</p>
+                                <p class="mb-0 certified">Certified on: <span class="cer-date">Mar 15, 2023</span></p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt">
+                                   <img src="assets/images/inspection-home/specification.png" alt="" width="22" height="22" style="min-width: 22px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Specifications</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/hq/tire-supply.png" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <a href="https://www.abcd.com/us/auto-lifts/16k-2-post/" target="_blank"  class="link text-truncate mb-0 lh">https://www.abcd.com/us/auto-lifts/16k-2-post/</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>    
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt" style="width: 20px;">
+                                   <img src="assets/images/inspection-home/marketing.png" alt="" width="19" height="23" style="min-width: 19px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Marketing Material</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/hq/tire-supply.png" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <a href="https://www.abcd.com/us/auto-lifts/16k-2-post/" target="_blank" class="link text-truncate mb-0 lh">https://www.abcd.com/us/auto-lifts/16k-2-post/</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>    
+                </div>
+                
+            </div>
+
+            <div class="row mb-32">
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt" style="width: 20px;">
+                                   <img src="assets/images/inspection-home/training.png" alt="" width="23" height="21" style="min-width: 23px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Training</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/hq/tire-supply.png" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <a href="https://www.abcd.com/us/auto-lifts/16k-2-post/" target="_blank" class="link text-truncate mb-0 lh">https://www.abcd.com/us/auto-lifts/16k-2-post/</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>    
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt">
+                                   <img src="assets/images/inspection-home/other-info.png" alt="" width="18" height="18" style="min-width: 18px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Other info</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/hq/tire-supply.png" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <a href="https://www.abcd.com/us/auto-lifts/16k-2-post/" target="_blank" class="link text-truncate mb-0 lh">https://www.abcd.com/us/auto-lifts/16k-2-post/</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>    
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt" style="width: 20px;">
+                                   <img src="assets/images/hq/install-icon.png" alt="" width="19" height="25" style="min-width: 19px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Installation Manual</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                    
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                        <span class="pdf-box"></span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                        <span class="pdf-box"></span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                        <span class="pdf-box"></span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>    
+                </div>
+                
+            </div>
+
+            <div class="row mb-32">
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt">
+                                   <img src="assets/images/inspection-home/setting.png" alt="" width="23" height="23" style="min-width: 23px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Replacement Parts</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="box">
+                                       
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Part#  EELR501APKG</p>
+                                        <p class="mb-0 f-regular text-truncate lh">Surface Mount</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="box">
+                                       
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Part#  EELR501APKG</p>
+                                        <p class="mb-0 f-regular text-truncate lh">Flush Mount</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>    
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt">
+                                   <img src="assets/images/inspection-home/setting.png" alt="" width="23" height="23" style="min-width: 23px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Maintenance Parts</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="box">
+                                       
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Part#  EELR501APKG</p>
+                                        <p class="mb-0 f-regular text-truncate lh">Surface Mount</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="box">
+                                       
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Part#  EELR501APKG</p>
+                                        <p class="mb-0 f-regular text-truncate lh">Flush Mount</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                    </div>    
+                </div>
+
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt" style="width: 20px;">
+                                   <img src="assets/images/inspection-home/service-type.png" alt="" width="19" height="22" style="min-width: 19px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Routine Maintenance</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/hq/tire-supply.png" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <a href="https://www.abcd.com/us/auto-lifts/16k-2-post/" target="_blank" class="link text-truncate mb-0 lh">https://www.abcd.com/us/auto-lifts/16k-2-post/</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                    <span class="img-border">
+                                        <img src="assets/images/inspection-home/Capture.PNG" alt="">
+                                    </span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>    
+                </div>
+                
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="outer-hq-container">
+                        <div class="d-flex align-items-center loc-head-row">
+                            <div class="col-sm-10 pr-1 d-flex align-items-center p-0">
+                                <span class="heading-txt" style="width: 20px;">
+                                   <img src="assets/images/hq/install-icon.png" alt="" width="18" height="24" style="min-width: 18px;">
+                                </span>
+                                <span class="loc-head-text text-truncate">Service Manuals</span>
+                            </div>
+                            <div class="col-sm-2 d-flex justify-content-end p-0 align-items-center">
+                                <span><img src="assets/images/customers/add-icon.png" alt="" role="button"></span>
+                                <span class="add-txt">Add</span>
+
+                            </div>
+                        </div>
+
+                        <div class="cert-data ps" [perfectScrollbar]="sconfig">
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                        <span class="pdf-box"></span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                        <span class="pdf-box"></span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="specification">
+                                <div class="d-flex spec-data ">
+                                        <span class="pdf-box"></span>
+                                    <div class="spec-datas">
+                                        <p class="mb-0 f-regular text-truncate lh">Lorem ipsum dolor sit amet, consectetur adipiscing</p>
+                                        <div class="d-flex align-items-center lh">
+                                            <span class="f-regular ">3543676876CFS.jpg</span>
+                                            <span class="dot"></span>
+                                            <span class="mb f-regular">1MB</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                    </div>    
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>

@@ -1,0 +1,42 @@
+<div class="right-section">
+    <div class="prob-index system-setting">
+        <div class="container-fluid">
+            <div class="center-middle-width-container">
+                <div class="center-middle-width padding-common padding-common-hq">
+                    <div  class="hq-head d-flex">
+                        <div>
+                            <div class="hq-head-row-0">
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+                                <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span> 
+                                <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('step1')">{{headQuarterService.sublevelName}}</span> 
+                            </div>
+                            <div class="hq-head-row-1">
+                                <img  class="hq-head-img" src="assets/images/hq/hq-region-head-icon.png" alt="" />
+                                <span class="hq-head-text">{{headQuarterService.levelName}} - {{headQuarterService.sublevelName}}</span>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <app-headquarter-sidebar [selectedTab]="'SUMMARY'"></app-headquarter-sidebar>                        
+                        <div class="ts-list-rt transition filter-expand">                        
+                        <app-headquarters-list                        
+                            (headquartersComponentRef)="headquartersPageRef = $event"
+                            (callback)="headquartersCallback($event)"></app-headquarters-list>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

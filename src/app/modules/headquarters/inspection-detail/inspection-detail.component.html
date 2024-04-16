@@ -1,0 +1,1716 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="left-section">
+    <div class="first-left-width">
+        <nav id="nav-sidebar">
+            <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{pageAccess}}"
+                (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+        </nav>
+    </div>
+</div>
+
+<div class="right-section">
+    <div [style.height.px]="innerHeight" *ngIf="loading">
+        <div class="loading-small-screen-scroll trst" style="left:50% !important">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+        </div>
+    </div>
+    <div *ngIf="!loading" class="prob-index">
+        <div class="container-fluid">
+            <div class="center-middle-width-container">
+                <div class="center-middle-width padding-common padding-common-hq">
+                    <div class="d-flex align-items-center justify-content-between upper-head">
+                        <div class="hq-head ng-star-inserted">
+                            <div class="hq-head-row-0">
+                                <span *ngIf="!isAudit" routerLink='/headquarters/home'
+                                    class="hq-head-breadcrumb-text cursor">Home</span>
+                                <span *ngIf="isAudit" routerLink='/headquarters/audit'
+                                    class="hq-head-breadcrumb-text cursor">Audit</span>
+                                <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+                                <span routerLink='../../' class="hq-head-breadcrumb-text cursor">Inspection Summary
+                                    Page</span>
+                                <img src="assets/images/hq/hq-bc.png" alt="" class="hq-head-breadcrumb-img">
+                                <span class="hq-head-breadcrumb-text cursor">Dealer Inspection Page</span>
+                            </div>
+                            <div class="hq-head-row-1" style="padding-right: 16px;">
+                                <div class="left-heading d-flex align-items-center">
+                                    <img src="assets/images/inspection-home/inspection.png" alt="" class="hq-head-img">
+                                    <span class="hq-head-text">CCRF Program Certification (ID#3245), Annual</span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="left-heading d-flex justify-content-end align-items-center">
+                            <div class="review d-flex align-items-center">
+                                <span>
+                                    <img src="assets/images/inspection-home/review.png" alt="" width="16" height="14">
+                                </span>
+                                <span class="review-txt">
+                                    Assign for Review
+                                </span>
+                            </div>
+                            <div class="right-heading" style="padding-right: 16px;">
+                                <span class="rgt-txt gray-txt">Inspection Template<a
+                                        routerLink="/template/{{currentTemplateDetail?.id}}"><span
+                                            style="cursor: pointer; text-decoration: none;"
+                                            class="me-1 pl-1 green-txt">{{currentTemplateDetail?.title}}</span>
+                                    </a></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div [style.height]="'calc(100vh - '+emptyHeight+'px)'" style="padding-top: 5px;">
+                        <div class="ps" [perfectScrollbar]="sconfig">
+                            <div class="container pl-0">
+                                <div class="row mb-31">
+                                    <div class="col-sm-7">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-10 p-0">
+                                                    <span class="heading-txt">
+                                                        <img class="" src="assets/images/inspection-home/shop.png" />
+                                                    </span>
+                                                    <span class="loc-head-text">Shop Details</span>
+                                                </div>
+                                                <div class="col-sm-2 d-flex justify-content-end p-0">
+                                                    <img title="Edit" class="loc-head-edit-img cursor"
+                                                        src="assets/images/hq/hq-edit-icon.png">
+
+                                                </div>
+                                            </div>
+                                            <div class="d-flex p-3" style="padding-bottom: 21px !important;">
+                                                <div class="col-sm-7 pl-0">
+                                                    <div class="d-flex">
+                                                        <div class="shop-box"></div>
+                                                        <div class="shop-box-content">
+                                                            <p class="mb-0 shop-head mb-10">
+                                                                {{selectedShop?.name}}(ID#{{selectedShop?.id}})
+                                                            </p>
+                                                            <div class="d-flex flex-column">
+                                                                <div class="shop-info-txt d-flex mb-10">
+                                                                    <span>
+                                                                        <img src="assets/images/inspection-home/map-logo.png"
+                                                                            alt="" class="logo">
+                                                                    </span>
+                                                                    <span style="height: 40px;" class="shop-info-data">
+                                                                        <div>
+                                                                            {{selectedShop?.address1 ?
+                                                                            selectedShop?.address1 :
+                                                                            ''}}{{selectedShop?.address1 &&
+                                                                            selectedShop?.address2 ? ',' : ''}}
+                                                                            {{selectedShop?.address2 ?
+                                                                            selectedShop?.address2 : ''}}
+                                                                        </div>
+                                                                        <div>
+                                                                            {{selectedShop?.city ? selectedShop?.city :
+                                                                            ''}}{{selectedShop?.city &&
+                                                                            selectedShop?.state ? ',' : ''}} {{' ' +
+                                                                            selectedShop?.state ? selectedShop?.state :
+                                                                            ''}}{{selectedShop?.zip ? ' ' +
+                                                                            selectedShop?.zip: ''}}
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+
+                                                                <div class="shop-info-txt mb-10">
+                                                                    <span>
+                                                                        <img src="assets/images/inspection-home/mail-logo.png"
+                                                                            alt="" class="logo">
+                                                                    </span>
+                                                                    <span
+                                                                        class="shop-info-data neutral">{{selectedShop?.emailAddress}}</span>
+
+                                                                </div>
+                                                                <div class="shop-info-txt mb-10">
+                                                                    <span>
+                                                                        <img src="assets/images/inspection-home/phone-logo.png"
+                                                                            alt="" class="logo">
+                                                                    </span>
+                                                                    <span *ngIf="selectedShop?.phoneNo"
+                                                                        class="shop-info-data">{{selectedShop?.phoneNo}}</span>
+                                                                    <span *ngIf="!selectedShop?.phoneNo"
+                                                                        class="shop-info-data">-</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-5 d-flex">
+                                                    <div class="map-container">
+                                                        <!-- <img src="assets/images/inspection-home/map-img.png" alt=""> -->
+                                                        <iframe width="100%" height="100%" frameborder="0"
+                                                            scrolling="no" marginheight="0" marginwidth="0"
+                                                            id="gmap_canvas_1"
+                                                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyDTl6RmKfWJCO4m09HwmhZwjyDMtZTc594&amp;q=1945The Exchange SE,Atlanta,Georgia,30339&amp;zoom=6"></iframe>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-5 pl-3">
+                                        <div class="example-headers-align anouncement-panel" multi>
+                                            <div class="custom-panel">
+                                                <div class="ripple">
+                                                    <div class="menu-name-bar">
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-between mb-2 w-100">
+                                                            <div><span class="bg-image pr-2">
+                                                                    <img src="assets/images/announcement-new.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="menu-name pr-2">Announcements</span>
+                                                            </div>
+                                                            <div>
+                                                                <span *ngIf="!isBlank"
+                                                                    class="see-more-txt pr-1 cursor">See More</span>
+                                                                <span class="see-more-img">
+                                                                    <img src="assets/images/user-profile/view-more.png"
+                                                                        alt="">
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="announcement-box">
+                                                    <div *ngIf="!isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative mb-10"
+                                                        style="top: 0px;z-index: 2;">
+                                                        <span class="new-icon position-absolute">
+                                                            <img src="assets/images/landing-page/announcement-newold.png"
+                                                                alt="">
+                                                        </span>
+                                                        <div class="aavtar"></div>
+
+                                                        <div class="col-sm-9 ps-2">
+                                                            <div class="">
+                                                                <div class="d-flex position-relative">
+                                                                    <div class="user-content">
+                                                                        <div class="user-data">
+                                                                            <p class="mb-0 user-data-heading">2023
+                                                                                inspection report</p>
+                                                                            <p class="mb-0 data-content">
+                                                                                John William, Oct 16, 2023 10:00 AM
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-sm-3 d-flex justify-content-end align-items-center count-box">
+                                                            <div class="like-count d-flex align-items-center mr-4">
+                                                                <span class="thumb-img">
+                                                                    <img src="assets/images/thumb.png" alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    98
+                                                                </span>
+                                                            </div>
+                                                            <div class="active-count d-flex align-items-center">
+                                                                <span class="eye-img">
+                                                                    <img src="assets/images/common/eye-active.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    189
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="!isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative mb-10">
+
+                                                        <div class="col-sm-9 ps-2">
+                                                            <div class="">
+                                                                <div class="d-flex position-relative">
+
+                                                                    <div class="aavtar-2"></div>
+                                                                    <div class="user-content">
+                                                                        <div class="user-data">
+                                                                            <p class="mb-0 user-data-heading">Caliber -
+                                                                                Repair Process Quality Asssessment</p>
+                                                                            <p
+                                                                                class="mb-0 data-content position-relative">
+                                                                                George Michael, Oct 13, 2023 1:23 PM
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-sm-3 d-flex justify-content-end align-items-center count-box">
+                                                            <div class="like-count d-flex align-items-center mr-4">
+                                                                <span class="thumb-img">
+                                                                    <img src="assets/images/thumb.png" alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    16
+                                                                </span>
+                                                            </div>
+                                                            <div class="active-count d-flex align-items-center">
+                                                                <span class="eye-img">
+                                                                    <img src="assets/images/common/eye-active.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    124
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="!isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative">
+
+                                                        <div class="col-sm-9 ps-2">
+                                                            <div class="">
+                                                                <div class="d-flex position-relative">
+
+                                                                    <div class="aavtar-2"></div>
+                                                                    <div class="user-content">
+                                                                        <div class="user-data">
+                                                                            <p class="mb-0 user-data-heading">
+                                                                                Certificaiton Audit Scheduled</p>
+                                                                            <p
+                                                                                class="mb-0 data-content position-relative">
+                                                                                George Michael, Sep 24, 2023 1:23 PM
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </div>
+                                                        <div
+                                                            class="col-sm-3 d-flex justify-content-end align-items-center count-box">
+                                                            <div class="like-count d-flex align-items-center mr-4">
+                                                                <span class="thumb-img">
+                                                                    <img src="assets/images/thumb.png" alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    16
+                                                                </span>
+                                                            </div>
+                                                            <div class="active-count d-flex align-items-center">
+                                                                <span class="eye-img">
+                                                                    <img src="assets/images/common/eye-active.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span class="active-txt">
+                                                                    124
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                    <div style="height: 240px;justify-content: center;border-radius: 5px;"
+                                                        *ngIf="isBlank"
+                                                        class="Rounded-Rectangle d-flex user-box position-relative">
+                                                        <div class="d-flex align-items-center justify-content-center ">
+                                                            <i>
+                                                                <p style="color: #555555;" class="m-0 description">
+                                                                    Nothing to Show</p>
+                                                            </i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="row mb-31">
+                                    <div class="col-sm-3">
+                                        <div class="outer-hq-container" style="height: 95%;">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-12 p-0 d-flex">
+                                                    <div>
+                                                        <span class="heading-txt">
+                                                            <img class=""
+                                                                src="assets/images/inspection-home/contact.png" />
+                                                        </span>
+                                                        <span class="loc-head-text f-bold">Contact at Location</span>
+                                                    </div>
+
+                                                    <div (click)="assignContact()"
+                                                        style="margin-left:auto;cursor:pointer"
+                                                        *ngIf="selectedContactUsers && selectedContactUsers.userName">
+                                                        <span class="heading-txt">
+                                                            <img class="p-0"
+                                                                src="assets/images/inspection-home/pencil.png" />
+                                                        </span>
+                                                        <span style="color: #469073;font-size: 13px;">EDIT</span>
+                                                    </div>
+                                                    <!-- <mat-menu #menu3="matMenu" backdropClass="ptabletmenu">
+                                                        <div class="part-menu">
+                                                            <ul class="more-actions">
+                                                                <li class="cursor" (click) = assignContactToMe() ><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to me</li>
+                                                                <li class="cursor" (click)="assignContact()"><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to team member</li>
+                                                            </ul>
+                                                        </div>
+                                                    </mat-menu> -->
+                                                </div>
+
+                                            </div>
+                                            <div class="p-3 "
+                                                [ngClass]="{'d-flex justify-content-center':!selectedContactUsers || !selectedContactUsers.userName}"
+                                                style="text-align: center;">
+                                                <div *ngIf="selectedContactUsers && selectedContactUsers.userName"
+                                                    class="rounded-card customer-card">
+                                                    <div class="d-flex">
+                                                        <div class="small-box"></div>
+                                                        <div class="box-description col-9 pr-0">
+                                                            <div class="customer-desc-head text-truncate"
+                                                                style="margin-bottom: -5px;text-align: left;"
+                                                                triggers="hover" tooltipClass="announce-tooltip"
+                                                                ngbTooltip="{{selectedContactUsers.userName}}">
+                                                                {{selectedContactUsers.userName}}
+                                                            </div>
+                                                            <div class="box-count d-flex align-items-center">
+                                                                <span>
+                                                                    <img src="assets/images/inspection-home/mail.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span
+                                                                    class="customer-add col-11 text-truncate p-0 pl-1 text-left"
+                                                                    triggers="hover" tooltipClass="announce-tooltip"
+                                                                    ngbTooltip="{{selectedContactUsers?.email}}">{{selectedContactUsers?.email}}</span>
+                                                            </div>
+                                                            <div class="box-count d-flex align-items-center">
+                                                                <span>
+                                                                    <img src="assets/images/inspection-home/phone.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span *ngIf="selectedContactUsers.phoneNo"
+                                                                    class="customer-add col-11 text-truncate p-0 pl-1 text-left">{{selectedContactUsers.phoneNo}}</span>
+                                                                <span *ngIf="!selectedContactUsers.phoneNo"
+                                                                    class="customer-add col-11 text-truncate p-0 pl-1 text-left">-</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div *ngIf="!selectedContactUsers || !selectedContactUsers.userName">
+                                                    <div (click)="assignContact()" style="cursor:pointer;width: 135px;"
+                                                        class="green-button-1 d-flex align-items-center">
+                                                        + Select user
+                                                    </div>
+                                                    <!-- <mat-menu #menu4="matMenu" backdropClass="ptabletmenu">
+                                                        <div class="part-menu">
+                                                            <ul class="more-actions">
+                                                                <li class="cursor" (click) = assignContactToMe() ><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to me</li>
+                                                                <li class="cursor" (click)="menuTrigger.closeMenu();assignContact()"><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to team member</li>
+                                                            </ul>
+                                                        </div>
+                                                    </mat-menu> -->
+                                                    <i style="color: #777777;font-size: 12px;">Tap on the ‘Select user’
+                                                        button to add Location contacts</i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="outer-hq-container" style="height: 95%;">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-12 p-0 d-flex">
+                                                    <div>
+                                                        <span class="heading-txt">
+                                                            <img class=""
+                                                                src="assets/images/inspection-home/user.png" />
+                                                        </span>
+                                                        <span class="loc-head-text f-bold">Assessor</span>
+                                                    </div>
+                                                    <div #menuTrigger="matMenuTrigger" style="margin-left: auto;"
+                                                        [matMenuTriggerFor]="menu1"
+                                                        *ngIf="selectedCustomerUsers && selectedCustomerUsers.userName">
+                                                        <span class="heading-txt" style="padding: 4px;">
+                                                            <img class="p-0"
+                                                                src="assets/images/inspection-home/assign.png" />
+                                                        </span>
+                                                        <span
+                                                            style="color: #469073;font-size: 13px;cursor: pointer;">RE-ASSIGN</span>
+                                                    </div>
+                                                    <mat-menu #menu1="matMenu" backdropClass="ptabletmenu">
+                                                        <div class="part-menu">
+                                                            <ul class="more-actions">
+                                                                <li class="cursor" (click)=assignToMe()><img
+                                                                        src="assets/images/tech-support/tech-support-assign.png"
+                                                                        alt="View">&nbsp;&nbsp;Assign to me</li>
+                                                                <li class="cursor"
+                                                                    (click)="actionStatus([], 'assignmember');"><img
+                                                                        src="assets/images/tech-support/tech-support-assign.png"
+                                                                        alt="View">&nbsp;&nbsp;Assign to team member
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </mat-menu>
+                                                </div>
+
+                                            </div>
+                                            <div class="p-3"
+                                                [ngClass]="{'d-flex justify-content-center':!selectedCustomerUsers || !selectedCustomerUsers.userName}"
+                                                style="text-align: center;">
+                                                <div *ngIf="selectedCustomerUsers && selectedCustomerUsers.userName"
+                                                    class="rounded-card customer-card">
+                                                    <div class="d-flex">
+                                                        <div class="small-box"></div>
+                                                        <div class="box-description col-9 pr-0">
+                                                            <div class="customer-desc-head text-truncate"
+                                                                style="margin-bottom: -5px;text-align: left;"
+                                                                triggers="hover" tooltipClass="announce-tooltip"
+                                                                ngbTooltip="{{selectedCustomerUsers.userName}}">
+                                                                {{selectedCustomerUsers.userName}}
+                                                            </div>
+                                                            <div class="box-count d-flex align-items-center">
+                                                                <span>
+                                                                    <img src="assets/images/inspection-home/mail.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span
+                                                                    class="customer-add col-11 text-truncate p-0 pl-1 text-left"
+                                                                    triggers="hover" tooltipClass="announce-tooltip"
+                                                                    ngbTooltip="{{selectedCustomerUsers?.email}}">{{selectedCustomerUsers?.email}}</span>
+                                                            </div>
+                                                            <div class="box-count d-flex align-items-center">
+                                                                <span>
+                                                                    <img src="assets/images/inspection-home/phone.png"
+                                                                        alt="">
+                                                                </span>
+                                                                <span *ngIf="selectedCustomerUsers.phoneNo"
+                                                                    class="customer-add col-11 text-truncate p-0 pl-1 text-left">{{selectedCustomerUsers.phoneNo}}</span>
+                                                                <span *ngIf="!selectedCustomerUsers.phoneNo"
+                                                                    class="customer-add col-11 text-truncate p-0 pl-1 text-left">-</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div *ngIf="!selectedCustomerUsers || !selectedCustomerUsers.userName">
+                                                    <div class="green-button-1"
+                                                        style="align-items: center; cursor: pointer;"
+                                                        #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu2">
+                                                        <img style="width: 15px;height: 15px;margin-right: 5px;"
+                                                            src="assets/images/inspection-home/assign.png"> Assign
+                                                    </div>
+                                                    <i style="color: #777777;font-size: 12px;">Tap on the ‘Assign’
+                                                        button to add Assessor</i>
+                                                    <mat-menu #menu2="matMenu" backdropClass="ptabletmenu">
+                                                        <div class="part-menu">
+                                                            <ul class="more-actions">
+                                                                <li class="cursor" (click)=assignToMe()><img
+                                                                        src="assets/images/tech-support/tech-support-assign.png"
+                                                                        alt="View">&nbsp;&nbsp;Assign to me</li>
+                                                                <li class="cursor"
+                                                                    (click)="menuTrigger.closeMenu();actionStatus([], 'assignmember');$event.stopPropagation();">
+                                                                    <img src="assets/images/tech-support/tech-support-assign.png"
+                                                                        alt="View">&nbsp;&nbsp;Assign to team member
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </mat-menu>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="outer-hq-container" style="height: 95%;">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-12 p-0 d-flex">
+                                                    <span class="heading-txt">
+                                                        <img class=""
+                                                            src="assets/images/inspection-home/calendar.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold"
+                                                        style="margin-top: 3px;">Assessment Date</span>
+                                                </div>
+
+                                            </div>
+                                            <div class="p-3">
+                                                <p-dropdown *ngIf="!isBlank" optionLabel="name"
+                                                    placeholder="Jan 25, 2023" class="ass-date"
+                                                    [style]="{'width':'100%', 'border': 'solid 1px #e8e8e8', 'border-radius': '10px', 'box-shadow': 'none'}"></p-dropdown>
+                                                <p *ngIf="isBlank" style="
+                                                font-size: 16px;
+                                                font-weight: 700;">
+                                                    Not scheduled
+                                                </p>
+
+                                                <div *ngIf="!isBlank" class="pt-3 d-flex align-items-center">
+                                                    <div class="ass-box"></div>
+                                                    <div class="ass-info">
+                                                        <div class="ass-head">Assessment Status</div>
+                                                        <div class="ass-status">Certified</div>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="isBlank" class="pt-3 d-flex align-items-center">
+                                                    <div class="pss-box"></div>
+                                                    <div class="ass-info">
+                                                        <div class="ass-head">Assessment Status</div>
+                                                        <div class="pss-status">Pending</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="outer-hq-container" style="height: 95%;">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-8 pl-0 pr-1 d-flex align-items-center">
+                                                    <span class="heading-txt">
+                                                        <img class=""
+                                                            src="assets/images/inspection-home/calendar.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold text-truncate"
+                                                        style="display: block; width: 165px;margin-top: 3px;">Previous
+                                                        Assessment
+                                                        Date</span>
+                                                </div>
+                                                <div class="col-sm-4 p-0 d-flex align-items-center justify-content-end">
+                                                    <span class="see-more">See More</span>
+                                                    <span class="see-more-img pl-1" style="line-height: 17px;">
+                                                        <img src="assets/images/inspection-home/see-more.PNG" alt=""
+                                                            width="15" height="15">
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+                                            <div *ngIf="!isBlank" class="p-3 border-bottom">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="col-7 p-0">
+                                                        <p-dropdown optionLabel="name"
+                                                            placeholder="Jul 10, 22 - Jul 12, 22" triggers="hover"
+                                                            tooltipClass="announce-tooltip"
+                                                            ngbTooltip="Jul 10, 22 - Jul 12, 22" class="pre-ass-date"
+                                                            [style]="{'width':'100%', 'border': '0','box-shadow': 'none', 'line-height': '0'}"></p-dropdown>
+
+                                                    </div>
+                                                    <div class="col-5 pr-1">
+                                                        <div class="d-flex align-items-center justify-content-end"
+                                                            style="gap: 5px;">
+                                                            <a href="">View</a>
+                                                            <span class="v1"></span>
+                                                            <a href="">Compare</a>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!isBlank" class="p-3" style="padding-bottom: 0 !important;">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="col-7 p-0">
+                                                        <p-dropdown optionLabel="name"
+                                                            placeholder="Jul 10, 22 - Jul 12, 22" triggers="hover"
+                                                            tooltipClass="announce-tooltip"
+                                                            ngbTooltip="Jul 10, 22 - Jul 12, 22" class="pre-ass-date"
+                                                            [style]="{'width':'100%', 'border': '0'}"></p-dropdown>
+
+                                                    </div>
+                                                    <div class="col-5 pr-1">
+                                                        <div class="d-flex align-items-center justify-content-end"
+                                                            style="gap: 5px;">
+                                                            <a href="">View</a>
+                                                            <span class="v1"></span>
+                                                            <a href="">Compare</a>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div
+                                                style="text-align: center;display: flex;align-items: center;justify-content: center;height: 80%;width: 100%;">
+                                                <i *ngIf="isBlank" style="color: #777777;font-size: 12px;">
+                                                    Nothing to show
+                                                </i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-31">
+                                    <div class="col-sm-12">
+                                        <div class="outer-hq-container"
+                                            style="border-top-left-radius: 6px;border-top-right-radius: 6px; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="border-bottom: 0 !important;">
+                                                <div class="col-sm-12 p-0 d-flex align-items-center">
+                                                    <span class="heading-txt">
+                                                        <img class=""
+                                                            src="assets/images/inspection-home/in-progress.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold">Inspection Status</span>
+                                                    <div class="d-flex ml-auto" style="font-size: 14px;">
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="assets/images/inspection-home/cal.png">
+                                                            <span class="ml-1" style="color: #777777;">Start
+                                                                date</span>
+                                                            <span *ngIf="!inspectionStatus?.created_at">: -</span>
+                                                            <span *ngIf="inspectionStatus?.created_at">:
+                                                                {{renderDate(inspectionStatus?.created_at) |
+                                                                date:
+                                                                'MMM dd, yyyy h:mm a'}}</span>
+                                                        </div>
+                                                        <div style="margin-left: 30px;"
+                                                            *ngIf="!inspectionStatus?.complete_at"
+                                                            class="pl-3 d-flex align-items-center">
+                                                            <img src="assets/images/inspection-home/cal.png">
+                                                            <span class="ml-1" style="color: #777777;">Last saved
+                                                                date</span>
+                                                            <span *ngIf="!inspectionStatus?.updated_at"> : - </span>
+                                                            <span *ngIf="inspectionStatus?.updated_at">:
+                                                                {{renderDate(inspectionStatus?.updated_at) |
+                                                                date:
+                                                                'MMM dd, yyyy h:mm a'}}</span>
+                                                        </div>
+                                                        <div style="margin-left: 30px;"
+                                                            *ngIf="inspectionStatus?.complete_at"
+                                                            class="d-flex align-items-center">
+                                                            <img src="assets/images/inspection-home/cal.png">
+                                                            <span class="ml-1" style="color: #777777;">Completed
+                                                                date</span><span>:
+                                                                {{renderDate(inspectionStatus?.complete_at) |
+                                                                date:
+                                                                'MMM dd, yyyy h:mm a'}}</span>
+                                                        </div>
+                                                        <div style="margin-left: 30px;"
+                                                            *ngIf="inspectionStatus?.edit_at"
+                                                            class="d-flex align-items-center">
+                                                            <img src="assets/images/inspection-home/cal.png">
+                                                            <span class="ml-1" style="color: #777777;">Edited
+                                                                date</span><span>: -
+                                                                {{renderDate(inspectionStatus?.edit_at) | date:
+                                                                'MMM dd, yyyy h:mm a'}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div id="matrixTable"
+                                            class="matrix-table parts-mat-table parts-mat-table-fs insepection-detail-container">
+
+                                            <div class="custom-heading">
+                                                Progress
+                                            </div>
+                                            <div class="info-container">
+                                                <div class="p-table-col">
+                                                    <ul class="box-progress-ind">
+                                                        <li class="box-completed">Notified</li>
+                                                        <li class="box-completed">Scheduled</li>
+                                                        <li
+                                                            [ngClass]="inspectionStatus?.created_at ? 'box-completed' :'white-box'">
+                                                            In-process</li>
+                                                        <li
+                                                            [ngClass]="inspectionStatus?.complete_at ? 'box-completed' :'white-box'">
+                                                            Completed</li>
+                                                        <li
+                                                            [ngClass]="inspectionStatus?.complete_at && inspectionStatus?.total_no > 0  ?  'box-completed non-compliant' :'white-box'">
+                                                            Non-compliant</li>
+                                                        <li
+                                                            [ngClass]="inspectionStatus?.complete_at && inspectionStatus?.total_no == 0  ?  'box-completed' :'white-box'">
+                                                            Compliant</li>
+                                                    </ul>
+                                                    <ul class="progress-date d-flex p-0 m-0">
+                                                        <li class="dates">Dec 15, 2022</li>
+                                                        <li class="dates">Jan 5, 2023</li>
+                                                        <li class="dates">{{inspectionStatus?.created_at
+                                                            | date:
+                                                            'MMM dd, yyyy'}}</li>
+                                                        <li class="dates">
+                                                            {{inspectionStatus?.complete_at |
+                                                            date:
+                                                            'MMM dd, yyyy'}}</li>
+                                                    </ul>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="info-container">
+
+                                                <div class="progress-container">
+                                                    <div *ngIf="currentExitStatus == 4"
+                                                        class="d-flex align-items-center" style="gap: 20px;">
+                                                        <circle-progress [percent]="currentProgress" [radius]="30"
+                                                            [outerStrokeWidth]="6" [innerStrokeWidth]="1"
+                                                            [outerStrokeColor]="'#469073'"
+                                                            [innerStrokeColor]="'#d6e6e0'" [animation]="true"
+                                                            [animationDuration]="300"
+                                                            [titleFontSize]="13"></circle-progress>
+                                                        <a style="width: 181px; text-decoration: none;color: white !important;background-color: #326de4; padding: 4px 9px; justify-content: center;"
+                                                            routerLink="/headquarters/start-inspection/{{apiData?.title}}/{{apiData?.id}}/{{selectedShopId}}/{{currentGts}}"
+                                                            class="visit-report d-flex align-items-center  ml-4">
+                                                            <img src="assets/images/inspection-home/des.png" alt=""
+                                                                class="pimg" width="14" height="19">
+                                                            <span class="report">Continue Inspection</span>
+                                                        </a>
+                                                    </div>
+
+                                                    <div *ngIf="!currentExitStatus" class="d-flex align-items-center"
+                                                        style="gap: 20px; position: relative;"
+                                                        [ngClass]="!selectedCustomerUsers || !selectedCustomerUsers.userName ? 'disabled-btn' : ''">
+                                                        <circle-progress [percent]="0" [radius]="30"
+                                                            [outerStrokeWidth]="6" [innerStrokeWidth]="1"
+                                                            [outerStrokeColor]="'#469073'"
+                                                            [innerStrokeColor]="'#d6e6e0'" [animation]="true"
+                                                            [animationDuration]="300"
+                                                            [titleFontSize]="13"></circle-progress>
+                                                        <a *ngIf="!currentExitStatus"
+                                                            style="text-decoration: none;color: white !important;background-color: #fb982c;padding: 4px 9px; justify-content: center;"
+                                                            routerLink="/headquarters/start-inspection/{{apiData?.title}}/{{apiData?.id}}/{{selectedShopId}}"
+                                                            class="visit-report d-flex align-items-center  ml-4">
+                                                            <img src="assets/images/inspection-home/des.png" alt=""
+                                                                class="pimg" width="14" height="19">
+                                                            <span class="report">Start Inspection</span>
+                                                        </a>
+                                                        <i *ngIf="!selectedCustomerUsers || !selectedCustomerUsers.userName"
+                                                            class="disabled-btn-msg">
+                                                            <img style="width: 19px;height: 19px;"
+                                                                src="assets/images/gts/sample/info-grey.png" alt=""
+                                                                srcset="">Unable to start
+                                                            because the Assessor is not assigned</i>
+                                                    </div>
+
+                                                    <div *ngIf="currentExitStatus == 1"
+                                                        class="d-flex align-items-center" style="gap: 20px;">
+                                                        <circle-progress [percent]="currentProgress" [radius]="30"
+                                                            [outerStrokeWidth]="6" [innerStrokeWidth]="1"
+                                                            [outerStrokeColor]="'#469073'"
+                                                            [innerStrokeColor]="'#d6e6e0'" [animation]="true"
+                                                            [animationDuration]="300"
+                                                            [titleFontSize]="13"></circle-progress>
+                                                        <a style="width: auto; text-decoration: none;color: #0e9a4e !important;background-color: #def5e9; padding: 4px 9px; justify-content: center;"
+                                                            class="visit-report d-flex align-items-center  ml-4">
+                                                            <img src="assets/images/inspection-home/complete-inspection-tick.png"
+                                                                alt=""
+                                                                style="object-fit: cover;height: 10px; width:10px;">
+                                                            <span style="margin-left: 6px;" class="report">Inspection
+                                                                Completed</span>
+                                                        </a>
+                                                    </div>
+
+                                                    <!-- Days -->
+
+                                                    <div class="report-btn-container">
+                                                        <span class="small-text">Total
+                                                            Time :</span>
+                                                        <span class="shop-id">{{countDays()}} {{countDays() < 1 ? 'Day'
+                                                                : 'Days' }}</span>
+                                                                <a style="text-decoration: none !important;color: white !important;     margin-left: 30px;"
+                                                                    routerLink="/headquarters/start-inspection/{{apiData?.title}}/{{apiData?.id}}/{{selectedShopId}}/{{currentGts}}/1"
+                                                                    [ngClass]="!currentExitStatus ? 'disabled':''"
+                                                                    class="visit-report d-flex align-items-center">
+                                                                    <img src="assets/images/inspection-home/des.png"
+                                                                        alt="" class="pimg" width="14" height="19">
+                                                                    <span class="report">Visit Report</span>
+                                                                </a>
+                                                    </div>
+                                                    <!-- Days END -->
+
+                                                    <!-- EDIT -->
+                                                    <div *ngIf="currentExitStatus == 1" style="position: absolute;
+                                                        right: 40px;" class="d-flex">
+                                                        <a (click)="onEdit()"
+                                                            class="visit-report edit-btn d-flex align-items-center">
+                                                            <img src="assets/images/inspection-home/inspection-edit.png"
+                                                                alt=""
+                                                                style="object-fit: cover;height: 12px; width:12px;">
+                                                            <span style="margin-left: 4px;" class="report">Edit</span>
+                                                        </a>
+                                                    </div>
+                                                    <!-- EDIT END -->
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-31">
+                                    <div class="col-sm-12">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-12 p-0">
+                                                    <span class="heading-txt">
+                                                        <img class="" src="assets/images/inspection-home/on-site.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold">On-Site Validation</span>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="h-100 grid-container">
+                                                <div *ngIf="onSiteInformation.length == 0"
+                                                    class="col-12  d-flex align-items-start justify-content-start p-4 circle-item-container">
+                                                    <p class="mb-0 f-regular">Inspection not started</p>
+                                                </div>
+
+                                                <div *ngFor="let i of onSiteInformation"
+                                                    class="border-right d-flex align-items-start  justify-content-start p-4 circle-item-container">
+                                                    <div class="site-progress">
+                                                        <circle-progress
+                                                            [percent]="getPerItemPercentage(i?.total_answered,i?.total_checks)"
+                                                            [radius]="54" [outerStrokeWidth]="8" [innerStrokeWidth]="1"
+                                                            [outerStrokeColor]="'#5ec8ba'"
+                                                            [innerStrokeColor]="'#d6e6e0'" [animation]="true"
+                                                            [animationDuration]="300"
+                                                            [titleFontSize]="13"></circle-progress>
+                                                    </div>
+                                                    <div class="site-content" style="padding-right: 44px;">
+                                                        <p class="mb-0 f-bold text-truncate">
+                                                            {{i?.name}}</p>
+                                                        <p class="mb-0 f-regular">{{i?.total_checks}} questions</p>
+                                                        <p class="mb-0 f-regular bold-green">{{i?.total_yes}} Compliant
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <div class="row mb-31">
+                                    <div class="col-sm-12">
+                                        <div class="outer-hq-container h-100">
+                                            <div class="d-flex align-items-center loc-head-row">
+                                                <div class="col-sm-12 p-0">
+                                                    <span class="heading-txt">
+                                                        <img class="" src="assets/images/inspection-home/on-site.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold">Financial and Economic
+                                                        Indicators</span>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="d-flex h-100">
+
+                                                <div
+                                                    class="col-sm-12 border-right d-flex align-items-start  justify-content-start graph-box circle-item-container">
+
+                                              
+                                                    <div style="padding-left: 0px;flex-direction: column;"
+                                                        class="d-flex col-8">
+                                                        <div style="max-height: 10px; margin-top: 10px;padding-left: 0px; padding-right: 0px;"
+                                                            class="col-12">
+                                                            <div
+                                                                class="d-flex align-items-center progress-wrapper title-container">
+                                                                <span class="fw-black col-3 pl-1">35 Questions</span>
+                                                                <span
+                                                                    style="display: flex; align-items: center; justify-content: end;"
+                                                                    class="fw-black col-3 pl-1">80%</span>
+                                                            </div>
+                                                        </div>
+                                                        <div style="padding-left: 0px;" class="col-sm-12">
+                                                            <div
+                                                                class="d-flex align-items-center progress-wrapper pt-1">
+                                                                <div class="progress col-12 p-0">
+                                                                    <div class="progress-bar fill" role="progressbar"
+                                                                        style="width: 80%" aria-valuenow="30"
+                                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                                    <div class="progress-bar no-fill" role="progressbar"
+                                                                        style="width: 20%" aria-valuenow="20"
+                                                                        aria-valuemin="0" aria-valuemax="100"></div>
+                                                                </div>
+                                                                <p style="min-width: 198px;
+                                                                margin-left: 20px;
+                                                                margin-top: 20px;" class="mb-0 f-regular bold-green">4
+                                                                    Compliant</p>
+                                                            </div>
+                                                            
+                                                        </div>
+
+                                                    </div>
+                                                    
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> -->
+
+                                <div class="row mb-31">
+                                    <div class="col-sm-12 progress-row">
+                                        <div class="outer-hq-container"
+                                            style="border-top-left-radius: 6px;border-top-right-radius: 6px; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="border-bottom: 0 !important;">
+                                                <div class="col-sm-12 p-0">
+                                                    <span class="heading-txt">
+                                                        <img class="" src="assets/images/inspection-home/on-site.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold">Vehicle Review (Target number of
+                                                        VINs)</span>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex ">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Estimate Procedures</p>
+                                                        <p class="mb-0 customer-add">5 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: JACDJ58X527J08183
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 80%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-indigo" role="progressbar"
+                                                                    style="width: 20%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: WAUDFAFL6DN014563
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 2CNBJ13C3Y6924710
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">4 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">80%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center ">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Repair Plan</p>
+                                                        <p class="mb-0 customer-add">5 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1G1JC524417418958
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 2CNDL23F856093901
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1J4FF68S0XL545426
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex ">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">ADAS Calibration</p>
+                                                        <p class="mb-0 customer-add">15 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: JH4KA8160NC005601
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 25%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 75%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1GCHK29U31E237682
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0 pt-1">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0 ">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: KNAFB121625150469
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">4 of 15 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">25%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">15 of 15 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center ">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 15 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex ">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Vehicle Measure</p>
+                                                        <p class="mb-0 customer-add">10 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 2G1WD57C491198247
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 50%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-yellow" role="progressbar"
+                                                                    style="width: 50%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1G8ZF5287XZ363384
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1FMCU24X4NUD21099
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">5 of 10 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">50%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center ">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 10 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Welding Joining</p>
+                                                        <p class="mb-0 customer-add">15 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1GKFK16K0RJ736886
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 80%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-indigo" role="progressbar"
+                                                                    style="width: 20%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: JH4DB1660MS010193
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: JH4DA1740JS012019
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">12 of 15 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">80%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">15 of 15 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center ">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 15 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Body Finishing</p>
+                                                        <p class="mb-0 customer-add">5 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 3VWRA69M74M033915
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 80%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-indigo" role="progressbar"
+                                                                    style="width: 20%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 2FTHF26L7GCA92029
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1B7GG2AN9YS629756
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">4 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">80%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="compliant col-9 p-0">5 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Paint</p>
+                                                        <p class="mb-0 customer-add">10 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: JH4KA8250MC004002
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 50%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-yellow" role="progressbar"
+                                                                    style="width: 50%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 4A3AB76T68E011282
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center pt-1">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 5N1AA08A64N729252
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">5 of 10 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">50%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">10 of 10 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">100%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center ">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 10 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="p-3 border-bottom">
+                                                <div class="d-flex">
+                                                    <div class="col-sm-2 px-1">
+                                                        <p class="mb-0 customer-desc-head">Pre-Delivery</p>
+                                                        <p class="mb-0 customer-add">5 questions</p>
+                                                    </div>
+                                                    <div class="col-sm-8">
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1FAFP45X83F403461
+                                                            </div>
+                                                            <div *ngIf="!isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-green" role="progressbar"
+                                                                    style="width: 20%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 80%" aria-valuenow="30"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                            <div *ngIf="isBlank" class="progress col-9 p-0">
+                                                                <div class="progress-bar bg-red" role="progressbar"
+                                                                    style="width: 100%" aria-valuenow="20"
+                                                                    aria-valuemin="0" aria-valuemax="100"></div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank"
+                                                            class="d-flex align-items-center progress-wrapper">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1FVXA7AS24LM58815
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div *ngIf="!isBlank" class="d-flex align-items-center">
+                                                            <div class="progress-data col-3 text-truncate f-medium ">
+                                                                VIN: 1G8ZH1277XZ105148
+                                                            </div>
+                                                            <div class="progress-nothing col-9 p-0">
+                                                                <span class="nothing">N/A</span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <div *ngIf="!isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">1 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">20%</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="compliant col-9 p-0"></span>
+                                                            <span class="fw-black col-3 pl-1"></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="isBlank" class="col-sm-2 px-2">
+                                                        <div class="d-flex align-items-center progress-wrapper">
+                                                            <span class="compliant col-9 p-0">0 of 5 Compliant</span>
+                                                            <span class="fw-black col-3 pl-1">0%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="outer-hq-container"
+                                            style="border-top-left-radius: 6px;border-top-right-radius: 6px; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                                            <div class="d-flex align-items-center loc-head-row"
+                                                style="border-bottom: 0 !important;">
+                                                <div class="col-sm-10 p-0">
+                                                    <span class="heading-txt">
+                                                        <img class=""
+                                                            src="assets/images/inspection-home/in-progress.png" />
+                                                    </span>
+                                                    <span class="loc-head-text f-bold">Actions</span>
+                                                </div>
+
+                                                <div class="col-sm-2 p-0 d-flex align-items-center justify-content-end">
+                                                    <span class="see-more">See More</span>
+                                                    <span class="see-more-img pl-1" style="line-height: 15px;">
+                                                        <img src="assets/images/inspection-home/see-more.PNG" alt=""
+                                                            width="15" height="15">
+                                                    </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        <div id="matrixTable"
+                                            class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs">
+                                            <p-table #table [scrollable]="true" id="file-datatable"
+                                                [columns]="grid2Columns" [value]="grid2Data"
+                                                Class="thread-list-table shop-list-table"
+                                                [scrollHeight]="'calc(100vh - 200px)'">
+                                                <ng-template pTemplate="header" let-columns>
+                                                    <tr>
+                                                        <th *ngFor="let col of columns"
+                                                            class="{{col.columnpclass}} custom-heading">
+                                                            {{col.header}}
+                                                        </th>
+                                                    </tr>
+                                                </ng-template>
+
+                                                <ng-template pTemplate="body" let-ActionList let-i="rowIndex">
+                                                    <tr class="cursor">
+                                                        <td class=" thl-col-4"
+                                                            style="border-left: 0 !important; padding-left: 1.5rem !important;">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <span class="shop-id">{{ActionList.section}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+
+                                                        <td class="thl-col-6">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <span
+                                                                        class="shop-id">{{ActionList.questionhere}}</span>
+                                                                </div>
+
+                                                            </div>
+                                                        </td>
+                                                        <td class="thl-col-6">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <span
+                                                                        class="shop-id">{{ActionList.Answerhere}}</span>
+                                                                </div>
+
+                                                            </div>
+                                                        </td>
+                                                        <td class="thl-col-6">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <span
+                                                                        class="shop-id">{{ActionList.Actionhere}}</span>
+                                                                </div>
+
+                                                            </div>
+                                                        </td>
+                                                        <td class="thl-col-6">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <span class="shop-id">{{ActionList.Assigned}}</span>
+                                                                </div>
+
+                                                            </div>
+                                                        </td>
+                                                        <td class="thl-col-3">
+                                                            <div class="p-table-col">
+                                                                <div class="p-table-col">
+                                                                    <span class="shop-id">{{ActionList.Duedate}}</span>
+                                                                </div>
+
+                                                            </div>
+                                                        </td>
+
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="addUserVisible" [baseZIndex]="100" position="right"
+    [dismissible]="false" modal="true">
+    <app-user-add *ngIf="addUserVisible" [userData]=userData (saveUser)="onDrawerDismiss($event)"></app-user-add>
+</p-sidebar>

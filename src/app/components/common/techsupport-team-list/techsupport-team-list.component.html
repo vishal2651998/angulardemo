@@ -1,0 +1,66 @@
+<div align="center" #listDiv class="container-fluid thread-page-container thread-list-page-container" align="center" style="margin: 0 auto;" >
+    
+    <div class="thread-container" [style.height]="'calc(100vh - '+rmHeight+'px)'">        
+        <div #top align="center" id="thread-data-container" class="row row-data thread-scroll-container" [ngClass]="{'opacity': opacityFlag}" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">        
+            <div *ngIf="!loadingthread && (displayNoRecords || displayNoRecordsDefault)" class="no-item-list no-res-list text-center">
+                <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newThreadInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="createThreadUrl"></app-empty-container>
+            </div>            
+            <div class="loading-small-screen-scroll trst" align="center" *ngIf="loadingthread && !centerloading && !hideFlag" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+            <div >                
+                <div >            
+                    <div class="prob-list-cont ">
+                        <div class="inner-container1 mat-inner-container1 documents-grid-row documents-grid-row-new" [style.height.px]="listHeight">
+                            <div *ngIf="!displayNoRecords && !displayNoRecordsDefault" id="matrixTable" class="mat-elevation-z8 gts-mat-table matrix-table parts-mat-table parts-mat-table-ts">
+                                <p-table #table [columns]="cols" [scrollable]="true" [totalRecords]="threadListArray.length" id="file-datatable" [ngClass]="{'opacity': opacityFlag}" class="file-datatable thread-list-table" [value]="threadListArray" [scrollHeight]="pTableHeight" (scroll)="scroll($event)">
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr *ngIf="threadListArray.length>0" >
+                                            <th *ngFor="let col of columns" class="{{col.columnpclass}}">
+                                                {{col.header}}                                                
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-threadListArray let-i="rowIndex">
+                                        <tr class="cursor" id="{{threadListArray.userId}}">                                                        
+                                            <td class="tsw1 setPadding thl-col-1 col-sticky " >
+                                               <div class="thread-bg thread-bg-no-margin p-table-col">
+                                                    <div class="profile-container">
+                                                        <div class="profileimg-container no-padding">
+                                                            <div class="profile-left-container list-profile-left-container profile-left-container-no-margin" >
+                                                                <img class="profileImg" [src]="threadListArray.profileImg" onerror="this.src='assets/images/thumb_profile_image.png'"/>
+                                                                <span class="list-availability-status availability-status availability-status{{threadListArray.availability}}"></span>
+                                                            </div>
+                                                            <div class="profile-right-container">
+                                                                <div class="user-name" title="{{threadListArray.userName}}">  
+                                                                    {{threadListArray.userName}}
+                                                                </div>
+                                                                <!--div class="buss-title" title="{{threadListArray.badgeStatus}}">
+                                                                    {{threadListArray.badgeStatus}}
+                                                                </div>
+                                                                <div class="buss-title posted-from" [ngClass]="{'no-title': threadListArray.badgeStatus == ''}" title="{{threadListArray.postedFrom}}">
+                                                                    {{threadListArray.postedFrom}}
+                                                                </div-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>                                            
+                                            <td class="tsw2 setPadding thl-col-2" ><span class="p-table-col" title="{{threadListArray.availabilityText}}">{{threadListArray.availabilityText}}</span></td>
+                                            <td class="tsw3 setPadding thl-col-3" ><span class="p-table-col" title="{{threadListArray.supportReadinessText}}">{{threadListArray.supportReadinessText}}</span></td>
+                                            
+                                          </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div align="center" class="thread-loading-text " *ngIf="loadingthreadmore">loading..</div>-->
+</div>
+<div align="center" class="thread-loading-text bottom-loading" *ngIf="loadingthreadmore || centerloading"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+<!--div align="center" class="thread-loading-text bottom-loading" *ngIf="!loadingthread && !displayNoRecords && nothingtoshow" style="color:#797777;font-size: 14px;top:0px;font-style: italic;">  </div-->
+
+{{threadListArray}}
+ 

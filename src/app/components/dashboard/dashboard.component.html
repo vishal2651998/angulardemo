@@ -1,0 +1,17 @@
+<div id="dashboard">
+    <div class="container-fluid">
+      
+      <div class="wrapper">
+        <nav id="nav-sidebar" [ngClass]="{ 'custom-width': isCollabtic}" *ngIf="dashboardFlag">
+          <app-sidebar accessModule="{{bodyClass}}"></app-sidebar>
+        </nav>
+        <div class="container-fluid" id="content">
+          <router-outlet></router-outlet>
+        </div>        
+      </div>
+  
+      <div id="footer">
+        <app-footer accessModule="{{bodyClass}}"></app-footer>
+      </div>        
+    </div>
+</div>

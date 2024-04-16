@@ -1,0 +1,152 @@
+<div class="main-contaier profile-widget">
+    <!--<p-accordion [multiple]="true"  >
+        <p-accordionTab    [selected]="true">
+        <p-header class="accordion-icon ">-->
+            <div class="container-fluid">
+                <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head landing-padding0 landing-margin0">
+                    <div class="menu-name-bar col-9 col-lg-9 col-md-9 col-xl-9 col-sm-9 landing-padding0 landing-margin0">
+                        <div>
+                             <span class="bg-image personal-info-icon">
+                                <img src='assets/images/profile/personal-info.svg' alt='' onload='SVGInject(this)' />
+                             </span>
+                            <span class="menu-name">Personal Info</span></div>
+                    </div>
+                    <div class="col-3 col-lg-3 col-md-3 col-xl-3 col-sm-3 landing-padding0 landing-margin0">
+                        <div *ngIf="profileEdit && profileInfo" (click)="editPersonalInfo()" class="rightside-menu"><span class="edit-icon"></span></div>
+                        <div *ngIf="!profileInfo" class="rightside-menu"><span class="save-icon" (click)="onProfileSubmit()"></span><span type="reset" (click)="onCancelProfile()" class="cancel-icon"></span></div>
+                    </div>
+                </div>
+            </div>
+        <!--</p-header>-->
+        <div class="search-landing-widget">
+            <div class="loading-small-screen" *ngIf="loadingrs" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+            <div class="container-fluid">
+                <div class="nothingtoshow profile-nothingtoshow" *ngIf="profileError">
+                    <div class="no-data-contaier">
+                        <div>
+                            <img class="no-data-img" src="assets/images/landing-page/empty-recent-search.svg">
+                        </div>
+                        <div class="no-data-text">{{profileErrorMsg}}</div>
+                    </div>
+                </div>
+                <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0">
+                    <div class="info-div-section-scroll-to scrollbar scrollbar-primary thin">
+                        <div class="info-div" *ngIf="profileInfo && !loadingrs && !profileError">
+                            <div class="row-cont">
+                                <div class="col-left bg-img bg-img-user"  [ngClass]="{'deactiveField': firstName==''}"></div>
+                                <div *ngIf="firstName==''" class="col-right right-text">First Name</div>
+                                <div *ngIf="firstName!=''" class="col-right right-text">{{firstName | titlecase}}</div>
+                            </div>
+                            <div class="row-cont"  [ngClass]="{'deactiveField': lastName==''}" >
+                                <div class="col-left bg-img bg-img-user"></div>
+                                <div *ngIf="lastName==''" class="col-right right-text">Last Name</div>
+                                <div *ngIf="lastName!=''" class="col-right right-text">{{lastName | titlecase}}</div>
+                            </div>
+                            <div class="row-cont" *ngIf="nickName != undefined"  [ngClass]="{'deactiveField': nickName==''}" >
+                                <div class="col-left bg-img bg-img-user"></div>
+                                <div *ngIf="nickName==''" class="col-right right-text">Nick Name</div>
+                                <div *ngIf="nickName!=''" class="col-right right-text">{{nickName | titlecase}}</div>
+                            </div>
+                            <div class="row-cont" [ngClass]="{'deactiveField': emailAddress==''}">
+                                <div class="col-left bg-img bg-img-email"></div>
+                                <div *ngIf="emailAddress==''" class="col-right right-text">Email</div> 
+                                <div *ngIf="emailAddress!=''" class="col-right right-text">{{emailAddress}}</div>                        
+                            </div>
+                            <div class="row-cont"  [ngClass]="{'deactiveField': phonenumber==''}">
+                                <div class="col-left bg-img bg-img-phone"></div>                               
+                                <div class="col-right right-text">                                        
+                                    <span *ngIf="phonenumber==''">Phone Number</span>                                        
+                                    <span *ngIf="idialCode!=''">{{idialCode}}&nbsp;&nbsp;&nbsp;</span>                                        
+                                    <span *ngIf="phonenumber!=''">{{phonenumber}}</span>
+                                </div>
+                            </div>
+                            <div class="row-cont"  [ngClass]="{'deactiveField': city==''}">
+                                <div class="col-left bg-img bg-img-address"></div>
+                                <div *ngIf="city==''" class="col-right right-text">City</div>
+                                <div *ngIf="city!=''" class="col-right right-text">{{city}}</div>
+                            </div>
+                            <div class="row-cont"  [ngClass]="{'deactiveField': state==''}">
+                                <div class="col-left bg-img bg-img-address"></div>
+                                <div *ngIf="state==''" class="col-right right-text">State</div>
+                                <div *ngIf="state!=''" class="col-right right-text">{{state}}</div>
+                            </div>
+                            <div class="row-cont"  [ngClass]="{'deactiveField': zipCode==''}">
+                                <div class="col-left bg-img bg-img-zip"></div>
+                                <div *ngIf="zipCode==''" class="col-right right-text">Zip Code</div>
+                                <div *ngIf="zipCode!=''" class="col-right right-text">{{zipCode}}</div>
+                            </div>
+                        </div>
+                        <div class="info-div" *ngIf="!profileInfo && !loadingrs && !profileError">
+                            <form [formGroup]="form" (ngSubmit)="onProfileSubmit()">
+                                <div class="row-cont ">
+                                    <div class="col-left bg-img bg-img-user"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" style="text-transform: capitalize;" class="inputtext"  matInput placeholder="First Name" [(ngModel)]="firstName" formControlName="firstName" maxlength="200" />                                                                                                                                                        
+                                    </div>
+                                </div>
+                                <div class="row-cont ">
+                                    <div class="col-left bg-img bg-img-user"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" style="text-transform: capitalize;" class="inputtext"  matInput placeholder="Last Name" [(ngModel)]="lastName" formControlName="lastName" maxlength="200" />                                                                                                                                                        
+                                    </div> 
+                                </div>
+                                <div class="row-cont"  *ngIf="nickName != undefined">
+                                    <div class="col-left bg-img bg-img-user"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" style="text-transform: capitalize;" class="inputtext"  matInput placeholder="Nick Name" [(ngModel)]="nickName" formControlName="nickName" maxlength="200" />                                                                                                                                                        
+                                    </div> 
+                                </div>                               
+                                <div class="row-cont">
+                                    <div class="col-left bg-img bg-img-email"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" class="inputtext"  matInput placeholder="Email" [(ngModel)]="emailAddress" formControlName="emailAddress" maxlength="200" />                                        
+                                        <div *ngIf="submitted && f.emailAddress.errors" class="profile-invalid-feedback">                                                
+                                            <div *ngIf="f.emailAddress.errors">Email is invalid</div>
+                                        </div>                                                                         
+                                    </div>                        
+                                </div>
+                                <div class="row-cont">
+                                    <div class="col-left bg-img bg-img-phone"></div>
+                                    <div class="col-right form-group">
+                                        <app-country-phonenumber [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>                           
+                                        <!--<input type="text" appPhoneMask class="inputtext"  matInput placeholder="555-555-5555" [(ngModel)]="phonenumber" formControlName="phonenumber" maxlength="12" />-->                                                                                                                                                      
+                                        <div *ngIf="!invalidNumber" class="profile-invalid-feedback">                                                
+                                            <div>Phone number is invalid</div>
+                                        </div> 
+                                    </div>  
+                                </div>
+
+                                <div class="row-cont">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" class="inputtext"  matInput placeholder="City" [(ngModel)]="city" formControlName="city" maxlength="200" />                                                                                                                                                        
+                                    </div>  
+                                </div>
+                               
+                                <div class="row-cont">
+                                    <div class="col-left bg-img bg-img-address"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" class="inputtext"  matInput placeholder="State" [(ngModel)]="state" formControlName="state" maxlength="200" />                                                                                                                                                        
+                                    </div> 
+                                </div>
+
+                                <div class="row-cont">
+                                    <div class="col-left bg-img bg-img-zip"></div>
+                                    <div class="col-right form-group">
+                                        <input type="text" class="inputtext" matInput placeholder="Zip Code" [(ngModel)]="zipCode" formControlName="zipCode" maxlength="15" />  
+                                        <div *ngIf="submitted && f.zipCode.errors" class="profile-invalid-feedback">                                                
+                                            <div *ngIf="f.zipCode.errors">Zip Code is invalid</div>
+                                        </div>                                                                                                                                                       
+                                    </div> 
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--</p-accordionTab>
+    </p-accordion>-->
+</div>
+

@@ -1,0 +1,184 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" ></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" ></app-product-header>
+</div>
+<div class="loading-small-screen-scroll trst" align="center" *ngIf="loading" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div class="ts-list" *ngIf="!loading">
+    <p-messages [(value)]="msgs1" [enableService]="false"></p-messages>
+    <div class="ts-list-lt topltwidth">
+        <div class="ts-list-lt-top">
+            <img src="assets/images/tech-support/tech-support-head-img.png" >
+            <span class="title-text">Tech Support</span>
+        </div>
+    </div>
+    <div class="ts-list-rt toprtwidth">
+        <div class="ts-list-rt-top">
+            <div class="lt"  >
+                <div class="select-order-option">
+                    <p-dropdown class="select-ts-order" appendTo="body" [options]="selectedOrderOptions" [(ngModel)]="selectedOrder" placeholder="" optionLabel="name" (onChange)="selectEvent($event,'order')" ></p-dropdown>
+                </div>                           
+                 
+                <div class="select-order-option">
+                    <form [formGroup]="levelForm"> 
+                        <p-dropdown formControlName="levelFormControl" class="select-ts-order select-ts-order-3" appendTo="body" [options]="selectedLevelOptions" [(ngModel)]="selectedLevel" placeholder="" optionValue="code" optionLabel="name" (onChange)="selectEvent($event,'level')" ></p-dropdown>
+                    </form>
+                </div>  
+                <div class="select-order-option" [ngClass]="{ 'show' : memberSelectFlag, 'hide' : !memberSelectFlag  }">
+                    <form [formGroup]="tsForm"> 
+                        <p-dropdown formControlName="tsFormControl" class=" select-ts-order select-ts-order-3" appendTo="body" [options]="selectedStatusOptions" [(ngModel)]="selectedStatus" placeholder="" optionValue="code" optionLabel="name" (onChange)="selectEvent($event,'status')" ></p-dropdown>
+                    </form>
+                </div> 
+                <div *ngIf="roleId == '3'" class="more-option gray-change" (click)="techsupportteampage()">
+                   
+                    <img src="assets/images/tech-support/teahsupport-team-icon.png">
+                    <span class="gray-change">Tech Support Team</span>
+                </div>            
+            </div>
+            <div class="rt">
+                
+                
+                <div *ngIf="actionMoreFlag" class="more-option" tooltipClass="techsupport-tt" container="body"
+                triggers="click" placement="bottom" [ngbTooltip]="moreaction"
+                #ttchat="ngbTooltip">
+                    <img src="assets/images/tech-support/tech-more.png" >
+                    <span >Action Menu</span>
+                </div>
+
+                <ng-template #moreaction>
+                    <div class="tooltip-ts-mo-div">
+                        <ul class="more-actions">
+                            <li *ngIf="((ticketStatus == '1' && teamMemberId == userId) || (teamMemberId != userId)) && techSupportUserFlag" class="cursor active tooltip-ts-mo-new" (click)="actionStatus('assignme');"><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to me</li>
+                            <li class="cursor active tooltip-ts-mo-new" (click)="actionStatus('assignmember');"><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to team member</li>
+                            <!--li class="cursor tooltip-ts-mo-new opacity no-access" (click)="actionStatus('close');"><img src="assets/images/tech-support/tech-support-close.png" alt="View">&nbsp;&nbsp;Close</li>
+                            <li class="cursor tooltip-ts-mo-new no-access" (click)="actionStatus('delete');"><img src="assets/images/tech-support/tech-support-delete.png" alt="View">&nbsp;&nbsp;Delete</li-->
+                        </ul>
+                    </div>
+                </ng-template>  
+               
+                <div *ngIf="roleId == '3'" class="more-option green-change" (click)="techsupportrulespage()">
+                   
+                    <img src="assets/images/tech-support/tech-support-rules-icon.png">
+                    <span class="green-change">Tech Support Rules</span>
+                </div>
+                              
+            </div>            
+        </div>
+    </div>
+</div>
+<div class="ts-list" *ngIf="!loading">
+    <div class="ts-list-lt ts-list-bottom cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <div class="" >
+            <div id="filter">
+                <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()">
+                    <div *ngIf="expandFlag">
+                        <img src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+                    </div>
+                    <div *ngIf="!expandFlag">
+                        <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+                    </div>
+                </div>
+                <div class="filter-widgets ts-list-lt-center transition" *ngIf="expandFlag">
+
+                    <div *ngIf="teamList.length>0">
+                        <div class="div-pos">
+                            <div class="select-group-div">
+                                <form [formGroup]="teamForm">
+                                    <p-dropdown formControlName="teamFromControl" class="select-group-order"  appendTo="body" [options]="selectedGroupOptions" [(ngModel)]="selectedGroup" placeholder="" optionValue="code" optionLabel="name" (onChange)="selectEvent($event,'team')" ></p-dropdown>
+                                </form>
+                            </div>
+                        </div>                        
+                    </div>
+
+                    <div [style.height]="'calc(91vh - '+rmHeight+'px)'">
+                        <div class="ps" [perfectScrollbar]="sconfig">
+                            <div class="group-row">                                                    
+                                <div *ngIf="ticketStatusList.length>0">
+                                    <div class="type-row ticketStatus{{j}}" *ngFor="let ts of ticketStatusList; let j=index;" [ngClass]="{ 'active' : ts.activeClass, 'normal' : !ts.activeClass, 'hide' : j>0 && 8>j }" (click)="selectTap(j,'status')">
+                                        <div class="type-row-inner" *ngIf="j==0">
+                                            <span class="type-text" title="{{ts.name}}" >{{ts.name}}</span>
+                                            <span *ngIf="ts.count != 0 && ts.count < 100" class="type-count" title="{{ts.count}}">{{ts.count}}</span>
+                                            <span *ngIf="ts.count != 0 && ts.count > 99" class="type-count" title="{{ts.count}}">99<span class="plus-icon">+</span></span>
+                                        </div>
+                                        <div class="type-row-inner" *ngIf="j==8">
+                                            <span class="type-text" title="{{ts.name}}" >{{ts.name}}</span>
+                                            <span *ngIf="ts.count != 0 && ts.count < 100" class="type-count" title="{{ts.count}}">{{ts.count}}</span>
+                                            <span *ngIf="ts.count != 0 && ts.count > 99" class="type-count" title="{{ts.count}}">99<span class="plus-icon">+</span></span>
+                                        </div>
+                                    </div>
+                                    <div class="profile-row normal" *ngIf="techSupportUserFlag">
+                                        <div class="profile-row-inner">
+                                            <span class="pimg"><img onerror="this.src='assets/images/thumb_profile_image.png'" [src]="userProfile"></span>
+                                            <span class="avail-status availability-status1" ></span>
+                                            <!--<span class="uname" >{{userName}}</span>-->
+                                            <span class="uname" >You</span>
+                                        </div>                    
+                                    </div>  
+                                    <div *ngIf="techSupportUserFlag">                                
+                                        <div class="type-row" *ngFor="let ts of ticketStatusList; let j=index;" [ngClass]="{ 'active' : ts.activeClass, 'normal' : !ts.activeClass, 'hide' : j==0 || j==8  }" (click)="selectTap(j,'status')">                                       
+                                            <div class="type-row-inner" *ngIf="j>0 && 8>j">
+                                                <span class="type-text" title="{{ts.name}}" >{{ts.name}}</span>
+                                                <span *ngIf="ts.count != 0 && ts.count < 100" class="type-count" title="{{ts.count}}">{{ts.count}}</span>
+                                                <span *ngIf="ts.count != 0 && ts.count > 99" class="type-count" title="{{ts.count}}">99<span class="plus-icon">+</span></span>
+                                            </div>                                         
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <div class="user-row">
+                                <div *ngIf="teamMembers.length>0">
+                                    <div *ngFor="let tm of teamMembers; let i=index;" class="profile-row" [ngClass]="{ 'active' : tm.activeClass, 'normal' : !tm.activeClass }" (mouseenter)="t.close();" (click)="t.close();selectTap(i,'member')">
+                                        <div class="profile-row-inner" (mouseenter)="t.close();">                                            
+                                            <span class="pimg">
+                                                <div class="tooltipUseDiv" >  
+                                                    <div class="tooltipUseDivInner listtt listtt-tcmlist" (mouseenter)="t.close();getUserProfileStatus(tm.userId,i);t.open();$event.stopPropagation();"></div>                                                        
+                                                    <div class="tooltipLeave tooltipLeave-tcmlist" (mouseleave)="t.close();" ></div>  
+                                                    <img tooltipClass="profile-tooltip tech-pro-tooltip" container="body" triggers="manual" #t="ngbTooltip" [openDelay]="1000" [autoClose]="'outside'" placement="top-left" [ngbTooltip]="profileTT" class="profileImg {{tm.badgeTopUser}}" [src]="tm.profileImg" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                                </div>
+                                                <!--img onerror="this.src='assets/images/thumb_profile_image.png'" [src]="tm.profileImg"-->
+                                            </span>                                            
+                                            <!--span class="avail-status availability-status{{tm.availability}}" ></span-->
+                                            <span class="uname" >{{tm.userName}}</span>
+                                        </div>  
+                                        <ng-template #profileTT  >
+                                            <div (mouseleave)="t.close();" class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : tm.profileShow } ">
+                                                <div class="table-row2">
+                                                    <div class="profile-tt-row">
+                                                        <div class="profile-tt-col-lt profile-status-tt">
+                                                            <img *ngIf="tm.availability == 0" class="" src="assets/images/thread/bt-profile-status-{{tm.availability}}.svg"/>
+                                                            <img *ngIf="tm.availability != 0" class="" src="assets/images/thread/profile-status-{{tm.availability}}.svg"/>
+                                                        </div>
+                                                        <div class="profile-tt-col-rt">                                                                        
+                                                            <p class="profile-text-tt">{{tm.availabilityStatusName}}</p>      
+                                                        </div> 
+                                                    </div>
+                                                    <div class="line"></div>
+                                                    <div class="profile-tt-row cursor-pointer" (click)="taponprofileclick(tm.userId);$event.stopPropagation();">
+                                                        <div class="profile-tt-col-lt">
+                                                            <img src="assets/images/thread-detail/black-theme-tooltip-viewprofile.png" />
+                                                        </div>
+                                                        <div class="profile-tt-col-rt">                                                                        
+                                                            <p class="profile-text-tt">View Profile</p>      
+                                                        </div> 
+                                                    </div>
+                                                </div>  
+                                            </div>    
+                                        </ng-template>                  
+                                    </div>                                        
+                                </div>              
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ts-list-rt transition" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">        
+        <div class="ts-list-rt-center">
+            <div class="probing-content cbt-content part-content part-content-threads-new">
+                <app-techsupport-list [pageDataInfo]="pageData" (changeAction)="changeAction($event)" (serviceAction)="serviceAction($event)"></app-techsupport-list>
+            </div>
+        </div>
+    </div>
+</div>
+

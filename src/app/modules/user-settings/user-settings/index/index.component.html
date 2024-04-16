@@ -1,0 +1,68 @@
+<div id="header">
+    <app-thread-detail-header [pageData]="headerData"></app-thread-detail-header>
+    <!--app-product-header [pageData]="headerData" (search)="applySearch($event)"></app-product-header-->
+</div>
+<div class="prob-index">
+    <div class="probing-content system-setting">
+        <div class="escalationv2-list-head head-row">
+        <div class="head-col-1">
+            <img class="head-img" src="assets/images/user-settings/user-settings-head.png" />
+            <span class="head-text">User Settings</span>
+        </div>
+        <div *ngIf="loading">
+            <!--div class="loader"><img width="60" height="60" src="assets/images/loading.svg" alt="Loader" /></div-->
+        </div>     
+        <div *ngIf="!loading && itemEmpty" class="empty-item" [style.height]="'calc(100vh - '+ermHeight+'px)'">
+            <app-empty-container [showType]="showType" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeDefaultNewText]="contentTypeText"></app-empty-container>
+        </div>  
+        <div *ngIf="!loading && !itemEmpty">
+            <div class="ts-list-lt ts-list-bottom cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                <div class="" >
+                    <div id="filter">
+                        <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()">
+                            <div *ngIf="expandFlag">
+                                <img src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+                            </div>
+                            <div *ngIf="!expandFlag">
+                                <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+                            </div>
+                        </div>
+                        <div class="filter-widgets ts-list-lt-center transition" *ngIf="expandFlag">
+                            <div [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                                <div class="ps" [perfectScrollbar]="sconfig">                            
+                                    <div class="user-row">
+                                        <div >
+                                            <div *ngFor="let menu of menuItemsData; let i=index;" class="profile-row system-settings-menu-row" [ngClass]="{ 'active' : menu.activeFlag, 'normal' : !menu.activeFlag }" (click)="navSection(i,menu.id)">
+                                                <div class="profile-row-inner ">
+                                                    <span class="pimg {{menu.class}}"></span>
+                                                    <span class="uname" >{{menu.name}}</span>                                                    
+                                                </div>                    
+                                            </div>                                                                                                                                
+                                        </div>              
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ts-list-rt transition" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">        
+                <div class="ts-list-rt-center">
+                    <div class="system-setting-container-outer" [style.height]="'calc(100vh - '+innerHeight+'px)'">
+                        <app-dispatch-config [menuId]="activeMenuId" *ngIf="!loading && dispatchFlag"></app-dispatch-config>
+                        
+                        <app-thread-config [menuId]="activeMenuId" *ngIf="!loading && emailFlag"></app-thread-config>
+                        <!--app-email-notifications [menuId]="activeMenuId" *ngIf="!loading && emailFlag"></app-email-notifications--->
+                        
+                        <app-push-config [menuId]="activeMenuId" *ngIf="!loading && pushFlag"></app-push-config>
+                        <!--app-push-notifications [menuId]="activeMenuId" *ngIf="!loading && pushFlag"></app-push-notifications-->
+
+                        <app-make-notifications [menuId]="activeMenuId" *ngIf="!loading && makeFlag"></app-make-notifications>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

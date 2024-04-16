@@ -1,0 +1,217 @@
+<div class="row container-fluid">
+  <div class="row header-main-div">
+    <div class="col-10">
+      <div class="d-flex align-items-center justify-content-between ">
+        <div class="d-flex align-items-center">
+          <div (click)="goBack()">
+            <img style="margin-right: 9px;cursor: pointer;" src="assets/images/gts/sample/back-arrow-black.png" alt=""
+              srcset="">
+          </div>
+          <span class="heading-right-start">
+            {{inspectionTitle}}
+            <span style="color: #469073;">ID# {{inspectionId}}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="overflow-y: scroll;" class="col-12 p-0 right-section">
+
+    <!-- Parent info div START -->
+    <div *ngIf="!loading" class="container-fluid">
+      <div *ngFor="let val of infoData; let outerIndex = index" class="right-section-one">
+        <!-- INFO START-->
+        <div class="right-sec-heading cursor-pointer">
+          <div class="innerhtml-container">{{(classArr[0] + 1) | romanize}}. {{outerIndex+1}}.
+            <div [innerHTML]="val.description | striphtml"></div>
+          </div>
+          <div class="info-progress-container">
+            <img class="outer-content-img" src="assets/images/gts/sample/arrow-up.png" alt="" srcset="">
+          </div>
+        </div>
+        <!-- INFO START-->
+
+        <!-- Render START CHECKS -->
+        <div>
+          <div *ngFor="let item of returnChecksAction(val, outerIndex,'Check'); let innerIndex = index"
+            class="row p-0 m-0 right-sec-content">
+            <div class="col-10 p-0 border-bottom content-box">
+
+              <!-- CHECK START -->
+              <div class="d-flex justify-content-between align-items-center ">
+                <span style="position: relative;" class="innerhtml-container">
+                  {{outerIndex+1}}.{{innerIndex+1}}
+                  <div style="margin-left: 10px;" class="inner-html" [innerHTML]="item.description | striphtml"></div>
+                  <img style="width: 19px;height: 19px; margin-top: 5px; margin-left: 7px; "
+                    src="assets/images/gts/sample/info-grey.png" alt="" srcset="">
+                </span>
+                <span>
+                  <img *ngIf="item?.attachments.length" width="25px" height="20px"
+                    src="assets/images/gts/sample/green-img-icon.png" alt="" srcset="">
+                </span>
+              </div>
+              <!-- CHECK END -->
+
+            </div>
+            <!-- ACTION BUTTTON START -->
+            <div class="col-1 p-0 text-center border-left-right">
+              <!-- null space -->
+              <div class="yes-sec">
+                <i class="cursor-pointer pi pi-check"></i>
+                <span style="margin-left: 5px;">YES</span>
+              </div>
+            </div>
+            <div class="col-1 p-0 text-center border-right">
+              <!-- null space -->
+              <div class="yes-sec">
+                <i class="cursor-pointer pi pi-times"></i>
+                <span style="margin-left: 5px;">NO</span>
+              </div>
+            </div>
+            <!-- ACTION BUTTTON END -->
+
+            <!-- Render START ACTIONS -->
+            <div *ngFor="let itemAct of returnChecksAction(val, outerIndex,'Action'); let innerActionIndex = index"
+              style="padding: 0px !important;"
+              class="row container-fluid col-12 p-0 m-0 {{outerContentBox.includes(outerIndex) ? '' : 'display-none' }}">
+              <div *ngIf="returnsAction(itemAct, item)" class="col-10 p-0 border-bottom content-box">
+                <div class="d-flex justify-content-between align-items-center ">
+                  <span class="innerhtml-container">
+                    {{outerIndex+1}}.{{innerIndex+1}}.{{innerActionIndex+1}}
+                    <div style="margin-left: 10px;" class="inner-html" [innerHTML]="itemAct.description  | striphtml">
+                    </div>
+                    <img style="width: 19px;height: 19px; margin-top: 5px; margin-left: 7px; "
+                      src="assets/images/gts/sample/info-grey.png" alt="" srcset="">
+                  </span>
+                </div>
+
+                <!-- USer check Input render START -->
+                <!-- LOADING -->
+
+                <div class="row p-0 m-0">
+                  <div class="col-12">
+                    <!-- Assign user implementation start -->
+                    <div
+                      *ngFor="let assignUser of renderAssignUserInput(itemAct?.instructionAssignOwners); let inputIndex = index;"
+                      class="col-12">
+                      <div style="padding-right: 0px;" class="col-12 row">
+                        <div class="col-4">
+                          <div class="d-flex align-items-center py-2">
+                            <img class="mr-1" src="assets/images/gts/gts-owner.png" alt="" srcset="">
+                            <span class="grey-color">Select Owner</span>
+                          </div>
+                          <!-- <input class="w-100" type="text" pInputText /> -->
+
+                          <button *ngIf="!readonly" class="w-100 form-control btn-user">Select Owner
+                            <span class="pi pi-angle-down dropdown-icon"></span>
+                          </button>
+
+                        </div>
+                        <div class="col-4">
+                          <div class="d-flex align-items-center py-2">
+                            <img class="mr-1" src="assets/images/gts/gts-cal.png" alt="" srcset="">
+                            <span class="grey-color">Due Date</span>
+                          </div>
+
+                          <div *ngIf="!readonly" class="date-item-container">
+                            <input *ngIf="!readonly" readonly id="'due-date'+inputIndex"
+                              class="w-100 form-control readonly-input-date" placeholder="Due date" matInput
+                              [matDatepicker]="picker" />
+                            <mat-datepicker-toggle class="picker-icon" matIconSuffix
+                              [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                          </div>
+
+                        </div>
+                        <div style="padding-right: 0px;" class="col-4">
+                          <div class="d-flex align-items-center py-2">
+                            <img class="mr-1" src="assets/images/gts/gts-cal.png" alt="" srcset="">
+                            <span class="grey-color">Follow up date</span>
+                          </div>
+                          <div *ngIf="!readonly" class="date-item-container">
+                            <input id="follow-date" class="w-100 form-control readonly-input-date" readonly
+                              placeholder="Follow up date" matInput [matDatepicker]="pickerFollow" />
+                            <mat-datepicker-toggle style="right: 0px;" class="picker-icon" matIconSuffix
+                              [for]="pickerFollow"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerFollow></mat-datepicker>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Assign user implementation end -->
+                    <div *ngFor="let input of itemAct.userInputs; let inputIndex = index " class="col-12">
+
+                      <!-- INPUT START Render input with userinput === 1 -->
+                      <div *ngIf="input.userInput == 1" class="col-12">
+                        <div class="d-flex align-items-center py-2">
+                          <img class="mr-1" src="assets/images/gts/sample/to-do-list.png" alt="" srcset="">
+                          <span class="grey-color">{{ input.authorInput }}</span>
+                          <div *ngIf="!readonly">
+                            <span *ngIf="input.isRequired == 1" style="position: absolute; right: 16px;"
+                              class="grey-color">Required</span>
+                          </div>
+                          <!-- <span *ngIf="input.isRequired == 1" class="required-input">*</span> -->
+                        </div>
+
+                      </div>
+                      <!-- INPUT END Render input with userinput === 1 -->
+
+                      <!-- INPUT START Render input with userinput === 2 -->
+                      <div *ngIf="input.userInput == 2" class="col-12">
+                        <p-dropdown appendTo="body" [options]="input.dropDownValues" placeholder="Select"
+                          styleClass="w-100">
+                        </p-dropdown>
+                      </div>
+                      <!-- INPUT END Render input with userinput === 2 -->
+
+                      <!-- Attachment RENDER START-->
+                      <div style="margin-top: 10px;" class="col-12 " *ngIf="input.userInput == 3">
+                        <span class="grey-color">
+                          <img class="mr-1" src="assets/images/gts/sample/img-gray.png" alt="" srcset="">
+                          {{ input.authorInput }}</span>
+                        <div style="margin-top: 10px; column-gap: 12px;" class="d-flex attachments-sec">
+                          <div class="img-add">
+                            <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt=""
+                              srcset="">
+                            <span>Add</span>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Attachment RENDER END-->
+
+                    </div>
+                  </div>
+                </div>
+                <!-- USer check Input render END -->
+
+              </div>
+
+              <!-- ACTION BUTTTON START -->
+              <div class="col-1 p-0 text-center border-left-right">
+                <!-- null space -->
+              </div>
+              <div class="col-1 p-0 text-center border-right">
+                <!-- null space -->
+              </div>
+              <!-- ACTION BUTTTON END -->
+            </div>
+            <!-- Render END ACTIONS -->
+
+
+          </div>
+        </div>
+        <!-- Render END CHECKS -->
+
+      </div>
+    </div>
+    <!-- Parent info div END -->
+
+    <div *ngIf="loading" class="col-10 p-0 center-section">
+      <div class="loading-announcement">
+        <img src="assets/images/loading-small.svg" alt="Loader" />
+      </div>
+    </div>
+
+  </div>
+
+</div>

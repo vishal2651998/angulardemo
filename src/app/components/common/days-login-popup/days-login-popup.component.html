@@ -1,0 +1,58 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">    
+    <div class="modal-body">              
+       <div class="page-load-container" >
+            <div style="height:100%">
+
+                <div class="scroll-area scrollbar scrollbar-primary thin" style="height:100%" >
+                    <div *ngIf="loading" class="loading-image"><img src="assets/images/loading.svg" alt="Loader" width="60"/></div> 
+                    <div *ngIf="!loading" >
+                        <div class="fst-div">
+                            <div class="f-row-one">
+                                <span class="name-text">Hello {{firstLastname}} </span>
+                            </div>
+                            <div class="f-row-two">
+                                <span class="into-text">Please provide or update your preferred contact information, in order to make sure we can contact you during a TAC Support request</span>
+                            </div>
+                        </div>
+                        <div class="sec-div">
+                            <form [formGroup]="signupForm1" (ngSubmit)="submitStep1()" autocomplete="false">
+                                <div>
+                                    <div class="placeholder-text">Preferred Name or Nick Name<span class="red-text">*</span></div>
+                                    <div class="input-group" [ngClass]="{ 'active': nameInputFlag, 'error': submitted1 && f1.name.invalid }">
+                                        <div class="input-group-prepend name-img"><img width="20" height="20" src="assets/images/login/days-login-name.png"  ></div>
+                                        <input type="text" tabindex="1" class="form-control inputtext" matInput  [(ngModel)]="name" placeholder="Preferred Name or Nick Name" formControlName="name" maxlength="200" (keyup)="onKeypress(1,$event)" />                                                                                                                   
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="split-col-1">
+                                        <div class="placeholder-text">EMAIL<span class="red-text">*</span></div>
+                                        <div class="input-group" [ngClass]="{ 'active': emailInputFlag, 'error': submitted1 && f1.email.invalid }">
+                                            <div class="input-group-prepend email-img"><img width="22" height="15" src="assets/images/login/days-login-email.png"  ></div>
+                                            <input type="text" tabindex="2" class="form-control inputtext" matInput placeholder="Email"  [(ngModel)]="email" formControlName="email" maxlength="200" (keyup)="onKeypress(2,$event)" />                                                                                                                   
+                                        </div>
+                                    </div>
+                                    <div class="split-col-2">
+                                        <div class="placeholder-text">PHONE NUMBER<span class="red-text">*</span></div>
+                                        <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag , 'error': submitted1 && !invalidNumber && phoneNumberValid}">  
+                                            <div class="input-group-prepend phone-img"><img width="18" height="18" src="assets/images/login/days-login-phone.png"  ></div>  
+                                            <app-country-phonenumber [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="submit-row">
+                                    <div *ngIf="!buttonEnable"><button class="action-button action-button-inactive" ><span class="signup-text">UPDATE</span>&nbsp;&nbsp;<span class="signup-img"><img width="8" height="15" src="assets/images/login/days-login-arrow.png"  ></span></button></div>                                           
+                                    <div *ngIf="buttonEnable"><button class="action-button action-button-active" (click)="submitStep1()" type="submit" ><span class="signup-text">UPDATE</span>&nbsp;&nbsp;<span class="signup-img"><img width="8" height="15" src="assets/images/login/days-login-arrow.png"  ></span></button></div>   
+                                </div> 
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>       
+       </div> 
+    </div>
+</div>
+
+
+
+

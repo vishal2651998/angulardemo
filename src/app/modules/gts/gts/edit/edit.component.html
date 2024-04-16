@@ -1,0 +1,1104 @@
+<div #top id="header">
+    <!--<app-probing-header [pageData]="headerData"></app-probing-header>-->
+    <!--app-product-header [pageData]="headerData"></app-product-header-->
+    <app-new-edit-header [pageData]="headerData"></app-new-edit-header>
+</div>
+
+<div class="prob-new" style="overflow:hidden;">
+    <div *ngIf="loading" class="dash-loader cust-loader">
+        <img src="assets/images/loading.svg" alt="Loader" width="60px" />
+        <div class="loading-msg">{{loadingMessage}}</div>
+    </div>
+    <div *ngIf="!loading" class="row new-pro-cont"
+        [ngClass]="{'col-lg-8 step1': step1Action && !step2Action, 'col-lg-12 step2': step1Action && step2Action}">
+        <div *ngIf="step2Action" class="step2-info" [ngClass]="{'col-lg-3': step1Action && step2Action}"
+            [style.height.px]="innerHeight+62">
+            <div id="inner-step" class="ps form-values" [perfectScrollbar]="sconfig">
+                <div class="prob-form-info base-info base-info-new">
+                    <div class="base-info-row">
+                        <span *ngIf="imgURL != null" class="left-image">
+                            <span class="image" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></span>
+                        </span>
+                        <div class="base-info-col gts-title-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">GTS Procedure Title</span>
+                            <span class="title value">{{editGtsForm.value.gtsTitle}}</span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div *ngIf="!DICVDomain" class="base-info-col info-icon"></div>
+                        <div *ngIf="DICVDomain" class="base-info-col desc-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span *ngIf="!DICVDomain" class="label">Additional Info</span>
+                            <span *ngIf="DICVDomain" class="label">Description</span>
+                            <span class="value" *ngIf="editGtsForm.value.gtsDescription == ''">-</span>
+                            <span class="value"
+                                *ngIf="editGtsForm.value.gtsDescription != ''">{{editGtsForm.value.gtsDescription}}</span>
+                        </div>
+                    </div>
+                    <div class="base-info-row" *ngIf="!tvsFlag && industryType['id'] == '1'">
+                        <div class="base-info-row workstream">
+                            <div class="base-info-col error-icon-red"></div>
+                            <div class="base-info-col ws-cont">
+                                <span class="label">Error Code</span>
+                                <span *ngIf="filteredErrorCodes?.length == 0">-</span>
+                                <span *ngIf="filteredErrorCodes?.length > 0"><span class="ws-tag"
+                                        *ngFor="let fec of filteredErrorCodes">{{fec}}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="base-info-row" *ngIf="!tvsFlag && industryType['id'] != '1'">
+                        <div class="base-info-col dtc-icon-red"></div>
+                        <div class="base-info-col ws-cont">
+                            <span class="label">DTC Code & Description</span>
+                            <span *ngIf="filteredErrorCodes?.length == 0">-</span>
+                            <span *ngIf="filteredErrorCodes?.length > 0"><span class="ws-tag"
+                                    *ngFor="let fec of filteredErrorCodes">{{fec}}</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prob-form-info vehicle-info base-info-new"
+                    [ngClass]="{ 'hide' : !prodTypeFlag && !tvsFlag}">
+                    <div *ngIf="!prodTypeFlag && tvsFlag" class="all">All Models</div>
+                    <div *ngIf="prodTypeFlag" class="vehicle-accord">
+                        <!-- vechile {{vehicleList | json}}    --vechild {{vehicleFormInfo | json}} -->
+                        <mat-accordion [multi]="true" #accordion="matAccordion">
+                            <mat-expansion-panel class="{{vh.class}}" [disabled]="vh.isDisabled"
+                                [expanded]="vh.isExpanded" [hideToggle]="false" (opened)="beforePanelOpened(vh)"
+                                (closed)="beforePanelClosed(vh)" (afterCollapse)="afterPanelClosed()"
+                                (afterExpand)="afterPanelOpened()" *ngFor="let vh of vehicleList; let i = index"
+                                #mapanel="matExpansionPanel">
+                                <mat-expansion-panel-header
+                                    class="mat-expansion-panel-header {{vh.title | removeWhiteSpace | lowercase}}">
+                                    <mat-panel-title>
+                                        <div class="vh-info">
+                                            <span class="title">{{vh.title}}</span>
+                                        </div>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <div class="vehicle-list">
+                                    <span class="emission-items">
+                                        <ul>
+                                            <li *ngFor="let e of editGtsForm.value.vehicleInfo[i].emissionName">{{e}}
+                                            </li>
+                                        </ul>
+                                    </span>
+                                    <span class="model-items">
+                                        <ul>
+                                            <li *ngFor="let m of vehicleFormInfo[i].models">{{m}}</li>
+                                        </ul>
+                                    </span>
+                                    <span class="year-items">
+                                        <ul>
+                                            <li *ngFor="let y of vehicleFormInfo[i].years">
+                                                <span *ngIf="y==0">All</span>
+                                                <span *ngIf="y!=0">{{y}}</span>
+                                            </li>
+                                        </ul>
+                                    </span>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </div>
+                <div class="prob-form-info base-info base-info-new">
+                    <div class="base-info-row">
+                        <div class="base-info-col catg-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">Problem Category</span>
+                            <span class="value">{{probCatgName}}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="dtcFlag">
+                        <div class="base-info-row">
+                            <div class="base-info-col dtc-icon"></div>
+                            <div class="base-info-col cust-comp-cont">
+                                <span class="label">DTC Code & Description</span>
+                                <span class="value">{{editGtsForm.value.dtc}}</span>
+                            </div>
+                        </div>
+                        <div class="base-info-row">
+                            <div class="base-info-col mod-type-icon"></div>
+                            <div class="base-info-col cust-comp-cont">
+                                <span class="label">Module Type</span>
+                                <span class="value">{{ecuTypeName}}</span>
+                            </div>
+                        </div>
+                        <div class="base-info-row">
+                            <div class="base-info-col mod-mft-icon"></div>
+                            <div class="base-info-col cust-comp-cont">
+                                <span class="label">Module Manufacturer</span>
+                                <span class="value">{{mfgName}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col system-icon"></div>
+                        <div class="base-info-col cust-comp-cont">
+                            <span class="label">System</span>
+                            <span class="value">{{editGtsForm.value.system}}</span>
+                        </div>
+                    </div>
+                    <div class="base-info-row">
+                        <div class="base-info-col tag-icon"></div>
+                        <div class="base-info-col ws-cont">
+                            <span class="label">Tags</span>
+                            <span *ngIf="filteredTags?.length == 0">-</span>
+                            <span class="ws-tag" *ngFor="let tag of filteredTags">{{tag}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prob-form-info  base-info-new">
+                    <div class="base-info-row workstream">
+                        <div class="base-info-col ws-icon"></div>
+                        <div class="base-info-col ws-cont">
+                            <span class="label">Workstreams</span>
+                            <span class="ws-tag" *ngFor="let ws of filteredWorkstreams">{{ws}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="prob-form-info  base-info-new" *ngIf="collabticDomain && workflowName != ''">
+                    <div class="base-info-row workstream">
+                        <div class="base-info-col wft-icon"></div>
+                        <div class="base-info-col ws-cont">
+                            <span class="label">Workflow Type</span>
+                            <span class="ws-tag">{{workflowName}}</span>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        <div class="form-cont"
+            [ngClass]="{'col-lg-12': step1Action && !step2Action, 'col-lg-8': step1Action && step2Action}">
+            <form class="form-horizontal" [formGroup]="editGtsForm" (ngSubmit)="onSubmit()">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="step1Action && step2Action" class="back-icon cursor" title="Back to Step1"
+                            (click)="backStep1()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/probing/new/cancel-icon.png" /></div>
+                        <button *ngIf="step1Action && !step2Action" class="btn next">Next&nbsp;<img
+                                src="assets/images/probing/new/next-icon.png" /></button>
+                        <div *ngIf="step1Action && step2Action" class="btn next save" (click)="submitAction('save')">
+                            Save Draft&nbsp;<img src="assets/images/probing/new/save-draft.png" />
+                            <!--<span *ngIf="editActionStatus == 1"><img src="assets/images/probing/new/save-draft.png" /></span>
+                            <span *ngIf="editActionStatus == 2"><img src="assets/images/probing/new/publish.png" /></span>-->
+                        </div>
+                        <div *ngIf="step1Action && step2Action && (editActionStatus == 1 || editActionStatus == 2)" class="btn next publish"
+                            [ngClass]="{'disable': !gtsPublishFlag}" (click)="submitAction('publish')">Publish&nbsp;<img
+                                src="assets/images/probing/new/publish.png" /></div>
+                    </div>
+                </div>
+                <div [style.height.px]="innerHeight-10">
+                    <div id="step" #step class="ps form-fields" [perfectScrollbar]="sconfig">
+                        <ul class="progressbar">
+                            <li [ngClass]="{'active': step1, 'selection': step2}">Information</li>
+                            <li [ngClass]="{'active': step2}">GTS Procedure</li>
+                        </ul>
+                        <div class="form-items">
+                            <div *ngIf="step1Action && !step2Action">
+                                <div class="prob-form-row">
+                                    <div class="form-col upload-col">
+                                        <span *ngIf="imgURL == null" class="prob-upload prob-upload-new">
+                                            <a (click)="selectFile.click()" class="browse-button"></a>
+                                            <input style="display: none" type="file" accept='image/*'
+                                                (change)="onFileUpload($event)" #selectFile />
+                                            <span class="upload-txt">Upload GTS Image</span>
+                                        </span>
+                                        <span *ngIf="imgURL != null" class="prob-upload upload-bg upload-bg-new"
+                                            [ngStyle]="{'background-image': 'url(' + imgURL + ')'}">
+                                            <div class="upload-actions">
+                                                <a (click)="deleteUploadedFile()" class="action-btn delete-upload"></a>
+                                                <a (click)="selectFile.click()" class="action-btn edit-upload"></a>
+                                            </div>
+                                            <input style="display: none" type="file" accept='image/*'
+                                                (change)="onFileUpload($event)" #selectFile />
+                                        </span>
+                                        <div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">
+                                            {{invalidFileErr}}</div>
+                                    </div>
+                                    <div class="form-col field-col">
+                                        <div class="row">
+                                            <div class="col-md-12" [ngClass] = "{ 'col-lg-6 ' : collabticDomain, 'col-lg-12 ' : !collabticDomain }" >
+                                                <div class="prob-form-control">
+                                                    <div class="field-label split"><span
+                                                            class="label-col part-label part-label-new ws-bg">Workstream</span><span
+                                                            class="label-col required">Required</span></div>
+                                                    <app-sec-workstreams [filteredWorkstreams]="filteredWorkstreamIds"
+                                                        [workstreams]="workstreamItems" [split]="wsplit"
+                                                        (selectedWorkstreams)="selectedWorkstreams($event)">
+                                                    </app-sec-workstreams>
+                                                    <mat-error class="invalid-feedback page-error-text"
+                                                        *ngIf="step1Submitted && !workstreamValid">Select workstream</mat-error>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-md-12" *ngIf="collabticDomain">
+                                                <div class="prob-form-control">
+                                                    <div class="field-label split"><span
+                                                            class="label-col part-label part-label-new wft-bg">Workflow Type</span><span
+                                                            class="label-col required">Required</span></div>
+                                                            <p-dropdown class="p-dropdown-workflowtype" placeholder="Workflow Type" 
+                                                            formControlName="workflowtype" [(ngModel)]="workflowtypeId" 
+                                                            (onChange)="workflowtypeChange()"
+                                                            [options]="workflowtypeOptions" optionLabel="name" optionValue="id">                                                            
+                                                            </p-dropdown>
+                                                    <mat-error class="invalid-feedback page-error-text" style="margin-top: 4px;"
+                                                        *ngIf="step1Submitted && !workflowValid">Select Workflow Type</mat-error>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="prob-form-control cust-comp-control">
+                                            <div class="field-label split"><span
+                                                    class="label-col part-label part-label-new gts-t-bg">Title</span><span
+                                                    class="label-col required">Required</span></div>
+                                            <textarea matInput placeholder="GTS Procedure Title"
+                                                formControlName="gtsTitle" [(ngModel)]="editGtsForm.value.gtsTitle"
+                                                [ngClass]="{ 'is-invalid': step1Submitted && f.gtsTitle.errors }"
+                                                maxlength="{{titleMaxLen}}"></textarea>
+                                            <span
+                                                class="text-count text-count-new">{{editGtsForm.value.gtsTitle.length}}/{{titleMaxLen}}</span>
+                                            <div *ngIf="step1Submitted && f.gtsTitle.errors" class="invalid-feedback">
+                                                <div *ngIf="f.gtsTitle.errors.required">GTS Procedure Title is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="!tvsFlag  && !DICVDomain" class="prob-form-row">
+                                    <div class="prob-form-control cust-comp-control desc-control">
+                                        <div class="field-label split"><span
+                                                class="label-col part-label gts-error-bg-{{errorCodebg}}">{{errorCodeTitle}}</span>
+                                        </div>
+                                        <div class="">
+                                            <div class="cursor def-select" (click)="manageList('errorCode')">
+                                                <div class="tag-col tag-text error-select-text">
+                                                    <span *ngIf="filteredErrorCodes?.length == 0">Select</span>
+                                                    <span class="error-text-span"
+                                                        *ngIf="filteredErrorCodes?.length > 0">
+                                                        <span *ngFor="let item of filteredErrorCodes; let t=index"
+                                                            class="tag-text">
+                                                            <span *ngIf="t!='0'">,&nbsp;</span><span>{{item}}</span>
+                                                        </span>
+                                                    </span>
+                                                    <img src="assets/images/probing/new/dropdown_downarrow.png">
+                                                </div>
+                                            </div>
+                                            <div *ngIf="filteredErrorCodes?.length > 0"
+                                                class="selected-items selected-items-ec">
+                                                <div *ngFor="let item of filteredErrorCodes; let t=index"
+                                                    class="tag-text">
+                                                    <span>{{item}}</span>
+                                                    <i class="material-icons tag-close"
+                                                        (click)="disableErrorCodeSelection(t)">close</i>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div *ngIf="!DICVDomain">
+                                    <div class="prob-form-row">
+                                        <div class="prob-form-control cust-comp-control desc-control">
+                                            <div class="field-label split"><span
+                                                    class="label-col part-label add-info-bg">Additional Info</span>
+                                            </div>
+                                            <textarea matInput placeholder="Additional Info"
+                                                formControlName="gtsDescription" maxlength="{{descMaxLen}}"></textarea>
+                                            <span
+                                                class="text-count text-count-new">{{editGtsForm.value.gtsDescription.length}}/{{descMaxLen}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="DICVDomain">
+                                    <div class="prob-form-row">
+                                        <div class="prob-form-control cust-comp-control desc-control">
+                                            <div class="field-label split"><span
+                                                    class="label-col part-label gts-desc-bg">Description</span></div>
+                                            <textarea matInput placeholder="Description"
+                                                formControlName="gtsDescription" maxlength="{{descMaxLen}}"></textarea>
+                                            <span
+                                                class="text-count text-count-new">{{editGtsForm.value.gtsDescription.length}}/{{descMaxLen}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- DICV Domain-->
+                                <div *ngIf="!tvsFlag && DICVDomain" class="prob-form-row">
+                                    <div *ngIf="!prodTypeFlag" class="eq-type-info" style="margin-bottom:0">Select
+                                        Vehicle</div>
+                                    <div *ngIf="prodTypeFlag" class="eq-type-info">Select Vehicle</div>
+                                    <span *ngIf="!prodTypeFlag" class="text-right required"
+                                        style="top: 8px;">Required</span>
+                                    <div *ngIf="!prodTypeFlag">
+                                        <div class="prob-form-control prod-control cust-select gts-sel prob-catg">
+                                            <mat-icon class="material-icon prod-type-icon"></mat-icon>
+                                            <select #probTypeSelect formControlName="prodTypeVal"
+                                                [(ngModel)]="defProdType"
+                                                (change)="fieldChange(0, 'defProdType', probTypeSelect.value)">
+                                                <optgroup>
+                                                    <option value="" disabled>Select {{productMakePl}}</option>
+                                                    <option *ngFor="let pt of prodTypes" [value]="pt.id"
+                                                        class="{{pt.name | lowercase}}">
+                                                        {{ pt.name }}
+                                                    </option>
+                                                </optgroup>
+                                            </select>
+                                            <mat-error class="invalid-feedback"
+                                                *ngIf="step1Submitted && f.prodTypeVal.errors">Select {{productMakePl}}
+                                            </mat-error>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="prodTypeFlag" class="vehicle-form">
+                                        <!--span class="text-right required">Required</span-->
+                                        <div *ngFor="let vehicle of v.controls; let i = index">
+                                            <div [formGroup]="vehicle">
+                                                <div class="row col-lg-12 vehicle-row">
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div class="prob-form-control prod-control">
+                                                            <mat-form-field>
+                                                                <mat-select
+                                                                    panelClass="mat-gts-make-panel mat-gts-panel"
+                                                                    *ngIf="i == 0" class="single-selection"
+                                                                    [(ngModel)]="vehicleFormInfo[i].prodType"
+                                                                    formControlName="productType"
+                                                                    placeholder="{{productMakePl}}"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of prodTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                                <mat-select
+                                                                    panelClass="mat-gts-make-panel mat-gts-panel"
+                                                                    *ngIf="i > 0" class="single-selection"
+                                                                    [(ngModel)]="vehicleFormInfo[i].prodType"
+                                                                    formControlName="productType"
+                                                                    placeholder="{{productMakePl}}"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of vehicleProdTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                            <!--mat-error class="invalid-feedback page-error-text" *ngIf="step1Submitted && !vehicleFormInfo[i].prodTypeValid">Select {{productMakePl}}</mat-error-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div class="prob-form-control">
+                                                            <span *ngIf="vehicleFormInfo[i].emissionLoading"
+                                                                class="loading-model"><img
+                                                                    src="assets/images/loading.svg" alt="Loader"
+                                                                    width="60px" /></span>
+                                                            <app-emissions *ngIf="!vehicleFormInfo[i].emissionLoading"
+                                                                [dicvDomain]="DICVDomain"
+                                                                [filteredErrorCodes]="filteredErrorCodes"
+                                                                [filteredEmissions]="vehicleFormInfo[i].emissions"
+                                                                [emissions]="vehicleFormInfo[i].emissionList"
+                                                                (selectedEmissions)="selectedEmissions(i, $event)"
+                                                                (selectedEmiNames)="selectedEmiNames(i, $event)">
+                                                            </app-emissions>
+                                                            <!--mat-error class="invalid-feedback page-error-text" *ngIf="step1Submitted && !vehicleFormInfo[i].emissionValid">Select emissions</mat-error-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div class="prob-form-control">
+                                                            <span *ngIf="vehicleFormInfo[i].modelLoading"
+                                                                class="loading-model"><img
+                                                                    src="assets/images/loading.svg" alt="Loader"
+                                                                    width="60px" /></span>
+                                                            <app-vehicle-models *ngIf="!vehicleFormInfo[i].modelLoading"
+                                                                [filteredModels]="vehicleFormInfo[i].models"
+                                                                [models]="vehicleFormInfo[i].modelList"
+                                                                (selectedModels)="selectedModels(i, $event)">
+                                                            </app-vehicle-models>
+                                                            <!--mat-error class="invalid-feedback page-error-text" *ngIf="step1Submitted && !vehicleFormInfo[i].modelValid">Select model</mat-error-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div class="prob-form-control"
+                                                            style="position:relative;top:-1rem;">
+                                                            <app-years [filteredYears]="vehicleFormInfo[i].years"
+                                                                [years]="years"
+                                                                (selectedYears)="selectedYears(i, $event)"></app-years>
+                                                            <!--mat-error class="invalid-feedback page-error-text" *ngIf="step1Submitted && !vehicleFormInfo[i].yearValid && industryType.id != '1'">Select year</mat-error-->
+                                                        </div>
+                                                    </div>
+                                                    <div class="vehicle-row-actions">
+                                                        <div *ngIf="vehicleFormInfo[i].actionFlag && vehicleFormInfo[i].addFlag"
+                                                            class="action-icon add-icon"
+                                                            (click)="addDICVVehicelFields(actionInit, i+1, '')"
+                                                            title="Add Vehicle Applicabilities"></div>
+                                                        <div class="action-icon remove-icon"
+                                                            (click)="removeEmissionsVehicleFields(i)"
+                                                            title="Remove Vehicle Applicabilities"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- DICV Domain-->
+
+                                <!-- NOT TVS ENABLE -->
+                                <div *ngIf="!tvsFlag" class="prob-form-row">
+                                    <div class="prob-detail-info">Problem Details</div>
+
+                                    <div *ngIf="!tvsFlag && DICVDomain" class="prob-form-row">
+                                        <div class="prob-form-control cust-comp-control desc-control">
+                                            <div class="field-label split"><span
+                                                    class="label-col part-label gts-error-bg-{{errorCodebg}}"
+                                                    [ngClass]="{'disable': disableErrorCodeFlag}">{{errorCodeTitle}}</span>
+                                            </div>
+                                            <div class="">
+                                                <div class="cursor def-select"
+                                                    [ngClass]="{'disable': disableErrorCodeFlag}"
+                                                    (click)="manageList('errorCode')">
+                                                    <div class="tag-col tag-text error-select-text">
+                                                        <span *ngIf="filteredErrorCodes?.length == 0">Select</span>
+                                                        <span class="error-text-span"
+                                                            *ngIf="filteredErrorCodes?.length > 0">
+                                                            <span *ngFor="let item of filteredErrorCodes; let t=index"
+                                                                class="tag-text">
+                                                                <span *ngIf="t!='0'">,&nbsp;</span><span>{{item}}</span>
+                                                            </span>
+                                                        </span>
+                                                        <img src="assets/images/probing/new/dropdown_downarrow.png">
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="filteredErrorCodes?.length > 0"
+                                                    class="selected-items selected-items-ec">
+                                                    <div *ngFor="let item of filteredErrorCodes; let t=index"
+                                                        class="tag-text">
+                                                        <span>{{item}}</span>
+                                                        <i class="material-icons tag-close"
+                                                            (click)="disableErrorCodeSelection(t)">close</i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="cust-select gts-sel prob-catg">
+                                        <mat-icon class="material-icon prob-catg-icon"></mat-icon>
+                                        <mat-form-field class="custom-mat-sel prob-catg-sel">
+                                            <mat-select #catgSelect panelClass="mat-bottom-panel"
+                                                placeholder="Select Problem Category *" [(ngModel)]="probCatgVal"
+                                                formControlName="probCatg"
+                                                (selectionChange)="selectChange('probCatg', $event)"
+                                                disableOptionCentering>
+                                                <mat-option>
+                                                    <ngx-mat-select-search ngModel
+                                                        (ngModelChange)="filterOptions('catg', $event)"
+                                                        [formControl]="catgInputFilter"
+                                                        placeholderLabel="Search Problem Category..."
+                                                        noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                </mat-option>
+                                                <mat-option [value]="0" [disabled]="disableSelection()">Select Problem
+                                                    Category *</mat-option>
+                                                <mat-option class="create-option" [value]="-1">{{catgActionTxt}}
+                                                </mat-option>
+                                                <mat-option *ngFor="let catg of filteredCategory" [value]="catg.id">
+                                                    {{ catg.name }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-error class="invalid-feedback page-error-text"
+                                            *ngIf="step1Submitted && f.probCatg.errors && f.probCatg.errors.required">
+                                            Select Problem Category</mat-error>
+                                    </div>
+                                </div>
+                                <div *ngIf="!tvsFlag" class="prob-form-row">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon system-icon"></mat-icon>
+                                                <mat-form-field class="custom-mat-sel system-sel">
+                                                    <mat-select #systemSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select System *" [(ngModel)]="systemVal"
+                                                        formControlName="system"
+                                                        (selectionChange)="selectChange('system', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('sys', $event)"
+                                                                [formControl]="systemInputFilter"
+                                                                placeholderLabel="Search System..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            System *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{sysActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let sys of filteredSystem" [value]="sys">
+                                                            {{ sys }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && f.system.errors && f.system.errors.required">
+                                                    Select System</mat-error>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12 tag-col">
+                                            <div class="cursor def-select select-tags" (click)="manageTag()">
+                                                <div class="tag-col tag-bg"></div>
+                                                <div class="tag-col tag-text">
+                                                    Select Tags <img
+                                                        src="assets/images/probing/new/dropdown_downarrow.png">
+                                                </div>
+                                            </div>
+                                            <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                                                <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                                                    <span>{{item}}</span>
+                                                    <i class="material-icons tag-close"
+                                                        (click)="disableTagSelection(t)">close</i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="!tvsFlag && !DICVDomain" class="prob-form-row">
+                                    <div *ngIf="industryType.id == '1'" class="eq-type-info">Select Equipment Type</div>
+                                    <div *ngIf="industryType.id != '1'" class="eq-type-info">Select Vehicle</div>
+                                    <div *ngIf="!prodTypeFlag">
+                                        <div class="prob-form-control prod-control cust-select gts-sel prob-catg">
+                                            <mat-icon class="material-icon prod-type-icon"></mat-icon>
+                                            <select #probTypeSelect formControlName="prodTypeVal"
+                                                [(ngModel)]="defProdType"
+                                                (change)="fieldChange(0, 'defProdType', probTypeSelect.value)">
+                                                <optgroup>
+                                                    <option value="" disabled>Select {{productMakePl}}</option>
+                                                    <option *ngFor="let pt of prodTypes" [value]="pt.id"
+                                                        class="{{pt.name | lowercase}}">
+                                                        {{ pt.name }}
+                                                    </option>
+                                                </optgroup>
+                                            </select>
+                                            <div *ngIf="step1Submitted && f.prodTypeVal.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="f.prodTypeVal.errors.required">Please Select
+                                                    {{productMakePl}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="prodTypeFlag" class="vehicle-form">
+                                        <!--span class="text-right required">Required</span-->
+                                        <div *ngFor="let vehicle of v.controls; let i = index">
+                                            <div [formGroup]="vehicle">
+                                                <div class="row col-lg-12 vehicle-row">
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div class="prob-form-control prod-control">
+                                                            <mat-form-field>
+                                                                <mat-select
+                                                                    panelClass="mat-gts-make-panel mat-gts-panel"
+                                                                    *ngIf="i == 0" class="single-selection"
+                                                                    [(ngModel)]="vehicleFormInfo[i].prodType"
+                                                                    formControlName="productType"
+                                                                    placeholder="{{productMakePl}}"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of prodTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                                <mat-select
+                                                                    panelClass="mat-gts-make-panel mat-gts-panel"
+                                                                    *ngIf="i > 0" class="single-selection"
+                                                                    [(ngModel)]="vehicleFormInfo[i].prodType"
+                                                                    formControlName="productType"
+                                                                    placeholder="{{productMakePl}}"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of vehicleProdTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !vehicleFormInfo[i].prodTypeValid">
+                                                                Select {{productMakePl}}</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-5 col-md-6">
+                                                        <div class="prob-form-control">
+                                                            <span *ngIf="vehicleFormInfo[i].modelLoading"
+                                                                class="loading-model"><img
+                                                                    src="assets/images/loading.svg" alt="Loader"
+                                                                    width="60px" /></span>
+                                                            <app-vehicle-models *ngIf="!vehicleFormInfo[i].modelLoading"
+                                                                [filteredModels]="vehicleFormInfo[i].models"
+                                                                [models]="vehicleFormInfo[i].modelList"
+                                                                (selectedModels)="selectedModels(i, $event)">
+                                                            </app-vehicle-models>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !vehicleFormInfo[i].modelValid">
+                                                                Select model</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <div class="prob-form-control"
+                                                            style="position:relative;top:-1rem;">
+                                                            <app-years [filteredYears]="vehicleFormInfo[i].years"
+                                                                [years]="years"
+                                                                (selectedYears)="selectedYears(i, $event)"></app-years>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !vehicleFormInfo[i].yearValid && industryType.id != '1'">
+                                                                Select year</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="vehicle-row-actions">
+                                                        <div *ngIf="vehicleFormInfo[i].actionFlag && vehicleFormInfo[i].addFlag"
+                                                            class="action-icon add-icon"
+                                                            (click)="addVehicelFields(actionInit, i+1, '')"
+                                                            title="Add Vehicle Applicabilities"></div>
+                                                        <div class="action-icon remove-icon"
+                                                            (click)="removeVehicleFields(i)"
+                                                            title="Remove Vehicle Applicabilities"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- NOT TVS ENABLE -->
+
+                                <!-- TVS ENABLE -->
+                                <div *ngIf="tvsFlag" class="prob-form-row">
+                                    <div class="vehicle-avail">Vehicle Applicability</div>
+                                    <div *ngIf="!prodTypeFlag">
+                                        <div class="prob-form-control prod-control cust-select gts-sel prob-catg">
+                                            <mat-icon class="material-icon prod-type-icon"></mat-icon>
+                                            <select #probTypeSelect formControlName="prodTypeVal"
+                                                [(ngModel)]="defProdType"
+                                                (change)="fieldChange(0, 'defProdType', probTypeSelect.value)"
+                                                [ngClass]="{ 'is-invalid': step1Submitted && f.prodTypeVal.errors }">
+                                                <optgroup>
+                                                    <option value="" disabled>Select {{productMakePl}}</option>
+                                                    <option *ngFor="let pt of prodTypes" [value]="pt.id"
+                                                        class="{{pt.name | lowercase}}">
+                                                        {{ pt.name }}
+                                                    </option>
+                                                </optgroup>
+                                            </select>
+                                            <div *ngIf="step1Submitted && f.prodTypeVal.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="f.prodTypeVal.errors.required">Please Select
+                                                    {{productMakePl}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="prodTypeFlag" class="vehicle-form">
+                                        <span class="text-right required">Required</span>
+                                        <div *ngFor="let vehicle of v.controls; let i = index">
+                                            <div [formGroup]="vehicle">
+                                                <div class="row col-lg-12 vehicle-row">
+                                                    <div class="col-lg-3 col-md-6">
+                                                        <div class="prob-form-control prod-control">
+                                                            <mat-form-field>
+                                                                <mat-select *ngIf="i == 0" class="single-selection"
+                                                                    [(ngModel)]="vehicleFormInfo[i].prodType"
+                                                                    formControlName="productType"
+                                                                    placeholder="{{productMakePl}}"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of prodTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                                <mat-select *ngIf="i > 0" class="single-selection"
+                                                                    [(ngModel)]="vehicleFormInfo[i].prodType"
+                                                                    formControlName="productType"
+                                                                    placeholder="{{productMakePl}}"
+                                                                    (selectionChange)="fieldChange(i, 'prodType', $event.value)"
+                                                                    disableOptionCentering>
+                                                                    <mat-option *ngFor="let pt of vehicleProdTypes"
+                                                                        [value]="pt.id">
+                                                                        {{ pt.name }}
+                                                                    </mat-option>
+                                                                </mat-select>
+                                                            </mat-form-field>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !vehicleFormInfo[i].prodTypeValid">
+                                                                Select {{productMakePl}}</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-5 col-md-6">
+                                                        <div class="prob-form-control">
+                                                            <span *ngIf="vehicleFormInfo[i].modelLoading"
+                                                                class="loading-model"><img
+                                                                    src="assets/images/loading.svg" alt="Loader"
+                                                                    width="60px" /></span>
+                                                            <app-vehicle-models *ngIf="!vehicleFormInfo[i].modelLoading"
+                                                                [filteredModels]="vehicleFormInfo[i].models"
+                                                                [models]="vehicleFormInfo[i].modelList"
+                                                                (selectedModels)="selectedModels(i, $event)">
+                                                            </app-vehicle-models>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !vehicleFormInfo[i].modelValid">
+                                                                Select model</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <div class="prob-form-control"
+                                                            style="position:relative;top:-1rem;">
+                                                            <app-years [filteredYears]="vehicleFormInfo[i].years"
+                                                                [years]="years"
+                                                                (selectedYears)="selectedYears(i, $event)"></app-years>
+                                                            <mat-error class="invalid-feedback page-error-text"
+                                                                *ngIf="step1Submitted && !vehicleFormInfo[i].yearValid && industryType.id != '1'">
+                                                                Select year</mat-error>
+                                                        </div>
+                                                    </div>
+                                                    <div class="vehicle-row-actions">
+                                                        <div *ngIf="vehicleFormInfo[i].actionFlag && vehicleFormInfo[i].addFlag"
+                                                            class="action-icon add-icon"
+                                                            (click)="addVehicelFields(actionInit, i+1, '')"
+                                                            title="Add Vehicle Applicabilities"></div>
+                                                        <div class="action-icon remove-icon"
+                                                            (click)="removeVehicleFields(i)"
+                                                            title="Remove Vehicle Applicabilities"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="tvsFlag && !dtcFlag && pblmDetailFlag" class="prob-form-row">
+                                    <div class="prob-detail-info">Problem Details</div>
+                                    <div class="cust-select gts-sel prob-catg">
+                                        <mat-icon class="material-icon prob-catg-icon"></mat-icon>
+                                        <mat-form-field class="custom-mat-sel prob-catg-sel">
+                                            <mat-select #catgSelect panelClass="mat-bottom-panel"
+                                                placeholder="Select Problem Category *" [(ngModel)]="probCatgVal"
+                                                formControlName="probCatg"
+                                                (selectionChange)="selectChange('probCatg', $event)"
+                                                disableOptionCentering>
+                                                <mat-option>
+                                                    <ngx-mat-select-search ngModel
+                                                        (ngModelChange)="filterOptions('catg', $event)"
+                                                        [formControl]="catgInputFilter"
+                                                        placeholderLabel="Search Problem Category..."
+                                                        noEntriesFoundLabel="No record"> </ngx-mat-select-search>
+                                                </mat-option>
+                                                <mat-option [value]="0" [disabled]="disableSelection()">Select Problem
+                                                    Category *</mat-option>
+                                                <mat-option class="create-option" [value]="-1">{{catgActionTxt}}
+                                                </mat-option>
+                                                <mat-option *ngFor="let catg of filteredCategory" [value]="catg.id">
+                                                    {{ catg.name }}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-error class="invalid-feedback page-error-text"
+                                            *ngIf="step1Submitted && f.probCatg.errors && f.probCatg.errors.required">
+                                            Select Problem Category</mat-error>
+                                    </div>
+                                </div>
+                                <div *ngIf="tvsFlag && dtcFlag && pblmDetailFlag" class="prob-form-row">
+                                    <div class="prob-detail-info">Problem Details</div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon prob-catg-icon split-icon dtc-catg-icon">
+                                                </mat-icon>
+                                                <mat-form-field class="custom-mat-sel split-sel dtc-catg-sel">
+                                                    <mat-select #catgSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select Problem Category *"
+                                                        [(ngModel)]="probCatgVal" formControlName="probCatg"
+                                                        (selectionChange)="selectChange('probCatg', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('catg', $event)"
+                                                                [formControl]="catgInputFilter"
+                                                                placeholderLabel="Search Problem Category..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            Problem Category *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{catgActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let catg of filteredCategory"
+                                                            [value]="catg.id">
+                                                            {{ catg.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && f.probCatg.errors && f.probCatg.errors.required">
+                                                    Select Problem Category</mat-error>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon split-icon mod-type-icon"></mat-icon>
+                                                <mat-form-field class="custom-mat-sel prob-catg-sel split-sel">
+                                                    <mat-select #ecuSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select Module Type *" [(ngModel)]="ecuTypeVal"
+                                                        formControlName="ecuType"
+                                                        (selectionChange)="selectChange('ecuType', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('ecu', $event)"
+                                                                [formControl]="ecuInputFilter"
+                                                                placeholderLabel="Search Module Type..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            Module Type *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{ecuActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let mod of filteredEcuTypes"
+                                                            [value]="mod.id">
+                                                            {{ mod.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && !ecuTypeValid">Select Module Type
+                                                </mat-error>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon split-icon mft-icon"></mat-icon>
+                                                <mat-form-field class="custom-mat-sel prob-catg-sel split-sel">
+                                                    <mat-select #mfgSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select Module Manufacturer *"
+                                                        formControlName="moduleMft" [(ngModel)]="mfgVal"
+                                                        (selectionChange)="selectChange('moduleMft', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('mfg', $event)"
+                                                                [formControl]="mfgInputFilter"
+                                                                placeholderLabel="Search Module Manufacturer..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            Module Manufacturer *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{mfgActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let mft of filteredModuleMft"
+                                                            [value]="mft.id">
+                                                            {{ mft.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && !mfgValid">Select Module Manufacturer
+                                                </mat-error>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon system-icon"></mat-icon>
+                                                <mat-form-field class="custom-mat-sel system-sel">
+                                                    <mat-select #systemSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select System *" [(ngModel)]="systemVal"
+                                                        formControlName="system"
+                                                        (selectionChange)="selectChange('system', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('sys', $event)"
+                                                                [formControl]="systemInputFilter"
+                                                                placeholderLabel="Search System..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            System *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{sysActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let sys of filteredSystem" [value]="sys">
+                                                            {{ sys }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && f.system.errors && f.system.errors.required">
+                                                    Select System</mat-error>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon split-icon curr-dtc-icon"></mat-icon>
+                                                <mat-form-field class="custom-mat-sel split-sel curr-dtc-sel">
+                                                    <mat-select #dtcSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select DTC *" [(ngModel)]="dtcVal"
+                                                        formControlName="dtc"
+                                                        (selectionChange)="selectChange('dtc', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('dtc', $event)"
+                                                                [formControl]="dtcInputFilter"
+                                                                placeholderLabel="Search DTC Code..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            DTC *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{dtcActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let dtc of filteredDtcItems"
+                                                            [value]="dtc.name">
+                                                            {{ dtc.name }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && !dtcValid">Select DTC</mat-error>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12 tag-col">
+                                            <div class="cursor def-select select-tags" (click)="manageTag()">
+                                                <div class="tag-col tag-bg"></div>
+                                                <div class="tag-col tag-text">
+                                                    Select Tags <img
+                                                        src="assets/images/probing/new/dropdown_downarrow.png">
+                                                </div>
+                                            </div>
+                                            <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                                                <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                                                    <span>{{item}}</span>
+                                                    <i class="material-icons tag-close"
+                                                        (click)="disableTagSelection(t)">close</i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="tvsFlag &&  !dtcFlag && pblmDetailFlag" class="prob-form-row">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="cust-select gts-sel prob-catg">
+                                                <mat-icon class="material-icon system-icon"></mat-icon>
+                                                <mat-form-field class="custom-mat-sel system-sel">
+                                                    <mat-select #systemSelect panelClass="mat-bottom-panel"
+                                                        placeholder="Select System *" [(ngModel)]="systemVal"
+                                                        formControlName="system"
+                                                        (selectionChange)="selectChange('system', $event)"
+                                                        disableOptionCentering>
+                                                        <mat-option>
+                                                            <ngx-mat-select-search ngModel
+                                                                (ngModelChange)="filterOptions('sys', $event)"
+                                                                [formControl]="systemInputFilter"
+                                                                placeholderLabel="Search System..."
+                                                                noEntriesFoundLabel="No record">
+                                                            </ngx-mat-select-search>
+                                                        </mat-option>
+                                                        <mat-option [value]="0" [disabled]="disableSelection()">Select
+                                                            System *</mat-option>
+                                                        <mat-option class="create-option" [value]="-1">{{sysActionTxt}}
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let sys of filteredSystem" [value]="sys">
+                                                            {{ sys }}
+                                                        </mat-option>
+                                                    </mat-select>
+                                                </mat-form-field>
+                                                <mat-error class="invalid-feedback page-error-text"
+                                                    *ngIf="step1Submitted && f.system.errors && f.system.errors.required">
+                                                    Select System</mat-error>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-12 tag-col">
+                                            <div class="cursor def-select select-tags" (click)="manageTag()">
+                                                <div class="tag-col tag-bg"></div>
+                                                <div class="tag-col tag-text">
+                                                    Select Tags <img
+                                                        src="assets/images/probing/new/dropdown_downarrow.png">
+                                                </div>
+                                            </div>
+                                            <div *ngIf="filteredTags?.length > 0" class="selected-items">
+                                                <div *ngFor="let item of filteredTags; let t=index" class="tag-text">
+                                                    <span>{{item}}</span>
+                                                    <i class="material-icons tag-close"
+                                                        (click)="disableTagSelection(t)">close</i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- TVS ENABLE -->
+                            </div>
+
+
+                            <div *ngIf="step2Action">
+                                <div class="prob-form-row">
+                                    <div class="gts-info-new">GTS</div>
+                                </div>
+                                <div class="gts-editor-section text-center">
+                                    <div *ngIf="legacyGts" class="gts-cont legacy-cont">
+                                        <span>Legacy GTS</span>
+                                    </div>
+                                    <div *ngIf="!legacyGts">
+                                        <div *ngIf="!gtsChartFlag" class="gts-cont">
+                                            <span>Create GTS procedure by launching the GTS Editor</span>
+                                            <div class="cursor launch-editor" (click)="submitAction('editor')">Launch
+                                                GTS Editor&nbsp;&nbsp;<img src="assets/images/gts/gts-img-new.png">
+                                            </div>
+                                        </div>
+                                        <div *ngIf="gtsChartFlag" class="gts-cont edit-cont">
+                                            <span>Edit Current GTS Editor</span>
+                                            <div class="cursor save-editor" (click)="submitAction('editor')">Edit
+                                                GTS&nbsp;&nbsp;<img src="assets/images/gts/gts-img-edit.png"></div>
+                                            <div class="gts-version">Current Version <span>{{gtsInfo['version']}}</span>
+                                            </div>
+                                            <div class="update-info">
+                                                <div class="update-col">
+                                                    <span class="user-col row-1">Created By</span>
+                                                    <span class="row-2">{{gtsInfo['flowChartcreatedBy']}}</span>
+                                                </div>
+                                                <div class="update-col">
+                                                    <span class="date-col row-1">Created On</span>
+                                                    <span class="row-2">{{gtsInfo['flowChartcreatedOn']}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="editor-info">
+                                            Drag and drop editor to create guided troubleshooting flow charts. Once
+                                            these are published, they canbe executed on the mobile app.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notify-row hide">
+                            <span>Notify all members of workstream when published or updated</span>
+                            <div title="Click to Inactive" *ngIf="!notifyFlag" class="notify cursor"
+                                (click)="notifyUserChange(1)"><img
+                                    src="assets/images/site/workstream-creation/toggle-icon.png" alt="Notify Users" />
+                            </div>
+                            <div title="Click to Active" *ngIf="notifyFlag" class="notify cursor"
+                                (click)="notifyUserChange(0)"><img
+                                    src="assets/images/site/workstream-creation/toggle-active-icon.png"
+                                    alt="Notify Users" /></div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

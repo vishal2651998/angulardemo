@@ -1,0 +1,28 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div *ngIf="dashView && !pageLoading" class="left-section">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}" (SidebarComponentRef)="sidebarRef = $event" (sidebarCallBack)="sidebarCallBack($event)" (menuNav)="menuNav($event)"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index" [ngClass]="{'prob-index-split': dashView}">
+    <div class="container-fluid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0"></div>
+        <div class="center-middle-width-container">
+            <div class="center-middle-width padding-common">
+              <div class="thread-top-section hide">
+                <div class="thread-top-right" [ngClass]="{ 'ms-thread-top-right': msTeamAccess }">
+                </div>
+              </div>
+              <div class="clear"></div>
+              <div class="probing-content cbt-content part-content part-content-threads-new" [ngClass]="{'dash-height': dashView, 'dash-height-ro': roFlag}">
+                  <app-customer-list [pageAccess]="pageAccess" [paramFlag]="paramFlag" (customerComponentRef)="customerPageRef = $event" (callback)="customerCallback($event)"></app-customer-list>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>

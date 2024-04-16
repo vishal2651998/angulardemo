@@ -1,0 +1,31 @@
+<p-dialog [style]="{width: '65%'}" styleClass="view-policy-popup" [(visible)]="showPolicy" [modal]="true" [draggable]="false" [closable]="false">
+    <ng-template pTemplate="header">
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <div>
+                <span class="heading-style-payment">{{policyName}}</span>
+            </div>
+            <div>
+                <button style="background: transparent; border: none; box-shadow: none; color: #fff;"
+                    (click)="closePopup()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+            </div>
+        </div>
+    </ng-template>
+    <div class="col-12 p-0 pt-2 full-height outer-div">
+        <!-- content -->
+        <div class="policy-content-html px-0 ck-content" *ngIf="policyContent" [innerHtml]="transformHtml(policyContent)">
+        </div>
+        <!-- tags -->
+        <div class="form-fields" style="height: fit-content;" *ngIf="policyTagsList?.length > 0">
+            <hr class="grey my-2">
+            <span>
+                <img style="width:18px; margin-right: 5px" src="assets/images/service-provider/tag-grey-light.png" alt="">
+                Tag
+            </span>
+            <div class="selected-items pl-4">
+                <div *ngFor="let item of policyTagsList; let t=index" class="tag-text">
+                    <span>{{item}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>

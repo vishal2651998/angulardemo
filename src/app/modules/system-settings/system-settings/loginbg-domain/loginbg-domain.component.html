@@ -1,0 +1,45 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+    <div [style.height.px]="innerHeight">
+        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+            <div class="section-container">
+                <div class="title-row">
+                    <div class="lt">
+                        <img src="assets/images/user-settings/loginbg-domain.png">
+                        <span class="title-text">Background Image</span>
+                        <img src="assets/images/black-info-icon.png">
+                        <span class="info-text">Right next to the login from, the uploaded image will be shown when you log in</span>
+                    </div>                   
+                </div>
+                
+                <div class="domain-login-page-bg-container">
+
+                    <div class="banner-fit">
+                        Banner image fit:<p-checkbox id="bannerfit_checkbox2"
+                            [(ngModel)]="landingBannerFit"
+                            (onChange)="UpdateCheckBox()"
+                            [binary]="true" inputId="binary" label="Fill"></p-checkbox>
+                    </div>                   
+                    <div class="image-container">
+                        <div class="image-container-lt">
+                            <div class="banner" [ngClass]="{ 'contain' : !landingBannerFit, 'cover': landingBannerFit}" [ngStyle]="{'background-image': 'url(' + loginImageUrl + ')'}"></div>
+                            <div class="upload-actions"><a (click)="removeLogo()" class="action-btn delete-upload"></a><a (click)="updateLogo()" class="action-btn edit-upload"></a></div>
+                        </div>                        
+                        <div class="image-container-rt">
+                            <span>Banner Size: 960X1080px&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>      
+                            <span>Supported file types: .jpg, .png</span>  
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    
+

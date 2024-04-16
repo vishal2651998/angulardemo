@@ -1,0 +1,939 @@
+<div *ngIf="searchLoading" [style.height.px]="innerHeight">
+    <div class="loading-small-screen-scroll trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div *ngIf="displayDetail" class="thread-detail-div {{detailView}}" [ngClass]="{'hide': searchLoading}">
+    <div *ngIf="fixesView" class="thread-actions">
+        <ul>
+            <li>
+                <span *ngIf="!threadOwner" class="cursor like" title="Like" [ngClass]="{'active': threadViewData.likeStatus > 0}" (click)="socialAction('like', threadViewData.likeStatus); $event.stopPropagation();"></span>
+                <span *ngIf="threadOwner" class="cursor like" title="Like" [ngClass]="{'active': threadViewData.likeStatus > 0}"></span>
+                <div *ngIf="likeModal" class="saction-txt like right">{{likeActionText}}</div>
+            </li>
+            <li>
+                <span *ngIf="!threadOwner" class="cursor pin" title="Pin" [ngClass]="{'active': threadViewData.pinStatus > 0}" (click)="socialAction('pin', threadViewData.pinStatus); $event.stopPropagation();"></span>
+                <span *ngIf="threadOwner" class="cursor pin" title="Pin" [ngClass]="{'active': threadViewData.pinStatus > 0}"></span>
+                <div *ngIf="pinModal" class="saction-txt pin right">{{pinActionText}}</div>
+            </li>
+            <li>
+                <span class="cursor copy" title="Copy Link" (click)="copyLink();"></span>
+                <div *ngIf="copiedModal" class="saction-txt copy right">Link Copied</div>
+            </li>
+        </ul>
+    </div>
+    <div class="thread-detail-div-col thread-detail-div-left">
+        <div class="thread-detail-view" [ngClass]="{'thread-detail-view-no-post': threadViewData.comment == 0 && closeStatus == 1}">
+            <div *ngIf="!fixesView" class="thread-head display-table">
+                <div class="display-tablecell thread-head-col1">
+                    <div class="display-table setWidth100">
+                        <div class="display-tablecell c1">
+                            <div class="tooltipUseDiv" (mouseleave)="t.close();">    
+                                <div *ngIf="!apiUrl.threadViewPublicPage" class="tooltipUseDivInner" (mouseenter)="getUserProfileStatus(threadViewData.userId);t.open();$event.stopPropagation();"></div>                                                        
+                                <div class="th-head-img" tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT">
+                                    <img class="th-img" [src]="threadViewData.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                </div>   
+                                <ng-template #profileTT  >
+                                    <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : threadViewData.profileShow } ">
+                                        <div class="table-row2">
+                                            <div class="profile-tt-row">
+                                                <div class="profile-tt-col-lt profile-status-tt">
+                                                    <img class="" src="assets/images/thread/profile-status-{{threadViewData.availability}}.svg"/>
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                    <p class="profile-text-tt">{{threadViewData.availabilityStatusName}}</p>      
+                                                </div> 
+                                            </div>
+                                            <div class="line"></div>
+                                            <div class="profile-tt-row cursor-pointer" (click)="taponprofileclick(threadViewData.userId)">
+                                                <div class="profile-tt-col-lt">
+                                                    <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                    <p class="profile-text-tt">View Profile</p>      
+                                                </div> 
+                                            </div>
+                                        </div>  
+                                    </div>    
+                                </ng-template>  
+                            </div>                       
+                        </div>
+                        <div class="display-tablecell">                                                                          
+                            <div class="th-head-title th-head-title">
+                                <div class="th-head-text1 th-head-inline th-head-inlinecursor-pointer" ><span class="profile-topbadge-user-tview" *ngIf="threadViewData.badgeTopUser"> <img  src="assets/images/thread/crownicon.svg"/></span>{{threadViewData.userName}}</div>
+                                <div class="th-head-text2 th-head-inline ">{{userRoleTitle}}</div>
+                                <div class="th-head-text3 th-head-inline ">, &nbsp;{{threadPosted}}</div>
+                            </div>                            
+                        </div>                        
+                    </div>   
+                </div>
+                <div class="display-tablecell thread-head-col2">
+                    <div class="th-head-ws-text" *ngIf="techSubmmitFlag && threadViewData.closeStatus=='1'"><span class="tech-summit-ws-text">{{threadViewData.summitFixWorkstream}}</span></div>
+                    <ng-template #moreInfo>
+                        <div class="thread-owner-reply">   
+                            <div class="label-tt-cont moreDiv" *ngIf="threadViewData.WorkstreamsList != ''" >
+                                <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-info-workstream.png"></span>
+                                <span class="label-tt-cont-rt moreDivRt">
+                                    <p class="more-title" *ngIf="!CBADomain">Workstream</p>
+                                    <p class="more-title" *ngIf="CBADomain">Request Type</p>                                    
+                                    <p class="more-cont"><span *ngFor="let list of threadViewData.WorkstreamsList; let i=index;let last=last;">{{list.workstreamName}}<span *ngIf="!last">, </span></span></p>
+                                </span>
+                            </div>
+                            <div class="label-tt-cont moreDiv" *ngIf="!scanToolFlag">
+                                <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-info-thread-category.png"></span>
+                                <span class="label-tt-cont-rt moreDivRt">
+                                    <p class="more-title">{{threadViewData.threadText}} Category</p>                                    
+                                    <p class="more-cont" *ngIf="!CBADomain">General Repair</p>
+                                    <p class="more-cont" *ngIf="CBADomain && threadCatgFlag">{{threadViewData.threadCategory[0].name}}</p>
+                                    <p class="more-cont" *ngIf="CBADomain && !threadCatgFlag">-</p>
+                                </span>
+                            </div>
+                            <div class="label-tt-cont moreDiv" *ngIf="!scanToolFlag && threadViewData.newThreadTypeSelect =='thread' || threadViewData.newThreadTypeSelect == ''">
+                                <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-info-post-thread.png"></span>
+                                <span class="label-tt-cont-rt moreDivRt">
+                                    <p class="more-title">{{threadViewData.threadText}} Type</p>
+                                    <p class="more-cont">Post {{threadViewData.threadText}}</p>                                    
+                                </span>
+                            </div>
+                            <div class="label-tt-cont moreDiv" *ngIf="threadViewData.newThreadTypeSelect =='share'">
+                                <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/thread-detail/more-info-share-fix.png"></span>
+                                <span class="label-tt-cont-rt moreDivRt">
+                                    <p class="more-title">{{threadViewData.threadText}} Type</p>
+                                    <p class="more-cont">Share Fix</p>                                    
+                                </span>
+                            </div>
+                        </div>                                                                
+                    </ng-template>
+                    <a *ngIf="!apiUrl.threadViewPublicPage" class="th-head-more-text" title="More Info"  tooltipClass="post-submit-tooltip more-tooltip more-tooltip-new" triggers="click" [autoClose]="true" placement="bottom" [ngbTooltip]="moreInfo">
+                        <!--img src="assets/images/thread-detail/more-info.svg" alt="" onload="SVGInject(this)" width="17" height="17" /-->
+                        <img src="assets/images/thread-detail/more-info.png" alt="" width="17" height="17" />
+                        <span>More Info</span>
+                    </a>
+                </div>
+                <div class="display-tablecell thread-head-col3">&nbsp;</div>
+                <div class="display-tablecell thread-head-col4">
+                    <span class="th-date-text">{{threadCreatedOn}}</span>
+                    <span *ngIf="viewVersion2 && threadEdited=='1' && threadViewData.editHistory" class="open-days-text" title="Edited" tooltipClass="edit-history-tooltip" container="body" triggers="click" (click)="$event.stopPropagation();" [autoClose]="true" placement="bottom-right" [ngbTooltip]="EditHistoryContent"><label style="margin:0;">Edited&nbsp;&nbsp;</label><img style="position: relative;top:-1px;" class="user-edit-history-icon cursor-pointer" src="assets/images/thread-detail/user-edit-history-icon.png" />&nbsp;&nbsp;&nbsp;</span>                                         
+                    <span title="Translate" class="mright post-button post-button-green cursor-pointer" tooltipClass="post-submit-tooltip translate-tooltip" triggers="click" [autoClose]="true" placement="bottom-right" [ngbTooltip]="SelectlanguageContent"><img class="post-delete-img cursor-pointer" src="assets/images/thread-detail/post-lang-icon.png" /></span>                                                        
+                    <span class="open-days-text" *ngIf="threadViewData.closeStatus=='0' && !opendaysFlag && !apiUrl.threadViewPublicPage">{{opendaysCount}}</span>
+                    <span class="open-days-text" *ngIf="threadViewData.closeStatus=='0' && opendaysFlag && !apiUrl.threadViewPublicPage">Open Today</span>
+                    <span style="float: right;padding:0 5px 2px 5px;margin:1px;border-radius:8px;width:auto;margin-left: 5px;" [style.background-color]="escColorCodes" [style.color]="escColorCodesValue" *ngIf="domainId==52 && escalateStatusLand!=''"><img style="padding-right: 2px;margin-top: -2px;" src="assets/images/thread/escalation-icon1-list.png"/><span>{{escalateStatusLand}}</span></span>
+                    
+                    <span tooltipClass="post-submit-tooltip escalation-level-tooltip" triggers="hover" [autoClose]="true" placement="bottom-right" [ngbTooltip]="escalationLevelInfo" #ttescalationInfo="ngbTooltip"  style="cursor:pointer; float: right;padding:0;margin:0;width:auto;height:100%;margin-left: 10px;" *ngIf="tvsIBDomain && escalationDescription!=''"><img style="padding-right: 2px;margin-top: -2px;" src="assets/images/thread-detail/escalate-info.png"/></span>
+                   
+                    <span style="float: right;padding:0 5px 2px 5px;margin:1px;border-radius:8px;width:auto;margin-left: 5px;text-transform: uppercase;" [style.background-color]="escColorCodes" [style.color]="escColorCodesValue" *ngIf="tvsIBDomain && currentEscalation!='' && ( nextEscalation =='' || escalationAction == '0' )"><img style="padding-right: 2px;margin-top: -2px;" src="assets/images/thread/escalation-icon1-list.png"/><span>{{currentEscalation}}</span></span>
+                    <span tooltipClass="post-submit-tooltip more-tooltip escalation-tooltip" triggers="click" [autoClose]="true" placement="bottom-right" [ngbTooltip]="escalationLevel" style="cursor:pointer; float: right;padding:0 5px 2px 5px;margin:1px;border-radius:8px;width:auto;margin-left: 5px;text-transform: uppercase;" [style.background-color]="escColorCodes" [style.color]="escColorCodesValue" *ngIf="tvsIBDomain && currentEscalation!='' && nextEscalation !='' && escalationAction == '1' "><img style="padding-right: 2px;margin-top: -2px;" src="assets/images/thread/escalation-icon1-list.png"/><span>{{currentEscalationText}}</span></span>
+                   
+                    <ng-template #escalationLevel>
+                        <div class="thread-owner-reply div-f-border">
+                            <div  (click)="updateEScalation(currentEscalation)">
+                                
+                                <div class="cursor-pointer">{{missingEscalationValue}}</div>
+                                <span class="label-tt-cont-lt cursor-pointer"><img width="17" height="17" src="assets/images/thread-detail/escalation-tt.png"></span><div style="display: inline-block;padding-left: 5px;" class="cursor-pointer">{{nextEscalationText}}</div>
+                            </div>  
+                            <div class="display-table label-tt-cont" *ngIf="nextNewEscalation != ''" (click)="updateEScalation(nextNewEscalation)">
+                                <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="17" height="17" src="assets/images/thread-detail/escalation-tt.png"></span>
+                                <span class="display-tablecell label-tt-cont-rt cursor-pointer">{{nextNewEscalationText}}</span>
+                            </div>                                                                                                                  
+                        </div>                            
+                    </ng-template>
+
+                    <ng-template #EditHistoryContent>
+                        <div class="thread-history-div">  
+                            <div class="table-row2">
+                                <div class="problem-row setPaddingTop">
+                                    <div class="problem-col-lt thread-history-date">
+                                        <!-- img src='assets/images/thread-detail/thread-history-date.svg' alt='' onload='SVGInject(this)' / -->
+                                    </div>
+                                    <div class="problem-col-rt w86">
+                                        <p class="edit-text1">Edited On</p>
+                                        <p *ngIf="threadViewData.editHistory" class="edit-text2">{{threadViewData.editHistory[threadViewData.editHistory.length-1].updatedOnNew}}</p>      
+                                    </div> 
+                                </div>
+                                <div class="problem-row setPaddingTop setPaddingTop2">
+                                    <div *ngIf="threadViewData.editHistory" class="problem-col-lt thread-history-edituser">
+                                        <span class="thread-history-edituser-img rounded-circle">
+                                            <img [src]="threadViewData.editHistory[threadViewData.editHistory.length-1].profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                        </span>
+                                    </div>
+                                    <div class="problem-col-rt w86">
+                                        <p class="edit-text1">Edited By</p>
+                                        <p *ngIf="threadViewData.editHistory" class="edit-text2">{{threadViewData.editHistory[threadViewData.editHistory.length-1].userName}}</p>      
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>                           
+                    </ng-template>
+
+                    <ng-template #escalationLevelInfo>
+                        <div class="estext-div" [innerHTML]="escalationDescription"></div>                           
+                    </ng-template>
+                    
+                    <ng-template #SelectlanguageContent>
+                        <div class="thread-owner-reply div-f-border">
+                            <div class="display-table label-tt-cont" (click)="changeTranslateType(threadViewData.transText)">
+                                <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="32" height="32" src="assets/images/thread-detail/post-lang-translate.png"></span>
+                                <span class="display-tablecell label-tt-cont-rt cursor-pointer">{{threadViewData.transText}}</span>
+                            </div>                                                                                                                     
+                        </div> 
+                        <div class="thread-owner-reply div-s-border">
+                            <div class="display-table label-tt-cont" (click)="changeTranslateType('settings')">
+                                <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="32" height="32" src="assets/images/thread-detail/post-lang-settings.png"></span>
+                                <span class="display-tablecell label-tt-cont-rt cursor-pointer">Language Settings</span>
+                            </div>                                                                                                                     
+                        </div>    
+                    </ng-template>
+                    
+                </div>
+            </div>
+            <div class="thread-content" [ngClass]="{'fix-thread-content': collabticFixesDomain}">
+                <div class="display-table table-row1">
+                    <div class="display-tablecell table-col-1-1 thread-img-div" >
+                        <span class="thread-id">ID# {{threadViewData.threadId}}</span>
+                        <!-- default -->
+                        <span *ngIf="!automobileFlag" class="thread-img">
+                            <!-- <span class="thread-bg">
+                                <img [src]="threadViewData.vehicleCarImage" alt="" />
+                            </span> -->
+                            <span class="thread-bg" [ngStyle]="{'background-image': 'url(' + threadViewData.vehicleCarImage + ')'}"></span>
+                        </span>       
+                        <!-- default -->                 
+                        <!-- automobile industry-->
+                        <span *ngIf="automobileFlag">
+                            <span *ngIf="automobileDefaultImg" class="thread-img">
+                                <!-- <span class="thread-bg">
+                                    <img [src]="threadViewData.vehicleBannerImage" alt="" onload="SVGInject(this)" />
+                                </span> -->
+                                <span class="thread-bg" [ngStyle]="{'background-image': 'url(' + threadViewData.vehicleCarImage + ')'}"></span>
+                            </span>                                                
+                            <span *ngIf="!automobileDefaultImg" class="auto-image-bg">                                                   
+                                <!-- <span class="thread-bg">
+                                    <img [src]="threadViewData.vehicleCarImage" alt="" />
+                                </span> -->
+                                <span  class="auto-image" [ngStyle]="{'background-image': 'url(' + threadViewData.vehicleCarImage + ')'}"></span>
+                            </span>
+                        </span>                       
+                        <!-- automobile industry-->
+                    </div>
+
+                    <div class="display-tablecell table-col-1-2">
+                        <div class="thread-head-split-col thread-title">
+                            <span>{{threadViewData.threadTitle}}</span>                            
+                        </div>
+                        <div *ngIf="collabticFixesDomain" class="thread-head-split-col lvcount">
+                            <div class="esc-count-row text-right">
+                              <div class="esc-count bg like active text-left">
+                                <span *ngIf="threadViewData.likeCount != 0">{{threadViewData.likeCount}}</span>
+                                <span *ngIf="threadViewData.likeCount == 0">-</span>
+                              </div>
+                              <div class="esc-count bg pin active text-left">
+                                <span *ngIf="threadViewData.pinCount != 0">{{threadViewData.pinCount}}</span>
+                                <span *ngIf="threadViewData.pinCount == 0">-</span>
+                              </div>
+                              <div class="esc-count bg view active text-left">
+                                <span *ngIf="threadViewData.viewCount != 0">{{threadViewData.viewCount}}</span>
+                                <span *ngIf="threadViewData.viewCount == 0">-</span>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="thread-head-split-col thread-copy cursor text-right hide" (click)="copyLink();">Copy Link</div>                        
+                        <div class="thread-mm" [ngClass]="{'hidden': collabticDomain && threadCategoryStr == 7}">
+                            <span>{{threadViewData.genericProductName}}</span><i class="pi pi-chevron-right"></i><span>{{threadViewData.model}}</span>
+                            <span *ngIf="industryType.id == 2"><i *ngIf="threadViewData.year != ''" class="pi pi-chevron-right"></i><span *ngIf="threadViewData.year != ''">{{threadViewData.year}}</span></span>
+                        </div>
+                        <div *ngIf="trim!='' && industryType.id != 2" class="thread-trim">{{trim}}</div>
+                        <div *ngIf="serialNo!='' || odometer!='' || WorkOrder!='' || scanVinInfo!='' || threadViewData.vinNo!=''" class="thread-mm-bottom" [ngClass]="{'hide': collabticDomain && threadCategoryStr == 7}"></div>
+                        <div class="thread-use-row">
+                            <div class="thread-use-col" *ngIf="serialNo!='' && serialNo!='0'">
+                                <span class="use-col-lt serial-number">
+                                    <img src="assets/images/thread-detail/serial-number.svg" alt="" onload="SVGInject(this)" />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head">Serial#</p>
+                                    <p class="use-col-cont">{{serialNo}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="locationVal != '' && locationVal != undefined">
+                                <span class="use-col-lt serial-number location">
+                                    <img src="assets/images/common/location-icon.png" alt="Location" />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head">Location</p>
+                                    <p class="use-col-cont">{{locationVal}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="ipAddr != '' && ipAddr != undefined">
+                                <span class="use-col-lt serial-number ipaddr">
+                                    <img src="assets/images/common/ipaddr-icon.png" alt="IPAddr" />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head">IP Address</p>
+                                    <p class="use-col-cont">{{ipAddr}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="severityLevel != '' && severityLevel != undefined">
+                                <span class="use-col-lt serial-number seveity-level">
+                                    <img src="assets/images/common/severity-level-icon.png" alt="Seveity Level" />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head">Severity Level</p>
+                                    <p class="use-col-cont">{{severityLevel}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="(scanVersion != '' && scanVersion != undefined)">
+                                <span class="use-col-lt serial-number scan-version">
+                                    <img src="assets/images/thread-detail/scan-version.svg" alt="" onload="SVGInject(this)" />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head">Version#</p>
+                                    <p class="use-col-cont">{{scanVersion}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="!tvsDomain && threadCategoryStr != 7 && industryType.id == 2 || tvsDomain">                                
+                                <span class="use-col-lt vin-number">
+                                    <img src='assets/images/common/barcode-icon-active.svg' alt='' onload='SVGInject(this)' />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head" *ngIf="!tvsDomain && industryType.id == 2">VIN#</p>
+                                    <p class="use-col-head" *ngIf="tvsDomain">Frame#</p>
+                                    <p *ngIf="!fixesView && !apiUrl.threadViewPublicPage && threadViewData.vinNo && threadViewData.vinNo!='' && domainId != 317" class="use-col-cont">{{threadViewData.vinNo}}</p>
+                                    <p *ngIf="(!fixesView && !apiUrl.threadViewPublicPage &&  domainId == 317) || (fixesView && threadViewData.vinFixes && threadViewData.vinFixes!='')" class="use-col-cont">{{threadViewData.vinFixes}}</p>
+                                    <p *ngIf="(!fixesView && apiUrl.threadViewPublicPage && threadViewData.vinFixes && threadViewData.vinFixes!='')" class="use-col-cont">{{threadViewData.vinFixes}}</p>
+                                    <p *ngIf="!threadViewData.vinNo && industryType.id == 2" class="use-col-cont">-</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="scanVinInfo!='' && scanVinInfo!=undefined">
+                                <span class="use-col-lt scan-info" [ngClass]="{'scan-info-green': CBADomain}"></span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head">Vehicle#</p>
+                                    <p class="use-col-cont">
+                                        <span class="vin-info">
+                                            {{scanVinInfo.make}} <i class="pi pi-chevron-right"></i>
+                                            {{scanVinInfo.model}} <i class="pi pi-chevron-right"></i>
+                                            {{scanVinInfo.year}}
+                                        </span>
+                                    </p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="odometer!='' && odometer != undefined">
+                                <span *ngIf="!tvsDomain" class="use-col-lt total-use {{industryType.class}}">
+                                    <ng-container *ngIf="industryType.class == 'automobile'; else nonautomobile">
+                                        <img src='assets/images/common/odo-meter-active.svg' alt='' onload='SVGInject(this)' />
+                                    </ng-container>
+                                    <ng-template #nonautomobile>
+                                        <img src='assets/images/thread-detail/total-use.svg' alt='' onload='SVGInject(this)' />
+                                    </ng-template>
+                                </span>
+                                <span *ngIf="tvsDomain" class="use-col-lt odo-icon {{industryType.class}}">
+                                    <img src='assets/images/thread-detail/odo-icon.svg' alt='' onload='SVGInject(this)' />
+                                </span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head" *ngIf="(!CBADomain && !tvsDomain) && industryType.id != 2 ">Total Use</p>
+                                    <p class="use-col-head" *ngIf="(!CBADomain && !tvsDomain) && industryType.id == 2 ">ODO</p>
+                                    <p class="use-col-head" *ngIf="CBADomain || tvsDomain">ODO</p>
+                                    <p class="use-col-cont">{{milesOdometer}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="WorkOrder!='' && WorkOrder != undefined" >
+                                <span class="use-col-lt work-order" [ngClass]="{'work-order-green': CBADomain}"></span>
+                                <span class="use-col-rt">
+                                    <p class="use-col-head" *ngIf="!tvsDomain && industryType.id != 2">Work Order#</p>
+                                    <p class="use-col-head" *ngIf="!tvsDomain && industryType.id == 2">Repair Order#</p>  
+                                    <p class="use-col-head" *ngIf="tvsDomain">Repair Order#</p>                                    
+                                    <p *ngIf="!tvsDomain" class="use-col-cont">
+                                       <span (click)="gotoRepairOrderPage(WorkOrder)" [ngClass]= " { 'repairorder-link' : diagNationDomain } " > {{WorkOrder}}</span>
+                                        <a class="ro-link" *ngIf="repairOrderLink != ''" 
+                                            href="{{repairOrderLink}}" title="Link to RO#" target="_blank"><span><i class="pi pi-link"></i></span>Link to RO#</a>
+                                    </p>
+                                </span>
+                            </div>
+
+                            <div  class="thread-use-col" *ngIf="WorkOrder!='' && WorkOrder != undefined && dviPdfUrlLink && CBADomain" >
+                                <span class="use-col-lt work-order" [ngClass]="{'dvi-ro-green': CBADomain}"></span>
+                                <span class="use-col-rt">
+                                   
+                                    <p class="use-col-head">DVI</p>                                    
+                                    <p class="use-col-cont">
+                                        <a class="ro-link" *ngIf="dviPdfUrlLink != ''" 
+                                            href="{{dviPdfUrlLink}}" title="Link to RO#" target="_blank"><span><i class="pi pi-link"></i></span>Link to DVI</a>
+                                    </p>
+                                </span>
+                            </div>
+                             <!--<div class="thread-use-col" *ngIf="tvsDomain && tvsSystem!=''">
+                           {{     <span clas}}s="use-col-lt tvs-system"></span>
+                                <span class="use-col-rt">                                    
+                                    <p class="use-col-head">System</p>                                    
+                                    <p class="use-col-cont">{{tvsSystem}}</p>
+                                </span>
+                            </div>
+                            <div class="thread-use-col" *ngIf="tvsDomain && repairOrder!=''">
+                                <span class="use-col-lt repair-order"></span>
+                                <span class="use-col-rt">                                    
+                                    <p class="use-col-head">Repair Order#</p>                                    
+                                    <p class="use-col-cont">{{repairOrder}}</p>
+                                </span>
+                            </div>-->
+                            <div class="thread-use-col" *ngIf="tvsDomain && techSubmmitFlag && kaizenCategory!=''">
+                                <span class="use-col-lt kaizen-category"></span>
+                                <span class="use-col-rt">                                    
+                                    <p class="use-col-head">Kaizen Category</p>                                    
+                                    <p class="use-col-cont">{{kaizenCategory}}</p>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="collabticDomain && automobileFlag  && modelAttributes.length > 0" class="trim-row table-row2 add-info-row">
+                    <div class="problem-row setPadding">
+                        <div class="problem-col-lt">
+                            <img src='assets/images/thread-detail/trim-info.png' alt='' />
+                        </div>
+                        <div class="problem-col-rt">
+                            <p class="problem-col-head">Additional Info</p>
+                            <div class="additional-cont-div" [ngClass]="{'auto': collabticDomain && autoMobile}">
+                                <span *ngIf="!autoMobile" class="truncate" title="{{additionalInfo}}">{{additionalInfo}}</span>
+                                <span *ngIf="collabticDomain && autoMobile" class="truncate">{{additionalInfo}}</span>
+                                <div *ngIf="collabticDomain && autoMobile" class="more-info" (click)="moreInfoNav()">
+                                    <span class="more-info-icon cursor"></span>
+                                    <span class="more-info-tooltip">View More Info</span>
+                                </div>
+                                
+                            </div>                            
+                        </div> 
+                    </div>                        
+                </div>
+
+                <div class="trim-row table-row2" *ngIf="!fixesView && ricohFlag && (userLoginMethod != '' || userAffectedDomain != '' || userEmailAddr != '')">
+                    <span *ngIf="userLoginMethod != ''">
+                        <div class="inner-trim-row inner-trim-row-split">
+                            <div class="problem-row problem">
+                                <div class="problem-col-lt login-info"></div>
+                                <div class="problem-col-rt">
+                                    <p class="problem-col-head">User login method</p>
+                                    <p class="problem-col-cont thread-description">{{userLoginMethod}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                    <span *ngIf="userAffectedDomain != ''">
+                        <div class="inner-trim-row inner-trim-row-split">
+                            <div class="problem-row">
+                                <div class="problem-col-lt domain-info"></div>
+                                <div class="problem-col-rt">
+                                    <p class="problem-col-head">Affected user domain</p>
+                                    <p class="problem-col-cont thread-description">{{userAffectedDomain}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                    <span *ngIf="userEmailAddr != ''">
+                        <div class="inner-trim-row inner-trim-row-block">
+                            <div class="problem-row">
+                                <div class="problem-col-lt email-info"></div>
+                                <div class="problem-col-rt">
+                                    <p class="problem-col-head">Affected user email address(es)</p>
+                                    <p class="problem-col-cont thread-description">{{userEmailAddr}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+
+                <div class="trim-row table-row2" *ngIf="!collabticDomain && !scanToolFlag && threadViewData.trim != '' &&  threadViewData.industryType && threadViewData.industryType['id'] == 2">
+                    <span *ngFor="let item of threadViewData.trims; ; let i=index">
+                        <span *ngIf="i<3">
+                            <div class="inner-trim-row">
+                                <div class="problem-row">
+                                    <div class="problem-col-lt trim-info" [ngClass]="{'trim-info-cba': CBADomain}"></div>
+                                    <div class="problem-col-rt">
+                                        <p class="problem-col-head">{{item.key}}</p>
+                                        <p class="problem-col-cont thread-description">{{item.name}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
+                        <span>
+                            <div *ngIf="trimborder && i==3" class="trim-border"></div> 
+                        </span>
+                        <span *ngIf="i>2">
+                            <div class="inner-trim-row">
+                                <div class="problem-row">
+                                    <div class="problem-col-lt trim-info" [ngClass]="{'trim-info-cba': CBADomain}"></div>
+                                    <div class="problem-col-rt">
+                                        <p class="problem-col-head">{{item.key}}</p>
+                                        <p class="problem-col-cont thread-description">{{item.name}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
+                    </span>                                    
+                </div>
+
+                <div class="table-row2"> 
+                    <div class="problem-row setPaddingLeft1">  
+
+                        <div class="paddingSet" *ngIf="tvsIndiaDomain">
+                            <div class="problem-col-lt problem">
+                                <img src="assets/images/thread-detail/problem.svg" alt="" onload="SVGInject(this)" />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Customer Voice</p>
+                                <p *ngIf="threadViewData.customerVoice!= ''" class="problem-col-cont thread-description" [innerHTML]="threadViewData.customerVoice"></p>
+                                <p *ngIf="threadViewData.customerVoice== ''" class="problem-col-cont thread-description-none">None</p>
+                            </div>
+                        </div>
+                        <div class="paddingSet" *ngIf="tvsIndiaDomain">
+                            <div class="problem-col-lt problem">
+                                <img style="vertical-align: top;" src="assets/images/thread-detail/dealer-observation.png" alt="" onload="SVGInject(this)" />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Dealer Observation</p>
+                                <p class="problem-col-cont thread-description" [innerHTML]="threadViewData.content"></p>
+                                <app-audio-attachment-view *ngIf="audioDesc.length > 0" [action]="action" [attachments]="audioDesc"></app-audio-attachment-view>
+                            </div>
+                        </div>
+
+                        <div class="paddingSet">
+                            <div class="problem-col-lt problem">
+                                <img *ngIf="tvsIndiaDomain" style="vertical-align: top;" src="assets/images/thread-detail/action-taken.png" alt="" onload="SVGInject(this)" />
+                                <img *ngIf="!tvsIndiaDomain" src="assets/images/thread-detail/problem.svg" alt="" onload="SVGInject(this)" />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p *ngIf="tvsIndiaDomain" class="problem-col-head">Action Taken / Parts Replaced</p>
+                                <p *ngIf="!CBADomain && !tvsIndiaDomain" class="problem-col-head">Description</p>
+                                <p *ngIf="CBADomain && !scanToolFlag && !tvsIndiaDomain" class="problem-col-head">Description (Original customer concern and repair history)</p>
+                                <p *ngIf="CBADomain && scanToolFlag && !tvsIndiaDomain" class="problem-col-head">How can Autotech team help you with your scantool support request?</p>
+                                <p *ngIf="tvsIndiaDomain && threadViewData.actionTaken!= ''" class="problem-col-cont thread-description" [innerHTML]="threadViewData.actionTaken"></p>
+                                <p *ngIf="tvsIndiaDomain && threadViewData.actionTaken== ''" class="problem-col-cont thread-description-none">None</p>
+                                <p *ngIf="!tvsIndiaDomain && threadViewData.content!= ''" class="problem-col-cont thread-description" [innerHTML]="threadViewData.content"></p>
+                                <p *ngIf="!tvsIndiaDomain && threadViewData.content== ''" class="problem-col-cont thread-description-none">None</p>
+                                <app-audio-attachment-view *ngIf="audioDesc.length > 0 && !tvsIndiaDomain" [action]="action" [attachments]="audioDesc"></app-audio-attachment-view>
+                            </div> 
+                        </div>
+
+                        <div class="paddingSet" *ngIf="CBADomain && !scanToolFlag">
+                            <div class="problem-col-lt teamassist">
+                                <img src="assets/images/thread-detail/teamassist.svg" alt="" onload="SVGInject(this)" />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">How can AutoTech Team assist you?</p>
+                                <p *ngIf="threadViewData.teamAssist!=''" class="problem-col-cont thread-description" [innerHTML]="threadViewData.teamAssist"></p>
+                                <p *ngIf="threadViewData.teamAssist==''" class="problem-col-cont thread-description"><i style="color:#bebfc3">None</i></p>
+                            </div>
+                        </div>
+
+                        <div *ngIf="curentDtclength>0" >
+                            <div *ngIf="!fixesView">
+                                <div *ngFor ="let dtcInfo of curentDtcData; let i=index" class="problem-row setPadding error-code-col">
+                                    <div class="problem-col-lt thread-error {{industryType.class}}">
+                                        <!-- <ng-container *ngIf="industryType.class == 'automobile'; else nonautomobile">
+                                            <img src='assets/images/common/engine-icon.svg' alt='' onload='SVGInject(this)' />
+                                        </ng-container>
+                                        <ng-template #nonautomobile>
+                                            <img src='assets/images/thread-detail/thread-error.svg' alt='' onload='SVGInject(this)' />
+                                        </ng-template> -->
+                                    </div>
+                                    <div class="problem-col-rt">
+                                        <p class="problem-col-cont-error pr-col-top ">
+                                            <span class="red-text">{{dtcInfo.code}}</span>{{dtcInfo.description}}                                        
+                                        </p>   
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="fixesView">
+                                <div class="paddingSet">
+                                    <div class="problem-col-lt problem">
+                                        <img style="vertical-align: top;" src="assets/images/common/engine-gray-split-icon.png" alt="" onload="SVGInject(this)" />
+                                    </div>
+                                    <div class="problem-col-rt">
+                                        <p class="problem-col-head">DTCs</p>
+                                        <div class="dtc-list bg">
+                                            {{currentDtcList}}
+                                        </div>   
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!fixesView && !scanToolFlag && !ricohFlag && curentDtclength==0 && threadCategoryStr != 7">
+                            <div class="problem-row setPadding">
+                                <div class="problem-col-lt thread-no-error">
+                                    <img src='assets/images/workstreams-page/no_error_code.svg' alt='' onload='SVGInject(this)' />    
+                                </div>
+                                <div class="problem-col-rt">
+                                    <p class="no-error-text">No Error Code</p>
+                                </div>
+                            </div>
+                        </div>  
+                        <div class="problem-row setPadding" *ngIf="threadViewData.systemSelection && threadViewData.systemSelection.length > 0">
+                            <div class="problem-col-lt system">
+                                <img src='assets/images/parts/system-icon-active.svg' alt='' onload='SVGInject(this)' />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">System Selection</p>
+                                <div class="tag-cont-div" *ngFor="let item of threadViewData.systemSelection;"> 
+                                   <span class="tag-cont btn tag">{{item.name}}</span>                                       
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="problem-row setPadding" *ngIf="taglength>0">
+                            <div class="problem-col-lt tag">
+                                <img src='assets/images/thread-detail/tag.svg' alt='' onload='SVGInject(this)' />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Tag<span *ngIf="tagData.length > 1">s</span></p>
+                                <div class="tag-cont-div" *ngFor="let item of tagData;"> 
+                                   <span class="tag-cont btn tag">{{item.name}}</span>                                       
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="problem-row setPadding" *ngIf="partsDataStrArrFlag && ((fixesView && partslength > 0) || !fixesView && partslength >= 0)">
+                            <div class="problem-col-lt tag">
+                                <img src='assets/images/thread-detail/detail-parts-gray.png' />
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head " style="position: relative;top:-1px">Parts</p>
+                                <span *ngIf="partslength==0" >                               
+                                    <div class="part-cont"> 
+                                    <span class="part-cont-none">None</span>                                       
+                                    </div>
+                                </span>                                
+                                <span *ngIf="partslength>0" >
+                                <div class="part-cont" *ngFor="let item of partsData;"> 
+                                    <img src='assets/images/thread-detail/detail-parts-green.png' />
+                                    <span class="">{{item}}</span>                                       
+                                 </div>
+                                </span> 
+                            </div>
+                             
+                        </div>
+
+                        <div class="problem-row setPadding" *ngIf="tvsDomain && occrance != ''">
+                            <div class="problem-col-lt occrance"></div>
+                            <div class="problem-col-rt">                                    
+                                <p class="problem-col-head">Occurance</p>
+                                <p class="problem-col-cont thread-description">{{occrance}}</p>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <div *ngIf="tvsDomain && technicianInfo!=''" class="problem-row support-team-row setPaddingLeft1">                   
+                        <div class="problem-col-lt tech-info"></div>
+                        <div class="problem-col-rt">
+                            <p class="problem-col-head problem-col-head-tvs">Technician Info</p>  
+                            <div class="support-team-cont">
+                                <div class="support-team-cont-tb">
+                                    <div class="display-table">
+                                        <div class="display-tablecell">
+                                            <div class="th-head-img"><span (click)="taponprofileclick(technicianInfo.id)" class="rounded-circle cursor-pointer" [ngStyle]="{'background-image': 'url(' + technicianInfo.profileImg + ')'}"></span><span class="availability-status availability-status{{technicianInfo.availability}}"></span></div>                            
+                                        </div>
+                                        <div class="display-tablecell">
+                                            <span class="th-head-text1 cursor-pointer" (click)="taponprofileclick(technicianInfo.id)">{{technicianInfo.name}}</span>
+                                            <span class="th-head-text2 new-head-text2">{{technicianInfo.placeholder}}</span>                                                    
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="support-team-cont-tb">
+                                    <div class="display-table">
+                                        <div class="display-tablecell">
+                                            <div class="th-phone-img"><img src="assets/images/thread-detail/tech-info-phone.png" /></div>                            
+                                        </div>
+                                        <div class="display-tablecell">
+                                            <span class="th-head-text3 cursor-pointer">Phone Number</span>
+                                            <span class="th-head-text2 new-head-text2">{{technicianInfo.phoneNo}}</span>                                                    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                         
+                        </div>                       
+                    </div>
+
+                    <div class="problem-row-bg-height" [ngClass]="{ 'set-height' : partsDataStrArrFlag }" *ngIf="threadViewData.newThreadTypeSelect == 'share'">&nbsp;</div>
+                    <div class="problem-row-bg" *ngIf="threadViewData.causeOfProblem!='' && threadViewData.causeOfProblem!=undefined">
+                        <div class="problem-row">                  
+                            <div class="problem-col-lt cause"></div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Cause</p>
+                                <p class="problem-col-cont shareContPTop" [innerHTML]="threadViewData.causeOfProblem"></p>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="problem-row-bg" *ngIf="threadViewData.newThreadTypeSelect == 'share' && threadViewData.threadDescFix != '' && threadViewData.threadDescFix != undefined">
+                        <div class="problem-row">                  
+                            <div class="problem-col-lt fix-description"></div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Fix Description</p>
+                                <p class="problem-col-cont shareContPTop" [innerHTML]="threadViewData.threadDescFix"></p>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="problem-row-bg" *ngIf="threadViewData.newThreadTypeSelect == 'share' && ((threadViewData.partUserDesc != '' && threadViewData.partUserDesc != undefined ) || ( threadViewData.partsUsedParts != '' && threadViewData.partsUsedParts != undefined ) )" >
+                        <div class="problem-row">                   
+                            <div class="problem-col-lt parts-used"></div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Parts Used</p>
+                                <p class="problem-col-cont shareContPTop" ><span class="red-text">{{threadViewData.partsUsedParts}}</span><span *ngIf="threadViewData.partUserDesc != ''">- {{threadViewData.partUserDesc}}</span></p>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="problem-row-bg" *ngIf="threadViewData.newThreadTypeSelect == 'share' && ((threadViewData.specialToolsPart != '' && threadViewData.specialToolsPart != undefined) || (threadViewData.specialToolsUsed != '' && threadViewData.specialToolsUsed != undefined ) )">
+                        <div class="problem-row">                  
+                            <div class="problem-col-lt special-tools"></div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Special Tools</p>
+                                <p class="problem-col-cont shareContPTop" ><span class="red-text">{{threadViewData.specialToolsPart}}</span> {{threadViewData.specialToolsUsed}}</p>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="problem-row-bg" *ngIf="threadViewData.newThreadTypeSelect == 'share' && threadViewData.difficultyLevel != '' && threadViewData.difficultyLevel != undefined ">
+                        <div class="problem-row">                  
+                            <div class="problem-col-lt difficulty-level"></div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Difficulty Level</p>
+                                <p class="problem-col-cont shareContPTop">{{threadViewData.difficultyLevel}}</p>
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="problem-row-bg" *ngIf="threadViewData.newThreadTypeSelect == 'share' && shareFixHours != '' && shareFixHours != undefined ">
+                        <div class="problem-row">                   
+                            <div class="problem-col-lt time-to-fix"></div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-head">Approx. time to fix</p>
+                                <p class="problem-col-cont shareContPTop"><span class="red-text">{{shareFixHours}}</span></p>
+                            </div>  
+                        </div>
+                    </div>
+                    <div *ngIf="tvsDomain && (threadViewData.assignedToName!='' || territoryManager!= '')" class="problem-row support-team-row setPaddingLeft1">                   
+                        <div class="problem-col-lt support-team"></div>
+                        <div class="problem-col-rt">
+                            <p class="problem-col-head problem-col-head-tvs">TVS SUPPORT TEAM</p>  
+                            <div class="support-team-cont">
+                                <!--div class="support-team-cont-tb" *ngIf="productCoordinator!=''">
+                                    <div class="display-table">
+                                        <div class="display-tablecell">
+                                            <div class="th-head-img"><span (click)="taponprofileclick(productCoordinator.userId)" class="rounded-circle cursor-pointer" [ngStyle]="{'background-image': 'url(' + productCoordinator.profileImg + ')'}"></span><span class="availability-status availability-status{{productCoordinator.availability}}"></span></div>                            
+                                        </div>
+                                        <div class="display-tablecell">
+                                            <span class="th-head-text1 cursor-pointer" (click)="taponprofileclick(productCoordinator.userId)">{{productCoordinator.firstLastname}}</span>
+                                            <span class="th-head-text2 new-head-text2">{{productCoordinator.placeholder}}</span>                                                    
+                                        </div>
+                                    </div>
+                                </div-->
+                                <div class="support-team-cont-tb" *ngIf="threadViewData.assignedToName!=''">
+                                    <div class="display-table">
+                                        <div class="display-tablecell">
+                                            <div class="th-head-img"><span (click)="taponprofileclick(threadViewData.assignedToId)" class="rounded-circle cursor-pointer" [ngStyle]="{'background-image': 'url(' + threadViewData.assignedToProfile + ')'}"></span></div>                            
+                                        </div>
+                                        <div class="display-tablecell">
+                                            <span class="th-head-text1 cursor-pointer" (click)="taponprofileclick(productCoordinator.userId)">{{threadViewData.assignedToName}}</span>                                                                                              
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="support-team-cont-tb" *ngIf="territoryManager">
+                                    <div class="display-table" style="display: inline-block;width:200px;" *ngFor="let territoryManagerData of territoryManager;">
+                                        <div class="display-tablecell">
+                                            <div *ngIf="territoryManagerData.userId!='0'" class="th-head-img"><span (click)="taponprofileclick(territoryManagerData.userId)" class="rounded-circle cursor-pointer" [ngStyle]="{'background-image': 'url(' + territoryManagerData.profileImg + ')'}"></span><span class="availability-status availability-status{{territoryManagerData.availability}}"></span></div>                            
+                                            <div *ngIf="territoryManagerData.userId=='0'" class="th-head-img"><span  class="rounded-circle" [ngStyle]="{'background-image': 'url(' + territoryManagerData.profileImg + ')'}"></span></div>                            
+                                        </div>
+                                        <div class="display-tablecell">
+                                            <span *ngIf="territoryManagerData.userId!='0'" class="th-head-text1 cursor-pointer" (click)="taponprofileclick(territoryManagerData.userId)">{{territoryManagerData.firstLastname}}</span>
+                                            <span *ngIf="territoryManagerData.userId=='0'" class="th-head-text1" >{{territoryManagerData.firstLastname}}</span>
+                                            <span class="th-head-text2 new-head-text2">{{territoryManagerData.placeholder}}</span>                                                    
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                         
+                        </div>                       
+                    </div>      
+                </div>
+                <div class="table-row2 table-row3">                   
+                    <div class="thread-detail-widget main-contaier" *ngIf="!scanToolFlag && (categoryLength>0 || subCategoryLength>0 || productTypeLength>0 || regionsLength>0)">
+                        <p-accordion class="custom-accordion flat-custom-accordion thread-detail-accordion" [multiple]="true">
+                            <p-accordionTab class="comments" [transitionOptions]="'100ms'" [selected]="false">
+                                <p-header class="header">
+                                    <span class="header-img">
+                                        <img src="assets/images/thread-detail/equipment-type.png">
+                                    </span>
+                                    <span class="header-text">
+                                        Equipment Type and Information
+                                    </span>
+                                </p-header>
+                                <div class="problem-row">
+                                    <div class="acc-col" *ngIf="categoryLength>0">
+                                        <div class="problem-col-lt category-red">
+                                            <img src='assets/images/thread-detail/category-red.svg' alt='' onload='SVGInject(this)' />
+                                        </div>
+                                        <div class="problem-col-rt w90">
+                                            <p class="problem-col-head">Category</p>
+                                            <div class="tag-cont-div" *ngFor="let item of categoryData;"> 
+                                               <span class="eq-cont btn tag">{{item.name}}</span>                                               
+                                            </div>
+                                        </div> 
+                                    </div>
+
+                                    <div class="acc-col" *ngIf="subCategoryLength>0">
+                                        <div class="problem-col-lt category-red">
+                                            <img src='assets/images/thread-detail/category-red.svg' alt='' onload='SVGInject(this)' />
+                                        </div>
+                                        <div class="problem-col-rt w90">
+                                            <p class="problem-col-head">Sub Category</p>
+                                            <div class="tag-cont-div" *ngFor="let item of subCategoryData;"> 
+                                               <span class="eq-cont btn tag">{{item.name}}</span>                                                                                               
+                                            </div>
+                                        </div> 
+                                    </div>
+
+                                    <div class="acc-col" *ngIf="productTypeLength>0">
+                                        <div class="problem-col-lt prod-type">
+                                            <img src='assets/images/thread-detail/prod-type.svg' alt='' onload='SVGInject(this)' />
+                                        </div>
+                                        <div class="problem-col-rt w90">
+                                            <p class="problem-col-head">Product Type</p>
+                                            <div class="tag-cont-div" *ngFor="let item of productTypeData;"> 
+                                               <span class="eq-cont btn tag">{{item.name}}</span>                                                                                           
+                                            </div>
+                                        </div> 
+                                    </div>
+
+                                    <div class="acc-col" *ngIf="regionsLength>0">
+                                        <div class="problem-col-lt map">
+                                            <img src='assets/images/thread-detail/map.svg' alt='' onload='SVGInject(this)' />
+                                        </div>
+                                        <div class="problem-col-rt w90">
+                                            <p class="problem-col-head">Region</p>
+                                            <div class="tag-cont-div" *ngFor="let item of regionsData;"> 
+                                               <span class="eq-cont btn tag">{{item.name}}</span>  
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    
+                                </div> 
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+
+                    <div class="thread-detail-widget main-contaier" *ngIf="!attachmentLoading">
+                        <p-accordion class="custom-accordion flat-custom-accordion thread-detail-accordion" [multiple]="true">
+                            <p-accordionTab class="comments" [transitionOptions]="'100ms'" [selected]="true">
+                                <p-header class="header">
+                                    <span class="header-img">
+                                        <img src="assets/images/thread-detail/attachments-white.png">
+                                    </span>
+                                    <span class="header-text">
+                                        Attachments
+                                    </span>
+                                </p-header>                               
+                                <!-- Attachment List-->
+                                <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                                <!-- Attachment List-->
+                            </p-accordionTab>
+                        </p-accordion>
+                    </div>
+
+                </div>
+                <div *ngIf="!fixesView && !apiUrl.threadViewPublicPage" class="table-row4 table-row4-border cursor-pointer" (click)="threadDashboarUserList('thread-dashboard','views',threadViewData.threadId,threadViewData.postId,'1')"> 
+                    <div class="display-table row4"> 
+                        <div class="display-tablecell row4-col1" >
+                            <div class="icons-div">
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" [ngbPopover]="like" popoverTitle="Like" placement="bottom" triggers="hover"  class="icon icon-like setOpacity5 topMove" *ngIf="threadOwner" [ngStyle]="{'background-image': 'url('+threadViewData.likeImg+')'}"></span>
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" [ngbPopover]="like" popoverTitle="Like" placement="bottom" triggers="hover"  class="icon icon-like cursor-pointer topMove" *ngIf="!threadOwner" (click)="socialAction('like', threadViewData.likeStatus); $event.stopPropagation();" [ngStyle]="{'background-image': 'url('+threadViewData.likeImg+')'}"></span>
+                                <span class="icon-count-text ">{{threadViewData.likeCountVal}}</span>
+                                <ng-template #like></ng-template>
+                            </div>
+                            <div class="icons-div">
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" [ngbPopover]="pin" popoverTitle="Pin" placement="bottom" triggers="hover"  class="icon icon-pin setOpacity5" *ngIf="threadOwner" [ngStyle]="{'background-image': 'url('+pinImg+')'}"></span>
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" [ngbPopover]="pin" popoverTitle="Pin" placement="bottom" triggers="hover"  class="icon icon-pin cursor-pointer" *ngIf="!threadOwner" (click)="socialAction('pin', pinStatus); $event.stopPropagation();" [ngStyle]="{'background-image': 'url('+pinImg+')'}"></span>
+                                <span class="icon-count-text">{{pinCountVal}}</span>
+                                <ng-template #pin></ng-template>
+                            </div>                           
+                            <div class="icons-div">
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" [ngbPopover]="comment" popoverTitle="Comment" placement="bottom" triggers="hover" class="icon icon-comment"></span>
+                                <span class="icon-count-text" *ngIf="threadViewData.comment>0">{{threadViewData.comment}}</span>
+                                <span class="icon-count-text" *ngIf="threadViewData.comment==0">-</span>
+                                <ng-template #comment></ng-template>
+                            </div>
+                            <div class="icons-div">
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" [ngbPopover]="view" popoverTitle="Views" placement="bottom" triggers="hover" class="icon icon-view"></span>
+                                <span class="icon-count-text" *ngIf="threadViewData.viewCount>0">{{threadViewData.viewCount}}</span>
+                                <span class="icon-count-text" *ngIf="threadViewData.viewCount==0">-</span>
+                                <ng-template #view></ng-template>
+                            </div>
+                            <div class="icons-div">
+                                <span class="icon icon-one-plus setOpacity5" *ngIf="threadOwner" [ngStyle]="{'background-image': 'url('+plusOneImg+')'}"></span>
+                                <ng-template #plusOneContent></ng-template>
+                                <!--ng-template #plusOneContent><p class="label-tt-head">I had the Same Problem</p></ng-template-->
+                                <!--span class="icon icon-one-plus cursor-pointer" *ngIf="!threadOwner" (click)="socialAction('plusone', plusOneStatus); ; $event.stopPropagation();" [ngStyle]="{'background-image': 'url('+plusOneImg+')'}" tooltipClass="plus-one-tooltip" triggers="hover" [autoClose]="true" placement="top" [ngbTooltip]="plusOneContent"></span-->
+                                <span container="body" popoverClass="custom-tooltip menu-tooltip arrow-hide-tooltip" *ngIf="!threadOwner" class="icon icon-one-plus cursor-pointer" [ngStyle]="{'background-image': 'url('+plusOneImg+')'}"
+                                 [ngbPopover]="plusOneContent" popoverTitle="I had the Same Problem" placement="bottom" triggers="hover" (click)="socialAction('plusone', plusOneStatus); $event.stopPropagation();"></span>
+                                <span class="icon-count-text">{{plusOneCountVal}}</span>
+                            </div>
+                        </div>
+                        <div class="display-tablecell row4-col2">
+                            <div class="icons-div icon-left share-div" style="padding-right: 20px;">
+                                <span class="icon icon-thread-share " 
+                                title="share" tooltipClass="post-submit-tooltip more-tooltip more-tooltip-new" 
+                                triggers="click" [autoClose]="true"
+                                placement="bottom-right" [ngbTooltip]="share"
+                                (click)="$event.stopPropagation();"
+                                 ></span>  
+                                <ng-template #share>
+                                <div class="thread-owner-reply cursor" (click)="publicCopyLink();$event.stopPropagation();">                  
+                                    <div class="label-tt-cont moreDiv">
+                                    <span class="label-tt-cont-lt moreDivLt"><img src="assets/images/detail-view-copy-icon.png" ></span>
+                                    <span class="label-tt-cont-rt moreDivRt">
+                                        <p class="more-cont">Copy Public Link</p>
+                                    </span>
+                                    </div>
+                                </div> 
+                                </ng-template> 
+                                <div *ngIf="copiedModalPublic" class="copied-txt-div">
+                                    <div class="copied-txt-inner-div">Link Copied</div>
+                                </div>                             
+                            </div>
+                            <!--div class="icons-div icon-left flag-div">
+                                <span title="Flag" class="icon icon-thread-flag "></span>                                
+                            </div-->                            
+                            <div class="icons-div icon-left" *ngIf="threadViewData.closeStatus==1">
+                                <span title="Closed Thread" class="icon icon-thread-closed"></span>                                
+                            </div>
+                            <div class="icons-div icon-left" *ngIf="threadViewData.fixStatus=='yes'">
+                                <span title="Summit Fix"  *ngIf="threadViewData.newThreadTypeSelect == 'share' && threadViewData.techSubmmitFlag" class="icon icon-thread-bstatus techsummit"></span>
+                                <span title="Shared Fix"  *ngIf="threadViewData.newThreadTypeSelect == 'share' && !threadViewData.techSubmmitFlag" class="icon icon-thread-bstatus share"></span>
+                                <span  title="Thread Status" *ngIf="threadViewData.newThreadTypeSelect == 'thread'" class="icon icon-thread-bstatus{{threadViewData.fixPostStatus}}"></span>                                                            
+                            </div> 
+                            <div class="icons-div icon-left" *ngIf="threadViewData.fixStatus=='no'">
+                                <span title="Summit Fix"  *ngIf="threadViewData.newThreadTypeSelect == 'share' && threadViewData.techSubmmitFlag" class="icon icon-thread-bstatus techsummit"></span>
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="thread-detail-div-col thread-detail-div-right thread-detail-scroll-to scrollbar scrollbar-primary thin">
+       <div class="edit-history-div">
+            <div class="fixed-button-top" *ngIf="threadViewData.buttonTop"><div class="button-green" (click)="gotoPosition('bottom')"><span ><span class="button-text">GOTO BOTTOM</span><span class="botton-icon"><img src="assets/images/thread-detail/goto-bottom-white.png"></span></span></div></div>
+            <div class="fixed-button-bottom" *ngIf="threadViewData.buttonBottom" ><div class="button-green" (click)="gotoPosition('top')"><span ><span class="button-text">GOTO TOP&nbsp;&nbsp;&nbsp;</span><span class="button-icon"><img src="assets/images/thread-detail/goto-top-white.png"></span></span></div></div>
+            <div class="thread-history-div" *ngIf="threadEdited=='1'">  
+                <div class="table-row2">
+                    <div class="problem-row setPaddingTop">
+                        <div class="problem-col-lt thread-history-date">
+                            <!-- img src='assets/images/thread-detail/thread-history-date.svg' alt='' onload='SVGInject(this)' / -->
+                        </div>
+                        <div class="problem-col-rt w86">
+                            <p class="edit-text1">Edited On</p>
+                            <p *ngIf="threadViewData.editHistory" class="edit-text2">{{threadViewData.editHistory[threadViewData.editHistory.length-1].updatedOnNew}}</p>      
+                        </div> 
+                    </div>
+                    <div class="problem-row setPaddingTop setPaddingTop2">
+                        <div *ngIf="threadViewData.editHistory" class="problem-col-lt thread-history-edituser"><span class="thread-history-edituser-img rounded-circle" [ngStyle]="{'background-image': 'url(' + threadViewData.editHistory[threadViewData.editHistory.length-1].profileImage + ')'}"></span></div>
+                        <div class="problem-col-rt w86">
+                            <p class="edit-text1">Edited By</p>
+                            <p *ngIf="threadViewData.editHistory" class="edit-text2">{{threadViewData.editHistory[threadViewData.editHistory.length-1].userName}}</p>      
+                        </div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

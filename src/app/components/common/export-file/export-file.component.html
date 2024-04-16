@@ -1,0 +1,26 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">  
+<div class="modal-header"> 
+    <h6 class="modal-title">{{title}}</h6>
+    <img  class="close-icon cursor" aria-label="Close" (click)="activeModal.dismiss('Cross click')" src="assets/images/login/popup-close.png" />
+</div>
+<div class="modal-body">        
+    <div class="">
+        <div class="">                                  
+                <div class="upload-col attachment-file media-attachment-file files action-dtc upload cursor" [ngClass]="{ 'setopacity' : uploadProcess && process }">
+                    <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                        [chooseLabel]="chooseLable"
+                        [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                        accept=".xls,.xlsx"
+                        (onSelect)="onUpload($event)" 
+                        >
+                    </p-fileUpload>
+                </div>
+                
+                <div class="successMsg" *ngIf="uploadProcess" [innerHTML]="successMsg"></div>
+            </div>                  
+        </div>            
+    </div> 
+</div>  
+
+
+

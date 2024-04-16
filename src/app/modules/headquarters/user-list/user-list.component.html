@@ -1,0 +1,256 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div class="loading-small-screen-scroll trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div> 
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{access}}-list-lazy-loader"></div>
+<div *ngIf="!loading" class="prob-list-cont">
+    <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new {{access}}-grid-row" [style.height.px]="innerHeight">
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table #table [columns]="userListColumns" [scrollable]="true" [totalRecords]="userList.length" id="file-datatable" 
+                class="file-datatable thread-list-table shop-list-table ro-list" [value]="userList" 
+                [ngClass]="{'opacity': opacityFlag, 'hide': displayNoRecords}" 
+                [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'" (scroll)="scroll($event)" (onLazyLoad)="lazyLoad($event)" [lazy]="true">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th [pSortableColumn]="col.sortName" *ngFor="let col of columns" class="{{col.columnpclass}}" [ngClass]="{ 'stock-header' : col.field == 'existStock' }">  
+                            <span>{{col.header}}</span>  
+                            <ng-container *ngIf="col.sortName">
+                                <p-sortIcon [field]="col.sortName"></p-sortIcon>
+                                <p-columnFilter *ngIf="!['IsAccountActive'].includes(col.sortName)" type="text" [field]="col.sortName"
+                                    display="menu"></p-columnFilter>
+                            </ng-container>
+                        </th>                            
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-userList let-i="rowIndex">
+                    <tr class="cursor" [ngClass]="{'bg-selected': lastSelectedUser == userList.userId}" (click)="navigateToProfile(userList.userId)"  routerLink="../user/{{userList.userId}}">
+                        <td  class="w1 usr-thl-col-1 col-sticky">
+                            <div class="thread-bg thread-bg-no-margin  ">
+                                <div  class="profile-container ">
+                                    <div  class="profileimg-container no-padding ">
+                                        <div  class="profile-left-container list-profile-left-container profile-left-container-no-margin ">
+                                            <div  class="tooltipUseDiv ">
+                                                <img onerror="this.src='assets/images/thumb_profile_image.png'" class="profileImg" [src]="userList.profileImage">
+                                            </div>
+                                        </div>
+                                        <div  class="profile-right-container ">
+                                            <div  class="user-name " title="{{userList.firstName}} {{userList.lastName}}">{{userList.firstName}} {{userList.lastName}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
+                        </td>                            
+                        <td  class="w2 usr-thl-col-2" >
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.title != ''">{{userList.title}}</span>
+                                <span *ngIf="userList.title == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w3 usr-thl-col-3" >
+                            <div class="">
+                                <span  class="overflow-text-table" *ngIf="userList.businessRoleStr != ''">{{userList.businessRoleStr}}</span>
+                                <span *ngIf="userList.businessRoleStr == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w4 usr-thl-col-4" >
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.deptName != ''">{{userList.deptName}}</span>
+                                <span *ngIf="userList.deptName == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w5 cth-col usr-thl-col-5" >
+                            <div class="">
+                                <span class="shop-id">{{userList.userId}}</span>
+                            </div>
+                        </td>
+                        <td class="w6 usr-thl-col-6" >
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.phoneNo != ''">{{userList.phoneNo}}</span>
+                                <span *ngIf="userList.phoneNo == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w7 usr-thl-col-7" >
+                            <div class=""><span class="overflow-text-table" title="{{userList.email}}">{{userList.email}}</span></div>
+                        </td>                                                
+                        <td class="w8 usr-thl-col-3" >
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.userTypeStr != ''">{{userList.userTypeStr}}</span>
+                                            <span *ngIf="userList.userTypeStr == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w9 usr-thl-col-9" >
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.managerStr != ''">{{userList.managerStr}}</span>
+                                            <span *ngIf="userList.managerStr == ''">-</span>
+                            </div>
+                        </td> 
+                        <td class="w9 usr-thl-col-9" *ngIf="access == 'all-users'">
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.levelOneName != ''">{{userList.levelOneName}}</span>
+                                            <span *ngIf="userList.levelOneName == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w9 usr-thl-col-9" *ngIf="access == 'all-users'">
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.levelTwoName != ''">{{userList.levelTwoName}}</span>
+                                            <span *ngIf="userList.levelTwoName == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w9 usr-thl-col-9" *ngIf="access == 'all-users'">
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.levelThreeName != ''">{{userList.levelThreeName}}</span>
+                                            <span *ngIf="userList.levelThreeName == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w9 usr-thl-col-9" *ngIf="access == 'all-users'">
+                            <div class="">
+                                <span class="overflow-text-table" *ngIf="userList.shopName != ''">{{userList.shopName}}</span>
+                                            <span *ngIf="userList.shopName == ''">-</span>
+                            </div>
+                        </td>
+                        <td class="w9 usr-thl-col-9">
+                            <div class="d-flex align-items-center">
+                                <span class="overflow-text-table">{{userList.isActive ? "Active" : "In-Active"}}</span>
+                                <div class="part-menu">
+                                        <div id="more1"  #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more1" class="more-icon more-icon-bg" (click)="$event.stopPropagation();">                                    
+                                            <img src="assets/images/edit-list-icon-green.png" alt="Edit">
+                                        </div>
+                                        <mat-toolbar color="primary">
+                                            <mat-menu #more1="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                                <div class="part-menu">
+                                                    <ul *ngIf="!user?.data?.shopId" class="more-actions">
+                                                        <li class="cursor active" (click)="menuTrigger.closeMenu();changeStatus('active',userList)">Active</li>
+                                                        <li class="cursor active" (click)="menuTrigger.closeMenu();changeStatus('inactive',userList)">In Active</li>
+                                                        <li class="cursor active" (click)="menuTrigger.closeMenu();openResetPassword(userList)">Reset password</li>
+                                                        
+                                                    </ul>
+                                                </div>
+                                            </mat-menu>
+                                        </mat-toolbar>   
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w10 usr-thl-col-10 col-sticky">
+                            <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                                <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                            </div>
+                            <mat-toolbar color="primary">
+                                <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="cursor active" (click)="menuTrigger.closeMenu();navigateToProfile(userList.userId)" routerLink="../user/{{userList.userId}}/1"><img src="assets/images/user-profile/more-user-home.png" alt="User Home" style="position: relative;top:-2px;">&nbsp;&nbsp;User Home</li>
+                                            <li class="cursor active" (click)="menuTrigger.closeMenu();navigateToProfile(userList.userId)" routerLink="../user/{{userList.userId}}/2"><img src="assets/images/user-profile/more-user-profile.png" alt="User Profile" style="position: relative;top:-2px;">&nbsp;&nbsp;User Profile</li>
+                                            <li class="cursor active" (click)="menuTrigger.closeMenu();openUserPOPUP('edit',userList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>                                 
+                        </td>               
+                    </tr>
+                </ng-template>
+
+                
+                
+            </p-table>
+        </div>
+    </div>    
+</div>
+
+<div class="list" *ngIf="!loading && itemEmpty">
+    <div *ngIf="userList && userList.length == 0" [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'" class=" w-100 tool-banner">
+        <div class="empty-show-container">
+            <div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="d-flex align-items-center justify-content-center flex-column">
+                                <div class="rounded-circle">
+                                    <img src="assets/images/hq/users.png">
+                                </div>
+                                <div>
+                                    <p class="fs-14 shop-txt">Tap on the ‘Add User’ button to add New User</p>
+                                </div>
+
+                                <div (click)="openUserPOPUP('new')" class="m-0 add-action-btn cursor">
+                                    <img src="assets/images/hq/add-icon.png">
+                                    <span>ADD USER</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="addUserVisible">
+    <!-- add user sidebar -->
+    <p-sidebar class="sidebar-cont form-type-fields" [(visible)]="addUserVisible" [baseZIndex]="100" position="right"
+        [dismissible]="false" modal="true">
+        <app-user-add *ngIf="addUserVisible" [userData] = "userData" (saveUser)="onDrawerDismiss($event)"></app-user-add>
+    </p-sidebar>
+</div>
+
+
+<p-dialog (onHide)="cancelresetpopup()" header="Reset Password" [(visible)]="displaydiaLog" [modal]="true" styleClass="p-fluid resetpassword-dialog" showEffect="fade" closeOnEscape="true" [style]="{width: '50vw'}">
+    
+    <div  *ngIf="displaydiaLog" class="resetpassword-dialog-content">
+    <!--{{resetpasswordForm.value | json}}-->
+        <form [formGroup]="resetpasswordForm" (ngSubmit)="onSubmitresetForm('asd')" #f="ngForm" novalidate>
+           <!-- {{resetpasswordForm.value | json}}-->
+   
+<div>
+
+    <div class="resetpassword-dialog-text">Reset password for  {{resetPassData.userName}}  at   <span style="color: red;">{{resetPassData.email}}</span></div>
+
+
+    <div class="reset-radiobutton">
+        <mat-radio-group formControlName="Resetradioaction" (change)="onChangeRadio($event)" [(ngModel)]="radioOptions">
+    <mat-radio-button [checked]="defaultpasswordcheck"   value="1">Default Password: <span style="color:blue;">@Password123</span></mat-radio-button>
+        <mat-radio-button [checked]="custompasswordcheck"    value="2">
+           <div class="cust-select">
+                <mat-icon class="material-icon reset-icon-dash" matSuffix></mat-icon>
+                <input [class.is-invalid]="passwordValidationError || (displayValidationforreset && registerFormControl.Resetpasswordcontent.touched && registerFormControl.Resetpasswordcontent.invalid)" (keyup)="checkresetpasstext($event)" [(ngModel)]="ResetpasswordcontentValue" formControlName="Resetpasswordcontent" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Alternate Password" (change)="checkPwdStrongValidation('reset')" />
+                <span *ngIf="successPasswordTextIcon" class="success-ok-tick-span"><span class="success-ok-tick"><img src="assets/images/green-ok.png"></span></span>
+                <span *ngIf="!passwordchecker && !accounthaspasswordError" class="new-user-default-text d-block">Min. 6 chars</span>
+                <span *ngIf="!passwordchecker && accounthaspasswordError" class="text-danger d-block">Password should not be empty. Min. 6 chars</span>
+                <span *ngIf="passwordchecker" class="new-user-default-div">
+                    <span *ngIf="!passwordValidationError && !disableDefaultPasswordText" class="new-user-default-text d-block">Min. 8 chars, one uppercase, one lowercase & one special character</span>
+                    <span *ngIf="passwordValidationError || registerFormControl.Resetpasswordcontent.touched && registerFormControl.Resetpasswordcontent.invalid " class="new-user-error-text d-block">{{passwordValidationErrorMsg}}</span>
+                </span>      
+           </div>
+           
+
+        </mat-radio-button>
+       
+        <small style="color:red;font-size: 12px;padding-left:15px;position: relative;top: -12px;left: 12px;" *ngIf="resetpassvalidationmsg">{{resetpassvalidationmsg}}</small>
+        </mat-radio-group>
+       
+    </div>
+        <div class="resetpass-custum-text">We’ll send an email to the user with the new password</div>
+     
+</div>
+
+        <br/>
+       
+        <div  class="confirm-actions">
+            <button [disabled]="displayValidationforreset && registerFormControl.Resetpasswordcontent.invalid"  class="btn action-btn submit" type="submit" >Reset<span class="submit-btn"></span></button>
+            <button class="btn action-btn cancel" (click)="cancelresetpopup()" >Cancel<span class="cancel-btn"></span></button>
+            
+        </div>
+        
+       
+   </form>
+</div>
+   
+</p-dialog>
+    
+    
+    
+    
+    

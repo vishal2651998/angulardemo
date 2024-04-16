@@ -1,0 +1,470 @@
+<div *ngIf="certificationFlag">
+
+    <div class="user-inner-section">
+        <div class="info-card-sec d-flex justify-content-between">
+            <h5 class="title-name"><img src="assets/images/user-profile/certification.png"
+                    alt="">{{profileSectionData.title}}</h5>
+            <a (click)="togglePopup(null, profileSectionData.fieldname)" class="act-butt"><img src="assets/images/user-profile/newadd-icon.png"> Add</a>
+        </div>
+    </div>
+    <div class="upss-parent-succ-div" *ngIf="certificationServerSuccess">
+        <div class="upss-success-msg"><span>{{certificationServerSuccessMsg}}</span></div>
+    </div>
+    <div class="user-table-section row col-lg-12 col-md-12 col-sm-12 m-0 p-0">
+        <div class="user-empty-section w-100" *ngIf="!certificationLoading && certificationDataArr.length > 0">
+            <div [perfectScrollbar]="sconfig">
+                <div >
+                    <p-table [value]="certificationDataArr">                    
+                        <ng-template pTemplate="header" >
+                            <tr>
+                                <th class="thText uiw0 col-sticky">Certification Name</th>
+                                <th class="thText uiw1">Certification Providers</th>
+                                <th class="thText uiw2">Certified on</th>                          
+                                <th class="thText uiw3">Expiration</th>                          
+                                <th class="thText uiw4">Attachments</th>
+                                <th class="thText uiw5"></th>                        
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-dataArrVal>
+                            <tr>
+                                <td class="tdText uiw0 col-sticky"><span class="truncate-uptext" title="{{dataArrVal?.cname.length>0 ? dataArrVal?.cname[0]['name'] : '' }}">{{dataArrVal?.cname.length>0 ? dataArrVal?.cname[0]['name'] : "-"}}</span></td>
+                                <td class="tdText uiw1"><span class="truncate-uptext" title="{{dataArrVal?.cproviders.length>0 ? dataArrVal?.cproviders[0]['name'] : ''}}">{{dataArrVal?.cproviders.length>0 ? dataArrVal?.cproviders[0]['name'] : "-"}}</span></td>
+                                <td class="tdText uiw2">{{dataArrVal?.certified ? dataArrVal?.certified : "-"}}</td>                          
+                                <td class="tdText uiw3">{{dataArrVal?.expiration ? dataArrVal?.expiration : "-"}}</td>                          
+                                <td class="tdText uiw4">
+                                    <div *ngIf="!dataArrVal.attachmentLoading" id="attachment-v4" class="reference-info user-info">
+                                        <app-attachment-view class="more-attachment-lt" [dynamicGid]="'c'+dataArrVal.id" *ngIf="!dataArrVal.attachmentLoading" [loading]="dataArrVal.attachmentLoading" [action]="action" [attachments]="dataArrVal.attachments"></app-attachment-view>
+                                        <div class="more-attachment more-attachment-rt" *ngIf="dataArrVal.moreVal != 0" ><div class="d-flex align-items-center more-text">+{{dataArrVal.moreVal}}</div></div>
+                                    </div>
+                                    <div *ngIf="dataArrVal.attachmentLoading">-</div>
+                                </td>  
+                                <td class="tdText uiw5">
+                                    <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul class="more-actions">
+                                                
+                                                    <li class="cursor active" (click)="menuTrigger.closeMenu();togglePopup(dataArrVal, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                    <li class="cursor active" (click)="menuTrigger.closeMenu();deleteItem(dataArrVal.id, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                                                
+                                                </ul>
+                                            </div>
+                                        </mat-menu>
+                                    </mat-toolbar>                                 
+                                </td>                         
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+             </div>
+        </div>
+    
+        <div *ngIf="!certificationLoading && certificationDataArr.length == 0" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                    <i>
+                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                    </i> 
+                </div>
+            </div>
+        </div> 
+
+        <div *ngIf="certificationLoading" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />               
+                </div>
+            </div>
+        </div> 
+
+    </div>
+</div>
+<div *ngIf="trainingFlag">
+
+    <div class="user-inner-section">
+        <div class="info-card-sec d-flex justify-content-between">
+            <h5 class="title-name"><img src="assets/images/user-profile/training.png"
+                    alt="">{{profileSectionData.title}}</h5>
+            <a (click)="togglePopup(null, profileSectionData.fieldname)" class="act-butt"><img src="assets/images/user-profile/newadd-icon.png"> Add</a>
+        </div>
+    </div>
+    
+    <div class="user-table-section row col-lg-12 col-md-12 col-sm-12 m-0 p-0">
+        <div class="user-empty-section w-100" *ngIf="!trainingLoading && trainingDataArr.length > 0">
+          <div [perfectScrollbar]="sconfig">
+          <p-table [value]="trainingDataArr">                    
+            <ng-template pTemplate="header" >
+                <tr>
+                    <th class="thText uiw6 col-sticky">Training Name</th>
+                    <th class="thText uiw7">Date</th>                          
+                    <th class="thText uiw7">Course</th>                          
+                    <th class="thText uiw7">Track</th>                          
+                    <th class="thText uiw7">Training Source</th>                          
+                    <th class="thText uiw4">Attachments</th>                          
+                    <th class="thText uiw5"></th>                          
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-dataArrVal>
+                <tr>
+                    <td class="tdText uiw6 col-sticky"><span class="truncate-uptext" title="{{dataArrVal?.tname.length>0 ? dataArrVal?.tname[0]['name'] : ''}}">{{dataArrVal?.tname.length>0 ? dataArrVal?.tname[0]['name'] : "-"}}</span></td>
+                    <td class="tdText uiw7">{{dataArrVal?.date ? dataArrVal?.date : "-"}}</td>
+                    <td class="tdText uiw7">{{dataArrVal?.course.length>0 ? dataArrVal?.course[0]['name'] : "-"}}</td>                          
+                    <td class="tdText uiw7">{{dataArrVal?.track.length>0 ? dataArrVal?.track[0]['name'] : "-"}}</td>                          
+                    <td class="tdText uiw7">{{dataArrVal?.source.length>0 ? dataArrVal?.source[0]['name'] : "-"}}</td>   
+                    <td class="tdText uiw4">
+                        <div *ngIf="!dataArrVal.attachmentLoading" id="attachment-v4" class="reference-info user-info">
+                            <app-attachment-view class="more-attachment-lt" [dynamicGid]="'t'+dataArrVal.id" *ngIf="!dataArrVal.attachmentLoading" [loading]="dataArrVal.attachmentLoading" [action]="action" [attachments]="dataArrVal.attachments"></app-attachment-view>
+                            <div class="more-attachment more-attachment-rt" *ngIf="dataArrVal.moreVal != 0" ><div class="d-flex align-items-center more-text">+{{dataArrVal.moreVal}}</div></div>
+                        </div>
+                        <div *ngIf="dataArrVal.attachmentLoading">-</div>
+                    </td> 
+                    <td class="tdText uiw5">
+                        <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary">
+                            <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                       
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();togglePopup(dataArrVal, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();deleteItem(dataArrVal.id, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                                    
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>                                 
+                    </td>                         
+                </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        </div>
+        
+    
+        <div *ngIf="!trainingLoading && trainingDataArr.length == 0" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center  user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                    <i>
+                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                    </i> 
+                </div>
+            </div>
+        </div> 
+
+        <div *ngIf="trainingLoading" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />               
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>
+<div *ngIf="organizationFlag">
+
+    <div class="user-inner-section">
+        <div class="info-card-sec d-flex justify-content-between">
+            <h5 class="title-name"><img src="assets/images/user-profile/organization.png"
+                    alt="">{{profileSectionData.title}}</h5>
+            <a (click)="togglePopup(null, profileSectionData.fieldname)" class="act-butt"><img src="assets/images/user-profile/newadd-icon.png"> Add</a>
+        </div>
+    </div>
+    <div class="upss-parent-succ-div" *ngIf="organizationServerSuccess">
+        <div class="upss-success-msg"><span>{{organizationServerSuccessMsg}}</span></div>
+    </div>
+    <div class="user-table-section row col-lg-12 col-md-12 col-sm-12 m-0 p-0">
+        <div class="user-empty-section w-100" *ngIf="!organizationLoading && orgDataArr.length > 0">
+            <div [perfectScrollbar]="sconfig">
+        <p-table [value]="orgDataArr">                    
+            <ng-template pTemplate="header" >
+                <tr>
+                    <th class="thText uiw0 col-sticky">Organization</th>
+                    <th class="thText uiw1">ID#</th>                         
+                    <th class="thText uiw4">Attachments</th>                          
+                    <th class="thText uiw5"></th>                          
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-dataArrVal>
+                <tr>
+                    <td class="tdText uiw0 col-sticky"><span class="truncate-uptext" title="{{dataArrVal?.oname.length>0 ? dataArrVal?.oname[0]['name'] : ''}}">{{dataArrVal?.oname.length>0 ? dataArrVal?.oname[0]['name'] : "-"}}</span></td>
+                    <td class="tdText uiw1">{{dataArrVal?.oid ? dataArrVal?.oid : "-"}}</td>                        
+                    <td class="tdText uiw4">
+                        <div *ngIf="!dataArrVal.attachmentLoading" id="attachment-v4" class="reference-info user-info">
+                            <app-attachment-view class="more-attachment-lt" [dynamicGid]="'o'+dataArrVal.id" *ngIf="!dataArrVal.attachmentLoading" [loading]="dataArrVal.attachmentLoading" [action]="action" [attachments]="dataArrVal.attachments"></app-attachment-view>
+                            <div class="more-attachment more-attachment-rt" *ngIf="dataArrVal.moreVal != 0" ><div class="d-flex align-items-center more-text">+{{dataArrVal.moreVal}}</div></div>
+                        </div>
+                        <div *ngIf="dataArrVal.attachmentLoading">-</div>
+                    </td>   
+                    <td class="tdText uiw5">
+                        <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary">
+                            <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                    
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();togglePopup(dataArrVal, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();deleteItem(dataArrVal.id, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                                    
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>                                 
+                    </td>                       
+                </tr>
+            </ng-template>
+        </p-table>
+            </div>
+        </div>        
+        
+        <div *ngIf="!organizationLoading && orgDataArr.length == 0" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                    <i>
+                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                    </i> 
+                </div>
+            </div>
+        </div> 
+
+        <div *ngIf="organizationLoading" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />               
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div *ngIf="shopCertificationFlag">
+
+    <div class="user-inner-section">
+        <div class="info-card-sec d-flex justify-content-between">
+            <h5 class="title-name"><img src="assets/images/user-profile/certification.png"
+                    alt="">{{profileSectionData.title}}</h5>
+            <a (click)="togglePopup(null, profileSectionData.fieldname)" class="act-butt"><img src="assets/images/user-profile/newadd-icon.png"> Add</a>
+        </div>
+    </div>
+    
+    <div class="user-table-section row col-lg-12 col-md-12 col-sm-12 m-0 p-0">
+        <div class="user-empty-section w-100" *ngIf="!shopCertificationLoading && shopCertificationDataArr.length > 0">
+            <div [perfectScrollbar]="sconfig">
+                <div >
+                    <p-table [value]="shopCertificationDataArr">                    
+                        <ng-template pTemplate="header" >
+                            <tr>
+                                <th class="thText uiw0 col-sticky">Type</th>
+                                <th class="thText uiw1">Certification</th>
+                                <th class="thText uiw2">Certified on</th>                          
+                                <th class="thText uiw3">Expiration</th>                          
+                                <th class="thText uiw4">Years Certified?</th>
+                                <th class="thText uiw5"></th>                        
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-dataArrVal>
+                            <tr>
+                                <td class="tdText uiw0 col-sticky"><span class="truncate-uptext" title="{{dataArrVal?.type.length>0 ? dataArrVal?.type[0]['name'] : ''}}">{{dataArrVal?.type.length>0 ? dataArrVal?.type[0]['name'] : "-"}}</span></td>
+                                <td class="tdText uiw1"><span class="truncate-uptext" title="{{dataArrVal?.certification.length>0 ? dataArrVal?.certification[0]['name'] :''}}">{{dataArrVal?.certification.length>0 ? dataArrVal?.certification[0]['name'] : "-"}}</span></td>
+                                <td class="tdText uiw2">{{dataArrVal?.certified ? dataArrVal?.certified : "-"}}</td>                          
+                                <td class="tdText uiw3">{{dataArrVal?.expiration ? dataArrVal?.expiration : "-"}}</td>                          
+                                <td class="tdText uiw4">{{dataArrVal?.years ? dataArrVal?.years : "-"}}</td>  
+                                <td class="tdText uiw5">
+                                    <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul class="more-actions">
+                                                
+                                                    <li class="cursor active" (click)="menuTrigger.closeMenu();togglePopup(dataArrVal, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                    <li class="cursor active" (click)="menuTrigger.closeMenu();deleteItem(dataArrVal.id, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                                                
+                                                </ul>
+                                            </div>
+                                        </mat-menu>
+                                    </mat-toolbar>                                 
+                                </td>                         
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+             </div>
+        </div>
+    
+        <div *ngIf="!shopCertificationLoading && shopCertificationDataArr.length == 0" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                    <i>
+                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                    </i> 
+                </div>
+            </div>
+        </div> 
+
+        <div *ngIf="shopCertificationLoading" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />               
+                </div>
+            </div>
+        </div> 
+
+    </div>
+</div>
+<div *ngIf="shopTechnologyFlag">
+
+    <div class="user-inner-section">
+        <div class="info-card-sec d-flex justify-content-between">
+            <h5 class="title-name"><img src="assets/images/hq/setting-gear-3.png"
+                    alt="">{{profileSectionData.title}}</h5>
+            <a (click)="togglePopup(null, profileSectionData.fieldname)" class="act-butt"><img src="assets/images/user-profile/newadd-icon.png"> Add</a>
+        </div>
+    </div>
+    
+    <div class="user-table-section row col-lg-12 col-md-12 col-sm-12 m-0 p-0">
+        <div class="user-empty-section w-100" *ngIf="!shopTechnologyLoading && shopTechnologyDataArr.length > 0">
+            <div [perfectScrollbar]="sconfig">
+        <p-table [value]="shopTechnologyDataArr">                    
+            <ng-template pTemplate="header" >
+                <tr>
+                    <th class="thText uiw0 col-sticky">Type</th>
+                    <th class="thText uiw1">Solution</th> 
+                    <th class="thText uiw5"></th>                          
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-dataArrVal>
+                <tr>
+                    <td class="tdText uiw0 col-sticky"><span class="truncate-uptext" title="{{dataArrVal?.type.length>0 ? dataArrVal?.type[0]['name'] : ''}}">{{dataArrVal?.type.length>0 ? dataArrVal?.type[0]['name'] : "-"}}</span></td>
+                    <td class="tdText uiw0"><span class="truncate-uptext" title="{{dataArrVal?.solution.length>0 ? dataArrVal?.solution[0]['name'] : ''}}">{{dataArrVal?.solution.length>0 ? dataArrVal?.solution[0]['name'] : "-"}}</span></td>  
+                    <td class="tdText uiw5">
+                        <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary">
+                            <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                    
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();togglePopup(dataArrVal, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();deleteItem(dataArrVal.id, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                                    
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>                                 
+                    </td>                       
+                </tr>
+            </ng-template>
+        </p-table>
+            </div>
+        </div>        
+        
+        <div *ngIf="!shopTechnologyLoading && shopTechnologyDataArr.length == 0" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                    <i>
+                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                    </i> 
+                </div>
+            </div>
+        </div> 
+
+        <div *ngIf="shopTechnologyLoading" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />               
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="shopPoliciesFlag">
+
+    <div class="user-inner-section">
+        <div class="info-card-sec d-flex justify-content-between">
+            <h5 class="title-name"><img src="assets/images/hq/subscription.png"
+                    alt="">{{profileSectionData.title}}</h5>
+            <a (click)="togglePopup(null, profileSectionData.fieldname)" class="act-butt"><img src="assets/images/user-profile/newadd-icon.png"> Add</a>
+        </div>
+    </div>
+    <div class="user-table-section row col-lg-12 col-md-12 col-sm-12 m-0 p-0">
+        <div class="user-empty-section w-100" *ngIf="!shopPoliciesLoading && shopPoliciesDataArr.length > 0">
+            <div [perfectScrollbar]="sconfig">
+        <p-table [value]="shopPoliciesDataArr">                    
+            <ng-template pTemplate="header" >
+                <tr>
+                    <th class="thText uiw0 col-sticky">Type</th>
+                    <th class="thText uiw1">Provider</th> 
+                    <th class="thText uiw1">Limits</th> 
+                    <th class="thText uiw1">Expiration</th> 
+                    <th class="thText uiw5"></th>                          
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-dataArrVal>
+                <tr>
+                    <td class="tdText uiw0 col-sticky"><span class="truncate-uptext" title="{{dataArrVal?.type.length>0 ? dataArrVal?.type[0]['name'] : ''}}">{{dataArrVal?.type.length>0 ? dataArrVal?.type[0]['name'] : "-"}}</span></td>
+                    <td class="tdText uiw0"><span class="truncate-uptext" title="{{dataArrVal?.provider.length>0 ? dataArrVal?.provider[0]['name'] : ''}}">{{dataArrVal?.provider.length>0 ? dataArrVal?.provider[0]['name'] : "-"}}</span></td>  
+                    <td class="tdText uiw3">{{dataArrVal?.limits ? dataArrVal?.limits : "-"}}</td>                          
+                    <td class="tdText uiw4">{{dataArrVal?.expiration ? dataArrVal?.expiration : "-"}}</td>
+                    <td class="tdText uiw5">
+                        <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                        </div>
+                        <mat-toolbar color="primary">
+                            <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                <div class="part-menu">
+                                    <ul class="more-actions">
+                                    
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();togglePopup(dataArrVal, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                        <li class="cursor active" (click)="menuTrigger.closeMenu();deleteItem(dataArrVal.id, profileSectionData.fieldname);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                                    
+                                    </ul>
+                                </div>
+                            </mat-menu>
+                        </mat-toolbar>                                 
+                    </td>                         
+                </tr>
+            </ng-template>
+        </p-table>
+            </div>
+        </div>        
+        
+        <div *ngIf="!shopPoliciesLoading && shopPoliciesDataArr.length == 0" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/blank-croc.png" alt="">
+                    <i>
+                    <p style="color: #777777;padding-top: 10px;" class="m-0 description">Nothing to show</p>
+                    </i> 
+                </div>
+            </div>
+        </div> 
+
+        <div *ngIf="shopPoliciesLoading" class="user-empty-section w-100">
+            <div class="d-flex align-items-center justify-content-center user-section-ht" >
+                <div class="text-center py-3">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />               
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ 
+
+
+
+

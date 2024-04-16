@@ -1,0 +1,21 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">    
+    <div class="modal-body">   
+        <div *ngIf="action == 'email'" class="domain-url-container non-user-div non-email-div text-center">            
+            <img src="assets/images/login/non-collabtic-user.png">     
+            <div class="success-div-text" [innerHtml]="successMsg"></div>
+            <div class="success-div success-div1">
+                <a (click)="exitPOPUP()" class="action-button" ><span>Exit</span> <img src="assets/images/login/exit-icon.png" /></a>
+            </div>
+            <div class="success-div success-div2">
+                <a (click)="continuePOPUP()" class="action-button" ><span>Continue <img src="assets/images/login/double-arrow.png" /></span></a>
+            </div>
+        </div> 
+        <div *ngIf="action == 'license'" class="domain-url-container non-user-div non-email-div text-center">            
+            <img src="assets/images/login/license.png">     
+            <div class="success-div-text success-div-text-lic" [innerHtml]="successMsg"></div> 
+            <div class="success-div success-div2" style="padding:0;">
+                <a (click)="continuePOPUP()" class="action-button" ><span>OK</span></a>
+            </div>
+        </div> 
+    </div>
+</div>

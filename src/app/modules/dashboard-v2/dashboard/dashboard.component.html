@@ -1,0 +1,47 @@
+<div class="landing-page-container">
+<div class="container-fluid">
+<div class="wrapper-landingpage">
+<div class="container-fluid" id="content">
+    <div id="header">
+        <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+        </app-product-header>
+        <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+        </app-product-header>
+    </div>
+    
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar style="display: block;" [style.height]="'calc(100vh - '+midHeight+'px)'" [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="right-section">
+        <div class="container-fluid">
+            <div id="homeSec" class="ps" [perfectScrollbar]="sconfig">
+                <div class="dash-outer" [style.height]="'calc(100vh - '+midHeight+'px)'">
+                    <div class="dash-header">
+                        <div class="lt">
+                            <span class="header-ic">
+                                <img src="assets/images/dashboard-head-icon.png" >
+                                <span>Dashboard</span>
+                            </span>
+                            <span class="menu-item">
+                                <span routerLink="summary" routerlinkactive="active" class="menu-normal active">   
+                                    <img src="assets/images/dashboard-v2/sr-active.png" >                      
+                                    <span class="uname">&nbsp;&nbsp;Summary</span>                           
+                                </span>
+                                <span routerLink="support-request" routerlinkactive="active" class="menu-normal">  
+                                    <img src="assets/images/dashboard-v2/summry-normal.png" >                           
+                                    <span class="uname">&nbsp;&nbsp;Support Request</span>                           
+                                </span>
+                            </span>                            
+                        </div>
+                        <div class="rt"></div>
+                    </div>                    
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+        </div>
+    </div>  
+</div>

@@ -1,0 +1,67 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" ></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" ></app-product-header>
+</div>
+<div class="left-section">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}" (sidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+      </nav>
+    </div>
+  </div>
+<div class="right-section">
+    <div class="prob-index split-sec1">
+        <div *ngIf="!itemEmpty" class="part-list-head sib-list-head shop-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+            <div class="prob-head-col  head-col-1 shop-head-col-1">
+                <img src="assets/images/repair-order/ro-title-icon.png" >
+                <span class="head-txt shop-head-txt">{{title}}</span>  
+                <!--div class="cursor thread-add-new" style="position: relative;top: 5px;"  (click)="navigateWindow()">                            
+                    <span class=""><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >New</span>                            
+                </div-->          	
+            </div>
+            <div class="prob-head-col head-col-2 text-right">     
+                <div *ngIf="completedListFlag || deletedListFlag" class="complete-action-btn cursor" title="Return to RO List"  (click)="showListView('actionList')">
+                    <img src="assets/images/gts/gts-list-back.png" >
+                    <span>Return to RO List</span>
+                </div> 
+                <div *ngIf="!completedListFlag" class="complete-action-btn cursor" title="Completed List"  (click)="showListView('actionComplete')">
+                    <img src="assets/images/gts/cust-complete.png">
+                    <span>Completed List</span>
+                </div> 
+                <div *ngIf="!deletedListFlag"  class="complete-action-btn cursor" title="Completed List"  (click)="showListView('actionDelete')">
+                    <img src="assets/images/gts/gts-delete.png">
+                    <span>Deleted List</span>
+                </div>        
+                <div class="list-excel list-excel-inactive setOpacity5 cursor-default"> 
+                    <!--<img *ngIf="listView" src="/assets/images/shop/shop-excel.png" >
+                    <span>&nbsp;&nbsp;Export as Excel&nbsp;&nbsp;</span>-->
+                </div>          
+            </div>
+        </div>
+        <!--div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+            <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+            <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        </div-->
+        <div class="probing-content cbt-content part-content part-content-new part-right-side-none" [ngClass]="{'filter-expand': expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+            <app-repair-order-list></app-repair-order-list>
+        </div>
+        <!--div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+            <app-domain-members></app-domain-members>
+        </div-->
+    </div>
+</div>
+<p-dialog id="import-progress-dialog" [header]="false" [modal]="true" [draggable]="false" [resizable]="false"  [(visible)]="importProgressDialog" styleClass="p-fluid">
+    <div style="width: 100%;">
+<div class="exportprogressbar">
+    <div class="download-header" >Importing data to File..</div>
+<div class="progress">
+    <div class="progress-bar" [ngStyle]="myStyle()">{{progress}}%</div>
+  </div>
+  <!--div class="cancel-div">
+
+    <button (click)="cancelUpload()" type="button" class="btn btn-info text-right">Cancel</button>
+      </div-->
+
+  </div>
+</div>
+</p-dialog>

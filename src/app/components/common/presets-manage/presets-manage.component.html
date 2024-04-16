@@ -1,0 +1,168 @@
+<div class="custom-modal modal-container" id="wrapper">
+    
+    <div class="modal-header preset-header">
+        <div class="preset-title">
+            <img src="assets/images/preset/popup-preset-icon.png" >
+            <span class="preset-title-text">{{headTitle}}</span>
+            <span style="background-color: #fa972d;margin-left: 20px;" class="cursor add-btn" [ngClass]="{'visibility-hidden': newFlag || editFlag}" (click)="openPresetsAction('new')">
+                <span class="save-text">NEW</span>
+            </span>
+            <img src="assets/images/preset/info-icon.png" >
+            <span class="info-text">Create or select frequently used responses for faster tech support follow-up</span>
+        </div>
+        
+        <div class="preset-actions">            
+             
+            <span *ngIf="newFlag || editFlag" class="cursor add-btn cancel-btn" (click)="cancelPresets()">
+                <span class="save-text">Cancel</span>
+                <img src="assets/images/list-close.png" width="12" height="12" alt="Cancel" />
+            </span> 
+            <span *ngIf="newFlag || editFlag" class="cursor add-btn" [ngClass]="{'setOpacity5': !addPresetsFlag}" (click)="addPresets()">
+                <span class="save-text">Save</span>
+                <img src="assets/images/preset/popup-save-icon.png" alt="Save" />
+            </span>          
+            <span class="cursor close-btn" (click)="closePresets()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div> 
+
+    <div class="modal-body preset-body" [ngClass]="{ 'preset-gray-bg' : viewFlag }">
+        <div [style.height.px]="innerHeight">
+            <div [ngClass]="{ 'visible-hide' : !viewFlag }" >
+                <app-presets-list (presetActionEmit)="presetAction($event)"></app-presets-list>
+            </div>
+            <div *ngIf="newFlag || editFlag" >
+                <div [style.height.px]="innerHeight">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig"> 
+                        <div *ngIf="loading">
+                            <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                        </div>
+                        <div *ngIf="!loading" >
+                            <form [formGroup]="presetsForm">
+    
+                                <div class="row prob-form-row">
+                                    <div class="preset-form-row">
+    
+                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                            <div class="col-lg-6 col-md-6 col-xl-6 col-sm-12 margin0 padding0 paddingRt20">
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/preset/preset-ws.png"></span><span class="lable-text">Workstream</span><span class="required-text">Required</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+
+                                                    <p-multiSelect [showToggleAll]="false" class="split-col catg-col" appendTo="body" formControlName="workstream" [options]="workstreamItems" [filter]="true" showClear="false"
+                                                    ([ngModel])="workstreamId" [defaultLabel]="defaultWSLabel"
+                                                    [maxSelectedLabels]="0"
+                                                    [selectedItemsLabel]="defaultWSLabel"
+                                                    [ngClass]="{ 'is-invalid': workstreamValid }"
+                                                    (onChange)="selectedItems($event,'workstream')"
+                                                    optionLabel="name">
+                                                </p-multiSelect> 
+
+                                                <div class="ws-display">
+                                                    <div *ngIf="workstreamSelection?.length > 0" class="selected-items">
+                                                        <div *ngFor="let item of workstreamSelection; let t=index" class="tag-text">
+                                                            <span>{{item.name}}</span>
+                                                            <i class="material-icons tag-close"
+                                                                (click)="disableWSSelection(item.id)">close</i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                   
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="col-lg-6 col-md-6 col-xl-6 col-sm-12 margin0 padding0 paddingRt20">
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/preset/preset-title.png"></span><span class="lable-text">Title</span><span class="required-text">Required</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+                                                    <input class="inputbox" matInput placeholder="Title" formControlName="title"
+                                                    [(ngModel)]="title" (ngModelChange)="onChange('title')"                                              
+                                                    maxlength="100" />                                        
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                            <div *ngIf="industryType.id != 1" class="col-lg-3 col-md-3 col-xl-3 col-sm-12 margin0 padding0 paddingRt20" >
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/preset/preset-mfg.png"></span><span class="lable-text">Manufacturer</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+                                                    <p-dropdown [options]="manufacturers" formControlName="manufacturer" placeholder="Select" 
+                                                    [filter]="true" optionLabel="name" 
+                                                    (onChange)="selectedItems($event,'manufacturer')"                                                
+                                                     [(ngModel)]="manufacturerSelection" ></p-dropdown>
+                                                </div>                                               
+                                            </div>
+                                            <div class="col-sm-12 margin0 padding0 paddingRt20" [ngClass]="{ 'col-lg-3 col-md-3 col-xl-3 ': industryType.id != 1, 'col-lg-4 col-md-4 col-xl-4 ': industryType.id == 1  }">
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/preset/preset-make.png"></span><span class="lable-text">Make</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+                                                    <p-dropdown [options]="makes" formControlName="make" placeholder="Select" 
+                                                    [filter]="true" optionValue="name" optionLabel="name"  
+                                                    (onChange)="selectedItems($event,'make')"                                                
+                                                     [(ngModel)]="make" ></p-dropdown>
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="col-sm-12 margin0 padding0 paddingRt20" [ngClass]="{ 'col-lg-3 col-md-3 col-xl-3 ': industryType.id != 1, 'col-lg-4 col-md-4 col-xl-4 ': industryType.id == 1  }">
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/preset/preset-model.png"></span><span class="lable-text">Model</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+                                                    <input class="inputbox cursor" readonly="true" matInput placeholder="Select Model" formControlName="model"
+                                                    [(ngModel)]="modelName" (click)="onChangeSelection('model')"                                              
+                                                    maxlength="" />
+                                                    <div class="input-down-arrow cursor"><span class="icon"></span></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 margin0 padding0 paddingRt20" [ngClass]="{ 'col-lg-3 col-md-3 col-xl-3 ': industryType.id != 1, 'col-lg-4 col-md-4 col-xl-4 ': industryType.id == 1  }">
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/common/date-time-icon.png"></span><span class="lable-text">Year</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+                                                    <p-dropdown [options]="Years" formControlName="year" placeholder="Select" [virtualScroll]="false"
+                                                    [filter]="true" optionValue="name" optionLabel="name" [virtualScroll]="true"
+                                                    [(ngModel)]="year" ></p-dropdown>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                            <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 margin0 padding0 paddingRt20">
+                                                <div class="part-label-row">
+                                                    <span class="label-icon"><img src="assets/images/preset/preset-desc.png"></span><span class="lable-text">Description</span><span class="required-text">Required</span>
+                                                </div>
+                                                <div class="part-text-row form-group">
+                                                    <ckeditor  formControlName="description" maxlength="100"
+                                                    [editor]="Editor" [config]="configCke" container="body"
+                                                    (change)="onChange('desc')" (drop)="dropEvent($event,'newComment')"
+                                                    [(ngModel)]="description"></ckeditor>  
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 margin0 padding0">
+                                            <div class="attachment-row black-theme-row newupload-black">
+                                                <div class="post-error-msg post-link-error" *ngIf="posteditServerError">{{postEditServerErrorMsg}}</div>
+                                                <app-file-attachment *ngIf="editPostUpload" class="attachment-file" [action]="manageAction" [apiData]="postEditApiData" [attachmentItems]="attachmentItems" [postData]="presetsEditData" (uploadedItems)="editAttachments($event)"></app-file-attachment>
+                                                <app-attachment-view *ngIf="attachments.length > 0" [action]="EditAttachmentAction" [access]="pageAccess" [attachments]="attachmentItems" (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                        
+                            </form>
+                        </div>
+                    </div>
+                </div>            
+            </div> 
+        </div>  
+     </div> 
+
+</div>    

@@ -1,0 +1,580 @@
+<div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin custom-heading-flex-class custom-white-background-color" *ngIf="showPaymentFields">
+  <div class="col-11 col-xl-11 col-lg-11 col-md-11 col-sm-11 no-padding row no-margin" *ngIf="showPaymentFields">
+    <div class="col-12 col-xl-8 col-lg-8 col-md-8 col-sm-12 custom-popup-header no-padding">
+      <i class="pi pi-arrow-left custom-back-arrow-design cursor-pointer" (click)="backToFormPopup()"></i>
+      <span style="font-size: 20px !important;" *ngIf="!paymentMethod">Select Payment Type To Continue</span>
+      <span   class="main-popup-ttl" *ngIf="paymentMethod == 'card'">Credit Card Details</span>
+      <span *ngIf="paymentMethod == 'check'">Check Details</span>
+    </div>
+    <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payicon payment-img-div" *ngIf="paymentMethod">
+      <img src="assets/images/service-provider/360-payments.png" alt="">
+    </div>
+  </div>
+  <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 no-padding flex-end cross-btn-div" *ngIf="showPaymentFields">
+    <button style="background: transparent; border: none; box-shadow: none; color: black;" (click)="closePaymentPopup()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+  </div>
+</div>
+<!-- <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-green-background-color" *ngIf="paymentSuccessPopup && (paymentMethod == 'card' || !(payablePrice && payablePrice != '0'))">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-end">
+    <button style="background: transparent; border: none; box-shadow: none;" (click)="closePopup()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+  </div>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-40px">
+      <img width="84px" height="84px" src="assets/images/service-provider/success.png" />
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px custom-payment-text-design">
+      {{payablePrice && payablePrice != '0' ? 'Payment successful' : 'Registration successful'}}
+    </div>
+    <div *ngIf="payablePrice && payablePrice != '0'" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center transcation-number">
+      Transaction Number: {{successData?.transactionid}}
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text">
+      We've emailed you the training details
+    </div>
+  </div>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-green-background-color" *ngIf="paymentSuccessPopup && paymentMethod == 'check'">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-end">
+    <button style="background: transparent; border: none; box-shadow: none;" (click)="closePopup()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+  </div>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-40px">
+      <img width="84px" height="84px" src="assets/images/service-provider/success.png" />
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px custom-payment-text-design">
+      {{payablePrice && payablePrice != '0' ? 'Payment information received' : 'Registration successful'}}
+    </div>
+    <div *ngIf="address" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text info-addr">
+      Please have the check mailed to the following address:
+    </div>
+    <div *ngIf="address" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text info-addr-det">
+      <img src="assets/images/service-provider/map-pin-green.png"> {{address}}
+    </div>
+    <div *ngIf="bounceFee" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text info">
+      There is a Fee of ${{bounceFee}} if the check is bounced
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text">
+      We've emailed you the training details
+    </div>
+  </div>
+</div> -->
+<div class="payment-successful-popup-row">
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 custom-green-background-color" style="float: left;" *ngIf="paymentSuccessPopup && (paymentMethod == 'card' || !(payablePrice && payablePrice != '0'))">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-40px">
+        <img width="84px" height="84px" src="assets/images/service-provider/success.png" />
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px custom-payment-text-design">
+        {{calculateTotalAmount() ? 'Payment successful' : 'Order successful'}}
+      </div>
+      <div *ngIf="calculateTotalAmount()" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center transcation-number">
+        Transaction Number: {{successData?.transactionid}}
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text">
+        We've emailed you the receipt
+      </div>
+    </div>
+      <div class="refund-policy-icon-div" (click)="showRefundPolicyFn()">
+        <img src="assets/images/service-provider/refund-yellow-mid.png" />
+        <span>Refund Policy</span>
+      </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 custom-green-background-color" style="float: left;" *ngIf="paymentSuccessPopup && paymentMethod == 'check'">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-40px">
+        <img width="84px" height="84px" src="assets/images/service-provider/success.png" />
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px custom-payment-text-design">
+        {{calculateTotalAmount() ? 'Payment information received' : 'Registration successful'}}
+      </div>
+      <div *ngIf="address" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text info-addr">
+        Please have the check mailed to the following address:
+      </div>
+      <div *ngIf="address" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text info-addr-det">
+        <img src="assets/images/service-provider/map-pin-green.png"> {{address}}
+      </div>
+      <div *ngIf="bounceFee" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text info">
+        There is a Fee of ${{bounceFee}} if the check is bounced
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center email-text">
+        We've emailed you the receipt
+      </div>
+    </div>
+      <div class="refund-policy-icon-div" *ngIf="policyContent">
+        <img src="assets/images/service-provider/refund-yellow-mid.png" />
+        <span>Refund Policy</span>
+      </div>
+  </div>
+  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8 float-left no-padding manual-slip" *ngIf="paymentSuccessPopup">
+    <div class="slip-details">
+      <div class="price-details success">
+        <span>PRICE DETAILS</span>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 no-padding flex-end" style="float: right;">
+          <button style="background: transparent; border: none; box-shadow: none; color: #bababa;" (click)="closePopup()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+        </div>
+      </div>
+
+      <div class="slip-summary">
+        <img style="width: 20px; margin-right: 10px; float: left;" src="assets/images/service-provider/all_tab.png" />
+        <div class="summary-title">Training Price Summary</div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          {{trainingData?.trainingName}}
+        </div>
+        <div class="detail-right">
+           <span *ngIf="trainingData?.price && trainingData?.price != '0'">{{numberOfCounts}} X {{threadApi.isInt(trainingData.price)}}</span>
+           <span *ngIf="!(trainingData?.price && trainingData?.price != '0')">{{numberOfCounts}} (Free)</span>
+        </div>
+      </div>
+      <div class="slip-details-inner" *ngIf="(trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)) || freeOffer || alternatePricing">
+        <div class="detail-left">
+         <span *ngIf="!alternatePricing && !freeOffer">Early Bird </span> Discount ({{threadApi.isInt(trainingData?.birdPercentage, false)}}% off)
+        </div>
+        <div class="detail-right" style="color: #7f17ff;">
+          -{{threadApi.isInt((trainingData?.price - trainingData?.birdPrice) * numberOfCounts)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Sales Tax ({{threadApi.isInt(trainingSalesTaxPercent, false)}}%)
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(trainingSalesTax)}}
+        </div>
+      </div>
+      <div class="slip-details-inner no-border" *ngIf="manualId && manualData && buyManualCount > 0">
+        <div class="detail-left">
+          Total Training Price
+        </div>
+        <div class="detail-right">
+           <span *ngIf="trainingData?.price && trainingData?.price != '0'">{{threadApi.isInt(calculateTrainingTotalAmount())}} </span>
+           <span *ngIf="!(trainingData?.price && trainingData?.price !='0')">Free</span>
+        </div>
+      </div>
+      <ng-container *ngIf="manualId && manualData && buyManualCount > 0">
+        <div class="slip-summary mt-4">
+          <img style="width: 20px; filter: invert(1); margin-right: 10px; float: left;" src="assets/images/service-provider/manual-white.png" />
+          <div class="summary-title">Manual Price Summary</div>
+        </div>
+        <div class="slip-details-inner">
+          <div class="detail-left">
+            {{manualData?.manualName}}
+          </div>
+          <div class="detail-right">
+            {{buyManualCount}}
+            <span *ngIf="manualPayablePrice">X {{threadApi.isInt(manualPayablePrice)}}</span>
+            <span *ngIf="!manualPayablePrice">(Free)</span>
+          </div>
+        </div>
+        <div class="slip-details-inner" *ngIf="manualData?.discountPrice && manualData?.discountPrice != '0'">
+          <div class="detail-left">
+            Discount ({{threadApi.isInt(manualData?.discountPercentage, false)}}% off)
+          </div>
+          <div class="detail-right" style="color: #7f17ff;">
+            -{{threadApi.isInt((manualPayablePrice - manualData?.discountPrice) * buyManualCount)}}
+          </div>
+        </div>
+        <div class="slip-details-inner">
+          <div class="detail-left">
+            Shipping Cost
+          </div>
+          <div class="detail-right">
+            {{threadApi.isInt(shippingCost)}}
+          </div>
+        </div>
+        <div class="slip-details-inner">
+          <div class="detail-left">
+            Tax on Shipping
+          </div>
+          <div class="detail-right">
+            {{threadApi.isInt(shippingTax)}}
+          </div>
+        </div>
+        <div class="slip-details-inner">
+          <div class="detail-left">
+            Shipping To
+          </div>
+          <div class="detail-right">
+             {{shippingTo}}
+          </div>
+        </div>
+        <div class="slip-details-inner">
+          <div class="detail-left">
+            Shipping Address
+          </div>
+          <div class="detail-right">
+             {{shippingAdress}}
+          </div>
+        </div>
+        <div class="slip-details-inner">
+          <div class="detail-left">
+            Sales Tax {{threadApi.isInt(salesTaxPercent, false)}}%
+          </div>
+          <div class="detail-right">
+            {{threadApi.isInt(salesTax)}}
+          </div>
+        </div>
+      </ng-container>
+      <div class="slip-details-inner final">
+        <div class="detail-left">
+          Total Amount
+        </div>
+        <div class="detail-right">
+          <span *ngIf="calculateTotalAmount()">{{threadApi.isInt(calculateTotalAmount() + trainingSalesTax)}}</span>
+          <span *ngIf="!(calculateTotalAmount())">Free</span>
+        </div>
+      </div>
+      <div class="slip-details-inner" *ngIf="calculateTotalAmount()">
+        <div class="detail-left">
+        Payment Type
+        </div>
+        <div class="detail-right">
+          {{paymentMethod == "card" ? "Credit Card" : "Check"}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-failer-backgroud-color" *ngIf="paymentFailurePopup">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-end">
+    <button style="background: transparent; border: none; box-shadow: none;" (click)="closePopup()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+  </div>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-40px">
+      <img width="84px" height="84px" src="assets/images/service-provider/failed.png" />
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px">
+      {{paymentMessage}}
+    </div>
+  </div>
+</div>
+<div id="payment-methods" *ngIf="!paymentMethod && showPaymentFields" class="col-md-8 payment-methods-selection">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin row">
+    <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payment-box">
+      <div class="payment-method-options" (click)="setPaymentMethod('card')">
+        <img src="assets/images/service-provider/payment-method-card.webp">
+      </div>
+      <div class="type-text">Credit Card</div>
+    </div>
+
+    <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payment-box">
+      <div class="payment-method-options" (click)="setPaymentMethod('check')">
+        <img src="assets/images/service-provider/payment-method-check.png" style="height: 50px; margin-top: -11px;">
+    </div>
+      <div class="type-text">Check</div>
+    </div>
+
+    <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payment-box">
+      <div class="payment-method-options disabled">
+        <img src="assets/images/service-provider/payment-method-coa-disabled.png">
+      </div>
+      <div class="type-text disabled">COA</div>
+    </div>
+  </div>
+</div>
+<div id="payment-fields"  class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 no-padding credit-card-payment-fields-div" id="payment-fields" style="float: left; margin-bottom: 20px;" *ngIf="paymentMethod && showPaymentFields">
+  <div class="display-flex col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="flex-wrap: wrap;">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">First Name</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="First Name" (keyup)="checkValidtionField('firstName')" [(ngModel)]="firstNameValue">
+        <span id="firstName" class="error-card" style="display: none;">First name is required</span>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Last Name</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="Last Name" (keyup)="checkValidtionField('lastName')" [(ngModel)]="lastNameValue">
+        <span id="lastName" class="error-card" style="display: none;">Last name is required</span>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Email</span>
+        <input type="email" style="width: 100%;" pInputText placeholder="Email" (keyup)="checkValidtionField('email')" [(ngModel)]="paymentEmailValue">
+        <span id="paymentEmail" class="error-card" style="display: none;">Email is required</span>
+    </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Phone Number</span>
+        <ngx-intl-tel-input [cssClass]="'custom'" class="KA_input_text_Phone_new" [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true" [phoneValidation]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="true" [selectedCountryISO]="selectedCountryIS0" [maxLength]="10" [phoneValidation]="false" [separateDialCode]="separateDialCode" [numberFormat]="PhoneNumberFormat.National" name="phone" [(ngModel)]="paymentPhoneValue">
+        </ngx-intl-tel-input>
+        <span id="paymentPhone" class="error-card" style="display: none;">Phone number is required</span>
+    </div>
+    </div>
+    <div style="flex-wrap: wrap;" class=display-flex col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Address 1</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="Address 1" (keyup)="checkValidtionField('address1')" [(ngModel)]="addressLine1Value">
+        <span id="address1" class="error-card" style="display: none;">Address 1 is required</span>
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Address 2</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="Address 2" [(ngModel)]="addressLine2Value">
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Country</span>
+        <p-dropdown name="countryValue" styleClass="width-100-perc dropdown-panel-change" [options]="countryDropdownData" [(ngModel)]="countryValue" placeholder="Select Country" optionLabel="name" optionValue="id" (onChange)="getStatesDropdownData($event.value);checkValidtionField('country')"></p-dropdown>
+        <span id="country" class="error-card" style="display: none;">Country is required</span>
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">State</span>
+        <p-dropdown [filter]="true" name="stateValue" styleClass="width-100-perc custom-dropdown-design-company-new dropdown-panel-change" [options]="stateDropdownData" [(ngModel)]="stateValue" placeholder="Select State" optionLabel="name" optionValue="id" (onChange)="checkValidtionField('state')"></p-dropdown>
+        <span id="state" class="error-card" style="display: none;">State is required</span>
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">City</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="City" (keyup)="checkValidtionField('city')" [(ngModel)]="cityValue">
+        <span id="city" class="error-card" style="display: none;">City is required</span>
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px">
+        <span class="card-number-style">Zip</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="Zip" (keyup)="checkValidtionField('zip')" [(ngModel)]="zipValue">
+        <span id="zip" class="error-card" style="display: none;">Zip is required</span>
+    </div>
+    <div class="payment-method-detail">
+      {{(paymentMethod == 'card' ? 'Credit Card' : paymentMethod) | titlecase}} Details
+    </div>
+    <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12 col-12 margin-10px" *ngIf="paymentMethod == 'card'">
+      <span class="card-number-style">Card Number</span>
+      <div class="payment-field" id="ccnumber"></div>
+      <span id="cardnumber" class="error-card" style="display: none;">Card number is required</span>
+  </div>
+  <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12 col-12 margin-10px" *ngIf="paymentMethod == 'card'">
+      <span class="card-number-style">Expiry Date</span>
+      <div class="payment-field" id="ccexp"></div>
+      <span id="expirydate" class="error-card" style="display: none;">Expiry date is required</span>
+  </div>
+  <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12 col-12 margin-10px" *ngIf="paymentMethod == 'card'">
+      <span class="card-number-style">CVV</span>
+      <div class="payment-field" id="cvv"></div>
+  </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px" *ngIf="paymentMethod == 'check'">
+        <span class="card-number-style">Check Number</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="Check Number" (keyup)="checkValidtionField('checkNumber')" [(ngModel)]="checkNumber">
+        <span id="checkNumber" class="error-card" style="display: none;">Check number is required</span>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px" *ngIf="paymentMethod == 'check'">
+        <span class="card-number-style">Bank Name</span>
+        <input type="text" style="width: 100%;" pInputText placeholder="Bank Name" (keyup)="checkValidtionField('bankName')" [(ngModel)]="bankName">
+        <span id="bankName" class="error-card" style="display: none;">Bank name is required</span>
+      </div>
+    <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12"></div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-align-center" style="flex-wrap: wrap;">
+      <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12 no-padding amount-payable-price-style flex-start margin-top-5px margin-bottom-5px" style="flex-wrap: wrap;">
+        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 no-padding flex-end margin-top-5px">
+          <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          </div>
+          <div class="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-button-design">
+            <button *ngIf="!hidePaymentButton" type="submit" id="payButton" [disabled]="hidePaymentButton" (click)="handleSubmit()" class="btn btn-primary btn-block">Pay Now</button>
+            <button *ngIf="hidePaymentButton" type="button" class="btn btn-primary btn-block custom-loader-button-design"><img src="assets/images/service-provider/loader.svg" onload="SVGInject(this)" /></button>
+          </div>
+        </div>
+      </div>
+    <div class="refund-policy-link" (click)="showRefundPolicyFn()">
+      <div>
+        <img width="18px" height="20px" src="assets/images/service-provider/refund-policy-green.png" style="margin-right: 5px; margin-top: -3px;">
+        <span>Refund Policy</span>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding manual-slip" *ngIf="showPaymentFields">
+  <div class="slip-details">
+    <div class="price-details">
+      PRICE DETAILS
+    </div>
+
+    <div class="slip-summary">
+      <img style="width: 20px; margin-right: 10px; float: left;" src="assets/images/service-provider/all_tab.png" />
+      <div class="summary-title">Training Price Summary</div>
+    </div>
+    <div class="slip-details-inner">
+      <div class="detail-left">
+        {{trainingData?.trainingName}}
+      </div>
+      <div class="detail-right">
+         <span *ngIf="trainingData?.price && trainingData?.price != '0'">{{numberOfCounts}} X  {{threadApi.isInt(trainingData.price)}} </span>
+         <span *ngIf="!(trainingData?.price && trainingData?.price != '0')">{{numberOfCounts}} (Free)</span>
+      </div>
+    </div>
+    <div class="slip-details-inner" *ngIf="(trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)) || freeOffer || alternatePricing">
+      <div class="detail-left">
+        <span *ngIf="!alternatePricing && !freeOffer">Early Bird </span> Discount ({{threadApi.isInt(trainingData?.birdPercentage, false)}}% off)
+      </div>
+      <div class="detail-right" style="color: #7f17ff;">
+        -{{threadApi.isInt((trainingData?.price - trainingData?.birdPrice) * numberOfCounts)}}
+      </div>
+    </div>
+    <div class="slip-details-inner">
+      <div class="detail-left">
+        Sales Tax ({{threadApi.isInt(trainingSalesTaxPercent, false)}}%)
+      </div>
+      <div class="detail-right">
+        {{threadApi.isInt(trainingSalesTax)}}
+      </div>
+    </div>
+    <div class="slip-details-inner no-border" *ngIf="manualId && manualData && buyManualCount > 0">
+      <div class="detail-left">
+        Total Training Price
+      </div>
+      <div class="detail-right">
+         <span *ngIf="trainingData?.price && trainingData?.price != '0'">{{threadApi.isInt(calculateTrainingTotalAmount())}} </span>
+         <span *ngIf="!(trainingData?.price && trainingData?.price !='0')">Free</span>
+      </div>
+    </div>
+    <ng-container *ngIf="manualId && manualData && buyManualCount > 0">
+      <div class="slip-summary mt-4">
+        <img style="width: 20px; filter: invert(1); margin-right: 10px; float: left;" src="assets/images/service-provider/manual-white.png" />
+        <div class="summary-title">Manual Price Summary</div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          {{manualData?.manualName}}
+        </div>
+        <div class="detail-right">
+          {{buyManualCount}}
+          <span *ngIf="manualPayablePrice">X {{threadApi.isInt(manualPayablePrice)}}</span>
+          <span *ngIf="!manualPayablePrice">(Free)</span>
+        </div>
+      </div>
+      <div class="slip-details-inner" *ngIf="manualData?.discountPrice && manualData?.discountPrice != '0'">
+        <div class="detail-left">
+          Discount ({{threadApi.isInt(manualData?.discountPercentage, false)}}% off)
+        </div>
+        <div class="detail-right" style="color: #7f17ff;">
+          -{{threadApi.isInt((manualPayablePrice - manualData?.discountPrice) * buyManualCount)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Shipping Cost
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(shippingCost)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Tax on Shipping
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(shippingTax)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Sales Tax {{threadApi.isInt(salesTaxPercent, false)}}%
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(salesTax)}}
+        </div>
+      </div>
+    </ng-container>
+    <div class="slip-details-inner final">
+      <div class="detail-left">
+        Total Amount
+      </div>
+      <div class="detail-right">
+        <span *ngIf="calculateTotalAmount()">{{threadApi.isInt(calculateTotalAmount() + trainingSalesTax)}}</span>
+        <span *ngIf="!(calculateTotalAmount())">Free</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-align-center" *ngIf="!paymentMethod && showPaymentFields">
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding amount-payable-price-style flex-start margin-top-5px margin-bottom-5px">
+    <div *ngIf="!birdPrice" class="total-seats-class-payment-method margin-bottom-15px col-md-4 no-padding" style="text-align: center;">
+        {{countText}}&nbsp;&nbsp;<span>{{numberOfCounts}} x ${{payablePrice}}</span>
+    </div>
+    <div *ngIf="birdPrice" class="total-seats-class-payment-method  margin-bottom-15px col-md-4 no-padding" style="text-align: center;">
+      {{countText}}: <span>{{numberOfCounts}}</span>
+    </div>
+    <div *ngIf="birdPrice" class="total-seats-class-payment-method margin-bottom-15px col-md-4 no-padding" style="text-align: center;">
+      Early Bird Discount Price: {{numberOfCounts}} X ${{birdPrice}}
+    </div>
+    <div class="total-seats-class-payment-method  col-md-4 no-padding" style="text-align: center;">
+      <span style="color: #469073;">Total Amount</span> &nbsp;&nbsp;<span class="payable-price-style">${{calculateTotalAmount()}}</span>
+    </div>
+  </div>
+</div> -->
+<!-- <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-align-center" style="flex-wrap: wrap;" *ngIf="paymentMethod && showPaymentFields">
+    <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12 no-padding amount-payable-price-style flex-start margin-top-5px margin-bottom-5px" style="flex-wrap: wrap;">
+      <span *ngIf="!birdPrice" class="total-seats-class col-5 margin-bottom-15px no-padding">
+          {{countText}}&nbsp;&nbsp;<span>{{numberOfCounts}} x ${{payablePrice}}</span>
+      </span>
+      <span *ngIf="birdPrice" class="total-seats-class col-3 margin-bottom-15px no-padding">
+        {{countText}}: <span>{{numberOfCounts}}</span>
+      </span>
+      <span *ngIf="birdPrice" class="total-seats-class col-5 margin-bottom-15px no-padding">
+        Early Bird Discount Price: {{numberOfCounts}} X ${{birdPrice}}
+      </span>
+      <span class="total-amount-class col-4 no-padding">
+          Total Amount &nbsp;&nbsp;<span class="payable-price-style">${{calculateTotalAmount()}}</span>
+      </span>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 no-padding flex-end margin-top-5px">
+      <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 col-12 no-padding"></div>
+      <div class="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-button-design">
+          <button *ngIf="!hidePaymentButton" type="submit" id="payButton" [disabled]="hidePaymentButton" (click)="handleSubmit()" class="btn btn-primary btn-block">Pay Now</button>
+          <button *ngIf="hidePaymentButton" type="button" class="btn btn-primary btn-block custom-loader-button-design"><img src="assets/images/service-provider/loader.svg" onload="SVGInject(this)" /></button>
+      </div>
+    </div>
+</div>
+<div class="refund-policy-link" *ngIf="paymentMethod && showPaymentFields && policyContent">
+  <div (click)="showRefundPolicyFn()">
+    <img style="margin-right: 5px; margin-top: -3px;" width="18px" height="20px" src="assets/images/service-provider/refund-policy-green.png">
+    <span>Refund Policy</span>
+  </div>
+</div> -->
+<div id="paymentTokenInfo" *ngIf="showPaymentFields"></div>
+<div class="svg-color-change custom-height" [hidden]="!paymentLoading">
+    <img src="assets/images/service-provider/loading-animation-processing-payment.svg" onload="SVGInject(this)" />
+    <div class="Completing-your-purchase">
+      {{paymentMethod == 'card' ? 'Completing your purchase' : 'Processing..'}}
+    </div>
+    <div class="Please-remain-on-the-page-and-do-not-close-your-browser-or-go">
+      Please remain on the page and do not close your browser <br/>or go back until you see a confirmation..
+    </div>
+</div>
+<!-- <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-between padding-right-left-30px margin-top-20px margin-bottom-20px" *ngIf="paymentSuccessPopup">
+    <span class="simple-design-class-text">{{countText}}</span>
+    <span class="simple-design-class-text">{{numberOfCounts}}</span>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-between padding-right-left-30px margin-top-20px margin-bottom-20px" *ngIf="paymentSuccessPopup && payablePrice && payablePrice != '0'">
+    <span class="simple-design-class-text">{{birdPrice ? 'Early Bird Discount ' : ''}}Price</span>
+    <span class="simple-design-class-text" *ngIf="birdPrice">{{birdPrice && birdPrice != '0' ? '$'+birdPrice : 'Free'}}</span>
+    <span class="simple-design-class-text" *ngIf="!birdPrice">{{payablePrice && payablePrice != '0' ? '$'+payablePrice : 'Free'}}</span>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-between padding-right-left-30px margin-top-20px margin-bottom-20px" *ngIf="paymentSuccessPopup && birdPrice && birdPrice != '0'">
+  <span class="simple-design-class-text">Total</span>
+  <span class="simple-design-class-text">{{numberOfCounts}} X ${{birdPrice}}</span>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-between padding-right-left-30px margin-top-20px margin-bottom-20px" *ngIf="paymentSuccessPopup && payablePrice && payablePrice != '0'">
+    <span class="amount-paid">Amount Paid</span>
+    <span class="amount" *ngIf="paymentMethod == 'card'">${{convertIntoInt(successData?.amount)}}</span>
+    <span class="amount" *ngIf="paymentMethod == 'check'">${{calculateTotalAmount()}}</span>
+</div>
+<hr *ngIf="paymentSuccessPopup && (payablePrice && payablePrice != '0')" />
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-between padding-right-left-30px margin-top-20px margin-bottom-20px" *ngIf="paymentSuccessPopup && payablePrice && payablePrice != '0'">
+    <span class="credit-card-text">Payment Type</span>
+    <span class="credit-card-text">{{paymentMethod == 'card' ? "Credit Card" : (paymentMethod == 'check' ? "Check" : "Credit Card")}}</span>
+</div>
+<div class="refund-policy-link success-popup" *ngIf="paymentSuccessPopup && payablePrice && payablePrice != '0' && policyContent">
+  <div (click)="showRefundPolicyFn()">
+    <img style="margin-right: 5px; margin-top: -3px;" width="16px" height="19px" src="assets/images/service-provider/refund-policy-green.png">
+    <span>Refund Policy</span>
+  </div>
+</div> -->
+<div *ngIf="paymentFailurePopup" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center padding-right-left-30px margin-top-20px margin-bottom-20px">
+    <button pButton type="button" (click)="tryAgain()" style="background: transparent; color: #e35757; border-color: #e35757; padding: 5px 40px; box-shadow: none;" label="Try Again"></button>
+</div>
+<p-dialog [ngClass]="scrollBarEffect ? 'hide-scroll-bar refund-popup-modal' : 'refund-popup-modal'" [(visible)]="showRefundPolicy" [modal]="true" [draggable]="false" [style]="{width: '70vw'}">
+  <!-- <div class="ps" style="height: 100%;" [perfectScrollbar]="sconfig"> -->
+    <div class="col-11 col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin custom-heading-flex-class refund-popup custom-white-background-color">
+      <div class="col-11 col-xl-11 col-lg-11 col-md-11 col-sm-11 no-padding row no-margin custom-popup-header">
+          <span>Refund Policy</span>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 no-padding refund-close-button">
+        <button (click)="hideRefundPolicy()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 border-bottom-1px refund-policy-html ck-content" (mouseenter)="ScrollBarEffect(false)" (mouseleave)="ScrollBarEffect(true)" [innerHtml]="transformHtml(policyContent)"></div>
+  <!-- </div> -->
+</p-dialog>

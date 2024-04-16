@@ -1,0 +1,37 @@
+<div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader"></div>
+<div *ngIf="!loading">
+        <div  class="bugs-grid-row" [style.height]="'calc(100vh - '+170+'px)'">
+                <div #top id="partLists" class="row-data thread-scroll-container" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                    <ngx-masonry [options]="{ gutter: 10,isFitWidth: true }" class=" parts masonry-item-container" 
+                        [updateLayout]="updateMasonryLayout" [ordered]="true">
+                        <div ngxMasonryItem class="parts-grid-col masonry-items" 
+                            *ngFor="let threadList of resultdatalist; let trd = index"  (click)="viewBugFeature(threadList , resultdatalist)">
+                            <div class="bugs-card cursor">
+                                <div class="bug-box " [ngClass]="{'bug-box-active' : threadList.selected}">
+                                    <div class="bug-status {{threadList.threadStatus}}" [ngClass]="{'bug-status-active': threadList.selected}">
+                                        <div class="bug-status-text">ID# {{status}}{{threadList.threadId}} -
+                                            {{threadList.threadStatus}}
+                                        </div>
+                                    </div>
+                                    <div class="bug-title-text">{{threadList.threadTitle}}</div>
+                                    <div class="bug-description-text">{{threadList.content}}</div>
+                                    <div class="{{threadList.platformTypeTitle}}">
+                                        <div class="platform-text">{{threadList.platformTypeTitle}}</div>
+                                    </div>
+                                    <div class="date-time" title="{{threadList.createdOn}}">{{threadList.createdOn}}
+                                    </div>
+                                    <div class="line"></div>
+                                    <div>
+                                        <img [src]="threadList.profileImage" class="bfprofile">
+                                        <div class="username">{{threadList.userName}}</div>
+                                        <div class="userRole">{{threadList.userRole}}</div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </ngx-masonry>
+                </div>
+        </div>
+</div>

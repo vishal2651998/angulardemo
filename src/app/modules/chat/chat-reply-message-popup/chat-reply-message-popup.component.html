@@ -1,0 +1,29 @@
+<section *ngIf="isChatExist(replyChat)" (click)="OpenReplyPopup(replyChat)" class="reply-chat-wrapper">
+  <section class="top-user-info-row">
+    <div>
+      <img src="{{replyChat?.profileImg}}" alt="" />
+    </div>
+    <div>
+      <h6>{{replyChat.userName}}<span>{{replyChat.createdOnMobile + ' UTC' |
+                                      date:'shortTime':'IST'}}</span></h6>
+    </div>
+  </section>
+  <!-- <span *ngIf ="IsReplyLinkMessage(replyChat)" class="text"> <a href="{{convertunicode(replyChat.content)}}" target="_blank">{{replyChat.content}} -->
+  <section class="reply-chat-wrapper-inner" [ngClass]="IsReplyMessageAudioExist(replyChat) ? 'clmn-direction' : ''">
+    <span *ngIf ="IsReplyNormalMessage(replyChat)" [innerHTML]="GetReplyNormalMessage(replyChat)"></span>
+    <div *ngIf ="IsReplyMessageImageExist(replyChat)">
+      <img src="{{GetReplyMessageImage(replyChat)}}">   
+                   
+    </div>
+    <div *ngIf ="IsReplyMessageAudioExist(replyChat)">
+      <!-- <img  src="assets/images/chat/sound-thumb.png">    -->
+      <audio  controls style="width:100%" [src]="replyChat.filePath"></audio>
+      </div>
+    
+    <div>    
+      <span *ngIf ="IsReplyLinkMessage(replyChat)" class="text"> {{replyChat.content}}</span>
+      <span *ngIf ="IsReplyFileInfoExist(replyChat)">{{GetReplyMessageChatFileName(replyChat)}}</span>
+      <span *ngIf ="IsReplyFileInfoExist(replyChat)" class="file-size">{{FileSize(replyChat.fileSize)}}</span>
+    </div>
+  </section>
+</section>

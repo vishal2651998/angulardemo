@@ -1,0 +1,332 @@
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin image-banner">
+  <img *ngIf="domainData?.bannerImageUrl && !reparifyDomain" [ngStyle]="{'height': imageHeight, 'width':bannerFit?'100%':'auto'}"
+    src="{{domainData?.bannerImageUrl}}" />
+  <img *ngIf="!domainData?.bannerImageUrl && !reparifyDomain" [ngStyle]="{'height': imageHeight, 'width':'100%'}"
+    src="assets/images/service-provider/inner-detail.jpg" />
+  <img *ngIf="reparifyDomain" [ngStyle]="{'height': imageHeight, 'width':'100%'}"
+    src="assets/images/service-provider/atg-banner-image.jpg" />
+</div>
+<div class="col-xl-12 col-lg-12 no-padding col-md-12 col-sm-12 col-12 font-family-lato">
+  <div class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row top-image-section custom-padding-heading">
+    <div class="width-80-perc custom-width">
+      <div class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row no-margin no-padding">
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 new-header-image col-4 image-section">
+          <div class="img-parent">
+            <img src="{{domainData?.business_logo}}" alt="logo" />
+          </div>
+        </div>
+        <div class="col-xl-9 col-lg-9 col-md-8 col-sm-8 col-8 no-margin image-right-section padding-right-0px">
+          <div class="col-lg-12 col-md-12 col-sm-12 no-padding custom-margin-heading">
+            <span class="text-heading-section-right">{{domainData?.market_place_company_name}}</span>
+          </div>
+          <div class="col-lg-12 col-md-12 col-sm-12 no-padding margin-top-5px">
+            <span *ngIf="domainData?.market_place_summary_service_offered"
+              class="text-subheading-section-right">{{domainData?.market_place_summary_service_offered}}</span>
+            <span *ngIf="!domainData?.market_place_summary_service_offered"
+              class="text-subheading-section-right">Summary of services offered</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center row new-top-image-section new-top-custom-style">
+    <div class="width-80-perc custom-width">
+      <div class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row no-margin no-padding">
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-0"></div>
+        <div
+          class="col-xl-9 col-lg-9 col-md-8 col-sm-8 col-12 no-margin row padding-right-0px custom-padding-detail-section">
+          <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 col-6 ">
+            <p *ngIf="domainData?.market_place_website" class="no-margin flex-align-center"><i
+                class="pi pi-globe icon-color"></i><a href="{{domainData?.market_place_website}}" target="_blank"
+                class="website-text">{{domainData?.market_place_website}}</a></p>
+            <p *ngIf="!domainData?.market_place_website" class="no-margin flex-align-center"><i
+                class="pi pi-globe icon-color"></i><a target="_blank" class="website-text">Website URL</a></p>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 col-6 " style="margin-right: 10px !important;">
+            <p *ngIf="domainData?.market_place_email" class="no-margin flex-align-center"><i
+                class="pi pi-envelope icon-color"></i><a href="mailto:{{domainData?.market_place_email}}"
+                target="_blank" class="website-text">{{domainData?.market_place_email}}</a></p>
+            <p *ngIf="!domainData?.market_place_email" class="no-margin flex-align-center"><i
+                class="pi pi-envelope icon-color"></i><a target="_blank" class="website-text">Email</a></p>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 col-6 custom-flex-info">
+            <p class="no-margin flex-align-center"><i class="pi pi-phone icon-new-color"></i>
+              <a *ngIf="domainData?.market_place_phone_number" href="tel:{{domainData?.market_place_phone_number}}"
+                target="_blank" class="website-new-text">{{domainData?.market_place_phone_number}}</a>
+              <span *ngIf="!domainData?.market_place_phone_number" class="website-new-text">Phone Number</span>
+            </p>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-5 col-sm-6 col-6 custom-flex-info">
+            <p class="no-margin flex-align-center"><i class="pi pi-map-marker icon-new-color"></i>
+              <span *ngIf="domainData?.market_place_city" class="website-new-text">{{domainData?.market_place_city}},
+                {{domainData?.market_place_state}}</span>
+              <span *ngIf="!domainData?.market_place_city" class="website-new-text">City, State</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="min-height: 90px;"
+        class="col-xl-12 col-lg-12 flex-center col-md-12 col-sm-12 col-12 row no-margin no-padding custom-margin-inner-detail-top">
+        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-0"></div>
+        <div
+          class="col-xl-9 col-lg-9 col-md-8 col-sm-8 col-12 no-margin row padding-right-0px custom-padding-detail-section">
+          <p style="width: 100%" *ngIf="domainData?.market_place_description"
+            class="descrition-style flex-align-center">
+            {{domainData?.market_place_description}}
+          </p>
+          <p style="width: 100%" *ngIf="!domainData?.market_place_description"
+            class="descrition-style flex-align-center">
+            Description about services
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin flex-center font-family-lato"
+  style="margin-bottom: 40px !important;">
+  <div class="width-80-perc margin-top-30px margin-bottom-30px ">
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12 row custom-margin-breadcum no-padding flex-align-center">
+      <img (click)="goBack()" style="margin-right: 15px; cursor: pointer;" width="17px" height="17px" src="assets/images/service-provider/back-arrow.png">
+      <a style="color: #000 !important;" href="https://marketplace.collabtic.com/"><i class="pi pi-home margin-right-5px"></i><span>Home</span></a><i class="pi pi-angle-right"></i><a style="color: #000 !important;"href="{{domainurl}}"><span class="color-green">{{domainData?.business_name}}</span></a>
+    </div> -->
+    <div class="row no-margin flex-align-end">
+      <div class="margin-top-10px green-color-background">
+        <img width="35px" height="35px" src="assets/images/service-provider/training-2.svg" onload="SVGInject(this)">
+      </div>
+      <img height="44px" src="assets/images/service-provider/Training offered.png">
+      <div class="sub-heading-style">
+        <span>Training Offered</span>
+      </div>
+    </div>
+    <div class="inner-section">
+      <div class="inner-section-card" *ngFor="let training of serviceProviderData; let i=index;">
+
+        <div class="col-lg-12 col-md-12 col-sm-12 no-padding row no-margin">
+          <div class="col-lg-3 col-md-3 col-sm-12 padding-20px">
+            <img class="border-radius-10px height-width-100-perc"
+              [src]="training?.bannerImageUrl ? training?.bannerImageUrl : 'assets/images/service-provider/training-blank-1.png'">
+          </div>
+          <div class="custom-id-div-design">
+            <span>
+              ID#{{training.id}}
+            </span>
+          </div>
+          <div class="col-lg-7 col-md-7 col-sm-12 padding-20px"
+            style="display: flex; justify-content: center; align-items: center;flex-wrap: wrap;">
+            <div class="col-lg-6 col-md-6 col-sm-6 no-padding">
+              <p class="no-margin">
+                <span class="card-heading">
+                  {{training?.trainingName}}
+                </span>
+              </p>
+              <p class="custom-style">
+               <ng-container  *ngIf="training?.trainingMode == 'Recorded' ">
+                <img src="assets/images/service-provider/record-green.png">
+              </ng-container>
+              <ng-container  *ngIf="training?.trainingMode == 'Seminar' ">
+                <img width="20px" height="15px" src="assets/images/service-provider/seminar-collabtic-detail.png" style="object-fit: contain;">
+              </ng-container>
+              <ng-container  *ngIf="training?.trainingMode == 'Webinar' ">
+                <img width="21px" height="16px" src="assets/images/service-provider/webinar-collabtic-detail.png">
+              </ng-container>
+                <span>
+                  Training mode - {{training?.trainingMode}}
+                </span>
+              </p>
+              <p class="custom-style" *ngIf="training?.trainingMode != 'Recorded'">
+                <img width="15px" height="15px" src="assets/images/service-provider/calender-green.png">
+                <span *ngIf="training?.startDate != training?.endDate">
+                  {{getStartDateFormat(training?.startDate)}} - {{getDateFormat(training?.endDate)}}
+                </span> <span *ngIf="training?.startDate == training?.endDate">
+                  {{getDateFormat(training?.endDate)}}
+                </span>
+              </p>
+              <p class="custom-style" *ngIf="training?.trainingMode == 'Recorded'">
+                <img width="15px" height="15px" src="assets/images/service-provider/calender-green.png">
+                <span *ngIf="training?.startDate">
+                  Posted Date: {{getDateFormat(training?.startDate)}}
+                </span>
+              </p>
+              <p class="custom-style"
+                *ngIf="training?.trainingMode == 'Webinar' || training?.trainingMode == 'Recorded'">
+                <i class="pi pi-clock"></i>
+                <span *ngIf="training?.trainingMode == 'Webinar'">
+                  {{getHourFormat(training?.startTime)}} - {{getHourFormat(training?.endTime)}} {{training?.timeZone}}
+                </span>
+                <span *ngIf="training?.trainingMode == 'Recorded'">{{training?.hours}} hours</span>
+              </p>
+              <p class="custom-style" *ngIf="training?.trainingMode == 'Seminar'">
+                <img width="13px" height="17px" src="assets/images/service-provider/map-pin-green.png">
+                <span>
+                  {{training?.city}}, {{training?.state}}
+                </span>
+              </p>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 no-padding">
+              <p class="card-custom-margin">
+                <img *ngIf="training.trainingMode != 'Recorded' && training.isSold == '0' && training.isClosed == '0'"
+                  width="160" height="50" src="assets/images/service-provider/registration-open.png" />
+                <img *ngIf="training.trainingMode != 'Recorded' && training.isSold == '0' && training.isClosed == '1'"
+                  width="73" height="75" src="assets/images/service-provider/training-closed.png" />
+                <img *ngIf="training.trainingMode != 'Recorded' && training.isSold == '1' && training.isClosed == '0'"
+                  width="85" height="46" src="assets/images/service-provider/training-sold-out.png" />
+                <img *ngIf="training.trainingMode != 'Recorded' && training.isSold == '1' && training.isClosed == '1'"
+                  width="73" height="75" src="assets/images/service-provider/training-closed.png" />
+              </p>
+            </div>
+            <div class="custom-price-section-design">
+              <div class="flex-center-align">
+              </div>
+              <div class="flex-center-align">
+                <div
+                  *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)"
+                  class="custom-bird-price-design">
+                  <div class="percentage-design">-{{training?.birdPercentage | number}}%</div>
+                  <div class="bird-price-design">{{training?.birdPrice | currency: 'USD':true:'1.0-0'}}</div>
+                </div>
+                <div class="early-bird-magin"
+                  *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)">
+                  <div class="early-bird-price-discount-design">
+                    Early bird discount price
+                  </div>
+                  <div class="early-bird-price-discount-design-valid-upto">
+                    VALID UP TO {{getDateFormat(training?.expiryDateBirdPrice)}}
+                  </div>
+                </div>
+                <div
+                  *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)"
+                  class="custom-line-design"></div>
+                <div *ngIf="training?.price && training?.price != '0'" class="regularPriceNew">
+                  <span
+                    class="{{training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice) ? 'small-text-size' : 'price-text'}}">{{training?.price | currency: 'USD':true:'1.0-0'}}</span>
+                 <span class="curr-price"
+                    *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)">Regular
+                    Price</span>
+                </div>
+                <span *ngIf="!training?.price || training?.price == '0'" class="price-text">Free</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-12 col-12 row no-padding no-margin">
+            <div class="flex-center-align col-lg-12 col-md-12 col-sm-6 col-6 no-padding">
+            </div>
+            <div *ngIf="!training?.isTraingClosed"
+              class="col-lg-12 col-md-12 col-sm-6 row no-margin col-6 no-padding flex-end-end">
+              <div class="col-lg-2 custom-view-buy-image-design col-md-2 col-sm-2 col-2 no-padding">
+                <img height="54px" src="assets/images/service-provider/View - View & Buy Button.png">
+              </div>
+              <div style="cursor:pointer;"
+                class="custom-style-new custom-view-buy-text-design col-lg-10 col-md-10 col-sm-10 col-10 no-padding"
+                (click)="redirectToInnerDetailPage(training)">
+                <span class="view-buy flex-align-center cursor-pointer">
+                  <span class="margin-right-5px">VIEW</span><i class="pi pi-angle-double-right"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height: 100%; width: 100%; display: table;" *ngIf="!serviceProviderData?.length && !loadingList">
+        <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12"
+          style="text-align:center; display:table-cell; vertical-align: middle;">
+          <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center">
+            <img width="295px" height="312px" src="assets/images/service-provider/vector-smart-object-3.png" />
+          </div>
+          <div
+            class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center margin-top-bottom-30px training-text">
+            Training not available
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12 col-md-12 col-sm-12 no-padding no-margin"
+        *ngIf="!loadingList && loadList && serviceProviderData?.length">
+        <div class="flex-center">
+          <span class="load-more" (click)="loadMoreData()"><span>LOAD MORE</span> <i
+              class="pi pi-angle-double-down"></i></span>
+        </div>
+        <div class="grey-line"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div
+  class="hide col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding flex-center background-white margin-top-30px font-family-lato">
+  <div class="width-80-perc">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding margin-top-30px flex-center">
+      <span class="blog-title">Blog</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding margin-top-30px flex-center">
+      <span class="blog-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget congue justo,
+        nec pellentesque di..</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding custom-blog-margin">
+      <div class="margin-bottom-30px">
+        <p-carousel styleClass="blog-card font-family-lato" [value]="blogs" [showNavigators]="false" [numVisible]="3"
+          [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions">
+          <ng-template let-blog pTemplate="item">
+            <img class="margin-bottom-20px" alt="Card" [src]="blog.image">
+            <p><span class="blog-date">{{blog.date}}</span></p>
+            <p><span class="blog-tags">{{blog.tags}}</span></p>
+            <p class="no-margin padding-15px-top-bottom border-top-2px-solid">
+              <span class="blog-footer-description">{{blog.description}}</span>
+            </p>
+          </ng-template>
+        </p-carousel>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="hide col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding flex-center background-aliceblue font-family-lato custom-padding">
+  <div class="width-80-perc">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding margin-top-30px flex-center">
+      <span class="blog-title">Press Releases</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding margin-top-30px flex-center">
+      <span class="blog-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget congue justo,
+        nec pellentesque di..</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding custom-blog-margin">
+      <div class="margin-bottom-30px">
+        <p-carousel styleClass="press-release-card font-family-lato" [value]="blogs" [showNavigators]="false"
+          [numVisible]="3" [numScroll]="3" [circular]="false" [responsiveOptions]="responsiveOptions">
+          <ng-template let-blog pTemplate="item">
+            <div class="padding-inner">
+              <img alt="Card" [src]="blog.image">
+              <p></p>
+              <p><span class="blog-tags">{{blog.tags}}</span></p>
+              <p class="no-margin padding-15px-top-bottom border-top-2px-solid">
+                <span class="blog-footer-description">{{blog.description}}</span>
+              </p>
+            </div>
+          </ng-template>
+        </p-carousel>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="hide col-xl-12 col-lg-12 col-md-12 flex-center col-sm-12 no-padding background-image font-family-lato">
+  <div class="width-80-perc">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding custom-review-position">
+      <div class="margin-bottom-30px col-xl-4 col-lg-6 col-md-8 col-sm-12 no-padding">
+        <p-carousel styleClass="customer-say font-family-lato" [value]="customerReview" [showNavigators]="false"
+          [numVisible]="1" [numScroll]="1" [circular]="false" [responsiveOptions]="reviewResponsiveOptions">
+          <ng-template let-review pTemplate="item">
+            <p class="quote">“</p>
+            <p class="title-1">
+              Customers say about
+            </p>
+            <p class="title-2">
+              {{review.companyName}}
+            </p>
+            <p><span class="description-text">{{review.description}}</span></p>
+            <p><span class="review-by">{{review.reviewBy}} / <span>{{review.reviewerPosition}}</span></span></p>
+          </ng-template>
+        </p-carousel>
+      </div>
+    </div>
+  </div>
+</div>

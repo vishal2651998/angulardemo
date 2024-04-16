@@ -1,0 +1,72 @@
+<div class="no-item-list empty-container text-center" [ngClass]="{'show-6': showType == 6}" style="background: #dfe1e3;">
+    
+    <div class="item-empty-container item-empty-container-global 'empty-center" *ngIf="showType==4 && contentTypeValue==2">
+        <img class="field-imge-store" width="92" height="76" src="assets/images/no-store-empty.png" alt="no-result-media">
+        <p  class="field-imge-p1" >No store assigned</p>  
+        <p  class="field-imge-p2" >Please contact your administrator</p>  
+    </div>
+    
+    <div class="item-empty-container" *ngIf="showType==1" [ngClass]="{'vertical-center': verticalCenterFlag}">
+        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+        <p class="item-empty-para empty-res padd-top-20">No result found</p>
+    </div>
+
+    <div class="item-empty-container item-empty-container-global" *ngIf="showType==2" [ngClass]="{'empty-center' : !workStreamPage && pageTitleText == 'Knowledge Base'}">
+
+        <img class="field-imge" [src]="contentTypeDefaultNewImg" alt="no-result-media">
+
+        <p *ngIf="!workStreamPage" class="item-empty-para empty-res padd-top-20" [ngClass]="{ 'new-thread' : contentTypeDefaultNewText == 'New Thread' }" >{{newPartInformation}}</p>
+        <p *ngIf="workStreamPage" class="item-empty-para empty-res padd-top-20" >Tap on the ‘Go to {{pageTitleText}}’ button to open the {{pageTitleText}} page.</p>
+
+        <div *ngIf="!workStreamPage"  class="new-button"  (click)="actionItem(contentTypeDefaultNewTextDisabled)" >{{contentTypeDefaultNewText}}</div>
+        <div *ngIf="workStreamPage"  class="goto-button"  (click)="pageNav()" >Go to {{pageTitleText}}&nbsp;<img src="assets/images/login/redirect-login-arrow.png"></div>
+    </div>
+
+    <div class="item-empty-container" [ngClass]="{ 'item-empty-container-global' :(pageTitleText == 'Market Place' || pageTitleText == 'Manuals') }" style="top:20%;" *ngIf="showType==3">
+
+        <img [src]="contentTypeDefaultNewImg" alt="no-result-media" [ngStyle]="{'width:30%' :(pageTitleText != 'Market Place' && pageTitleText != 'Manuals')}" [ngClass]="{ 'field-imge' :(pageTitleText == 'Market Place' || pageTitleText == 'Manuals') }"/>
+            <p *ngIf="(pageTitleText != 'Market Place' && pageTitleText != 'Manuals')" class="item-empty-para empty-res padd-top-20">{{newPartInformation}}</p>
+
+            <p *ngIf="(pageTitleText == 'Market Place' || pageTitleText == 'Manuals')" class="item-empty-para empty-res padd-top-20 margin-top-15px">{{newPartInformation}}</p>
+
+            <div *ngIf="(pageTitleText != 'Market Place' && pageTitleText != 'Manuals')" class="thread-add-new {{activeClass}}" style="background: #e55554 !important;" (click)="actionChatRedirect(actionUrl)">
+
+                <span> {{contentTypeDefaultNewText}}</span><span><i style="font-size: 13px;margin-right: 4px;" class="pi pi-angle-double-right"></i></span>
+                </div>
+            <div *ngIf="(pageTitleText == 'Market Place' || pageTitleText == 'Manuals')" class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 no-padding flex-center">
+                <div (click)="rediretToNew()" class="custom-button-design flex-align-justify-center">
+                    <i class="pi pi-plus white-text-button-design-text"></i>
+                    <span class="new-trainging-button-text-design">New {{pageTitleText == 'Market Place' ? "Training" : "Manual"}}</span>
+                </div>
+            </div>
+    </div>
+
+    <div class="item-empty-container" *ngIf="showType!=1 && showType!=2 && showType!=3 && showType!=4 && showType!=6 && !workStreamPage && accessCheck == '0'" >
+
+        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+        <p class="item-empty-para empty-res padd-top-20">No result found</p>
+    </div>
+    <div class="item-empty-container" *ngIf="showType!=1 && showType!=2 && showType!=3 && showType!=4 && !workStreamPage && accessCheck == '1'" >
+
+        <img class="field-imge" src="assets/images/thread/no-permission.png" width="250" height="250" alt="no-result-media">
+        <p class="item-empty-para empty-res padd-top-20" >This view is restricted. Contact your administrator for access</p>
+    </div>
+
+    <div class="item-empty-container item-empty-container-global" *ngIf="showType!=1 && showType!=2 && showType!=3 && showType!=4 && showType!=5 && workStreamPage">
+        <img class="field-imge" src="assets/images/documents-blank-page.png" alt="no-result-media">
+        <p *ngIf="workStreamPage" class="item-empty-para empty-res padd-top-20" >Tap on the ‘Go to {{pageTitleText}}’ button to open the {{pageTitleText}} page.</p>
+        <div *ngIf="workStreamPage"  class="goto-button"  (click)="pageNav()" >Go to {{pageTitleText}}&nbsp;<img src="assets/images/login/redirect-login-arrow.png"></div>
+    </div>
+
+    <div class="item-empty-container item-empty-container-global" *ngIf="showType==5" [ngClass]="{'empty-center' : !workStreamPage && pageTitleText == 'Knowledge Base'}">
+        <img class="field-imge" src="assets/images/thread/no-permission.png" alt="no-result-media">
+        <p class="item-empty-para empty-res padd-top-20" >This view is restricted. Contact your administrator for access</p>
+    </div>
+
+    <!-- User Settings Empty Container-->
+    <div class="item-empty-container item-empty-container-global empty-center" *ngIf="showType==6">
+        <img class="user-setting-img" [src]="contentTypeDefaultNewImg" alt="no-result-media" [ngStyle]="{'width:30%' :(pageTitleText != 'Market Place' && pageTitleText != 'Manuals')}" />
+        <p class="item-empty-para empty-res padd-top-20" >{{contentTypeDefaultNewText}}</p>
+    </div>
+
+</div>

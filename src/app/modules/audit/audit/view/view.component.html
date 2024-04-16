@@ -1,0 +1,365 @@
+<div [style.height.px]="innerHeight">
+    <div *ngIf="loading">
+        <div class="loader"><img style="left: 50%;top: 50%;" width="64" src="assets/images/loading.svg" alt="Loader" /></div>
+    </div>
+    <div *ngIf="!loading" >
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin header-container">
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding v-middle">
+                <span class="heading-text-lt">Audit <span class="green-text">ID# {{shopId}}</span></span>
+            </div>
+            <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 no-padding text-center v-middle">
+                <span class="heading-text-md">{{shopName}}</span>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding text-right v-middle">
+                <img class="heading-text-rt cursor" (click)="close()" src="assets/images/shop/detail-close.png" />
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin shop-view-container">
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 no-padding">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+                    <div class="lt-container">
+                        <div class="user-row">
+                            <div >
+                                <div [style.height]="'calc(100vh - 110px)'">
+                                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig"> 
+                                        <div class="profile-row system-settings-menu-row" [ngClass]="{ 'active' : tab1, 'normal' : !tab1 }" (click)="selectTap('tab1')">
+                                            <div class="profile-row-inner ">
+                                                <span class="pimg tab1"></span>
+                                                <span class="uname" >Audit Details</span>                                                    
+                                            </div>                    
+                                        </div>  
+                                        
+                                        <p-tree [value]="files" class="w-full md:w-30rem" selectionMode="single" [(selection)]="selectedFile"
+                                            (onNodeExpand)="nodeExpand($event)" (onNodeCollapse)="nodeCollapse($event)" (onNodeSelect)="nodeSelect($event)"(onNodeUnselect)="nodeUnselect($event)"></p-tree>
+                                    </div>
+                                </div>
+                            </div>              
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 no-padding">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 right-padding">
+                    <div class="middle-container" [ngClass]="{'task-container': tab2}">
+                        <div >
+                            <div > 
+                                <div *ngIf="tab1" style="width:100%;">
+                                    <div [style.height]="'calc(100vh - 150px)'">
+                                        <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig">
+                                            <div class="top-row">
+                                                <div class="top-lt" *ngIf="storeDetail.address != ''">
+                                                    <div #mapRef id="map" [ngStyle]="{'width': '311px', 'height': '230px'}"></div>
+                                                </div>
+                                                <div class="top-lt" *ngIf="storeDetail.address == ''">
+                                                    <img src="assets/images/shop/detail-default-img.png" />
+                                                </div>
+                                                <div class="top-rt">
+                                                    <span class="title">{{storeDetail.storeName}}</span>
+                                                    <div class="set-width-100">
+                                                        <div class="set-width-50">
+                                                            <div class="img-text-row">
+                                                                <img class="img-col" src="assets/images/shop/detail-map.png" />
+                                                                <span class="text-col">
+                                                                    <p>Location</p>
+                                                                    <p *ngIf="storeDetail.address != ''">{{storeDetail.address}}</p>
+                                                                    <p *ngIf="storeDetail.address == ''">-</p>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="set-width-50">
+                                                            <div class="img-text-row">
+                                                                <img class="img-col" src="assets/images/shop/detail-mail.png" />
+                                                                <span class="text-col">
+                                                                    <p>Contact Email</p>
+                                                                    <p *ngIf="storeDetail.email != ''"><a style="color:#000000 !important;" title="{{storeDetail.email}}" href="mailto:{{storeDetail.email}}">{{storeDetail.email}}</a></p>
+                                                                    <p *ngIf="storeDetail.email == ''">-</p>
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                    </div> 
+                                                    <div class="set-width-100">
+                                                        <div class="set-width-50">
+                                                            <div class="img-text-row">
+                                                                <img class="img-col" src="assets/images/shop/detail-contact.png" />
+                                                                <span class="text-col">
+                                                                    <p>Contact Name</p>
+                                                                    <p *ngIf="storeDetail.contactName != ''">{{storeDetail.contactName}}</p>
+                                                                    <p *ngIf="storeDetail.contactName == ''">-</p>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="set-width-50">
+                                                            <div class="img-text-row">
+                                                                <img class="img-col" src="assets/images/shop/detail-phone.png" />
+                                                                <span class="text-col">
+                                                                    <p>Contact Phone#</p>
+                                                                    <p *ngIf="storeDetail.phoneNumber != ''">{{storeDetail.phoneNumber}}</p>
+                                                                    <p *ngIf="storeDetail.phoneNumber == ''">-</p>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                               
+                                                </div>
+                                            </div>
+                                            <div class="bottom-row">
+                                                
+                                                <div class="progress-div">
+                                                    <div class="lt">
+                                                        <img src="assets/images/shop/detail-progress.png" />
+                                                        <span class="pro-text">Progress</span>
+                                                        <span class="data-text">Audit Date: {{storeDetail.auditDate}}</span>
+                                                    </div>
+                                                    <div class="rt">
+                                                        <img src="assets/images/shop/detail-export.png" />
+                                                        <span class="excel-text">Export to Excel</span>
+                                                    </div>
+                                                </div>
+                                                <div class="step-div" >
+                                                    <div class="set-width-steps" style="margin-left: -10px;">
+                                                        <div class="step-border-width"></div>
+                                                        <div class="step ">
+                                                            <div  class="step-bg step-bg-1"><img src="assets/images/shop/detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">1</span>
+                                                            </div>
+                                                            <div class="step-text">Start of Audit Process</div>
+                                                        </div>                                            
+                                                        
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-2"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-2"><img src="assets/images/shop/detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">2</span>
+                                                            </div>
+                                                            <div class="step-text">Audit Request confirmed</div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-3"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-3"><img src="assets/images/shop/detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">3</span>
+                                                            </div>
+                                                            <div class="step-text">Audit scheduled</div>
+                                                        </div>
+                                                        
+
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-4"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-4"><img src="assets/images/shop/detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">4</span>
+                                                            </div>
+                                                            <div class="step-text">Audit Review Complete</div>
+                                                        </div>
+                                                        
+
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-5"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-5"><img src="assets/images/shop/detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">5</span>
+                                                            </div>
+                                                            <div class="step-text">On-Site Audit Complete</div>
+                                                        </div>
+                                                    
+
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-6"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-6"><img src="assets/images/shop/gray-detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">6</span>
+                                                            </div>
+                                                            <div class="step-text">Resolve open items (Gaps)</div>
+                                                        </div>
+                                                        
+
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-7"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-7"><img src="assets/images/shop/gray-detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">7</span>
+                                                            </div>
+                                                            <div class="step-text">Gaps Closed</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-8"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-8"><img src="assets/images/shop/gray-detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">8</span>
+                                                            </div>
+                                                            <div class="step-text">Audit Passed</div>
+                                                        </div>
+                                                    </div>                                           
+                                                    
+                                                    <div class="set-width-steps">
+                                                        <div class="step-border-width step-bg-9"></div>
+                                                        <div class="step step-2">
+                                                            <div  class="step-bg step-bg-9"><img src="assets/images/shop/gray-detail-arrow.png" /></div>
+                                                            <div class="step-line"></div>
+                                                            <div class="step-circle">
+                                                                <span class="number-text">9</span>
+                                                            </div>
+                                                            <div class="step-text">Final Assessment Report Submitted</div>
+                                                        </div> 
+                                                    </div>                                           
+                                                </div>
+                                                <div class="percentage-div">
+                                                    <div class="new-div">
+                                                        <div class="set-border">
+                                                            <div class="text-div">NEW</div>
+                                                            <div class="set-bottom-border"></div>
+                                                            <div class="perc-div">{{storeDetail.newStock}}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="exist-div">
+                                                        <div class="set-border">
+                                                            <div class="text-div">Existing</div>
+                                                            <div class="set-bottom-border"></div>
+                                                            <div class="perc-div" style="width: 100%;">
+                                                                <span class="span-div-1">
+                                                                    <p class="text-1">{{storeDetail.goodStock}}</p>
+                                                                    <p class="text-2">good</p>
+                                                                </span>
+                                                                <span class="span-div-2">
+                                                                    <p class="text-1">{{storeDetail.avgStock}}</p>
+                                                                    <p class="text-2">Average</p>
+                                                                </span>
+                                                                <span class="span-div-3">
+                                                                    <p class="text-1">{{storeDetail.attentionStock}}</p>
+                                                                    <p class="text-2">Attention Required</p>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>                                            
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="tab2" style="width:100%;">
+                                    <div class="audit-data" [style.height]="'calc(100vh - 110px)'">
+                                        <div #top id="taskList" class="section-scroll report-row active" [perfectScrollbar]="sconfig">
+                                            <div [ngClass]="{'hide': !sectionLoading}">
+                                                <div class="loader"><img width="64" src="assets/images/loading.svg" alt="Loader" /></div>
+                                            </div>
+                                            <div *ngIf="!sectionLoading">
+                                                <p-accordion class="report-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of taskItems; let t = index;" [multiple]="false" (onClose)="onTabClose($event,item)" (onOpen)="onTabOpen($event,item)">
+                                                    <p-accordionTab id="section-{{t}}" class="section" [transitionOptions]="'100ms'" [selected]="item.isSelected">
+                                                        <p-header class="sec-info">
+                                                            <div class="sec-title">
+                                                                <span class="sec-head truncate" title="{{item.taskName}}">{{item.taskIndex}}. {{item.taskName}}</span>
+                                                                <div id="more" class="cursor more-icon more-sec-{{t}} hide" [matMenuTriggerFor]="secAction" 
+                                                                    (click)="$event.stopPropagation();">
+                                                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                                </div>
+                                                                <mat-toolbar color="primary">
+                                                                    <mat-menu #secAction="matMenu" backdropClass="ptabletmenu">
+                                                                        <div class="part-menu">
+                                                                            <ul>
+                                                                                <li  mat-menu-item class="raction-menu cursor"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                                                <li mat-menu-item class="raction-menu cursor"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                                            </ul>
+                                                                        </div> 
+                                                                    </mat-menu>
+                                                                </mat-toolbar>
+                                                                <div class="sec-desc"></div>
+                                                            </div>
+                                                        </p-header>
+                                                        <div class="content-list" id="cont-list-{{t}}">
+                                                            <div *ngIf="!item.formFlag" class="task-row">
+                                                                <div class="task-detail {{task.fieldClass}}" *ngFor="let task of item.auditTaskData; let ti = index;">
+                                                                    <div class="field-label {{task.fieldIcon}}" [ngClass]="{'hide': task.fieldName == 'attachments' && task.fieldValue == '[]'}">{{task.fieldLabel}}</div>
+                                                                    <div *ngIf="task.fieldName != 'attachments'" class="field-value {{task.fieldName}}">{{task.fieldValue}}</div>
+                                                                    <div *ngIf="task.fieldName == 'attachments' && task.fieldValue != '[]'" class="field-value {{task.fieldName}}">
+                                                                        <app-attachment-view [loading]="loading" [action]="viewTxt" [attachments]="task.fieldValue"></app-attachment-view>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div *ngIf="item.formFlag">
+                                                                <form class="form-horizontal" [formGroup]="taskForm">
+                                                                    <div class="form-items {{tf.fieldClass}}" [ngClass]="{'hide': !tf.isVisible}" *ngFor="let tf of taskFields; let ti = index;">
+                                                                        <div *ngIf="tf.isVisible" [ngSwitch]="tf.fieldType">
+                                                                            <div *ngIf="tf.isRequired" class="required-text text-right {{tf.fieldName}}">{{requiredTxt}}</div>
+                                                                            <div class="field-label {{tf.fieldName}} {{tf.fieldIcon}} item-label">{{tf.fieldLabel}}</div>
+                                                                            <div *ngSwitchCase="'input'">
+                                                                                <div class="field-item">
+                                                                                    <input class="{{tf.fieldName}}" placeholder="{{tf.fieldPlaceHolder}}"
+                                                                                        formControlName="{{tf.fieldName}}" [(ngModel)]="tf.selectedValue"
+                                                                                        maxlength="{{tf.maxLength}}" autocomplete="off" (ngModelChange)="onChange(tf.fieldName, tf, $event)">
+                                                                                </div>
+                                                                                <div *ngIf="taskForm.controls[tf.fieldName].errors" class="invalid-feedback"
+                                                                                    [ngClass]="{'invalid-field': tf.submitted && !tf.valid}">
+                                                                                    <div id="valid-error" class="field-err" *ngIf="taskForm.controls[tf.fieldName].errors.required">{{tf.requiredText}}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div *ngSwitchCase="'dropdown'">
+                                                                                <div class="field-item">
+                                                                                    <p-dropdown appendTo="body" [style]="{'width':'100%'}" class="drop-col dropdown"
+                                                                                        [options]="tf.selectionItems" formControlName="{{tf.fieldName}}" [(ngModel)]="tf.selectedValue"
+                                                                                        placeholder="{{tf.fieldPlaceholder}}" autoWidth="true" filter="true" optionLabel="name"
+                                                                                        optionValue="id" resetFilterOnHide="true" [virtualScroll]="true" (onChange)="onChange(tf.fieldName, tf, $event.value)"></p-dropdown> 
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- Date Picker -->
+                                                                            <div *ngSwitchCase="'inputDatePicker'">
+                                                                                <div class="cursor dynamic-form-control split-bg-col join-split-col" title="{{tf.fieldLabel}}">
+                                                                                    <div class="field-item cursor">
+                                                                                        <p-calendar formControlName="{{tf.fieldName}}" [(ngModel)]="tf.selectedValue" dateFormat="M, dd yy" [readonlyInput]="true" [showIcon]="true"></p-calendar>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- Text Area -->
+                                                                            <div *ngSwitchCase="'textArea'">
+                                                                                <ckeditor [editor]="Editor" [config]="configCke" formControlName="{{tf.fieldName}}"
+                                                                                [(ngModel)]="tf.selectedValue"
+                                                                                ></ckeditor>
+                                                                            </div>
+                                                                            <div *ngSwitchCase="'upload'"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="field-row">
+                                                                        <button icon="pi pi-save" pButton pRipple type="button" label="Save" class="p-button-rounded p-button-danger" [ngClass]="{'setOpacity5': formValid}" (click)="saveData(item)"></button>
+                                                                        <button icon="pi pi-times" pButton pRipple type="button" label="Cancel" class="p-button-outlined p-button-rounded cancel" (click)="cancelForm(item, t)"></button>        
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </p-accordionTab>
+                                                </p-accordion>
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>                   
+                </div>       
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+    
+    <div *ngFor="let udata of userInfoData">
+        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row" id="loc-head-row" [ngClass]="{'loc-head-row-shop': udata.type == 'shop-detail', 'border-top-none': udata.users?.length == 0, 'border-none': udata.users?.length > 0}" >
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+            <span style="cursor: pointer;" (click)="navigateToUsers(udata?.dataId)">
+                <img class="loc-head-img" src="assets/images/hq/hq-user-icon.png">
+                <span class="loc-head-utext">{{udata.dynamictext}} Location Users</span>
+            </span>
+            <span *ngIf="udata.users?.length>0 && udata.createAccess" class="add-action-btn cursor" (click)="updateUser(udata.dataId, 'new', udata.type, '', '')">
+                <img src="assets/images/customers/add-icon.png">                                                
+                <span >ADD USER</span>
+            </span>            
+            </div>
+        </div>   
+        <div *ngIf="udata.users?.length == 0" class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding user-cont-row text-center" >
+            <span *ngIf="udata.createAccess" class="add-action-text">Tap on the ‘Add User’ button to add {{udata.dynamictext}} users</span>
+            <span *ngIf="!udata.createAccess" class="no-user-text">No users</span>
+            <span *ngIf="udata.createAccess" class="add-action-btn cursor" style="margin:0 auto;" (click)="updateUser(udata.dataId, 'new', udata.type, '', '')">
+                <img src="assets/images/customers/add-icon.png">                                                
+                <span >ADD USER</span>
+            </span>
+        </div>  
+        <div *ngIf="udata.users?.length > 0" class="" >
+            <div class="user-div-wid" [style.width.px]="userDivWidth">
+                <div class="ps" [perfectScrollbar]="sconfig">
+                    <div class="user-cont-row main-user-cont-row">
+                        <div (click)="navigateToProfile(user.userId)" style="cursor: pointer;" class="user-cont-row inner-user-cont-row" *ngFor="let user of udata.users">
+                            <div class="user-info-row user-info-row-grid">
+                                <div class="" >
+                                    <div class="user-thumb"></div>
+                                    <div class="user-thumb-info">
+                                        <span class="text-1" >{{user.nameTitle}} <img *ngIf="user.editAccess" title="edit" (click)="updateUser(udata.dataId, 'edit', udata.type, user, '');" class="hq-icon-edit userinfo-icon-edit" src="assets/images/hq/hq-text-edit.png"> </span>
+                                        <!--span class="user-address-bg text-2">{{user.address}}</span-->
+                                        <span *ngIf="user.email != ''" class="user-email-uinfo-bg text-2"><span title="{{user.email}}" class="over-flow-text">{{user.email}}</span></span>
+                                        <span *ngIf="user.phone != ''" class="user-phone-uinfo-bg text-2"><span title="{{user.phone}}" class="over-flow-text">{{user.phone}}</span></span>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <!-- <div *ngIf="user.isPrimaryHq == '1'" class="primary-text-main-div"><div class="inner-div">PRIMARY</div></div> -->
+                        </div>  
+                    </div>
+                </div>
+            </div>                                     
+        </div>
+    </div>

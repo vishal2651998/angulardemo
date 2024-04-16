@@ -1,0 +1,22 @@
+<div *ngIf="loading" class="documents-thumb-view" [style.height.px]="innerHeight">
+    <div class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+<div *ngIf="!loading" class="documents-thumb-view" [style.height.px]="innerHeight">
+    <div *ngIf="lazyLoading"><div class="cust-loader esc-loader lazy-loader cust-lazy-loader doc-loader-new-one"></div></div>
+    <div class="ps" id="documentList" [ngClass]="{'empty': (!contentLoading && folderView && folders.length == 0 && !mfgView) || (!contentLoading && fileView && files.length == 0 && !mfgView ) || (!contentLoading && mfgView && mfg.length == 0) , 'doc-cont': contentLoading && itemOffset == 0, 'nonscroll-view': !contentLoading && !fileLoader && thumbView && itemOffset == 0 && fileView && (innerHeight > docRowHeight)}" id="documentList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+        <div class="documents-grid-row documents-app-grid-row"  [ngClass]="{'landing': accessFrom != 'documents', 'mfg-list-view': mfgView, 'list-view': !mainView && accessFrom != 'landingpage' && accessFrom != 'search'}">
+            <div class="doc-items" >
+                <div class="doc-list1">
+                    <div *ngIf="contentLoading && itemOffset == 0" class="cust-loader doc-loader cont-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                    
+                    <div id="fileList" class="list-items list-view noTop" ngClass="{'opacity': opacityFlag}" *ngIf="fileView && files.length > 0">
+                        <app-list [items]="files" [thumbView]="!thumbView" (scrollActionEmit)="scrollAction($event)" (emptyActionEmit)="emptyAction($event)"></app-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="contentLoading && itemOffset == 0 && !opacityFlag" class="cust-loader doc-loader cont-loader" [ngClass]="{'landing-cont-loader': accessFrom == 'landingpage'}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        <app-empty-container *ngIf="( (!contentLoading && fileView && ( files.length == 0 && !opacityFlag )))" [contentTypeValue]="contentTypeValue"></app-empty-container>       
+    </div>
+</div>
+

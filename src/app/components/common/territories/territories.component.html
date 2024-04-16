@@ -1,0 +1,29 @@
+<div *ngIf="terLoading" class="territories">
+    <mat-form-field class="custom-mat-sel prob-catg-sel">
+        <mat-select #selectopt (openedChange)="openedChange($event)" placeholder="Select Territories" [formControl]="terFormControl" [(ngModel)]="dbSelectedTer" disableOptionCentering>
+            <div class="select-container" *ngIf="terLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" placeholder="Search Territory" aria-label="Search Territory" matInput [formControl]="terSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(terFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="selectopt.close()"><img src="assets/images/dashboard/close.png" alt="close" /></div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of terFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+    <div *ngIf="dbSelectedTer != '' && dbSelectedTer !='Select Territories'" class="selected-items filter-selected-items make scrollbar scrollbar-primary thin">
+        <div class="tag-text">
+            <span>{{dbSelectedTer}}</span>
+            <!--i class="material-icons tag-close" (click)="disableMakeSelection(make)">close</i-->
+        </div>
+    </div>
+</div>

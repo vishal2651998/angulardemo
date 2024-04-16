@@ -1,0 +1,157 @@
+<div id="header" *ngIf="!msTeamAccess">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-marketplace-sidebar [activeMenuItem]="sideMenuActive" accessModule="{{bodyClass}}" (resetTrainingType)="resetTrainingType()"></app-marketplace-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec1 right-section">
+  <div class="container-fluid">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding-left: 8px; padding-top: 8px;">
+        <div class="flex-align-center">
+          <div class="ellipse">
+            <img width="10px" height="10px" src="assets/images/service-provider/filter-icon.png" />
+          </div>
+          <img src="assets/images/service-provider/training-title.png" class="training-marketplace-training-head">
+          <span class="marketplace-text-design">Training</span>
+          <!-- training dropdown -->
+          <div class="ml-auto px-2">
+            <!-- <span class="head-txt header-usermanage-title pr-3">Choose Training Type</span> -->
+            <p-dropdown class="p-table-choose-types upcoming-trinings-dropdown" 
+              [options]="[{label: 'Upcoming Trainings', value: 'upcoming'}, {label: 'Past Trainings', value: 'past'}]"
+              [(ngModel)]="selectedTrainingType" optionLabel="label" placeholder=""
+              (onChange)="selectTrainingType($event)"></p-dropdown>
+          </div>
+        </div>
+      </div>
+      <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+         <!-- <div *ngIf="!msTeamAccess" class="threads-page-filter col col-lg-2  col-md-2 col-xl-2 col-sm-2 padding-right-class"  [ngClass]="{'col col-lg-2 col-md-2 col-xl-2 col-sm-2': expandFlag, 'filter-show-hide': !expandFlag}">
+              <div class="cbt-filter thread-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+                <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+              </div>
+          </div>-->
+          <div [ngClass]="{'col col-lg-12 col-md-12 col-xl-12 col-sm-12': msTeamAccess, 'col col-lg-8 col-md-8 col-xl-8 col-sm-8': !msTeamAccess }" class="center-middle-width-container threads market-place-training">
+              <div class="center-middle-width padding-common">
+                  <div class="clear"></div>
+                  <div class="probing-content cbt-content part-content part-content-threads-new">
+                    <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 landing-page thread-page-container card-parent-design-new" style="margin-top: 0 !important; margin-left: 10px !important;">
+                      <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+                      <div #top id="marketplace-data-container" class="ps" style="height: 100%" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                        <!--[options]="{ gutter: 10,isFitWidth: true }"-->
+                        <ngx-masonry  [ngClass]="{'full-height': !serviceProviderData?.length && !loading}" class="masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                          <div ngxMasonryItem id="{{training.id}}" class="masonry-item custom-masonry-margin" data-masonry='{ "columnWidth": 200, "itemSelector": ".grid-item" }' *ngFor="let training of serviceProviderData; let i = index">
+                            <p-card [style]="{width: '100%'}" styleClass="p-card-shadow training-inner-card cursor-pointer" (click)="viewDetail(training.id)">
+                              <ng-template pTemplate="header">
+                                <div class="new-style-changes">
+                                  <div class="custom-id-div-design">
+                                    <span>
+                                      ID#{{training.id}}
+                                    </span>
+                                  </div>
+                                  <div *ngIf="training?.isClosed == '1' && training?.isActive == '1'" class="custom-closed-div-design">
+                                    <span>
+                                      Closed
+                                    </span>
+                                  </div>
+                                  <div *ngIf="!training?.isActive || training?.isActive == '0'" class="custom-cancelled-div-design">
+                                    <span>
+                                      Canceled
+                                    </span>
+                                  </div>
+                                  <img class="header-style-1 {{training?.isClosed == '1' || training?.isActive == '0' ? 'low-opacity' : ''}}" [src]="training?.bannerImageUrl ? training?.bannerImageUrl : 'assets/images/service-provider/training-blank-1.png'">
+                                </div>
+                                <div *ngIf="training.isSold == '1' && training.isClosed == '0'" class="sold-out-label-design">SOLD
+                                  OUT</div>
+                                <div
+                                  *ngIf="(training.isSold == '0' && training.isClosed == '1') || (training.isSold == '1' && training.isClosed == '1')"
+                                  class="closed-label-design"><img
+                                    style="width: 20px!important; height: 17px!important; margin-right: 5px;"
+                                    src="assets/images/service-provider/training-closed-icon.png" />Closed</div>
+                                <div *ngIf="checkShowSeatsLeft(training) && training?.isSold == '0' && training?.isClosed == '0'"
+                                  class="minimum-seats-available-design"><img
+                                    style="width: 22px!important; height: 15px!important; margin-right: 5px;"
+                                    src="assets/images/service-provider/seats-left-white.png" />
+                                  {{pendingParticipantsCount(training)}} seat{{pendingParticipantsCount(training)>1 ? 's' : ''}}
+                                  left</div>
+                              </ng-template>
+                              <div class="{{training?.isClosed == '1' || training?.isActive == '0' ? 'low-opacity' : ''}}">
+                                <div class="margin-bottom-10px" style="display: flex;">
+                                  <span title="{{training?.trainingName}}" class="inner-card-heading">{{training?.trainingName}}</span>
+                                </div>
+                                <div class="row no-margin svg-fill">
+                                  <img style="margin-top: 1px;" class="margin-right-6px" width="18px" height="17px" src="assets/images/service-provider/training-2.svg" onload="SVGInject(this)">
+                                  <span title="{{training?.trainingMode}}" class="inner-card-description-1 margin-bottom-10px">{{training?.trainingMode}}</span>
+                                </div>
+                                <div class="row no-margin" *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Seminar'">
+                                  <img style="margin-top: 1px;" class="margin-right-9px" width="15px" height="15px" src="assets/images/service-provider/calender.png" />
+                                  <span *ngIf="training?.startDate != training?.endDate" title="{{getDateFormatStartDate(training?.startDate)}} - {{getDateFormat(training?.endDate)}}" class="inner-card-description-2 margin-bottom-10px">{{getDateFormatStartDate(training?.startDate)}} - {{getDateFormat(training?.endDate)}}</span>
+                                  <span *ngIf="training?.startDate == training?.endDate" title="{{getDateFormat(training?.endDate)}}" class="inner-card-description-2 margin-bottom-10px">{{getDateFormat(training?.endDate)}}</span>
+                                </div>
+                                <div class="row no-margin" *ngIf="training.trainingMode == 'Recorded'">
+                                  <img style="margin-top: 1px;" class="margin-right-9px" width="15px" height="15px" src="assets/images/service-provider/calender.png" />
+                                  <span title="Posted Date: {{getDateFormat(training?.startDate)}}" class="inner-card-description-2 margin-bottom-10px">Posted Date: {{getDateFormat(training?.startDate)}}</span>
+                                </div>
+                                <div class="row no-margin" *ngIf="training.trainingMode == 'Webinar' || training.trainingMode == 'Recorded'">
+                                  <img style="margin-top: 1px;" class="margin-right-9px" width="15px" height="15px" src="assets/images/service-provider/simple-time.png" />
+                                  <span *ngIf="training.trainingMode == 'Webinar'" title="{{getHourFormat(training?.startTime)}} - {{getHourFormat(training?.endTime)}}" class="inner-card-description-1 margin-bottom-10px">{{getHourFormat(training?.startTime)}} - {{getHourFormat(training?.endTime)}} {{training?.timeZone}}</span>
+                                  <span *ngIf="training.trainingMode == 'Recorded'" title="{{training?.hours}}" class="inner-card-description-1 margin-bottom-10px">{{training?.hours}} hours</span>
+                                </div>
+                                <div class="row no-margin" *ngIf="training.trainingMode == 'Seminar'">
+                                  <img style="margin-top: 1px;" class="margin-right-9px" width="10px" height="14px" src="assets/images/service-provider/map-pin.png" />
+                                  <span title="{{training?.city}}, {{training?.state}}" class="inner-card-description-2 margin-bottom-10px"> {{training?.city}}, {{training?.state}}</span>
+                                </div>
+                                <div class="row no-margin" *ngIf="training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice)">
+                                  <img style="margin-top: 1px;" class="margin-right-9px" width="15px" height="15px" src="assets/images/service-provider/dollar.png" />
+                                  <span title="{{training?.birdPrice | currency: 'USD':true:'1.0-0'}}" class="inner-card-description-3 margin-bottom-10px margin-right-5px">Early Bird Price {{training?.birdPrice | currency: 'USD':true:'1.0-0'}}</span>
+                                </div>
+                                <div class="row no-margin">
+                                  <img style="margin-top: 1px;" class="margin-right-9px" width="15px" height="15px" src="assets/images/service-provider/dollar.png" />
+                                  <span *ngIf="training?.price && training?.price != '0'" title="{{training?.price | currency: 'USD':true:'1.0-0'}}" class="inner-card-description-3 margin-bottom-10px margin-right-5px">{{training?.birdPrice && training?.birdPrice != '0' && checkBirdPriceAvailablity(training?.expiryDateBirdPrice) ? 'Regular Price ' : ''}}{{training?.price | currency: 'USD':true:'1.0-0'}}</span>
+                                  <span *ngIf="!training?.price || training?.price == '0'" title="Free" class="inner-card-description-3 margin-bottom-10px margin-right-5px">Free</span>
+                                </div>
+                                <div class="row no-margin" *ngIf="!training?.birdPrice || training?.birdPrice == '0' || !checkBirdPriceAvailablity(training?.expiryDateBirdPrice)">
+                                  &nbsp;
+                                </div>
+                              <div class="d-flex align-items-center justify-content-between">
+                                <div class="custom-style-1" *ngIf="training.trainingMode != 'Recorded'">
+                                  <img style="margin-top: 1px;" class="margin-right-5px" width="19px" height="11px" src="assets/images/service-provider/group.png" />
+                                  <span class="inner-card-description-4">Signed up: <span *ngIf="!training?.signedupUsers || training?.signedupUsers == '0'">-</span><span *ngIf="training?.signedupUsers && training?.signedupUsers != '0'"></span>{{training?.signedupUsers}}</span>
+                                </div>
+                                <div class="custom-style-2" *ngIf="training.trainingMode == 'Recorded'">
+                                  <img style="margin-top: 1px;" class="margin-right-5px" width="17px" height="14px" src="assets/images/service-provider/cart.png" />
+                                  <span class="inner-card-description-5">Purchased: <span *ngIf="!training?.signedupUsers || training?.signedupUsers == '0'">-</span><span *ngIf="training?.signedupUsers && training?.signedupUsers != '0'">{{training?.signedupUsers}}</span></span>
+                                </div>
+                                  <div *ngIf="training.isSold == '0' && training.isClosed != '1' && training?.isActive != '0'" (click)="$event.stopPropagation();toggleCartItem($event, training?.id, 'training')">
+                                    <img *ngIf="!(cart?.trainingIds && cart?.trainingIds.includes(training?.id))" width="30px" height="30px" src="assets/images/service-provider/cart-orange.png" />
+                                    <img *ngIf="(cart?.trainingIds && cart?.trainingIds.includes(training?.id))" width="30px" height="30px" src="assets/images/service-provider/cart-white.png" />
+                                  </div>
+                                </div>
+                              </div>
+                            </p-card>
+                          </div>
+                          <div class="thumb" *ngIf="!serviceProviderData?.length && !loading">
+                            <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="partsUrl"></app-empty-container>
+                          </div>
+                        </ngx-masonry>
+                      </div>
+
+                    </div>
+                    <div align="center" class="thread-loading-text bottom-loading" *ngIf="loadingmarketplacemore"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                  </div>
+                </div>
+            </div>
+            <div *ngIf="!msTeamAccess" class="right-middle-width-container landing-padding0  col col-lg-2  col-md-2 col-xl-2 col-sm-2 padding-right-class">
+                <div class="right-width-column padding-common">
+                    <app-domain-members [disableRightPanel]="disableRightPanel" (toggle)="expandDomainAction($event)"></app-domain-members>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+<!-- salesPerson popoup -->
+<app-popup *ngIf="showCartUserPopup" access="market-place" title="Select Sales Person" buttonTitle="continue" (sendUserData)="getUserData($event)" (closeUserPopup)="closeSalePersonPopup()" [currentUser]="user" [isMultipleSalesPerson]="false" [isRequired]="true"></app-popup>

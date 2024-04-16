@@ -1,0 +1,54 @@
+<div id="header">
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>   
+</div>
+<div class="probing-content cbt-content part-content doc-content dynamic-form-content">
+    <div class="prob-new">
+        <div class="container">
+            <div *ngIf="!loading" class="row new-pro-cont dynmic-new-form-cont col-lg-12">
+                <div id="form-cont" class="form-cont" [ngClass]="{'col-lg-12': step1Action && !step2Action, 'col-lg-8': step1Action && step2Action}">
+                    <form class="form-horizontal" [formGroup]="docForm">
+                        <div class="new-prob-head">
+                            <div class="new-col title">
+                                <span *ngIf="teamSystem && step1Action && !step2Action" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                                <span *ngIf="step1Action && step2Action" class="back-icon cursor" title="Back to Step1" (click)="backStep1()"></span>
+                                {{threadTxt}}
+                            </div>
+                            <div *ngIf="!loading" class="new-col actions">
+                                <div class="btn cancel" (click)="closeWindow()">Cancel <img src="assets/images/parts/cancel-icon.png" /></div>
+                                <!--button *ngIf="step1Action && !step2Action" class="btn next" (click)="submitAction()">Next <img src="assets/images/parts/next-icon.png" /></button-->
+                                <div *ngIf="publishSubmitAction && draftButtonEnable" class="btn next save" (click)="submitAction('save')">Save Draft <img src="assets/images/parts/save-draft.png" /></div>                        
+                                <div *ngIf="!publishSubmitAction && draftButtonEnable" class="btn next save disable">Save Draft <img src="assets/images/parts/save-draft.png" /></div>                        
+                                <div *ngIf="publishSubmitAction" class="btn next publish" (click)="submitAction('publish')">{{saveText}} <img src="assets/images/parts/publish.png" /></div>
+                                <div *ngIf="!publishSubmitAction" class="btn next publish disable" >{{saveText}} <img src="assets/images/parts/publish.png" /></div>                            
+                            </div>
+                        </div>
+                        <div *ngIf="step2Loading || !step2Loading" class="dynamic-form-content" [style.height.px]="innerHeight">
+                            <div *ngIf="step1Loading" class="dash-loader cust-loader" [style.height.px]="innerHeight"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                            <div *ngIf="!step1Loading" id="step" class=" form-fields scroll-container" >
+                                <div class="form-items">
+                                    <div *ngIf="step2Loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    <div *ngIf="!step2Loading">
+                                        <div class="field-row" *ngFor="let th of apiFormFields[stepIndex][stepTxt]; let i=index;">
+                                            <div *ngIf="th.displayFlag" class="field-label {{th.sectionClass}}" [ngClass]="{'bg-label': th.isBackground > 0}">{{th.name}}</div>
+                                            <div [ngClass]="{'bg-fileld': th.cells.isBackground > 0}">
+                                                <div class="web-fields default-fields">
+                                                    <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [secIndex]="i" fieldSec="name" [formGroup]="docForm" [apiFormFields]="th.cells.name" [formFields]="formFields"></app-dynamic-fields>
+                                                    <div class="opt-field-toggle user-select text-right" [ngClass]="{'hide': th.cells.optionFilter.length == 0}">
+                                                        <div class="cursor toggle-opt" [ngClass]="{'disabled': th.optDisableFlag}" (click)="optFieldToggle(i, th.optFieldsFlag, th.optDisableFlag)">{{th.toggleTxt}} {{optionTxt}} <span [ngClass]="{'hide-more': th.optFieldsFlag, 'show-more': !th.optFieldsFlag}"></span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="web-fields optianal-fields" id="op-{{i}}" [ngClass]="{'hide': !th.optFieldsFlag}">
+                                                    <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [secIndex]="i" fieldSec="optionFilter" [formGroup]="docForm" [apiFormFields]="th.cells.optionFilter"></app-dynamic-fields>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

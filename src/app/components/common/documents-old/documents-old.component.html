@@ -1,0 +1,197 @@
+<div *ngIf="loading && !CBADomain" class="cust-loader {{accessFrom}}" [ngClass]="{'hide': ( accessFrom == 'landingpage' || accessFrom == 'search' ) && collabticDomain}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading" class="documents-thumb-view" [style.height.px]="innerHeight">
+    <div *ngIf="lazyLoading"><div class="cust-loader esc-loader lazy-loader cust-lazy-loader {{accessFrom}}" [ngClass]="{ 'doc-loader-new-one' : CBADomain, 'doc-loader-new-two' : !CBADomain }" ></div></div>
+    <div class="ps" id="documentList" [ngClass]="{'empty': (!contentLoading && folderView && folders.length == 0 && !mfgView) || (!contentLoading && fileView && files.length == 0 && !mfgView ) || (!contentLoading && mfgView && mfg.length == 0 && !CBADomain) , 'doc-cont': contentLoading && itemOffset == 0, 'nonscroll-view': !contentLoading && !fileLoader && thumbView && itemOffset == 0 && fileView && (innerHeight > docRowHeight)}" id="documentList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+        <div class="documents-grid-row" [ngClass]="{'landing': accessFrom != 'documents', 'mfg-list-view': mfgView, 'list-view': !mainView && accessFrom != 'landingpage' && accessFrom != 'search'}">
+            <div class="doc-items" *ngIf="mainView">
+                <div *ngIf="documentViewOption != '2'" class="document-tab" [ngClass]="{'tab-load': !tabFlag}">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" *ngFor="let t of recentTabs;">
+                            <a class="nav-link" [ngClass]="{'active': t.selected}" id="{{t.id}}" [attr.data-toggle]="t.toggle" [attr.href]="t.href" 
+                            [attr.role]="t.toggle" [attr.aria-controls]="t.control" [attr.aria-selected]="t.selected" (click)="recentTab('tab', t)">{{t.title | uppercase}}</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div *ngIf="!tabFlag" class="cust-loader tab-loader tab-loader-new"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                        <div *ngIf="tabFlag" class="tab-pane ps fade" [ngClass]="{'show active': recentTabs[0].selected}" id="viewed" role="tabpanel" aria-labelledby="viewed-tab"
+                            [perfectScrollbar]="sconfig" (scroll)="onScroll($event)" style="position: relative;">
+                            <div class="doc-tab" style="white-space: nowrap; padding-bottom: 15px; margin-left: 5px;" *ngIf="recentViewedDocuments">
+                                <ng-container *ngIf="recentViewedDocuments.length == 0">
+                                    <div class="no-view">No views yet</div>
+                                </ng-container>
+                                <ng-container *ngFor="let item of recentViewedDocuments; let i = index">
+                                    <div class="document-card" [ngClass]="{'active': item.selected}" (click)="callbackClick(recentViewedDocuments, item, i)">
+                                        <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                                            <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.resourceID" [action]="docAction" [attachments]="item.attachments"></app-attachment-view>
+                                        </div>
+                                        <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                                        <ng-container *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6">
+                                            <div class="document-card-top cover-image {{item.class}}"
+                                                [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                                                <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                                                <!--div class="view-count">{{item.viewCount}}</div-->
+                                                <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                            </div>
+                                            <div class="document-card-bottom">
+                                                <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                <div class="path" title="{{item.makeTooltip}}">
+                                                    <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                        {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                    </span>
+                                                    <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container
+                                            *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 8 || item.flagId == 5 || item.flagId == 0">
+                                            <div class="document-card-top {{item.styleName}}" [ngClass]="{'cover-image': item.logo != ''}"
+                                              [ngStyle]="item.logo != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                                                <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                                                <!--div class="view-count">{{item.viewCount}}</div-->
+                                                <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                            </div>
+                                            <div class="document-card-bottom">
+                                                <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                <div class="path" title="{{item.makeTooltip}}">
+                                                    <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                        {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                    </span>
+                                                    <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div *ngIf="tabFlag" class="tab-pane ps fade" [ngClass]="{'show active': recentTabs[1].selected}" id="uploaded" role="tabpanel" aria-labelledby="uploaded-tab" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)" style="position: relative;">
+                            <div  class="doc-tab" style="white-space: nowrap; padding-bottom: 15px; margin-left: 5px;">
+                                <ng-container *ngIf="recentUploadedDocuments.length == 0">
+                                    <div class="no-view">Nothing uploaded yet</div>
+                                </ng-container>
+                                <ng-container *ngFor="let item of recentUploadedDocuments; let i = index;">
+                                    <div class="document-card" [ngClass]="{'active': item.selected}" (click)="callbackClick(recentUploadedDocuments, item, i)">
+                                        <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                                            <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.resourceID" [action]="docAction" [attachments]="item.attachments"></app-attachment-view>
+                                        </div>
+                                        <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                                        <ng-container
+                                            *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6">
+                                            <div class="document-card-top cover-image {{item.class}}"
+                                                [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                                                <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span
+                                                        style="float: right;
+                                                padding-right: 5px;"> {{item.resourceID}} </span></div>
+                                                <!--div class="view-count">{{item.viewCount}}</div-->
+                                                <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                            </div>
+                                            <div class="document-card-bottom">
+                                                <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                <div class="path" title="{{item.makeTooltip}}">
+                                                    <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                        {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                    </span>
+                                                    <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container
+                                            *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 5 || item.flagId == 0">
+                                            <div class="document-card-top {{item.styleName}}" [ngClass]="{'cover-image': item.logo != ''}" 
+                                            [ngStyle]="item.logo != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                                                <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span
+                                                        style="float: right;
+                                                padding-right: 5px;"> {{item.resourceID}} </span></div>
+                                                <!--div class="view-count">{{item.viewCount}}</div-->
+                                                <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                            </div>
+                                            <div class="document-card-bottom">
+                                                <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                <div class="path" title="{{item.makeTooltip}}">
+                                                    <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                        {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                    </span>
+                                                    <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                    <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-list">
+                    <div *ngIf="contentLoading && itemOffset == 0" class="cust-loader doc-loader cont-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                    <div *ngIf="folders.length > 0 && showDocuments">
+                        <app-folders [items]="folders" [thumbView]="thumbView" section="main" (scrollActionEmit)="scrollAction($event)" ></app-folders>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Folder View --> <!--{{mfgView}} {{mfgInfo.length}} {{subFolderInfo.length}} {{mainView}} {{folderView}}-->
+            <div class="doc-list {{accessFrom}}" *ngIf="mfgView || folderView || fileView"
+                [ngClass]="{'mfg-list': mfgInfo.length > 0 && subFolderInfo.length > 0, 'no-list': accessFrom != 'search' && ((!contentLoading && mfgView && mfg.length == 0) && (!contentLoading && folderView && folders.length == 0) || (!contentLoading && fileView && ( files.length == 0 && !opacityFlag )))}">
+                <div *ngIf="documentViewOption != '2'" class="docbreadcrumb" [ngClass]="{'hide': accessFrom != 'documents'}">
+                    <div class="breadcrumb-back">
+                        <span *ngIf="!mfgView && mfgInfo.length == 0 && subFolderInfo.length == 0" class="cursor" (click)="breadcrumb('main')"></span><div *ngIf="!mfgView && mfgInfo.length == 0 && subFolderInfo.length == 0" class="cursor back-button-document" (click)="breadcrumb('main')">Back</div>
+                        <span *ngIf="!mfgView && mfgInfo.length == 0 && folderInfo.length > 0 && subFolderInfo.length > 0" class="cursor" (click)="breadcrumb('folders', subFolderId)"></span><div *ngIf="!mfgView && mfgInfo.length == 0 && folderInfo.length > 0 && subFolderInfo.length > 0" class="cursor back-button-document" (click)="breadcrumb('folders', folderInfo[0].id)">Back</div>
+                        <span *ngIf="mfgView && subFolderInfo.length == 0" class="cursor" (click)="breadcrumb('folders', folderInfo[0].id)"></span><div *ngIf="mfgView && subFolderInfo.length == 0" class="cursor back-button-document" (click)="breadcrumb('folders', folderInfo[0].id)">Back</div>
+                        <span *ngIf="mfgInfo.length > 0 && subFolderInfo.length > 0" class="cursor" (click)="breadcrumb('manufacturer', folderInfo[0].id, mfgInfo[0].id)"></span><div *ngIf="mfgInfo.length > 0 && subFolderInfo.length > 0" class="cursor back-button-document" (click)="breadcrumb('manufacturer', folderInfo[0].id, mfgInfo[0].id)">Back</div>
+                    </div>                    
+                    <div class="breadcrumb-home"></div>
+                    <nav aria-label="breadcrumb">                        
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><span class="cursor" (click)="breadcrumb('main')">Folders</span></li>
+                            <li class="breadcrumb-item" [ngClass]="{'hide': contentLoading && itemOffset == 0}" *ngFor="let f of folderInfo"><span *ngIf="!subFolderView && !mfgView">{{f.name}}</span> <span class="cursor" *ngIf="subFolderView || mfgView" (click)="breadcrumb('folders', subFolderId)">{{f.name}}</span></li>
+                            <li class="breadcrumb-item" [ngClass]="{'hide': contentLoading && itemOffset == 0}" *ngFor="let f of mfgInfo"><span  class="cursor" *ngIf="mfgInfo.length > 0 && subFolderInfo.length > 0" (click)="breadcrumb('manufacturer', folderInfo[0].id, mfgInfo[0].id)">{{f.name}}</span> <span *ngIf="mfgInfo.length > 0 && subFolderInfo.length == 0" >{{f.name}}</span></li>
+                            <li class="breadcrumb-item" [ngClass]="{'hide': contentLoading && itemOffset == 0}" *ngFor="let m of subFolderInfo"><span class="">{{m.name}}</span></li>
+                        </ol>
+                    </nav>                    
+                </div> 
+                <div *ngIf="documentViewOption == '2' && ( (folderInfo.length> 0 && mfgInfo.length > 0 ) || (folderInfo.length > 0 && mfgInfo.length == 0 && folderInfo[0].id != documentMfgIdOption ))" class="docbreadcrumb" [ngClass]="{'hide': accessFrom != 'documents' || contentLoading && itemOffset == 0 }" >
+                    <div class="breadcrumb-back" >
+                        <span *ngIf="!mfgView && mfgInfo.length == 0 && (folderInfo[0].id == otherTechInfo[0].id)" class="cursor" (click)="breadcrumb('main')"></span><div *ngIf="!mfgView && mfgInfo.length == 0 && (folderInfo[0].id == otherTechInfo[0].id)" class="cursor back-button-document" (click)="breadcrumb('main')">Back</div>
+                        <span *ngIf="!mfgView && mfgInfo.length == 0 && (folderInfo[0].id != otherTechInfo[0].id)" class="cursor" (click)="breadcrumb('folders', folderInfo[0].id)"></span><div *ngIf="!mfgView && mfgInfo.length == 0 && (folderInfo[0].id != otherTechInfo[0].id)" class="cursor back-button-document" (click)="breadcrumb('folders', folderInfo[0].id)">Back</div>
+                        <span *ngIf="mfgView && subFolderInfo.length == 0" class="cursor" (click)="breadcrumb('folders', folderInfo[0].id)"></span><div *ngIf="mfgView && subFolderInfo.length == 0" class="cursor back-button-document" (click)="breadcrumb('folders', folderInfo[0].id)">Back</div>
+                        <span *ngIf="mfgInfo.length > 0 && subFolderInfo.length > 0" class="cursor" (click)="breadcrumb('manufacturer', folderInfo[0].id, mfgInfo[0].id)"></span><div *ngIf="mfgInfo.length > 0 && subFolderInfo.length > 0" class="cursor back-button-document" (click)="breadcrumb('manufacturer', folderInfo[0].id, mfgInfo[0].id)">Back</div>
+                    </div>                    
+                    <div class="breadcrumb-home"></div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb" >
+                            <li class="breadcrumb-item" [ngClass]="{'hide': contentLoading && itemOffset == 0}" *ngFor="let f of folderInfo"><span *ngIf="!subFolderView && !mfgView && (folderInfo[0].id == otherTechInfo[0].id)">{{f.name}}</span> <span *ngIf="!subFolderView && !mfgView && (folderInfo[0].id != otherTechInfo[0].id)" class="cursor" (click)="breadcrumb('folders', folderInfo[0].id) ">{{f.name}}</span> <span class="cursor" *ngIf="subFolderView || mfgView" (click)="breadcrumb('folders', subFolderId)">{{f.name}}</span></li>
+                            <li class="breadcrumb-item" [ngClass]="{'hide': contentLoading && itemOffset == 0}" *ngFor="let f of mfgInfo"><span  class="cursor" *ngIf="mfgInfo.length > 0 && subFolderInfo.length > 0" (click)="breadcrumb('manufacturer', folderInfo[0].id, mfgInfo[0].id)">{{f.name}}</span> <span *ngIf="mfgInfo.length > 0 && subFolderInfo.length == 0" >{{f.name}}</span></li>
+                            <li class="breadcrumb-item" [ngClass]="{'hide': contentLoading && itemOffset == 0}" *ngFor="let m of subFolderInfo"><span class="">{{m.name}}</span></li>
+                            <li class="breadcrumb-item" [ngClass]="{'hide': (folderInfo[0].id == otherTechInfo[0].id) || (documentMfgIdOption == otherTechInfo[0].id) }" *ngFor="let m of otherTechInfo"><span>{{m.name}}</span></li>                            
+                        </ol>
+                    </nav>                    
+                </div> 
+
+                <div *ngIf="(accessFrom == '0' || accessFrom == 'search') && searchLoading" class="cust-loader search-loader center-loading trst justify-content-center align-items-center hide {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                <div *ngIf="accessFrom != 'search' && contentLoading && itemOffset == 0 && !opacityFlag" class="cust-loader doc-loader cont-loader" [ngClass]="{'hide': accessFrom == 'landingpage' && collabticDomain}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                <app-empty-container *ngIf="accessFrom != 'search' && ((!contentLoading && mfgView && mfg.length == 0) && (!contentLoading && folderView && folders.length == 0) || (!contentLoading && fileView && ( files.length == 0 && !opacityFlag )))" [contentTypeValue]="contentTypeValue" [showType]="displayNoRecordsShow"></app-empty-container>
+                <app-empty-container *ngIf="(accessFrom == 'search' && !searchLoading ) && ((!contentLoading && mfgView && mfg.length == 0) && (!contentLoading && folderView && folders.length == 0) || (!contentLoading && fileView && files.length == 0))" [accessCheck]="accessCheck"></app-empty-container>
+                
+                <div [ngClass]="{'list-items': accessFrom == 'documents' , 'noTop' : folderInfo.length > 0 && mfgInfo.length == 0 && folderInfo[0].id == documentMfgIdOption }" *ngIf="folderView && folders.length > 0 && showDocuments">
+                    <app-folders [items]="folders" [thumbView]="thumbView" section="folder" (scrollActionEmit)="scrollAction($event)" ></app-folders>
+                </div>
+                
+                <div id="fileList" [ngClass]="{'list-items': accessFrom == 'documents', 'mfg-list-items': accessFrom == 'documents' && CBADomain, 'list-view': !thumbView, 'opacity': opacityFlag}" *ngIf="fileView && files.length > 0">
+                    <app-files [items]="files" [thumbView]="thumbView" (scrollActionEmit)="scrollAction($event)"></app-files>
+                </div>
+                <div [ngClass]="{'list-items mfg-list-items': accessFrom == 'documents', 'list-view mfg-list-view': !thumbView, 'opacity': opacityFlag}" *ngIf="mfgView && mfg.length > 0">
+                    <app-doc-list [items]="mfg" [thumbView]="thumbView" (scrollActionEmit)="scrollAction($event)"></app-doc-list>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

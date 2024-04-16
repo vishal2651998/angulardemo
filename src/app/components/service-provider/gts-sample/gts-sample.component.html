@@ -1,0 +1,284 @@
+<div class="container-fluid">
+  <div class="row header-main-div">
+    <div class="col-2">
+      <img width="35px" height="35px" src="assets/images/gts/sample/volkaswagon-logo.png" alt="" srcset="">
+    </div>
+    <div class="col-10">
+      <div class="d-flex align-items-center justify-content-between ">
+        <div class="d-flex align-items-center">
+          <div (click)="goBack()">
+            <img style="margin-right: 9px;cursor: pointer;" src="assets/images/gts/sample/back-arrow-black.png" alt=""
+              srcset="">
+          </div>
+          <span class="heading-right-start">
+            {{inspectionTitle}}
+            <span style="color: #469073;">ID# {{inspectionId}}</span>
+          </span>
+        </div>
+        <div style="width: 15%;" class="d-flex align-items-center">
+          <span
+            class="mr-4 mat-badge mat-badge-overlap mat-badge-above mat-badge-after mat-badge-medium notification-class-icon-header unseenColor">
+            <span class="notification-header-icon">
+              <img src="assets/images/landing-page/landing-notifications.svg" onload="SVGInject(this)" />
+            </span>
+            <span id="mat-badge-content-0" class="mat-badge-content mat-badge-active">4</span>
+
+          </span>
+          <div class="d-flex align-items-center">
+            <img class="dummy-user" src="{{userData?.business_logo}}" alt="" srcset="">
+            <span class="ml-1">{{userData?.business_name}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-2 left-section px-0">
+      <div class="section-one">
+        <ul class="section-one-items">
+          <div *ngFor="let item of sections; index as i"
+            class="d-flex align-items-center justify-content-between section-one-items-sec ">
+            <div class="d-flex align-items-center {{classArr.includes(i) ? 'selected-item' : ''}}"
+              (click)="leftSelection(i)" style="padding: 5px 13px;cursor: pointer;">
+              <img *ngIf="!classArr.includes(i)" style="display: inline;" src="assets/images/gts/sample/question.png"
+                alt="" srcset="">
+              <img *ngIf="classArr.includes(i)" style="display: inline;"
+                src="assets/images/gts/sample/white-question.png" alt="" srcset="">
+              <li style="margin-left: 9px;">{{(i + 1)}}. {{item?.sectionName}}</li>
+            </div>
+            <div class="left-section-percent">{{getPerItemPercentage(item)}}%</div>
+          </div>
+        </ul>
+      </div>
+      <div class="section-two">
+        <span>Overall completion status</span>
+        <circle-progress [percent]="updatePercentageOverall()" [radius]="30" [outerStrokeWidth]="6"
+          [innerStrokeWidth]="2" [outerStrokeColor]="'#469073'" [innerStrokeColor]="'#d6e6e0'" [animation]="true"
+          [animationDuration]="300" [titleFontSize]="13"></circle-progress>
+      </div>
+      <div class="section-third">
+        <div class="section-third-sec">
+          <div class="d-flex align-items-center ">
+            <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/hash-grey.png" alt="" srcset="">
+            <div>Location Name</div>
+          </div>
+          <div style="margin-left: 25px;">{{currentLocation?.name}}</div>
+        </div>
+        <div class="section-third-sec">
+          <div class="d-flex align-items-center ">
+            <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/hash-grey.png" alt="" srcset="">
+            <div>Location Code</div>
+          </div>
+          <div style="margin-left: 25px;">{{currentLocation?.zip}}</div>
+        </div>
+        <div class="section-third-sec">
+          <div class="d-flex align-items-center ">
+            <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/location-grey.png" alt=""
+              srcset="">
+            <div>Address</div>
+          </div>
+          <div style="margin-left: 25px;">{{currentLocation?.address1}}</div>
+        </div>
+        <div class="section-third-sec">
+          <div class="d-flex align-items-center ">
+            <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/calendar.png" alt="" srcset="">
+            <div>Started on</div>
+          </div>
+          <div style="margin-left: 25px;">{{startInspectionDate}}</div>
+        </div>
+        <div class="section-third-sec">
+          <div class="d-flex align-items-center ">
+            <img class="mr-10" style="display: inline;" src="assets/images/gts/sample/user-grey.png" alt="" srcset="">
+            <div>Assessor Name</div>
+          </div>
+          <div style="margin-left: 25px;">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!loading" class="col-10 p-0 right-section">
+      <div *ngFor="let val of infoData; let outerIndex = index" class="right-section-one">
+        <div class="right-sec-heading cursor-pointer" (click)="openOuterContentBox(outerIndex,val)">
+          <div class="innerhtml-container">{{(classArr[0] + 1)}}. {{outerIndex+1}}.
+            <div [innerHTML]="val.description"></div>
+          </div>
+          <div>
+            <img class="{{outerContentBox.includes(outerIndex) ? '' : 'outer-content-img' }}"
+              src="assets/images/gts/sample/arrow-up.png" alt="" srcset="">
+          </div>
+        </div>
+        <!-- Section Loading START -->
+        <div *ngIf="isShowSectionLoading(val)" class="row p-0 m-0">
+          <div class="col-12 d-flex justify-content-center align-items-center ">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+          </div>
+        </div>
+        <!-- Section Loading END CHECKS -->
+        <!-- Render START CHECKS -->
+        <div *ngIf="!isShowSectionLoading(val)">
+          <div *ngFor="let item of returnChecksAction(val, outerIndex,'Check'); let innerIndex = index"
+            class="row p-0 m-0 right-sec-content {{outerContentBox.includes(outerIndex) ? '' : 'display-none' }}">
+            <div class="col-10 p-0 border-bottom content-box">
+              <div class="d-flex justify-content-between align-items-center ">
+                <span class="innerhtml-container">
+                  <div class="inner-html" [innerHTML]="item.description"></div>
+                  <img style="width: 19px;height: 19px; margin-top: 5px; margin-left: 7px; "
+                    src="assets/images/gts/sample/info-grey.png" alt="" srcset="">
+                </span>
+                <span>
+                  <!-- <img *ngIf="isEnableCameraIcon(item.userInput)" src="assets/images/gts/sample/camera.png" alt=""
+                srcset=""> -->
+                  <!-- <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt="" srcset=""> -->
+                </span>
+              </div>
+
+              <!-- USer check Input render START -->
+              <!-- LOADING -->
+
+              <div class="row p-0 m-0">
+                <div class="col-12">
+                  <div *ngFor="let input of item.userInputs; let inputIndex = index " class="col-12">
+                    <!-- INPUT START Render input with userinput === 1 -->
+                    <div *ngIf="input.userInput == 1" class="col-12">
+                      <div class="d-flex align-items-center py-2">
+                        <img class="mr-1" src="assets/images/gts/sample/to-do-list.png" alt="" srcset="">
+                        <span class="grey-color">{{ input.authorInput }}</span>
+                      </div>
+                      <div>
+                        <input id="username1" class="w-100" *ngIf="!input.minValue || !input.maxValue" type="text"
+                          pInputText (change)="onBlurInput($event, input, item)" />
+                      </div>
+                    </div>
+                    <!-- INPUT END Render input with userinput === 1 -->
+
+                    <!-- INPUT START Render input with userinput === 1 -->
+                    <div *ngIf="input.userInput == 2" class="col-12">
+                      <p-dropdown appendTo="body" [options]="input.dropDownValues" placeholder="Select"
+                        styleClass="w-100">
+                      </p-dropdown>
+                    </div>
+                    <!-- INPUT END Render input with userinput === 1 -->
+
+                    <!-- Attachment RENDER START-->
+                    <div *ngIf="input.userInput == 3">
+                      <span class="grey-color">{{ input.authorInput }}</span>
+                      <div style="margin-top: 10px;" class="d-flex attachments-sec">
+                        <span *ngFor="let files of attachmentFiles[item.id]" class="d-flex attachments-sec-img">
+                          <img class="content-box-img" [src]="files" alt="" srcset="">
+                          <div (click)="onDeleteAttachment(item.id, files)" class="attachment-dlt cursor-pointer">
+                            <img src="assets/images/gts/sample/delete-white.png" alt="" srcset="">
+                          </div>
+                        </span>
+                        <input accept="image/*" type="file" style="display: none;"
+                          (change)="onFileAttachment($event, item)" #fileUpload />
+                        <div (click)="fileUpload.click()" class="img-add">
+                          <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt=""
+                            srcset="">
+                          <span>Add</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Attachment RENDER END-->
+                  </div>
+                </div>
+              </div>
+              <!-- USer check Input render END -->
+
+            </div>
+            <!-- ACTION BUTTTON START -->
+            <div *ngFor="let actionButtons of item.actionOptions; let actionIndex = index"
+              class="col-1 p-0 text-center {{actionIndex === 0 ? 'border-left-right' : 'border-right'}}">
+              <div *ngIf="item.name === 'Check'" (click)="onSubmitForm(actionButtons?.id,item, actionIndex)"
+                class="{{isSelected(item.id, actionIndex)}}">
+                <i class="cursor-pointer pi pi-check" style="margin-right: {{actionIndex === 0 ? '5px' : ''}}"></i>
+                <span>{{actionButtons.name}}</span>
+              </div>
+            </div>
+            <!-- ACTION BUTTTON END -->
+
+            <!-- Render START ACTIONS -->
+            <div *ngIf="isRenderActionInputSection(item.id)" class="col-12">
+              <div *ngFor="let item of returnChecksAction(val, outerIndex,'Action'); let innerIndex = index"
+                class="row p-0 m-0 right-sec-content {{outerContentBox.includes(outerIndex) ? '' : 'display-none' }}">
+                <div class="col-10 p-0 border-bottom content-box">
+                  <div class="d-flex justify-content-between align-items-center ">
+                    <span class="innerhtml-container">
+                      <div class="inner-html" [innerHTML]="item.description"></div>
+                      <img style="width: 19px;height: 19px; margin-top: 5px; margin-left: 7px; "
+                        src="assets/images/gts/sample/info-grey.png" alt="" srcset="">
+                    </span>
+                    <span>
+                      <!-- <img *ngIf="isEnableCameraIcon(item.userInput)" src="assets/images/gts/sample/camera.png" alt=""
+                srcset=""> -->
+                      <!-- <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt="" srcset=""> -->
+                    </span>
+                  </div>
+
+                  <!-- USer check Input render START -->
+                  <!-- LOADING -->
+
+                  <div class="row p-0 m-0">
+                    <div class="col-12">
+                      <div *ngFor="let input of item.userInputs; let inputIndex = index " class="col-12">
+                        <!-- INPUT START Render input with userinput === 1 -->
+                        <div *ngIf="input.userInput == 1" class="col-12">
+                          <div class="d-flex align-items-center py-2">
+                            <img class="mr-1" src="assets/images/gts/sample/to-do-list.png" alt="" srcset="">
+                            <span class="grey-color">{{ input.authorInput }}</span>
+                          </div>
+                          <div>
+                            <input id="username1" class="w-100" *ngIf="!input.minValue || !input.maxValue" type="text"
+                              pInputText (change)="onBlurInput($event, input, item)" />
+                          </div>
+                        </div>
+                        <!-- INPUT END Render input with userinput === 1 -->
+
+                        <!-- INPUT START Render input with userinput === 1 -->
+                        <div *ngIf="input.userInput == 2" class="col-12">
+                          <p-dropdown appendTo="body" [options]="input.dropDownValues" placeholder="Select"
+                            styleClass="w-100">
+                          </p-dropdown>
+                        </div>
+                        <!-- INPUT END Render input with userinput === 1 -->
+
+                        <!-- Attachment RENDER START-->
+                        <div *ngIf="input.userInput == 3">
+                          <span class="grey-color">{{ input.authorInput }}</span>
+                          <div style="margin-top: 10px;" class="d-flex attachments-sec">
+                            <span *ngFor="let files of attachmentFiles[item.id]" class="d-flex attachments-sec-img">
+                              <img class="content-box-img" [src]="files" alt="" srcset="">
+                              <div (click)="onDeleteAttachment(item.id, files)" class="attachment-dlt cursor-pointer">
+                                <img src="assets/images/gts/sample/delete-white.png" alt="" srcset="">
+                              </div>
+                            </span>
+                            <input accept="image/*" type="file" style="display: none;"
+                              (change)="onFileAttachment($event, item)" #fileUpload />
+                            <div (click)="fileUpload.click()" class="img-add">
+                              <img width="25px" height="20px" src="assets/images/gts/sample/green-img-icon.png" alt=""
+                                srcset="">
+                              <span>Add</span>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Attachment RENDER END-->
+                      </div>
+                    </div>
+                  </div>
+                  <!-- USer check Input render END -->
+
+                </div>
+              </div>
+            </div>
+            <!-- Render END ACTIONS -->
+          </div>
+        </div>
+        <!-- Render END CHECKS -->
+      </div>
+    </div>
+    <div *ngIf="loading" class="col-10 p-0 center-section">
+      <div class="loading-announcement">
+        <img src="assets/images/loading-small.svg" alt="Loader" />
+      </div>
+    </div>
+  </div>
+</div>

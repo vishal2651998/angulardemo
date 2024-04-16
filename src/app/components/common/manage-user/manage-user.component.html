@@ -1,0 +1,507 @@
+<div class="modal-container custom-modal manage-modal" id="wrapper" [ngClass]="{'bg-color-white' : tagusersFlag}"
+    [style.height.px]="height">
+    <div class="modal-header">
+        <h6 class="modal-title">{{accessTitle}}</h6>
+        <div (click)="addNewUser()" class="m-0 add-action-btn cursor add-new">
+            <img src="assets/images/hq/add-icon.png">
+            <span>New User</span>
+        </div>
+        <div class="actions" [ngClass]="{'tag-actions' : tagusersFlag}">
+            <div *ngIf="!ppfrFlag && !langFlag && !uTypeFlag && !uTypeDealerFlag && access !== 'dekraUsers'"
+                class="action-col cursor clear" (click)="clearSelection()"
+                [ngClass]="{'show': (headerCheck == 'checked'), 'hide': (headerCheck == 'unchecked' || loading || (access == 'techsupportrules' ) || (escalationFlag && action == 'view')), 'clearCss' : recentSelectionFlag }">
+                Clear All</div>
+            <div *ngIf="access == 'dekraUsers' && !singleUser" class="action-col cursor clear" style="left:-70px"
+                (click)="clearDekraSelection()"
+                [ngClass]="{'show': (headerCheck == 'checked'), 'hide': (headerCheck == 'unchecked' || loading || (access == 'techsupportrules' ) || (escalationFlag && action == 'view')), 'clearCss' : recentSelectionFlag }">
+                Clear All</div>
+            <div *ngIf="!ppfrFlag && !langFlag && !uTypeFlag && !uTypeDealerFlag && this.access != 'techsupport' && !singleUser"
+                class="action-col apply cursor active" (click)="applySelection()"
+                [ngClass]="{ 'hide': (access == 'techsupportrules' && !techsupportrulesBtn ) || (escalationFlag && action == 'view') || (tagusersFlag && selectedList.length==0) , 'applyCss' : recentSelectionFlag}">
+                {{saveBtnText}}</div>
+            <span (click)="close()" class="cursor close">
+                <img *ngIf="!loading" src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="" [ngClass]="{'row' : recentSelectionFlag}">
+            <div [ngClass]="{'col-sm-6 pr-0': recentSelectionFlag}">
+                <div *ngIf="tagusersFlag && tvsProdOwner" class="productOwner-div">
+                    <table class="manage-table split-table">
+                        <tbody class="manage-items">
+                            <tr>
+                                <td><span class="productOwner-HeadText">Assigned Product Owner</span></td>
+                            </tr>
+                            <tr class="item-list user-list {{item.itemClass}} cursor"
+                                *ngFor="let item of productOwner; let i = index;">
+                                <td class="cont">
+                                    <span class="profile-info profile-icon" [ngClass]="{'init': !item.checkDisplayFlag}"
+                                        [ngStyle]="{'background-image': 'url(' + item.profileImage + ')'}">
+                                        <span class="avail"
+                                            [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                    </span>
+                                    <span class="profile-info user-name">
+                                        <span class="name">{{item.emailAddress}}</span>
+                                        <span class="role">{{item.assigneeRole}}</span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- <div *ngIf="singleUser && access == 'dekraUsers'" class="d-flex pt-3" style="margin-left:20px;">
+            <div class="action-col cursor clear d-flex align-items-center" style="border: 2px solid #999999;border-radius: 16px;padding: 3px 12px;" [ngClass]="{'activeUserBtn':userType == 'dekra'}" (click)="switchDekraUser()" [ngClass]=""><img alt="Search" class="mr-1" *ngIf="userType == 'dekra'"  src="assets/images/inspection-home/building.png"><img *ngIf="userType != 'dekra'" class="mr-1" alt="Search" src="assets/images/inspection-home/company.png">Dekra Users</div>
+            <div class="action-col cursor clear ml-3 d-flex align-items-center" style="border: 2px solid #999999;border-radius: 16px;padding: 3px 12px;" [ngClass]="{'activeUserBtn':userType == 'customer'}" (click)="switchCustomerUser()" [ngClass]=""><img *ngIf="userType != 'customer'" class="mr-1" alt="Search" src="assets/images/inspection-home/cus-user.png"> <img alt="Search" class="mr-1" *ngIf="userType == 'customer'"  src="assets/images/inspection-home/car.png"> Customer Users</div>
+        </div> -->
+
+                <div *ngIf="showSearchBar && !escalationFlag" class="search-user">
+                    <form *ngIf="!loading" class="search-form user-search" [formGroup]="searchForm">
+                        <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search"
+                                src="assets/images/search-icon.png"></a>
+                        <input *ngIf="!actionFlag" type="text" autocomplete="off" class="form-control search-control"
+                            value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30"
+                            placeholder="Search" (input)="onSearchChange($event.target.value)"
+                            [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                        <input *ngIf="actionFlag" type="text" autocomplete="off" class="form-control search-control"
+                            value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30"
+                            placeholder="Search" (input)="onSearchChange($event.target.value)"
+                            [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" disabled="true">
+                        <a *ngIf="searchClose && !actionFlag" class="search-actions search-close"
+                            (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                        <!--a *ngIf="searchTick && action == 'new'" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/search-icon.png"></a-->
+                    </form>
+                </div>
+                <div *ngIf="!langFlag && !ppfrFlag && !escalationFlag && !tagusersFlag && !uTypeFlag && !uTypeDealerFlag && access !== 'dekraUsers'"
+                    class="selected-users" [ngClass]="{'hide': selectedList.length < 1}">
+                    <ul style="max-height: 90px;" class="overflow-auto">
+                        <li *ngFor="let u of selectedList; let i = index;">
+                            <span class="img" [ngStyle]="{'background-image': 'url(' + u.img + ')'}">
+                                <span class="cursor remove" (click)="removeSelection(u.id)"></span>
+                            </span>
+                            <span class="name text-left ml-4" title="{{u.name}}">{{u.name}}</span>
+                            <span class="role">{{u.role}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="access == 'dekraUsers' && !singleUser" class="selected-users"
+                    [ngClass]="{'hide': selectedList.length < 1}">
+                    <ul style="max-height: 90px;" class="overflow-auto">
+                        <li *ngFor="let u of selectedList; let i = index;">
+                            <span class="img" [ngStyle]="{'background-image': 'url(' + u.profileImage + ')'}">
+                                <span class="cursor remove" (click)="removeDekraUser(u.id)"></span>
+                            </span>
+                            <span class="name text-left ml-4" title="{{u.name}}">{{u.userName}}</span>
+                            <!-- <span class="role">{{u.businessRoleStr}}</span> -->
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="!loading && tagusersFlag && action == 'new'" class="selected-users"
+                    [ngClass]="{'hide': selectedList.length < 1}">
+                    <ul style="max-height: 75px;" class="overflow-auto p-0">
+                        <li *ngFor="let u of selectedList; let i = index;" class="p-0 mt-2">
+                            <span class="img" [ngStyle]="{'background-image': 'url(' +u.img+ ')'}">
+                                <span class="cursor remove" (click)="removeTagSelection(u.id)"></span>
+                            </span>
+                            <span class="name text-left ml-4" title="{{u.name}}">{{u.name}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="!loading && escalationFlag && action == 'new'" class="selected-users"
+                    [ngClass]="{'hide': selectedList.length < 1}">
+                    <ul style="max-height: 75px;" class="overflow-auto p-0 d-flex">
+                        <li *ngFor="let u of selectedList; let i = index;" class="p-0 mt-2 mb-2">
+                            <span class="img" [ngStyle]="{'background-image': 'url(' +u.img+ ')'}">
+                                <span class="cursor remove" (click)="removeEscSelection(u.id)"></span>
+                            </span>
+                            <span class="name text-left ml-4" title="{{u.name}}">{{u.name}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div *ngIf="!empty && !loading && escalationFlag && action == 'new'" id="manageTable-esc"
+                    class="manage-container manageTable-esc">
+                    <table class="manage-table split-table">
+                        <tbody class="manage-items">
+                            <tr *ngIf="recentSelectionFlag">
+                                <td colspan="2">
+                                    <div class="td-title">Recent Selections</div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="recentSelectionFlag && showEmptyRecent ">
+                                <td colspan="2">
+                                    <div class="no-item-list">
+                                        <div class="item-empty-container text-center">
+                                            <!-- <div class="empty-bg"></div> -->
+                                            <img src="./assets/images/no-result-media.png" alt="">
+                                            <div class="empty-cont">
+                                                <span class="text-center message">Nothing to show</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="item-list user-list {{item.itemClass}} cursor"
+                                *ngFor="let item of exRecentList; let i = index;"
+                                [ngClass]="{'hide': !item.displayFlag}"
+                                (click)="itemRecentSelectionEscUsers('single', i, item.userId, !item.checkFlag)">
+                                <td class="choose" *ngIf="!managerFlag">
+                                    <span class="profile-info checkbox"
+                                        [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag, 'hide': !item.checkDisplayFlag}"></span>
+                                </td>
+                                <td class="cont">
+                                    <span class="profile-info profile-icon" [ngClass]="{'init': !item.checkDisplayFlag}"
+                                        [ngStyle]="{'background-image': 'url(' + item.profileImage + ')'}">
+                                        <span class="avail"
+                                            [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                    </span>
+                                    <span class="profile-info user-name">
+                                        <span class="name">{{item.emailAddress}}</span>
+                                        <span class="role">{{item.userName}}</span>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div [ngClass]="{'col-sm-6 pl-0 pbr-50 bg-color': recentSelectionFlag}">
+                <div *ngIf="!empty && !loading && escalationFlag && action == 'new'" id="manageTable-esc"
+                    class="manage-container manageTable-esc">
+                    <table class="manage-table split-table">
+                        <tbody class="manage-items">
+                            <tr *ngIf="newSelectionFlag">
+                                <td colspan="2">
+                                    <div class="td-title" [style.height.px]="20">Select Assignee</div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="newSelectionFlag">
+                                <td colspan="2">
+                                    <div class="search-user">
+                                        <form *ngIf="!loading" class="search-form user-search" [formGroup]="searchForm">
+                                            <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search"
+                                                    src="assets/images/search-icon.png"></a>
+                                            <input *ngIf="!actionFlag" type="text" autocomplete="off"
+                                                class="form-control search-control" value="{{searchVal}}" id="searchKey"
+                                                formControlName="searchKey" maxlength="30" placeholder="Search"
+                                                (input)="onSearchChange($event.target.value)"
+                                                [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                                            <input *ngIf="actionFlag" type="text" autocomplete="off"
+                                                class="form-control search-control" value="{{searchVal}}" id="searchKey"
+                                                formControlName="searchKey" maxlength="30" placeholder="Search"
+                                                (input)="onSearchChange($event.target.value)"
+                                                [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }"
+                                                disabled="true">
+                                            <a *ngIf="searchClose && !actionFlag" class="search-actions search-close"
+                                                (click)="clearSearch()"><img alt="Search Close"
+                                                    src="assets/images/select-close.png"></a>
+                                            <!--a *ngIf="searchTick && action == 'new'" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/search-icon.png"></a-->
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--div *ngIf="!empty" id="manageTable" class="container manage-container" style="height: 75vh;"-->
+                <div *ngIf="!empty" id="manageTable" class="container manage-container" [style.height.px]="innerHeight">
+
+                    <div class="scroll-area scrollbar scrollbar-primary thin" (scroll)="onScroll($event)">
+                        <table class="manage-table split-table">
+
+                            <tbody
+                                *ngIf="!loading && !ppfrFlag && !langFlag && !escalationFlag && !tagusersFlag && !uTypeFlag && !uTypeDealerFlag"
+                                class="manage-items">
+                                <tr class="item-list user-list {{item.itemClass}} cursor"
+                                    *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'hide': !item.displayFlag}"
+                                    (click)="itemSelection('single', i, item.userId, !item.checkFlag)">
+                                    <td class="choose" *ngIf="!managerFlag">
+                                        <span class="profile-info checkbox"
+                                            [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag, 'hide': !item.checkDisplayFlag}"></span>
+                                    </td>
+                                    <td class="cont">
+                                        <span class="profile-info profile-icon"
+                                            [ngClass]="{'init': !item.checkDisplayFlag}"
+                                            [ngStyle]="{'background-image': 'url(' + item.profileImg + ')'}">
+                                            <span class="avail"
+                                                [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                        </span>
+                                        <span class="profile-info user-name">
+                                            <span class="name">{{item.userName}}</span>
+                                            <span class="role">{{item.title}}</span>
+                                        </span>
+                                        <span class="more-icon profile-more" *ngIf="action == 'view'"
+                                            [matMenuTriggerFor]="eu"></span>
+                                        <mat-menu #eu="matMenu">
+                                            <div id="ng-popover" class="popover prob-tooltip modal-popover">
+                                                <div class="arrow"></div>
+                                                <div class="popover-body" id="ng-popover-cont">
+                                                    <ul class="user-actions">
+                                                        <li class="cursor remove" *ngIf="item.isDefault == 0"
+                                                            (click)="removeUser(i, item.userId)">Remove</li>
+                                                        <li class="cursor profile view"
+                                                            (click)="navProfile(item.userId)">Profile</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </mat-menu>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tbody *ngIf="!loading && ppfrFlag" class="manage-items">
+                                <tr class="item-list user-list cursor" *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'hide': !item.displayFlag}" (click)="itemSelectionPPFR(item.name)">
+
+                                    <td class="cont">
+                                        <span class="profile-info user-name">
+                                            <span class="name">{{item.name}}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tbody *ngIf="!loading && langFlag" class="manage-items">
+                                <tr (click)="itemSelectionLang( i, item.id, !item.checkFlag)" class="item-list cursor"
+                                    *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'hide': !item.displayFlag}">
+                                    <td class="choose">
+                                        <span class="checkbox"
+                                            [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}"></span>
+                                    </td>
+                                    <td class="cont cont-new"
+                                        [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}">
+                                        <span>{{item.name}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="!loading && escalationFlag && action == 'new'" class="manage-items">
+                                <tr *ngIf="showEmptyEscList">
+                                    <td colspan="2">
+                                        <div class="no-item-list">
+                                            <div class="item-empty-container text-center">
+                                                <!-- <div class="empty-bg"></div> -->
+                                                <img src="./assets/images/no-result-media.png" alt="">
+                                                <div class="empty-cont">
+                                                    <span class="text-center message">Nothing to show</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="item-list user-list {{item.itemClass}} cursor"
+                                    *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'hide': !item.displayFlag}"
+                                    (click)="itemSelectionEscUsers('single', i, item.userId, !item.checkFlag)">
+                                    <td class="choose" *ngIf="!managerFlag">
+                                        <span class="profile-info checkbox"
+                                            [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag, 'hide': !item.checkDisplayFlag}"></span>
+                                    </td>
+                                    <td class="cont">
+                                        <span class="profile-info profile-icon"
+                                            [ngClass]="{'init': !item.checkDisplayFlag}"
+                                            [ngStyle]="{'background-image': 'url(' + item.profileImage + ')'}">
+                                            <span class="avail"
+                                                [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                        </span>
+                                        <span class="profile-info user-name">
+                                            <span class="name">{{item.emailAddress}}</span>
+                                            <span class="role">{{item.firstLastname}}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="emptyEs">
+                                    <td colspan="3">
+                                        <div *ngIf="searchVal != ''" class="no-item-list">
+                                            <div class="item-empty-container">
+                                                <div class="empty-cont">
+                                                    <div class="text-center empty-res modal-empty-res"
+                                                        style="transform: none;top:36px;">
+                                                        <div class="empty-bg"></div>
+                                                        <!--<div>{{successMsg}}</div>-->
+                                                        <div>No result found</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="searchVal == ''" class="no-item-list" style="margin-top:12rem;">
+                                            <div class="item-empty-container text-center">
+                                                <!-- <div class="empty-bg"></div> -->
+                                                <img src="./assets/images/no-result-media.png" alt="">
+                                                <div class="empty-cont">
+                                                    <span class="text-center message">Nothing to show</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tbody *ngIf="!loading && tagusersFlag && action == 'new'" class="manage-items">
+                                <tr class="item-list user-list {{item.itemClass}} cursor"
+                                    *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'hide': !item.displayFlag}"
+                                    (click)="itemSelectionTagsUsers('single', i, item.userId, !item.checkFlag)">
+                                    <td class="choose" *ngIf="!managerFlag">
+                                        <span class="profile-info checkbox"
+                                            [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag, 'hide': !item.checkDisplayFlag}"></span>
+                                    </td>
+                                    <td class="cont">
+                                        <span class="profile-info profile-icon"
+                                            [ngClass]="{'init': !item.checkDisplayFlag}"
+                                            [ngStyle]="{'background-image': 'url(' + item.profileImage + ')'}">
+                                            <span class="avail"
+                                                [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                        </span>
+                                        <span class="profile-info user-name">
+                                            <span class="name">{{item.name}}</span>
+                                            <span class="role">{{item.assigneeRole}}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tbody *ngIf="!loading && escalationFlag && action == 'view'" class="manage-items">
+                                <tr class="item-list user-list cursor" *ngFor="let item of listItems; let i = index;">
+                                    <td class="cont" (click)="navProfile(item.id)">
+                                        <span class="profile-info profile-icon"
+                                            [ngStyle]="{'background-image': 'url(' + item.img + ')'}"
+                                            [ngClass]="{ 'hide' : escalationModelFlag } ">
+                                            <span class="avail"
+                                                [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span>
+                                        </span>
+                                        <span class="profile-info user-name">
+                                            <span class="name">{{item.name}}</span>
+                                            <span class="role">{{item.role}}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="!loading && (uTypeFlag)" class="manage-items">
+                                <tr (click)="itemSelectionuType( i, item.id, !item.checkFlag, item.enabled)"
+                                    class="item-list cursor" *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'udisabled': item.enabled == '0','hide': !item.displayFlag}">
+                                    <td class="choose">
+                                        <span class="checkbox"
+                                            [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}"></span>
+                                    </td>
+                                    <td class="cont cont-new"
+                                        [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}">
+                                        <span>{{item.name}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="!loading && (uTypeDealerFlag)" class="manage-items">
+                                <tr (click)="itemSelectionuTypeDealer( i, item.id, !item.checkFlag)"
+                                    class="item-list cursor" *ngFor="let item of listItems; let i = index;"
+                                    [ngClass]="{'hide': !item.displayFlag}">
+                                    <td class="choose">
+                                        <span class="checkbox"
+                                            [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}"></span>
+                                    </td>
+                                    <td class="cont cont-new"
+                                        [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}">
+                                        <span>{{item.name}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tbody *ngIf="access == 'dekraUsers'" class="manage-items">
+                                <!-- <tr (click)="itemSelectionuTypeDekraUser( i, item.id, !item.checkFlag)" class="item-list cursor" *ngFor="let item of listItems; let i = index;" >
+                            <td class="choose">
+                                <span class="checkbox" [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}"></span>
+                            </td>
+                            <td class="cont cont-new"  [ngClass]="{'active': item.checkFlag, 'inactive': !item.checkFlag}">
+                                <span>{{item.userName}}</span>
+                            </td>
+                        </tr>       -->
+                                <tr (click)="itemSelectionuTypeDekraUser( i, item.id, !item.checkFlag)"
+                                    class="item-list user-list cursor" *ngFor="let item of listItems; let i = index;">
+                                    <td class="choose">
+                                        <span class="checkbox"
+                                            [ngClass]="{'active-green': item.checkFlag, 'inactive': !item.checkFlag}"></span>
+                                    </td>
+                                    <td class="cont">
+                                        <span class="profile-info profile-icon"
+                                            [ngStyle]="{'background-image': 'url(' + item.profileImage + ')'}"
+                                            [ngClass]="{ 'hide' : escalationModelFlag } ">
+                                            <!-- <span class="avail" [ngClass]="{'user-offline': item.availability == 0, 'user-active': item.availability == 1, 'user-inactive': item.availability == 2}"></span> -->
+                                        </span>
+                                        <span class="profile-info user-name">
+                                            <span class="name">{{item.firstName}} {{item.lastName}}</span>
+                                            <span class="role">{{item.businessRoleStr}}</span>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="lazyLoading">
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!loading && empty && !escalationFlag" class="no-item-list" [style.height.px]="innerHeight"
+            style="margin:0">
+            <div class="item-empty-container">
+                <div class="empty-cont">
+                    <div class="text-center empty-res modal-empty-res">
+                        <div class="empty-bg"></div>
+                        <!--<div>{{successMsg}}</div>-->
+                        <div>No result found</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ts-list-rt transition filter-expand position-relative">
+        <app-user-list [userPageData]="userPageData" (userIndexListComponentRef)="userListPageRef = $event"
+            (userCallback)="userIndexListPageCallback($event)"></app-user-list>
+    </div>
+
+</div>

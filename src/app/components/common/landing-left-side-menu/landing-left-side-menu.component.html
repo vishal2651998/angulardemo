@@ -1,0 +1,367 @@
+<div class="bg-left-side-panel-widget" ng-cloak>
+  <div class="left-side-panel left-side-panel-peScroll bg-color" [style.height]="'calc(100vh - '+sidebarHeight+'px)'">
+    <div class="ps" [perfectScrollbar]="sconfig">
+      <div class="left-toggle-menu-bar ">
+        <div class="container-left-menu ">
+
+          <div class="left-side-menu-scroll-content">
+            <div *ngIf="pageData.pageInfo != chatpage">
+              <div (click)="taponleftmenu(leftmenu)" *ngFor="let leftmenu of normalMenu">
+                <div class="p-accordion-custom-normal-header-link normal accord-menu-{{leftmenu.id}}"
+                  [class.active]="leftmenu.name == activemenu">
+                  <a class="custom-normal-header-link">
+                    <div class=""> <span
+                        class="bg-image {{leftmenu.submenuimageClass}} {{ (leftmenu.name == activemenu) ? 'active': 'normal'}}">
+                        <!-- <img alt="icon" src="./assets/images/landing-page/menu/home-icon-active.svg"
+                          onload="SVGInject(this)" /> -->
+                      </span><span
+                        class="menu-name {{ (leftmenu.name == activemenu) ? 'active': 'normal'}}">{{leftmenu.name}}</span>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div>
+              <section class="chat-search" *ngIf="pageData.pageInfo == chatpage">
+                <section class="chat-search-top">
+                  <h2 *ngIf="!msTeamAccess">Chat</h2>
+                  <h2 *ngIf="msTeamAccess" tooltipClass="help-content-tooltip sidebarTeam sidebarTeam1" container="body"
+                    triggers="manual" [autoClose]="false" placement="right-top" [ngbTooltip]="chatTT"
+                    #ttchat="ngbTooltip">Chat</h2>
+                  <ng-template #chatTT>
+                    <div class="tt-helpcontent-container">
+                      <div class="tt-bg-image {{thelpContentIconName}}"></div>
+                      <div class="tt-title">
+                        <div class="lt-img {{thelpContentIconName}}"></div>
+                        <div class="rt-text">{{thelpContentTitle}}</div>
+                      </div>
+                      <div class="tt-desp">{{thelpContentContent}}</div>
+                      <div class="tt-next-text" (click)="helpContent(thelpContentId)">DONE</div>
+                    </div>
+                  </ng-template>
+                  <div>
+                    <a class="search-icon active-search">
+                      <!-- <img *ngIf="!isSearchPlaceholderEnabled" (click)="EnableSearch()" src="../../../../assets/images/chat/search-icon.png" aria-label="Search" />
+                    <img *ngIf="isSearchPlaceholderEnabled" (click)="EnableSearch()" src="../../../../assets/images/chat/search-icon-active.png" aria-label="Search" /> -->
+                    </a>
+                    <a (click)="AddMember()"><img src="../../../../assets/images/chat/add-user.png"
+                        aria-label="Add User" /></a>
+                  </div>
+                </section>
+                <section *ngIf="isSearchPlaceholderEnabled" class="chat-search-bottom">
+                  <div class="search-input">
+                    <button type="button" aria-label="Search" class="chat-input-search">
+                      <img src="../../../../assets/images/chat/chat-input-search.png" />
+                    </button>
+                    <input type="text" />
+                    <button aria-label="Close" (click)="ClearEnableSearch()">
+                      <img src="../../../../assets/images/chat/chat-search-close.png" />
+                    </button>
+                  </div>
+                </section>
+              </section>
+              <p-accordion [multiple]="true" (onClose)="onTabClose($event)" (onOpen)="onTabOpen($event)">
+                <p-accordionTab *ngFor="let leftmenu of accorodianMenu; let sm = index" [selected]="leftmenu.expandFlag"
+                  class="d-block" style="margin-bottom: 2px;">
+
+                  <p-header (click)="taponleftmenu(leftmenu)"
+                    class="cursor accordion-icon accord-menu-{{leftmenu.id}} {{ (leftmenu.name == activemenu) ? 'active': 'normal'}}">
+
+
+
+                    <div class="container-fluid">
+
+                      <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0"
+                        (mouseenter)="workstreamAction=true" (mouseleave)="workstreamAction=false">
+
+                        <div class="menu-name-bar col col col-lg-10 col-md-10 col-xl-10 col-sm-10">
+                          <div class="menu-name-div"> <span
+                              class="bg-image {{leftmenu.submenuimageClass}} {{ (leftmenu.name == activemenu) ? 'active': 'normal'}}">
+                              <!-- <img alt="icon" src="./assets/images/landing-page/menu/home-icon-active.svg"
+                              onload="SVGInject(this)" /> -->
+                            </span><span title="{{leftmenu.name}}"
+                              class="menu-name {{ (leftmenu.name == activemenu) ? 'active': 'normal'}}">{{leftmenu.name}}
+                            </span>
+                          </div>
+
+                          <div
+                            *ngIf="(leftmenu.id=='3' || leftmenu.id=='18') && chatService.totalNewWorkstreamMessage > 0"
+                            class="wscount wr">
+                            <span>{{chatService.totalNewWorkstreamMessage}}</span>
+                          </div>
+                          <div *ngIf="leftmenu.id=='6' && chatService.totalNewGroupMessage > 0" class="wscount tn">
+                            <span>{{chatService.totalNewGroupMessage}}</span>
+                          </div>
+                          <div *ngIf="leftmenu.id=='5' && chatService.totalNewDMMessage > 0" class="wscount dm">
+                            <span>{{chatService.totalNewDMMessage}}</span>
+                          </div>
+
+                        </div>
+                        <div class="col col col-lg-1 col-md-1 col-xl-1 col-sm-1 landing-padding0">
+                          <div
+                            *ngIf="workstreamAction && !whelpContentFlagStatus && ((roleId=='3' || roleId=='2' || roleId=='6' || roleId=='10' ) && (leftmenu.id=='3' || leftmenu.id=='18'))"
+                            title="New Workstream" class="dot-div-new-ws">
+                            <span class="more-button" tooltipClass="worksteam-tooltip" triggers="click"
+                              [autoClose]="true" placement="bottom" [ngbTooltip]="worksteamNew"
+                              (click)="$event.stopPropagation();"><span class="more-circle">&nbsp;</span><span
+                                class="more-circle">&nbsp;</span><span class="more-circle">&nbsp;</span></span>
+                            <ng-template #worksteamNew>
+                              <div class="tooltip-worksteam-new"
+                                (click)="workstreamPageNew();$event.stopPropagation();">
+                                <span class="w-img"><img
+                                    src="assets/images/workstreams-page/new-worksteam-icon.png"></span>
+                                <span class="w-text">New Workstream</span>
+                              </div>
+                            </ng-template>
+                          </div>
+                          <div class="dot-div-new-ws">
+                            <span class="more-button" tooltipClass="help-content-tooltip sidebarTeam3" container="body"
+                              triggers="manual" [autoClose]="false" placement="right-top" [ngbTooltip]="worksteamTT"
+                              #ttworksteam="ngbTooltip" (click)="$event.stopPropagation();"></span>
+                            <ng-template #worksteamTT>
+                              <div class="tt-helpcontent-container">
+                                <div class="tt-bg-image {{whelpContentIconName}}"></div>
+                                <div class="tt-title">
+                                  <div class="lt-img {{whelpContentIconName}}"></div>
+                                  <div class="rt-text">{{whelpContentTitle}}</div>
+                                </div>
+                                <div class="tt-desp">{{whelpContentContent}}</div>                                
+                                <div class="tt-div tt-next-div" (click)="nextTooltip(whelpContentId)"><span class="button-div button-next-div" ><span class="text">NEXT&nbsp;</span><img src="assets/images/common/next-tt.png" alt="next" /></span></div>
+                                <div class="tt-div tt-skip-div" (click)="skipTooltip(whelpContentId)"><span class="button-div button-skip-div"><span class="text">SKIP&nbsp;</span><img src="assets/images/common/skip-tt.png" alt="skip" /></span></div>
+                              </div>
+                            </ng-template>
+                          </div>
+
+                        </div>
+                        <div class="col col col-lg-1 col-md-1 col-xl-1 col-sm-1 landing-padding0">
+
+                          <div class="plusone{{sm}} {{ (sm!=expandminus1) ? 'showinline': 'hide'}}"><i
+                              class="pi pi-plus"></i></div>
+                          <div class="minusone{{sm}} {{ (sm==expandminus1) ? 'showinline': 'hide'}}"><i
+                              class="pi pi-minus"></i></div>
+
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <!--
+    <div *ngIf="sm!=expandminus ||  sm==expandplus" style="display: inline-block;"><i class="pi pi-plus"></i></div>
+                <div *ngIf="sm==expandminus && sm!=expandplus" style="display: inline-block;"><i class="pi pi-minus"></i></div>
+                -->
+
+                    <!--<span><p-button ></p-button></span>-->
+                  </p-header>
+
+                  <div *ngIf="leftmenu.id=='3' || leftmenu.id=='18'"
+                    class="workstreamsListClass scrollbar scrollbar-primary thin" tabindex="0">
+                    <div class="workstream-content">
+                      <!--div *ngIf="loadingws" style="width:28px;height:28px;" class="loading-small-screen">
+                        <img style="height:30px;text-align:center;" src="assets/images/loading.svg"
+                          alt="Loader" /></div-->
+                      <div *ngFor="let workstreams of chatService.workstreamArr; let sm = index">
+
+                        <div *ngIf="workstreams" id="{{workstreams.wsId}}" style="display: flex;"
+                          class="workstream-bg workstream-bg{{workstreams.wsId}}{{chatWorkstreamType}}"
+                          [class.active]="(((workstreams.wsId == currentWorkstreamIdInfo && pageData.pageInfo == 2 ) || ( currentWorkstreamType == 1 && pageData.access == 'chat-page' && workstreams.wsId == chatService.currentWorkstreamIdInfo)) && WorkstreamelectedFlag )"
+                          (mouseenter)="mouseenterWS(workstreams.wsId)" (mouseleave)="mouseleaveWS(workstreams.wsId)">
+                          <div class="ws-div" (click)="LoadWorkstreamChat(workstreams)">
+                            <div class="lt-wsimg image-cntr">
+
+                              <img *ngIf="workstreams.workstreamIcon" [ngClass]="{ 'white-bg' : techDomain }" src="{{workstreams.workstreamIcon}}" alt="Loader"  />
+                              <img *ngIf="!workstreams.workstreamIcon" src="assets/images/workstream-circle.svg" alt="Loader" onload="SVGInject(this)" />
+                              <!-- <img src="assets/images/landing-page/workstream-default.png" alt="Loader" /> -->
+                            </div>
+                            <div class="wd-80">
+                              <div class="rt-wsname" title="{{workstreams.wsName}}" style="overflow: hidden; text-overflow: ellipsis;">{{workstreams.wsName}}</div>
+                              <ng-template #chatMenu></ng-template>
+                              <div popoverTitle="{{workstreams?.cConfig[0]?.messageTypes[0]?.toolTip}}" popoverClass="custom-tooltip sett-tooltip" [ngbPopover]="chatMenu" placement="left" triggers="hover" appendTo="body" style="margin: 0 !important; padding-top: 2px; padding-left: 10px;" class="mute-notification" *ngIf="pageData?.access == 'chat-page' && workstreams?.cConfig[0]?.messageTypes[0]?.value == 0">
+                                <img src="assets/images/vector-smart-object-copy.png" class="Vector-Smart-Object-copy"
+                                  alt="mute" />
+                              </div>
+                              <div class="rt-mute" *ngIf="!workstreams.wsNew" [ngClass]="{'v-hidden': !workstreams.wsNew}" >
+
+                              </div>
+                              <div class="rt-mute"  *ngIf="workstreams.wsCount && (workstreams.wsNew  && workstreams.wsCount) ">
+                                <span class="rt-mute-text" *ngIf="workstreams.wsCount>100">99+</span>
+                                <span class="rt-mute-text"
+                                  *ngIf="workstreams.wsCount<100">{{workstreams.wsCount}}</span>
+                              </div>
+                            </div>
+
+
+                          </div>
+                          <div
+                            *ngIf="(((chatService.workstreamArr.length == 1) || (sm != chatService.workstreamArr.length-1)) && ((leftmenu.id=='3' || leftmenu.id=='18') && ((workstreams.wsEditAccess == '1' && workstreams.wsAction) || (workstreams.wsAction && pageData.pageInfo == 3))))"
+                            class="dot-div-edit-ws">
+                            <span title="Workstream" class="more-button"
+                              tooltipClass="worksteam-tooltip edit-worksteam-tt" triggers="click" [autoClose]="true"
+                              placement="bottom" [ngbTooltip]="worksteamEdit" (click)="$event.stopPropagation();"><span
+                                class="more-circle">&nbsp;</span><span class="more-circle">&nbsp;</span><span
+                                class="more-circle">&nbsp;</span></span>
+                            <ng-template #worksteamEdit>
+                              <div *ngIf="(workstreams.wsEditAccess == '1')" class="tooltip-worksteam-new"
+                                [ngClass]="{ 'chat-ws-text': pageData.pageInfo == 3  }"
+                                (click)="workstreamPageEdit(workstreams.wsId);$event.stopPropagation();">
+                                <span class="w-img"><img
+                                    src="assets/images/workstreams-page/edit-workstream-icon.png"></span>
+                                <span class="w-text">Edit Workstream</span>
+                              </div>
+                              <div *ngIf="pageData.pageInfo == 3"
+                                class="tooltip-worksteam-new chat-ws-text"
+                                [ngClass]="{ 'chat-ws-text': pageData.pageInfo == 3  }"
+                                (click)="openDialogNotification(workstreams.wsId);$event.stopPropagation();">
+                                <span class="w-img"><img
+                                    src="assets/images/workstreams-page/ws-chant-notification-icon.png"></span>
+                                <span class="w-text">Notification Settings</span>
+                              </div>
+                            </ng-template>
+                          </div>
+                          <div
+                            *ngIf="(((chatService.workstreamArr.length != 1) && (sm == chatService.workstreamArr.length-1)) && ((leftmenu.id=='3' || leftmenu.id=='18') && ((workstreams.wsEditAccess == '1' && workstreams.wsAction) || (workstreams.wsAction && pageData.pageInfo == 3))))"
+                            class="dot-div-edit-ws">
+                            <span title="Workstream" class="more-button"
+                              tooltipClass="worksteam-tooltip edit-worksteam-tt" triggers="click" [autoClose]="true"
+                              placement="top" [ngbTooltip]="worksteamEdit" (click)="$event.stopPropagation();"><span
+                                class="more-circle">&nbsp;</span><span class="more-circle">&nbsp;</span><span
+                                class="more-circle">&nbsp;</span></span>
+                            <ng-template #worksteamEdit>
+                              <div *ngIf="(workstreams.wsEditAccess == '1')" class="tooltip-worksteam-new"
+                                [ngClass]="{ 'chat-ws-text': pageData.pageInfo == 3  }"
+                                (click)="workstreamPageEdit(workstreams.wsId);$event.stopPropagation();">
+                                <span class="w-img"><img
+                                    src="assets/images/workstreams-page/edit-workstream-icon.png"></span>
+                                <span class="w-text">Edit Workstream</span>
+                              </div>
+                              <div *ngIf="pageData.pageInfo == 3"
+                                class="tooltip-worksteam-new chat-ws-text"
+                                [ngClass]="{ 'chat-ws-text': pageData.pageInfo == 3  }"
+                                (click)="openDialogNotification(workstreams.wsId);$event.stopPropagation();">
+                                <span class="w-img"><img
+                                    src="assets/images/workstreams-page/ws-chant-notification-icon.png"></span>
+                                <span class="w-text">Notification Settings</span>
+                              </div>
+                            </ng-template>
+                          </div>
+                          <div class="bottom-border" (click)="LoadWorkstreamChat(workstreams)"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="leftmenu.id=='5' || leftmenu.id=='20'"
+                    class="workstreamsListClass scrollbar scrollbar-primary thin" tabindex="0">
+                    <div class="workstream-content">
+                      <div *ngIf="loadingGroupDirectChat" class="loading-small-screen"><img
+                          src="assets/images/loading.svg" alt="Loader" /></div>
+                      <div *ngFor="let group of chatService.dmstreamArr; let dm = index">
+
+                        <div style="padding-left: 8px; padding-top: 8px;" *ngIf="group"
+                          class="chat-bg workstream-bg group-bg{{group.Id}}{{group.type}}"
+                          [ngClass]="{'active': (group.Id == currentWorkstreamIdInfo && currentWorkstreamType == 2) && WorkstreamelectedFlag}">
+                          <div (click)="LoadDirectChat(group)">
+                            <div class="lt-wsimg image-cntr">
+                              <img src="{{group.profileImg}}" alt="Loader" />
+                              <span *ngIf="group.availability==1" class="activeuser"></span>
+                              <span *ngIf="group.availability==2"></span>
+                            </div>
+                            <div class="wd-80">
+                              <div class="rt-wsname" title="{{group.grName}}">{{group.grName}}</div>
+                              <div
+                                *ngIf="group.grNew && !group.removeCount && group.grCount "
+                                class="rt-wscount">
+                                <span class="rt-wscount-text">{{group.grCount}}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="bottom-border" (click)="LoadDirectChat(group)"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="leftmenu.id=='6' || leftmenu.id=='21' "
+                    class="workstreamsListClass scrollbar scrollbar-primary thin" tabindex="0">
+                    <div class="workstream-content">
+                      <div *ngIf="loadingGroupDirectChat" class="loading-small-screen"><img
+                          src="assets/images/loading.svg" alt="Loader" /></div>
+                      <div *ngFor="let group of chatService.grstreamArr; let dm = index">
+
+                        <div style="padding-left: 8px; padding-top: 8px;" *ngIf="group"
+                          class="group-bg workstream-bg group-bg{{group.Id}}{{group.type}}"
+                          [ngClass]="{'active': (group.Id == currentWorkstreamIdInfo && pageData.pageInfo == 3 && currentWorkstreamType == 3) && WorkstreamelectedFlag}">
+                          <div (click)="LoadGroupChat(group)">
+                            <div class="lt-wsimg image-cntr">
+                              <img src="{{group.profileImg}}" alt="Loader" />
+                            </div>
+                            <div class="wd-80">
+                              <div class="rt-wsname" title="{{group.grName}}">{{group.grName}}</div>
+                              <div
+                                *ngIf="group.grNew && !group.removeCount && group.grCount "
+                                class="rt-wscount">
+                                <span class="rt-wscount-text">{{group.grCount}}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="bottom-border" (click)="LoadGroupChat(group)"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    *ngIf="leftmenu.id!='3' && leftmenu.id!='18' && leftmenu.id!='5' && leftmenu.id!='6' && leftmenu.id!='20' && leftmenu.id!='21'">
+                    <p>{{leftmenu.name}} </p>
+                  </div>
+
+
+                </p-accordionTab>
+              </p-accordion>
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<p-dialog [resizable]="false" [draggable]="false" appendToBody="true"
+  header="Notification Settings ({{currentSettingName}})" (onHide)="cancelNotificationPopup()"
+  [(visible)]="displaydiaLogNotifications" [modal]="true" styleClass="p-fluid dialog-notification">
+
+  <!--div class="save-btn action">
+    <div class="action-col apply active" (click)="updateChatConfig()" >Save</div>
+  </div-->
+
+  <div class="notification-container">
+
+    <div *ngFor="let cs of currentSettingArr; let sm = index"
+      class="col settings-row col-lg-12 col-md-12 col-xl-12  col-sm-12 padding0 margin0">
+      <div class="col col-lg-9 col-md-6 col-xl-9 col-sm-6 padding0 margin0">
+        <span class="n-text">{{cs.placeholder}}</span>
+      </div>
+      <div class="col col-lg-3 col-md-6 col-xl-3 col-sm-6 padding0 margin0">
+        <span class="n-img">
+          <div class="field-box toggle-box notificationToggle"
+            [ngClass]="{ 'active' : cs.valFlag, 'inactive' : !cs.valFlag, 'disable' : cs.disabled  }">
+            <span class="toggle-col toggle-option">
+              <p-inputSwitch [(ngModel)]="cs.valFlag" [disabled]="cs.disabled" (onChange)="onChangeSettings($event)">
+              </p-inputSwitch>
+            </span>
+          </div>
+
+        </span>
+      </div>
+    </div>
+
+    <div class="settings-info">
+      <div class="info-text">
+        Settings apply to both, Web and Mobile app
+      </div>
+    </div>
+
+  </div>
+
+</p-dialog>

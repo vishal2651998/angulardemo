@@ -1,0 +1,32 @@
+<div *ngIf="yrLoading" class="years cust-select gts-sel prob-catg">
+    <mat-icon *ngIf="splitIcon" class="material-icon media-material-icon year-icon"></mat-icon>
+    <mat-form-field class="custom-mat-sel prob-catg-sel" [ngClass]="{'media-mat-sel': splitIcon}">
+        <mat-select #selectopt panelClass="mat-bottom-panel mat-gts-panel" (openedChange)="openedChange($event)" placeholder="{{placeholder}}" [formControl]="yrFormControl" [(ngModel)]="dbSelectedYr" multiple disableOptionCentering>
+            <div class="select-container select-container-gts" *ngIf="yrLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" class="year-search-input" placeholder="{{searchPlaceholder}}" matInput [formControl]="yrSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(yrFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="selectopt.close()">Close</div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of yrFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="yrLoadingSelect">
+    <div *ngIf="yrFormControl.value != ''" class="selected-items ps" [perfectScrollbar]="sconfig">
+        <div *ngFor="let item of yearItems; let t=index" class="tag-text year-tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

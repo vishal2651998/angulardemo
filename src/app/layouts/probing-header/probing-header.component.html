@@ -1,0 +1,73 @@
+<div *ngIf="showItemheader" class="prob-header row col-lg-12 col-md-12 col-sm-12">
+    <div class="col-lg-7 col-md-7 col-sm-12 head-row head-brand">
+        <div class="head-col logo"><img src="{{platformLogo}}" alt="Logo" /></div>
+        <div *ngIf="welcomeProfileFlag" class="head-col welcome-text">Good Morning {{userName}}!</div>
+    </div>
+    <div class="col-lg-5 col-md-5 col-sm-12 head-row head-prof">
+        <div class="head-col search-col">
+            <span *ngIf="searchFlag" class="search-div" [ngClass]="{'search-filter search-btn' : searchClose || searchTick}">
+                <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+                    <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/site/workstream-creation/search-icon.png"></a>
+                    <input type="text" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="50" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                    <!--div *ngIf="submitted && f.searchKey.errors" class="invalid-feedback page-error-text">
+                        <div *ngIf="f.searchKey.errors.required">Please enter search keyword</div>
+                    </div-->
+                    <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/site/workstream-creation/close.png"></a>
+                    <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/site/workstream-creation/search-icon.png"></a>   
+                </form>              
+            </span>
+            <span (click)="tapnotifications()" class="notification-header-icon"><img src="assets/images/landing-page/landing-notifications.svg"></span>
+        </div>
+        <div *ngIf="profileFlag" class="head-col text-center profile">
+            <span class="profile-img">
+                <span class="rounded-circle" id="profile_pic" [style.background-image]="'url('+profileImage+')'" ></span>
+            </span>
+            <span class="prof-name">{{userName}}</span>
+        </div>
+    </div> 
+</div>
+<div *ngIf="detFlag && !teamSystem" class="prob-header row col-lg-12 col-md-12 col-sm-12">
+
+    <div class="col-lg-4 col-md-4 col-sm-12 head-row head-brand">
+        <div  class="head-col logo"><img src="assets/images/logo.png" alt="Logo" /></div>
+    </div>
+    <div class="col-lg-8 col-md-8 col-sm-12 head-row head-brand">
+        <div class="head-col head-title" [innerHTML]="headTitle"></div>
+        <div class="head-col head-close cursor" title="Close" (click)="closeWindow()"><img src="assets/images/site/workstream-creation/tap-close.png" alt="Close" /></div>
+    </div>
+</div>
+<div *ngIf="teamSystem" class="prob-header row col-lg-12 col-md-12 col-sm-12">
+    <div class="text-center col-lg-12 col-md-12 col-sm-12 head-row head-brand">
+        <span *ngIf="teamSystem" class="cursor team-back-icon" (click)="closeWindow()"></span>
+        <div class="head-col head-title text-left" [ngClass]="{'team-col': teamSystem && access == 'partView'}" [innerHTML]="headTitle"></div>
+        <div class="head-col head-close cursor" title="Close" (click)="closeWindow()"><img src="assets/images/site/workstream-creation/tap-close.png" alt="Close" /></div>
+    </div>
+</div>
+
+<app-dialog-popup *ngIf="displayLogoutPopup" [dialogData]="dialogData" (closewindow)="closewindowPopup($event)"></app-dialog-popup>
+<!--p-dialog [header]="false" [(visible)]="displayLogoutPopup" [modal]="true" styleClass="p-fluid logoutPopup-prime" [style]="{width: '50vw'}">
+    
+    <div class="row col-lg-12 col-md-12 col-sm-12 logout-dialog-main-container" >
+        <div class="col col-lg-5 col-md-5 col-sm-5" style="background-color: #332b3f;height:300px;position: relative;padding: 0px;">
+            
+            <div class="vertical-center">
+                <img src="assets/images/landing-page/logout-dialog-icon.png">
+                </div>
+
+            </div >
+            <div class="col col-lg-7 col-md-7 col-sm-7" style="background-color: #fff;height:300px;">
+                <div class="logout-right-container">
+                    <div class="inner-border-container vertical-center">
+                        <div class="right-side-text-container">
+                        You are logged out of {{platformName}}
+</div>
+<div (click)="closewindowPopup()" class="btn-logout-output">OK</div>
+                        </div>
+                       
+                    </div>
+
+            </div>
+        </div>
+  
+      
+</p-dialog-->

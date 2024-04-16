@@ -1,0 +1,122 @@
+
+<div *ngIf="!deleteFolderFlag">
+<form [formGroup]="changePasswordForm" (ngSubmit)="actionSubmit()" autocomplete="off">
+    <div class="modal-body">
+        <div class="cpwd-form-row">
+            <div class="cpwd-form-control">
+              
+                <div>
+                    <div class="wstream-div-outer">
+                        <div class="cpwd-form-field">
+                            <div class="field-col bg-col w-bg"></div>
+                            <div class="field-col text-col alt-text">
+                                <p-multiSelect class="split-col catg-col" appendTo="body" formControlName="wsFormControl" [options]="workstreamItems" [filter]="true" showClear="false"
+                                    ([ngModel])="workstreamId" [defaultLabel]="defaultWSLabel"
+                                    [ngClass]="{ 'is-invalid': workstreamValid }"
+                                    (onChange)="selectedItems($event)"
+                                    [disabled]="allworkstreamToggle"
+                                    [showToggleAll]="showAllWS"
+                                    optionLabel="name" optionValue="id">
+                                </p-multiSelect>                            
+                            </div>
+                        </div>                        
+                        <div class="ws-display">
+                            <div *ngIf="workstreamSelection?.length > 0" class="selected-items">
+                                <div *ngFor="let item of workstreamSelection; let t=index" class="tag-text">
+                                    <span>{{item.name}}</span>
+                                    <i class="material-icons tag-close"
+                                        (click)="disableWSSelection(item.id)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="toggleOptionShow" class="cpwd-form-field toggle-form-field">                    
+                    <div class="field-col">
+                        <div class="field-box toggle-box"
+                            [ngClass]="{ 'active' : allworkstreamToggle, 'inactive' : !allworkstreamToggle}">
+                            <span class="toggle-col toggle-option">
+                            <p-inputSwitch [(ngModel)]="allworkstreamToggle" (onChange)="onChangeAll($event)" formControlName="wsAllFormControl"></p-inputSwitch>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field-col all-text">All Workstream</div>
+                </div>
+                <div class="cpwd-form-field">
+                    <div class="field-col bg-col pwd-bg"></div>
+                    <div class="field-col text-col alt-text">
+                        <input [type]="'text'" matInput placeholder="{{enterTxt}} {{textfolderName}}" formControlName="folderName" ([ngModel])="folderName" maxlength="{{NewFolderNumberLenth}}" (keyup)="foldercreatevalidate($event)" [ngClass]="{ 'is-invalid': changPasswordSubmitted && c.folderName.errors }" [readonly]="submitLoading">                       
+                    </div>
+                    <div class="invalid-feedback" align="left" style="display: inline-block;width:80%;">
+                        <div [ngClass]="{'show': invalidOldPwdMsg}" class="field-err" >{{invalidOldPwdMsg}}</div>
+                    </div>
+                    <div align="right" style="display: inline-block;width:17%;text-align: right;" class="folder-text-count">{{strlengthforuser}}/{{NewFolderNumberLenth}}</div>
+                    
+                           
+                   
+                </div>
+            </div>
+        </div>
+        
+       
+        
+    </div>
+    <div class="modal-footer">
+        <div class="confirm-actions">
+            <button type="button" class="btn action-btn cancel" [ngClass]="{'setOpacity3': submitLoading}"  (click)="cancelAction()">Cancel<span class="cancel-btn"></span></button>
+            <button type="submit" class="btn action-btn submit" [ngClass]="{'setOpacity3': !submitFlag || submitLoading || workstreamValid}">save
+                <span *ngIf="!submitLoading" class="submit-btn save-btn"></span>                
+            </button>
+            <span *ngIf="submitLoading" class="load-btn"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span>
+        </div>
+    </div>
+</form>
+</div>
+
+<div *ngIf="deleteFolderFlag">    
+    <div class="modal-body">   
+        <div class="del-row" *ngIf="!noFilesFlag">
+            <span class="checkbox-col">
+                <span class="chk-img" (click)="checkboxChange(checkboxFlag2,'type2')">
+                    <img *ngIf="checkboxFlag2" src="assets/images/announcement/radiobox-selected.png" />
+                    <img *ngIf="!checkboxFlag2" src="assets/images/announcement/radiobox-normal.png" />
+                </span>
+            </span>                               
+            <span class="text-col">Delete all files</span>
+        </div>
+        <div class="del-row" *ngIf="!noFilesFlag">
+            <span class="checkbox-col">
+                <span class="chk-img" (click)="checkboxChange(checkboxFlag1,'type1')">
+                    <img *ngIf="checkboxFlag1" src="assets/images/announcement/radiobox-selected.png" />
+                    <img *ngIf="!checkboxFlag1" src="assets/images/announcement/radiobox-normal.png" />
+                </span>
+            </span>                               
+            <span class="text-col">Move files in General Folder</span>
+        </div>
+        
+        <div class="del-row text-center" *ngIf="noFilesFlag">
+            <span class="checkbox-col">
+                <span class="chk-img">
+                    <img *ngIf="checkboxFlag2" src="assets/images/announcement/radiobox-selected.png" />
+                    <img *ngIf="!checkboxFlag2" src="assets/images/announcement/radiobox-normal.png" />
+                </span>
+            </span>                               
+            <span class="text-col">Delete folder</span>
+        </div>
+        <div class="invalid-feedback" align="left" style="display: inline-block;width:80%;">
+            <div [ngClass]="{'show': invalidOldPwdMsg}" class="field-err" >{{invalidOldPwdMsg}}</div>
+        </div>  
+    </div>
+    <div class="modal-footer">
+        <div class="confirm-actions">
+            <button type="button" class="btn action-btn cancel" [ngClass]="{'setOpacity3': submitLoading}"  (click)="cancelAction()">Cancel<span class="cancel-btn"></span></button>                
+            <button *ngIf="checkboxFlag1 || checkboxFlag2" class="btn action-btn submit" [ngClass]="{'setOpacity3': submitLoading}" (click)="actionDelete()">delete
+                <span *ngIf="!submitLoading" class="submit-btn yes-btn-delete"></span>
+            </button>
+            <button *ngIf="!checkboxFlag1 && !checkboxFlag2" class="btn action-btn submit setOpacity3" >delete
+                <span *ngIf="!submitLoading" class="submit-btn yes-btn-delete"></span>
+            </button>
+            <span *ngIf="submitLoading" class="load-btn"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span>
+        </div>
+    </div>    
+</div>

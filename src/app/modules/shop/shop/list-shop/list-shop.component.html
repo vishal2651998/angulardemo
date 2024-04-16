@@ -1,0 +1,92 @@
+<div class="prob-list-cont">
+    <div class="documents-grid-row documents-grid-row-new">        
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs">
+            <p-table #table [columns]="shopListColumns" [scrollable]="true" [totalRecords]="shopList.length" id="file-datatable" 
+            class="file-datatable thread-list-table shop-list-table ro-list" [value]="shopList" (onLazyLoad)="lazyLoad($event)" [lazy]="true"   
+            [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th [pSortableColumn]="col.sortName" *ngFor="let col of columns"
+                        class="{{col.columnpclass}}">
+                        {{col.header}}
+                        <ng-container *ngIf="col.sortName" >
+                            <p-sortIcon [field]="col.sortName"></p-sortIcon>
+                            <p-columnFilter type="text" [field]="col.sortName" display="menu"></p-columnFilter>
+                        </ng-container>
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-shopList let-i="rowIndex">
+                <tr class="cursor" id="{{shopList.storeNo}}">
+                    <!-- <td (click)="onViewShop(shopList)" class="w1 shop-thl-col-1  col-sticky" >                
+                        <div class="">
+                            <span class="overflow-text-table" title="{{shopList?.parentName}}">{{shopList?.parentName}}</span>
+                        </div>
+                    </td> -->
+                    <td (click)="onViewShop(shopList)" class="w1 shop-thl-col-2 col-sticky">                
+                        <div class=""><span
+                                class="overflow-text-table"  title="{{shopList?.id}}">{{shopList?.id}}</span>
+                        </div>                
+                    </td>
+                    <td (click)="onViewShop(shopList)" class="w3 shop-thl-col-3">              
+                        <div class=""><span
+                                class="overflow-text-table"  title="{{shopList?.name}}">{{shopList?.name}}</span>
+                        </div>                
+                    </td>
+                    <td (click)="onViewShop(shopList)"  class="w4 shop-thl-col-4">                
+                        <div class=""><span
+                                class="overflow-text-table"  title="{{shopList?.city}}, {{shopList?.state}}">{{shopList?.city}}, {{shopList?.state}}</span>
+                        </div>                
+                    </td>
+                    <td (click)="onViewShop(shopList)"  class="w5 shop-thl-col-5">                
+                        <div class=""><span
+                                class="overflow-text-table" title="{{shopList?.shopTypeName}}">{{shopList?.shopTypeName}}</span>
+                        </div>                
+                    </td>
+                    <td (click)="onViewShop(shopList)"  class="w5 shop-thl-col-5">                
+                        <div class=""><span
+                                class="overflow-text-table" title="{{shopList?.dealerCode}}">{{shopList?.dealerCode}}</span>
+                        </div>                
+                    </td>
+                    <td (click)="onViewUsers(shopList)"  class="w3 shop-thl-col-3">                
+                        <div class="">
+                            <span *ngIf="shopList?.usersCount !== 0" class="overflow-text-table txt-link" title="{{shopList?.usersCount}}">{{shopList?.usersCount}}</span>
+                            <span *ngIf="shopList?.usersCount == 0" class="overflow-text-table">-</span>
+                        </div>                
+                    </td>
+                    <td (click)="onViewShop(shopList)"  class="w5 shop-thl-col-5">
+                        <div class="">
+                            <span class="overflow-text-table" title="{{shopList?.levelOneName}}">{{shopList?.levelOneName}}</span>
+                        </div>
+                    </td>
+                    <td (click)="onViewShop(shopList)"  class="w5 shop-thl-col-5">                
+                        <div class=""><span title="{{shopList?.levelTwoName}}"
+                                class="overflow-text-table">{{shopList?.levelTwoName}}</span>
+                        </div>               
+                    </td>
+                    <td (click)="onViewShop(shopList)"  class="w5 shop-thl-col-5">
+                        <div class=""><span class="overflow-text-table" title="{{shopList?.levelThreeName}}">{{shopList?.levelThreeName}}</span></div>                    
+                    </td>                   
+                   <td class="w7 shop-thl-col-10 col-sticky">
+                    <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                    </div>
+                    <mat-toolbar color="primary">
+                        <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                            <div class="part-menu">
+                                <ul class="more-actions">
+                                    <li class="cursor active" (click)="menuTrigger.closeMenu();onViewShop(shopList)"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                    <li class="cursor active" (click)="menuTrigger.closeMenu();onEditShop(shopList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                    <!--li class="cursor active" (click)="menuTrigger.closeMenu();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li-->                                                                                       
+                                </ul>
+                            </div>
+                        </mat-menu>
+                    </mat-toolbar>                                 
+                </td>
+
+                </tr>
+            </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>

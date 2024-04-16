@@ -1,0 +1,68 @@
+<div id="header" *ngIf="!msTeamAccess">
+  <app-product-header (productHeaderComponentRef)="productHeaderRef = $event" [pageData]="headerData" (callback)="headerCallback($event)" (search)="applySearch('emit', $event)">
+  </app-product-header>
+</div>
+<div class="left-section">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}" (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec">
+  <div class="container-fluid">
+    <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+      <div *ngIf="!msTeamAccess" class="threads-page-filter col padding-right-class">
+        <div class="text-thread-title">
+            <span style="vertical-align: middle;padding-left: 8px;padding-right: 8px;">
+              <img src="assets/images/dispatch/svg/dispatch.svg" onload="SVGInject(this)" /></span>
+          <span [ngClass]="{'right-padding': !newFlag}" style="vertical-align:middle">{{ headTitle }}</span>
+          <div class="cursor thread-add-new text-center hidden" 
+            [ngClass]="{'thread-add-new-ms': msTeamAccess, 'ms-thread-add-web': msTeamAccess }">
+            <span><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i>New</span>
+          </div>
+          <div *ngIf="selectionFlag" class="selection-area">
+            <p-dropdown *ngIf="dispatchFlag && viewOptions.length > 0" [options]="displayView" [(ngModel)]="selectedView" placeholder="Select" [virtualScroll]="false"
+              [itemSize]="1" [filter]="false" class="category-dropdown" [disabled]="dispatchPageRef.loadingDispatch" (onChange)="changeAction('view', $event.value)"></p-dropdown>
+            <span class="selection-area-span" *ngIf="viewOptions.length > 0" style="margin: 0 15px;">
+              <button pButton pRipple type="button" icon="pi pi-angle-left" *ngIf="view < 3"
+                (click)="changeDate('previous')" [ngClass]="{'disable': view == 2 && (prevIndex < 0 || !newFlag)}" class="p-button-rounded p-button-outlined selector-btn"
+                style="margin-right:5px;background-color: white;color: #b3b3b3;height: 32px;width: 32px;vertical-align: middle;"></button>
+                <!-- [disabled]="disablePreviousBtn" -->
+              <p-dropdown [options]="range" [(ngModel)]="selectedRange" placeholder="Select" [virtualScroll]="false"  *ngIf="view < 3"
+                [itemSize]="2" [filter]="false" class="day-dropdown" [disabled]="true">
+              </p-dropdown>
+              <button pButton pRipple type="button" icon="pi pi-angle-right" *ngIf="view < 3"
+                (click)="changeDate('next')" [ngClass]="{'disable': view == 2 && (nextIndex < 0 || !newFlag)}" class="p-button-rounded p-button-outlined selector-btn"
+                style="margin-left:5px;background-color: white;color: #b3b3b3;height: 32px;width: 32px;vertical-align: middle;"></button>
+                <!-- [disabled]="disableNextBtn" -->
+            </span>
+            <span style="font-size: 14px;color: #e55554;" *ngIf="!dispatchPageRef.loadingDispatch && !displayToday && view == 1">
+              <label style="margin-right: 2px;" class="mb-0 cursor" (click)="todayClicked()">TODAY</label>
+              <i class="pi pi-angle-double-right" style="margin-left: 1px;vertical-align: middle;"></i>
+            </span>
+            <span *ngIf="(roleId == 3 && isMobileTech) || isMobileTech" class="switch cursor" 
+            [ngClass]="{'tech': roleId != 3 && isMobileTech}" (click)="roleId == 3 && isMobileTech ? switchView() : false">
+            {{switchText}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="center-middle-width-container">
+      <div class="center-middle-width padding-common">
+        <div class="thread-top-section hide">
+          <div class="thread-top-right" [ngClass]="{ 'ms-thread-top-right': msTeamAccess }">
+          </div>
+        </div>
+        <div class="clear"></div>
+        <div class="probing-content cbt-content part-content part-content-threads-new">
+          <div style="min-height: 80vh;" [ngClass]="{'hide': !pageLoading}" class="col">
+            <div class="loading-small-screen-scroll trst" align="center" *ngIf="pageLoading">
+              <img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+            </div>
+          <app-dispatch-page (dispatchComponentRef)="dispatchPageRef = $event" (callback)="dispatchCallback($event)" [(displayModalChanged)]="displayModal" [(selectedDay)]="selectedRange"></app-dispatch-page>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

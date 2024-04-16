@@ -1,0 +1,229 @@
+<div *ngIf="loading">
+    <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+<div *ngIf="!loading">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+            <div class="page-index">
+                <div class="header">
+                    <div class="mp-desktop-view">
+                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row" > 
+                            <div class="width-80-per height-60-px flex-align-center">
+                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left flex-align-center">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">                                            
+                                            <div class="header-left cursor-pointer">
+                                                <img (click)="redirectionPage(businessDomainData.business_domain,'home')" [src]="businessDomainData.business_logo" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right flex-align-center">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">
+                                            <div class="header-right">
+                                                <div class="lt">
+                                                    <img src="assets/images/internal-user-login.png" alt="" />
+                                                </div>
+                                                <div class="rt cursor" (click)="redirectionPage(businessDomainData.business_domain,'login')">
+                                                    <span class="green-text">Internal users</span>
+                                                    <span>Login/sign up</span>
+                                                </div>
+                                            </div>                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mp-mobile-view">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12row no-margin no-padding flex-center row"> 
+                            <div class="height-60-px flex-align-center">  
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">     
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-margin no-padding header-left text-left cursor-pointer">
+                                        <img (click)="redirectionPage(businessDomainData.business_domain,'home')" [src]="businessDomainData.business_logo" />
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-margin no-padding text-right cursor-pointer">
+                                        <div (click)="showMobileMenu = !showMobileMenu" class="mp-menu topmenu p-menubar p-component"><a  class="p-menubar-button"><i  class="pi pi-bars"></i></a></div>  
+                                    </div>
+                                    <div class="mobile-menu-list-items custom-mobile-menu" *ngIf="showMobileMenu">
+                                        <ul>
+                                            <li (click)="goToLink('home')"><a>Login/sign up</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                    </div>
+                </div>                
+                <div class="banner">
+                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row">
+                        <div class="banner-bg-container" [ngStyle]="{'background-image': 'url(' + businessDomainData.bannerImageUrl + ')'}"></div>  
+                        <div class="banner-content-container flex-align-center">
+                            <div class="banner-content vertical-center">
+                                <h6>{{businessDomainData.market_place_company_name}}</h6>
+                                <p>{{businessDomainData.market_place_summary_service_offered}}</p>
+                            </div>
+                        </div>                      
+                    </div> 
+                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row" > 
+                        <div class="width-80-per height-100-px flex-align-center">
+                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-margin no-padding text-left margin-mtop">
+                                    <div class="flex-align-center">
+                                        <div class="starbg-lt">
+                                            <img class="starbg-img" src="assets/images/index-domain.png" alt="" />
+                                        </div>
+                                        <div class="starbg-rt">
+                                            <span class="label-name">Website</span>
+                                            <span title="{{businessDomainData.market_place_website}}" (click)="redirectionPage(businessDomainData.market_place_website,'website')" *ngIf="businessDomainData.market_place_website != '' " class="label-text cursor-pointer">{{businessDomainData.market_place_website}}</span>
+                                            <span *ngIf="businessDomainData.market_place_website == '' " class="label-text">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-margin no-padding text-left margin-mtop">                                    
+                                    <div class="flex-align-center">
+                                        <div class="starbg-lt">
+                                            <img class="starbg-img" src="assets/images/index-mail.png" alt="" />
+                                        </div>
+                                        <div class="starbg-rt">
+                                            <span class="label-name">Email</span>
+                                            <span title="{{businessDomainData.market_place_email}}" *ngIf="businessDomainData.market_place_email != '' && businessDomainData.market_place_email != null" class="label-text"><a style="color:#ffffff !important;" href="mailto:businessDomainData.market_place_email">{{businessDomainData.market_place_email}}</a></span>
+                                            <span *ngIf="businessDomainData.market_place_email == '' || businessDomainData.market_place_email == null" class="label-text">-</span>
+                                        </div>
+                                    </div> 
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-margin no-padding text-left margin-mtop">
+                                    <div class="flex-align-center">
+                                        <div class="starbg-lt">
+                                            <img class="starbg-img" src="assets/images/index-phone.png" alt="" />
+                                        </div>
+                                        <div class="starbg-rt">
+                                            <span class="label-name">Phone Number</span>
+                                            <span *ngIf="businessDomainData.market_place_phone_number != '' && businessDomainData.market_place_phone_number != null" class="label-text">{{ businessDomainData.market_place_dialCode}}&nbsp;{{businessDomainData.market_place_phone_number}}</span>
+                                            <span *ngIf="businessDomainData.market_place_phone_number == '' || businessDomainData.market_place_phone_number == null" class="label-text">-</span>
+                                       
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-margin no-padding text-left margin-mtop">
+                                    <div class="flex-align-center">
+                                        <div class="starbg-lt">
+                                            <img class="starbg-img" src="assets/images/index-map.png" alt="" />
+                                        </div>
+                                        <div class="starbg-rt">
+                                           <span class="label-name">Location</span>
+                                           <span *ngIf="businessDomainData.market_place_city != '' && businessDomainData.market_place_city != null" class="label-text">{{businessDomainData.market_place_city}}<span *ngIf="businessDomainData.market_place_city !=''">, &nbsp;{{businessDomainData.market_place_state}}</span> </span>
+                                           <span *ngIf="businessDomainData.market_place_city == '' || businessDomainData.market_place_city == null" class="label-text">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>                  
+                </div>
+                <div class="center">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-center row" > 
+                        <div class="width-80-per flex-align-center">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding" > 
+                                <div class="content-desc" *ngIf="businessDomainData.market_place_description != '' && businessDomainData.market_place_description != null" >{{businessDomainData.market_place_description}}</div>
+                                <div class="content-desc-empty" *ngIf="businessDomainData.market_place_description == '' || businessDomainData.market_place_description == null" >&nbsp;</div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding margin-bottom-40 background-bg" > 
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 row no-margin no-padding background-bg" >
+                                        <div class="left-panel training-bg flex-align-center">
+                                            <div class="circle-div-lt training-bg">
+                                                <img class="circle-div-img" src="assets/images/index-training.png" alt="" />
+                                            </div>
+                                            <span class="circle-div-rt">Training</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-align-center" >
+                                        <div class="right-panel">
+                                            <div class="right-panel-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sagittis mi eget neque accumsan, id tempor quam vestibulum.</div>
+                                            <div class="right-panel-btn flex-align-center">
+                                                <span class="right-panel-btn-text">Register Training</span>&nbsp;&nbsp;
+                                                <img src="assets/images/index-view-icon.png" alt="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding margin-bottom-40 background-bg" > 
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 row no-margin no-padding background-bg" >
+                                        <div class="left-panel mobile-bg flex-align-center">
+                                            <div class="circle-div-lt mobile-bg">
+                                                <img class="circle-div-img" src="assets/images/index-md.png" alt="" />
+                                            </div>
+                                            <span class="circle-div-rt">Mobile Diagnostics</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-align-center" >
+                                        <div class="right-panel">
+                                            <div class="right-panel-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sagittis mi eget neque accumsan, id tempor quam vestibulum.</div>
+                                            <div class="right-panel-btn flex-align-center">
+                                                <span class="right-panel-btn-text">Request a Service</span>&nbsp;&nbsp;
+                                                <img src="assets/images/index-view-icon.png" alt="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding margin-bottom-40 background-bg" > 
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 row no-margin no-padding background-bg" >
+                                        <div class="left-panel ondemand-bg flex-align-center">
+                                            <div class="circle-div-lt ondemand-bg">
+                                                <img class="circle-div-img" src="assets/images/index-ondemand.png" alt="" />
+                                            </div>
+                                            <span class="circle-div-rt">On-Demand Support</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-align-center" >
+                                        <div class="right-panel">
+                                            <div class="right-panel-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sagittis mi eget neque accumsan, id tempor quam vestibulum.</div>
+                                            <div class="right-panel-btn flex-align-center">
+                                                <span class="right-panel-btn-text">Contact Us</span>&nbsp;&nbsp;
+                                                <img src="assets/images/index-view-icon.png" alt="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding margin-bottom-40 background-bg" > 
+                                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12 row no-margin no-padding background-bg" >
+                                        <div class="left-panel knowledge-bg flex-align-center">
+                                            <div class="circle-div-lt knowledge-bg">
+                                                <img class="circle-div-img" src="assets/images/index-knowledge.png" alt="" />
+                                            </div>
+                                            <span class="circle-div-rt">Knowledgebase</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12 row no-margin no-padding flex-align-center" >
+                                        <div class="right-panel">
+                                            <div class="right-panel-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sagittis mi eget neque accumsan, id tempor quam vestibulum.</div>
+                                            <div class="right-panel-btn flex-align-center">
+                                                <span class="right-panel-btn-text">View Knowledgebase</span>&nbsp;&nbsp;
+                                                <img src="assets/images/index-view-icon.png" alt="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                   
+                <div class="footer">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin footer-top-border"></div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding flex-center row footer-row" > 
+                        <div class="width-80-per flex-align-center">
+                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding footer-text-lt">
+                                    <span class="text-co">&copy; Collabtic {{year}}. All rights reserved.</span>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding footer-text-rt">
+                                    <img src="assets/images/index-footer-collabtic.png" alt="" />
+                                </div> 
+                            </div>                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>

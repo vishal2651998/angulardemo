@@ -1,0 +1,61 @@
+<div class="main-contaier {{optionsval.shortName}}">
+  <p-accordion [multiple]="true" (onClose)="onTabClose4($event)" (onOpen)="onTabOpen4($event)">
+    <p-accordionTab [selected]="true">
+      <p-header class="accordion-icon ">
+        <div class="container-fluid">
+          <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0">
+            <div class="menu-name-bar col col col-lg-9  col-md-9 col-xl-9 col-sm-8 landing-padding0">
+              <div>
+                <span class="bg-image {{optionsval.imageClass}}">
+                  <img src="assets/images/landing-page/{{optionsval.imageUrl}}" alt="" onload="SVGInject(this)">
+                </span>
+                <span class="menu-name">{{optionsval.placeholder}}</span>
+                <span><i class="pi hide pi-ellipsis-v"></i></span>
+              </div>
+            </div>
+            <div class="col col col-lg-3  col-md-3 col-xl-3 col-sm-4 landing-padding0">
+              <div class="rightside-menu-header" *ngIf="!this.fromSearchPage">
+                <div class="see-more-text" *ngIf="searchseemore">
+                  <span>See More</span>
+                  <span> <i class="pi pi-angle-double-right icon-size"></i></span>
+                </div>
+                <div class="plusone40 showinline"><i class="pi pi-chevron-up"></i></div>
+                <div class="minusone40 hide"><i class="pi pi-chevron-down"></i></div>
+              </div>
+              <div (click)="taponclearhistory($event)" class="clear-history"
+                [ngClass]="{'hide': nosearchres && fromSearchPage}" *ngIf="!nosearchres && fromSearchPage">
+                <span>
+                  <img style="vertical-align: top;" src="assets/images/landing-page/clearhistoryicon.svg"  onload='SVGInject(this)' />
+                </span>
+                <span class="clear-history-text">Clear History</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-header>
+      <div class="search-landing-widget" [ngClass]="{'home': currPage == 'landing-page', 'search': currPage == 'search-page', 'profile': currPage == 'profile'}">
+        <div class="loading-small-screen" *ngIf="loadingrs">
+          <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+        <div class="padding10">
+          <div class="container-fluid">
+            <div class="nothingtoshow" *ngIf="nosearchres">
+              <div class="no-data-contaier">
+                <div>
+                  <img class="no-data-img" src="assets/images/landing-page/empty-recent-search.svg">
+                </div>
+                <div class="no-data-text">{{nosearchresText}}</div>
+              </div>
+            </div>
+            <div class="row col col-lg-12  col-md-12 col-xl-12 col-sm-12">
+              <span class="flex-box-content cursor" (click)="taponsearchres(searchres,$event)"
+                *ngFor="let searchres of landingsearchHistory; let rex = index" [@anim]="searchres.state">
+                {{searchres.searchKey}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-accordionTab>
+  </p-accordion>
+</div>

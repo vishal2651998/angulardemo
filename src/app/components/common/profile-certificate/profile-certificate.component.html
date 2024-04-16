@@ -1,0 +1,52 @@
+<div class="main-contaier profile-certificate-widget">
+    <!--<p-accordion [multiple]="true"  >
+        <p-accordionTab    [selected]="true">
+            <p-header class="accordion-icon ">-->
+                <div class="container-fluid">
+                    <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head landing-padding0 landing-margin0">
+                        <div class="menu-name-bar col-9 col-lg-9 col-md-9 col-xl-9 col-sm-9 landing-padding0 landing-margin0">
+                            <div> 
+                                <span class="bg-image certification-icon">
+                                    <img src='assets/images/profile/profile-certification.svg' alt='' onload='SVGInject(this)' />
+                                </span>
+                                <span class="menu-name">Certification</span>
+                            </div>
+                        </div>
+                        <div class="col-3 col-lg-3 col-md-3 col-xl-3 col-sm-3 landing-padding0">
+                            <div class="rightside-menu"><span *ngIf="enableEditIcon || enableAddIcon" class="plus-icon" title="Add" (click)="addCertification(1,'add')"></span></div>                            
+                        </div>
+                    </div>
+                </div>
+            <!--</p-header>-->
+            <div class="search-landing-widget">
+                <div class="loading-small-screen" *ngIf="loadingrs" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+                <div class="container-fluid">
+                    <div class="nothingtoshow certnoData" *ngIf="certNoData">
+                        <div class="no-data-contaier">
+                            <div>
+                                <img class="no-data-img" src="assets/images/landing-page/empty-recent-search.svg">
+                            </div>
+                            <div class="no-data-text">No data</div>
+                        </div>
+                    </div>
+                    <div *ngIf="!certNoData" class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0">
+                        <div class="certificate-div-scroll-to scrollbar scrollbar-primary thin">
+                            <div class="certificate-div">   
+                                <div class="certification-div" *ngFor="let item of certData;">
+                                    <div class="title-div row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0"><span class="title first-title">{{item.name}}</span><span *ngIf="enableEditIcon" title="Edit" (click)="addCertification(item.parentId,'edit')" class="edit-icon-img"></span></div>                               
+                                    <div class="certification-sub-div col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 landing-padding0 paddingR20 landing-margin0" *ngFor="let inItem of item.selectedcontents;">
+                                        <div class="title-div"><span class="title">{{inItem.contentInfo}}</span><span class=""></span></div>
+                                        <div *ngIf="(inItem.certificationDate)" class="certification-date-div"><span  class="calendar-icon-img"><img src="assets/images/profile/profile-calendar.png" alt="calendar" /></span><span  class="date-text">Certification Date:</span><span  class="date-text date">{{inItem.certificationDate}}</span></div>
+                                        <div *ngIf="(inItem.expiryDate)" class="certification-date-div"><span  class="calendar-icon-img"><img src="assets/images/profile/profile-calendar.png" alt="calendar" /></span><span  class="date-text">Expiration Date:</span><span  class="date-text date">{{inItem.expiryDate}}</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!--</p-accordionTab>
+    </p-accordion>-->
+</div>
+
+

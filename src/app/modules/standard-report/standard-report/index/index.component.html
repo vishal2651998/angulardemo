@@ -1,0 +1,127 @@
+<div id="header" *ngIf="!msTeamAccess">
+    <app-product-header (productHeaderComponentRef)="productHeaderRef = $event" [pageData]="headerData" (callback)="headerCallback($event)" (search)="applySearch($event)"></app-product-header>
+</div>
+<div class="prob-index">
+    <div *ngIf="!itemEmpty" class="part-list-head sib-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt standard-report-head-txt" *ngIf="!msTeamAccess">
+                <span class="parts-head-ic st-report-head-ic">
+                    <img src="assets/images/standard-report/svg/standard-report-icon-gray.svg" onload="SVGInject(this)">
+                </span>
+                {{headTitle}}
+            </span>
+            <!--div class="cursor thread-add-new" [ngClass]="{'hide': !reportFlag || searchFlag }" (click)="createAction('report')">                            
+                <span><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >{{reportNew}}</span>                            
+            </div>
+            <div class="cursor thread-add-new" [ngClass]="{'hide': !sectionFlag || searchFlag }" (click)="createAction('section')">
+                <span><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >{{sectionNew}}</span>
+            </div>
+            <div class="cursor thread-add-new" [ngClass]="{'hide': !diagnosticFlag || searchFlag }" (click)="createAction('diagnostic')">
+                <span><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >{{moduleNew}}</span>
+            </div-->
+            <div class="sort" [ngClass]="{'hide': !reportFlag || searchFlag || selectedWs == 0 }">
+                <div class="sws-label">Select Workstream</div>
+                <p-dropdown appendTo="body" [options]="wsList" optionLabel="name" optionValue="id" [(ngModel)]="selectedWs" [filter]="true" resetFilterOnHide="true"
+                    placeholder="Select workstream" [virtualScroll]="false" [itemSize]="5" (onChange)="fieldChange('ws', $event.value)">
+                </p-dropdown>
+            </div>
+            <div class="sort" [ngClass]="{'hide': !sectionFlag }">
+                <p-dropdown appendTo="body" [options]="sortItems" optionLabel="name" optionValue="id"
+                    showClear="showClear" placeholder="Section Sort" [virtualScroll]="false" [itemSize]="5" [filter]="true" resetFilterOnHide="true">
+                </p-dropdown>
+            </div>
+            <div class="sort" [ngClass]="{'hide': !diagnosticFlag }">
+                <p-dropdown appendTo="body" [options]="sortItems" optionLabel="name" optionValue="id"
+                    showClear="showClear" placeholder="Module Sort" [virtualScroll]="false" [itemSize]="5" [filter]="true" resetFilterOnHide="true">
+                </p-dropdown>
+            </div>
+            <div class="report-col" [ngClass]="{'hide': !diagnosticFlag || !createAccess || searchFlag }">
+                <div class="prob-head-col download-head-col template-col cursor" (click)="download('diagnostic-template')">Template</div>
+                <div class="prob-head-col p-table-col" [ngClass]="{'hide': !downloadFlag}">
+                    <span class="action-dtc download cursor" (click)="download('diagnostic')">Download Module</span>                    
+                </div>
+                <div class="prob-head-col p-table-col upload">
+                    <span class="action-dtc upload hide">Upload Module File (xls)</span>
+                    <div class="upload-col attachment-file media-attachment-file files action-dtc upload cursor">
+                        <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                            [chooseLabel]="chooseLable"
+                            [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                            accept=".xls,.xlsx"
+                            (onSelect)="onUpload('module', $event)" 
+                            >
+                        </p-fileUpload>
+                    </div>                    
+                </div>
+                <div *ngIf="lastUploaded != ''" class="prob-head-col p-table-col">
+                    <span class="cursor tooltip-info" [matMenuTriggerFor]="lastUpload"></span>
+                    <mat-toolbar color="primary">
+                        <mat-menu #lastUpload="matMenu" backdropClass="ptabletmenu">
+                            <div class="part-menu">
+                                <ul>
+                                    <li mat-menu-item class="raction-menu rluaction-menu cursor">Last uploaded on: {{lastUploaded}}</li>
+                                </ul>
+                            </div> 
+                        </mat-menu>
+                    </mat-toolbar>
+                </div>
+            </div>
+            <div class="report-col" [ngClass]="{'hide': !adasFlag || !createAccess || searchFlag }">
+                <div class="prob-head-col download-head-col template-col cursor" (click)="download('adas-template')">Template</div>
+                <div class="prob-head-col p-table-col" [ngClass]="{'hide': !downloadFlag}">
+                    <span class="action-dtc download cursor" (click)="download('adas')">Download Vehicle</span>                    
+                </div>
+                <div class="prob-head-col p-table-col upload">
+                    <span class="action-dtc upload hide">Upload Module File (xls)</span>
+                    <div class="upload-col attachment-file media-attachment-file files action-dtc upload cursor">
+                        <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                            [chooseLabel]="chooseLableAdas"
+                            [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                            accept=".xls,.xlsx"
+                            (onSelect)="onUpload('adas', $event)" 
+                            >
+                        </p-fileUpload>
+                    </div>                    
+                </div>
+                <div *ngIf="lastUploaded != ''" class="prob-head-col p-table-col">
+                    <span class="cursor tooltip-info" [matMenuTriggerFor]="lastUpload"></span>
+                    <mat-toolbar color="primary">
+                        <mat-menu #lastUpload="matMenu" backdropClass="ptabletmenu">
+                            <div class="part-menu">
+                                <ul>
+                                    <li mat-menu-item class="raction-menu cursor">Last uploaded on: {{lastUploaded}}</li>
+                                </ul>
+                            </div> 
+                        </mat-menu>
+                    </mat-toolbar>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cbt-filter" *ngIf="sectionFlag || diagnosticFlag || adasFlag" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter (filterComponentRef)="filterRef = $event" (callback)="filterCallback($event)" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div>
+    <div class="probing-content cbt-content part-content part-content-new" [ngClass]="{'filter-expand': expandFlag && (sectionFlag || diagnosticFlag || adasFlag), 'right-panel-expand part-right-side-none': rightPanel && (sectionFlag || diagnosticFlag || adasFlag), 'right-panel-collapse': !rightPanel && (sectionFlag || diagnosticFlag || adasFlag), 'full-width-cont': !sectionFlag && !diagnosticFlag && !adasFlag}">
+        <app-standard-report-list [apiInfo]="apiInfo" (reportComponentRef)="reportPageRef = $event" (callback)="reportCallback($event)"></app-standard-report-list>
+    </div>
+</div>
+<div class="attachment-progress  refer-info upload-info attachment-info">   
+    <p-dialog *ngIf="attachmentProgress" class="attachment-uploading" header="{{successMsg}}" [(visible)]="attachmentProgress" [(closeOnEscape)]="closeDialog" [(modal)]="attachmentProgress">
+        <div class="attachment-cont">
+            <div class="upload-items attachment-row {{file.fileExtn}}" *ngFor="let file of attachments; let i = index;">
+                <div class="{{file.fileExtn}}">
+                    <div class="attachment-col bg-col doc-bg" [ngStyle]="{'background-image': 'url(' + file.thumbFilePath + ')'}"></div>
+                    <div class="attachment-col cont-col">
+                        <div class="caption" [ngClass]="{'active': progress == 100}">
+                            <span>{{file.name}}</span>
+                        </div>
+                        <p-progressBar class="media-bar" mode="determinate" [showValue]="false" [value]="progress"></p-progressBar>
+                        <div class="progress">
+                            <span class="progress-col info">{{progress}}%</span>
+                            <span class="progress-col size text-right">{{file.fileSize}}</span>
+                        </div>                        
+                    </div>                    
+                </div>
+            </div>
+        </div>
+    </p-dialog>
+</div>

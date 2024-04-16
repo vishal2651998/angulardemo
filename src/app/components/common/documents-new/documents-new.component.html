@@ -1,0 +1,497 @@
+<div class="documents-grid-row documents-grid-row-padd">
+    <div *ngIf="loading" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="documents-thumb-view" [style.height.px]="innerHeight">
+        <div *ngIf="lazyLoading"><div class="cust-loader esc-loader lazy-loader cust-lazy-loader {{accessFrom}}" [ngClass]="{ 'doc-loader-new-one' : CBADomain, 'doc-loader-new-two' : !CBADomain }" ></div></div>
+        <div class="ps" id="documentList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+            <div class="doc-padd documents-row">
+                <div class="doc-items" *ngIf="mainView">
+                    <div *ngIf="documentViewOption != '2'" class="document-tab" [ngClass]="{'tab-load': !tabFlag}">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" *ngFor="let t of recentTabs;">
+                                <a class="nav-link" [ngClass]="{'active': t.selected}" id="{{t.id}}" [attr.data-toggle]="t.toggle" [attr.href]="t.href" 
+                                [attr.role]="t.toggle" [attr.aria-controls]="t.control" [attr.aria-selected]="t.selected" (click)="recentTab('tab', t)">{{t.title | uppercase}}</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                            <div *ngIf="!tabFlag" class="cust-loader tab-loader tab-loader-new"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                            <div *ngIf="tabFlag" class="tab-pane ps fade" [ngClass]="{'show active': recentTabs[0].selected}" id="viewed" role="tabpanel" aria-labelledby="viewed-tab"
+                            [perfectScrollbar]="sconfig" (scroll)="onScroll($event)" style="position: relative;">
+                                <div class="doc-tab" style="white-space: nowrap; padding-bottom: 15px; margin-left: 5px;" *ngIf="recentViewedDocuments">
+                                    <ng-container *ngIf="recentViewedDocuments.length == 0">
+                                        <div class="no-view">No views yet</div>
+                                    </ng-container>
+                                    <ng-container *ngFor="let item of recentViewedDocuments; let i = index">
+                                        <div class="document-card" [ngClass]="{'active': item.selected}" (click)="callbackClick(recentViewedDocuments, item, i)">
+                                            <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                                                <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.resourceID" [action]="docAction" [attachments]="item.attachments"></app-attachment-view>
+                                            </div>
+                                            <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                                            <ng-container *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6">
+                                                <div class="document-card-top cover-image {{item.class}}"
+                                                    [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                                                    <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                                                    <!--div class="view-count">{{item.viewCount}}</div-->
+                                                    <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                                </div>
+                                                <div class="document-card-bottom">
+                                                    <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                    <div class="path" title="{{item.makeTooltip}}">
+                                                        <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                            {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                        </span>
+                                                        <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                            <ng-container
+                                                *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 8 || item.flagId == 5 || item.flagId == 0">
+                                                <div class="document-card-top {{item.styleName}}" [ngClass]="{'cover-image': item.logo != ''}"
+                                                [ngStyle]="item.logo != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                                                    <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                                                    <!--div class="view-count">{{item.viewCount}}</div-->
+                                                    <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                                </div>
+                                                <div class="document-card-bottom">
+                                                    <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                    <div class="path" title="{{item.makeTooltip}}">
+                                                        <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                            {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                        </span>
+                                                        <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <div *ngIf="tabFlag" class="tab-pane ps fade" [ngClass]="{'show active': recentTabs[1].selected}" id="uploaded" role="tabpanel" aria-labelledby="uploaded-tab">
+                                <div  class="doc-tab" style="white-space: nowrap; padding-bottom: 15px; margin-left: 5px;">
+                                    <ng-container *ngIf="recentUploadedDocuments.length == 0">
+                                        <div class="no-view">Nothing uploaded yet</div>
+                                    </ng-container>
+                                    <ng-container *ngFor="let item of recentUploadedDocuments; let i = index;">
+                                        <div class="document-card" [ngClass]="{'active': item.selected}" (click)="callbackClick(recentUploadedDocuments, item, i)">
+                                            <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                                                <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.resourceID" [action]="docAction" [attachments]="item.attachments"></app-attachment-view>
+                                            </div>
+                                            <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                                            <ng-container
+                                                *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6">
+                                                <div class="document-card-top cover-image {{item.class}}"
+                                                    [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                                                    <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span
+                                                            style="float: right;
+                                                    padding-right: 5px;"> {{item.resourceID}} </span></div>
+                                                    <!--div class="view-count">{{item.viewCount}}</div-->
+                                                    <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                                </div>
+                                                <div class="document-card-bottom">
+                                                    <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                    <div class="path" title="{{item.makeTooltip}}">
+                                                        <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                            {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                        </span>
+                                                        <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                            <ng-container
+                                                *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 5 || item.flagId == 0">
+                                                <div class="document-card-top {{item.styleName}}" [ngClass]="{'cover-image': item.logo != ''}" 
+                                                [ngStyle]="item.logo != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                                                    <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span
+                                                            style="float: right;
+                                                    padding-right: 5px;"> {{item.resourceID}} </span></div>
+                                                    <!--div class="view-count">{{item.viewCount}}</div-->
+                                                    <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                                </div>
+                                                <div class="document-card-bottom">
+                                                    <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                    <div class="path" title="{{item.makeTooltip}}">
+                                                        <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                            {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                        </span>
+                                                        <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                        <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="doc-list">
+                    <div>
+                        <div *ngIf="thumbView" class="folder-list">
+                            <ngx-masonry [options]="{ gutter: 10 }" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                                <ng-container *ngFor="let item of mainFolders">
+                                    <div ngxMasonryItem class="folder-card masonry-item">
+                                        <div class="document-folder-item-system" [ngClass]="{'document-folder-item-syystem': item.isSystemFolder == 1, 'document-folder-item': item.isSystemFolder == 0}" (click)="viewDocument(item)">
+                                            <span *ngIf="domainAccess">
+                                                <span> 
+                                                    <div *ngIf="item.isSystemFolder == 0" class="three-dot three-dot-action" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div>
+                                                    <div *ngIf="item.isSystemFolder == 1" class="three-dot-mfg three-dot-mfg-action" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div>
+                                                    <mat-toolbar color="primary">
+                                                        <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu">
+                                                            <div class="part-menu" >
+                                                                <ul class="more-actions">
+                                                                    <li *ngIf="item.isSystemFolder == 0 && !item.isMfg" class="cursor active" (click)="editfolderpopup(item.folderName,item.id,item.workstreamsList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                                    <li *ngIf="item.isSystemFolder == 0 && !item.isMfg" class="cursor active" (click)="deletefolderpopup(item.folderName,item.id,item.fileCount)"><img class="img-del" src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                    <li class="cursor active" [ngStyle]="item.isSystemFolder == 1 ? {'padding': '0px 20px 5px 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(item, 'upload')"><img class="img-upload" src="assets/images/media/image-thumb.png" alt="Upload"><span *ngIf="item.logo == ''">{{uploadTxt}}</span> <span *ngIf="item.logo != ''">{{updateTxt}}</span></li>
+                                                                    <li *ngIf="item.logo != ''" class="cursor active" [ngStyle]="item.isSystemFolder == 1 ? {'padding': '10px 20px 0 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(item, 'remove')"><img class="img-upload" src="assets/images/delete.png" alt="Remove"><span>Remove Image</span></li>
+                                                                </ul>
+                                                            </div>
+                                                        </mat-menu>
+                                                    </mat-toolbar>
+                                                </span>                   
+                                            </span>            
+                                        <div class="mfg-logo-div">
+                                                <img *ngIf="item.isSystemFolder == 1" [src]="item.logo" onerror="this.src='assets/images/documents/sys-folder-thumb.png'" >
+                                                <img *ngIf="item.isSystemFolder == 0" [src]="item.logo" onerror="this.src='assets/images/documents/user-folder-thumb.png'" >
+                                            </div>
+                                            <div title="{{item.folderName}}" class="system-heading" [ngClass]="{'system-folder-head': item.isSystemFolder == 1}">{{item.folderName}}</div>
+                                            <div class="system-sub-heading">
+                                                <ng-container *ngIf="item.subFolderCount > 0">
+                                                    {{item.subFolderCount}} Folder<span *ngIf="item.subFolderCount > 1">s</span></ng-container>
+                                                <ng-container *ngIf="item.subFolderCount > 0 && item.fileCount > 0">,
+                                                </ng-container>
+                                                <ng-container *ngIf="item.fileCount > 0">{{item.fileCount}}
+                                                    File<span *ngIf="item.fileCount > 1">s</span></ng-container>
+                                            </div>
+                                            <div class="system-sub-heading empty" *ngIf="item.subFolderCount == 0 && item.fileCount == 0">
+                                                Empty
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ngx-masonry>
+                        </div>
+                        <div *ngIf="!thumbView" class="doc-list-cont">
+                            <div id="documentTable">
+                                <p-table #table [totalRecords]="mainFolders.length" id="file-datatable" class="file-datatable folder-datatable thread-list-table folder-list-table" [value]="mainFolders">
+                                    <ng-template pTemplate="body" let-mainFolders let-i="rowIndex">
+                                        <tr class="cursor" (click)="viewDocument(mainFolders)">
+                                            <td>
+                                                <div class="doc-item">
+                                                    <div class="item-col mfg-col icon">
+                                                        <span class="document-img" [ngClass]="{'folder-bg': mainFolders.isSystemFolder == 1, 'file-bg': mainFolders.isSystemFolder == 0}"></span>
+                                                        <span class="mfg-logo-new" *ngIf="mainFolders.isSystemFolder == 1"><img src="{{mainFolders.logo}}" onerror="this.src='assets/images/documents/sys-folder-thumb.png'" /></span>
+                                                        <span class="mfg-logo-new" *ngIf="mainFolders.isSystemFolder == 0"><img src="{{mainFolders.logo}}" onerror="this.src='assets/images/documents/user-folder-thumb.png'" /></span>
+                                                    </div>
+                                                    <div class="item-col title mfg-title" >
+                                                        <div>{{mainFolders.folderName}}</div>
+                                                        <div class="folder-user-details" *ngIf="mainFolders.isSystemFolder == 1">
+                                                            <span><span class="system-folder">System Folder</span></span>
+                                                        </div>
+                                                        <div class="folder-user-details" *ngIf="mainFolders.isSystemFolder == 0">
+                                                            <span *ngIf="mainFolders.createdOn !=''"><span class="label">Created on </span>{{mainFolders.createdOn | date:'mediumDate'}}</span>
+                                                            <span *ngIf="mainFolders.userName !=''" class="item"><span class="label">by </span>{{mainFolders.userName}} </span> 
+                                                            <span *ngIf="mainFolders.updatedOn !=''" class="item"><span class="label">Updated on </span>{{mainFolders.updatedOn | date:'mediumDate'}} </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="doc-count text-right">
+                                                    <div class="doc-col folder">
+                                                        <span class="count-row" *ngIf="mainFolders.subFolderCount > 0">
+                                                            <span class="count-col subFolderCount">{{mainFolders.subFolderCount}} </span>
+                                                            <span class="count-col folder-text">Folder<span *ngIf="mainFolders.subFolderCount > 1">s</span></span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="doc-col file">
+                                                        <span class="count-row" *ngIf="mainFolders.fileCount > 0">
+                                                            <span class="count-col filecount">{{mainFolders.fileCount}}</span>
+                                                            <span class="count-col file-text">File<span *ngIf="mainFolders.fileCount > 1">s</span></span>
+                                                        </span>
+                                                        <span class="empty text-center" *ngIf="mainFolders.fileCount == 0">-</span>
+                                                    </div>
+                                                    <span class="doc-more">
+                                                        
+                                                        <div id="more" class="more-icon" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();">
+                                                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                        </div>
+                                                        <mat-toolbar color="primary">
+                                                            <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu">
+                                                                <div class="part-menu" >
+                                                                    <ul class="more-actions">
+                                                                        <li *ngIf="mainFolders.isSystemFolder == 0" class="cursor active" (click)="editfolderpopup(mainFolders.folderName,mainFolders.id,mainFolders.workstreamsList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                                        <li *ngIf="mainFolders.isSystemFolder == 0" class="cursor active" (click)="deletefolderpopup(mainFolders.folderName,mainFolders.id,mainFolders.fileCount)"><img class="img-del" src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                        <li class="cursor active" [ngStyle]="mainFolders.isSystemFolder == 1 ? {'padding': '0px 20px 5px 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(items, 'upload')"><img class="img-upload" src="assets/images/media/image-thumb.png" alt="Upload"><span *ngIf="mainFolders.logo == ''">{{uploadTxt}}</span> <span *ngIf="mainFolders.logo != ''">{{updateTxt}}</span></li>
+                                                                        <li *ngIf="mainFolders.logo != ''" class="cursor active" [ngStyle]="mainFolders.isSystemFolder == 1 ? {'padding': '10px 20px 0 10px'} : {'padding': '10px 20px 5px 10px'}" (click)="updateLogo(items, 'remove')"><img class="img-upload" src="assets/images/delete.png" alt="Remove"><span>Remove Image</span></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </mat-menu>
+                                                        </mat-toolbar>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>          
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="doc-list {{accessFrom}}" *ngIf="!mainView">                    
+                    <div >
+                    <div class="docbreadcrumb" [ngClass]="{'hide': accessFrom != 'documents'}">
+                        <div class="breadcrumb-back" (click)="breadcrumb('folderType1');$event.stopPropagation();">
+                            <span class="cursor"></span>
+                            <div class="cursor back-button-document">Back</div>
+                        </div> 
+                        <div class="breadcrumb-home"></div>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb"> 
+                                <li class="breadcrumb-item" (click)="breadcrumb('folderType1');$event.stopPropagation();"><span class="cursor">{{folderType1Name}}</span></li>
+                                <li class="breadcrumb-item" (click)="breadcrumb('folderType2');$event.stopPropagation();" *ngIf="folderType2Id!=''"><span [ngClass]= "{ 'cursor' : folderType3Id!='' }" >{{folderType2Name}}</span></li>
+                                <li class="breadcrumb-item" (click)="breadcrumb('folderType3');$event.stopPropagation();" *ngIf="folderType3Id!=''"><span [ngClass]= "{ 'cursor' : folderType4Id!='' }">{{folderType3Name}}</span></li>
+                                <li class="breadcrumb-item" *ngIf="folderType4Id!=''"><span  class="">{{folderType4Name}}</span></li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div [ngClass]="{'list-items': accessFrom == 'documents'}">
+                        <div *ngIf="thumbView">
+                            <ngx-masonry [options]="{ gutter: 10 }" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                                <ng-container *ngFor="let item of items">
+                                    <div *ngIf="item.docType == 'folder'">
+                                        <div ngxMasonryItem class="folder-card masonry-item">
+                                            <div class="document-folder-item-system" [ngClass]="{'document-folder-item-syystem': item.isSystemFolder == 1, 'document-folder-item': item.isSystemFolder == 0, 'empty' : item.fileCount == 0}" (click)="viewDocument(item)">
+                                                <span *ngIf="domainAccess">
+                                                    <span >
+                                                        <div class="three-dot-mfg three-dot-mfg-action" #menuTrigger="matMenuTrigger"  [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();"></div>
+                                                        <mat-toolbar color="primary">
+                                                            <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu">
+                                                                <div class="part-menu">
+                                                                    <ul class="more-actions">
+                                                                        <li class="cursor active" (click)="updateLogo(item, 'upload')" style="padding: 10px 20px 5px 10px;"><img class="img-upload" src="assets/images/media/image-thumb.png" alt="Upload"><span *ngIf="item.isDef">{{uploadTxt}}</span> <span *ngIf="!item.isDef">{{updateTxt}}</span></li>
+                                                                        <!--li *ngIf="!item.isDef" class="cursor active hide" (click)="updateLogo(item, 'remove')" style="padding: 10px 20px 5px 10px;"><img class="img-upload" src="assets/images/delete.png" alt="Remove"><span>Remove Image</span></li-->
+                                                                    </ul>
+                                                                </div>
+                                                            </mat-menu>
+                                                        </mat-toolbar>
+                                                    </span>                   
+                                                </span>
+                                                <div class="mfg-logo-div">
+                                                    <img [src]="item.logo" onerror="this.src='assets/images/documents/sys-folder-thumb.png'" >
+                                                </div>
+                                                <div title="{{item.folderName}}" class="system-heading">{{item.folderName}}</div>
+                                                <div class="system-sub-heading">
+                                                    <ng-container *ngIf="item.subFolderCount > 0">
+                                                        {{item.subFolderCount}} Folder<span *ngIf="item.subFolderCount > 1">s</span></ng-container>
+                                                    <ng-container *ngIf="item.subFolderCount > 0 && item.fileCount > 0">,
+                                                    </ng-container>
+                                                    <ng-container *ngIf="item.fileCount > 0">{{item.fileCount}}
+                                                        File<span *ngIf="item.fileCount > 1">s</span></ng-container>
+                                                </div>
+                                                <div class="system-sub-heading empty" *ngIf="item.subFolderCount == 0 && item.fileCount == 0">
+                                                    Empty
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="item.docType == 'file'">
+                                        <div class="file-list">
+                                            <div ngxMasonryItem class="document-card masonry-item" id="{{item.resourceID}}" [ngClass]="{'active': item.selected}" *ngIf="item" (click)="callbackClick(items, item)">
+                                                <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                                                    <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.resourceID" [action]="docAction" [attachments]="item.attachments"></app-attachment-view>
+                                                </div>
+                                                <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                                                <ng-container *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6 ">
+                                                    <div class="document-card-top cover-image {{item.styleName}} {{item.class}}"
+                                                        [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                                                        <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                                                        <!--div class="view-count">{{item.viewCount}}</div-->
+                                                        <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                                    </div>
+                                                    <div class="document-card-bottom">
+                                                        <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                        <div class="path">
+                                                            <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                                {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                            </span>
+                                                            <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                                                            <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                            <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container
+                                                    *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 8 || item.flagId == 5 || item.flagId == 0">
+                                                    <div class="document-card-top {{item.styleName}}"  [ngStyle]="item.logo != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                                                        <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                                                        <!--div class="view-count">{{item.viewCount}}</div-->
+                                                        <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                                                    </div>
+                                                    <div class="document-card-bottom">
+                                                        <div class="text" title="{{item.title}}">{{item.title}}</div>
+                                                        <div class="path">
+                                                            <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                                                {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                                                            </span>
+                                                            <span *ngIf="!item.isGenreal && item.mfg == ''">
+                                                                {{item.make}}
+                                                            </span>
+                                                            <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                                                            <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ngx-masonry>
+                        </div>
+                        <div class="table-view doc-list-cont" *ngIf="!thumbView && items?.length > 0 && !emptyFlag" [style.height]="'calc(100vh - '+secHeight+'px)'">
+                            <div #top class="ps" id="documentTable">
+                                <div *ngIf="currentDocAction == 'mfgfolder'">
+                                <p-table [scrollable]="true" #table [totalRecords]="items.length" id="file-datatable" class="file-datatable folder-datatable thread-list-table folder-list-table" [value]="items"
+                                [scrollHeight]="'calc(100vh - '+(listHeight - 50)+'px)'"
+                                >
+                                    <ng-template pTemplate="body" let-items let-i="rowIndex">
+                                        <tr class="cursor" (click)="viewDocument(items)">
+                                            <td>
+                                                <div class="doc-item">
+                                                    <div class="item-col mfg-col icon">
+                                                        <span class="document-img file-bg" ></span>
+                                                        <span class="mfg-logo-new"><img src="{{items.logo}}" onerror="this.src='assets/images/documents/user-folder-thumb.png'" /></span>
+                                                    </div>
+                                                    <div class="item-col title mfg-title" style="vertical-align:middle;">
+                                                        <div>{{items.folderName}}</div>  
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="doc-count text-right">
+                                                    <div class="doc-col folder">
+                                                        <span class="count-row" *ngIf="items.subFolderCount > 0">
+                                                            <span class="count-col subFolderCount">{{items.subFolderCount}} </span>
+                                                            <span class="count-col folder-text">Folder<span *ngIf="items.subFolderCount > 1">s</span></span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="doc-col file">
+                                                        <span class="count-row" *ngIf="items.fileCount > 0">
+                                                            <span class="count-col filecount">{{items.fileCount}}</span>
+                                                            <span class="count-col file-text">File<span *ngIf="items.fileCount > 1">s</span></span>
+                                                        </span>
+                                                        <span class="empty text-center" *ngIf="items.fileCount == 0">-</span>
+                                                    </div>
+                                                    <span class="doc-more">
+                                                        
+                                                        <div id="more" class="more-icon" [matMenuTriggerFor]="moreAction" (click)="$event.stopPropagation();">
+                                                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                        </div>
+                                                        <mat-toolbar color="primary">
+                                                            <mat-menu #moreAction="matMenu" backdropClass="ptabletmenu" class="folderActMenu">
+                                                                <div class="part-menu" >
+                                                                    <ul class="more-actions">
+                                                                        <li class="cursor active" (click)="editfolderpopup(items.folderName,items.id,items.workstreamsList)"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                                        <li class="cursor active" (click)="deletefolderpopup(items.folderName,items.id,items.fileCount)"><img class="img-del" src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                                                        <li class="cursor active" style="padding: 10px 20px 5px 10px" (click)="updateLogo(items, 'upload')"><img class="img-upload" src="assets/images/media/image-thumb.png" alt="Upload"><span *ngIf="items.logo == ''">{{uploadTxt}}</span> <span *ngIf="items.logo != ''">{{updateTxt}}</span></li>
+                                                                        <li *ngIf="items.logo != ''" class="cursor active" style="padding:10px 20px 5px 10px;"  (click)="updateLogo(items, 'remove')"><img class="img-upload" src="assets/images/delete.png" alt="Remove"><span>Remove Image</span></li>
+                                                                    </ul>
+                                                                </div>
+                                                            </mat-menu>
+                                                        </mat-toolbar>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>          
+                                    </ng-template>
+                                </p-table>
+                                </div>
+                                <div *ngIf="currentDocAction != 'mfgfolder'">
+                                <p-table [scrollable]="true" [totalRecords]="items.length" id="file-datatable" class="mfg-table file-datatable doc-file-table folder-datatable thread-list-table" [scrollHeight]="'calc(100vh - '+listHeight+'px)'" (scroll)="onScroll($event)" [value]="items" sortMode="multiple">
+                                    <ng-template pTemplate="header">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>&nbsp;</th>
+                                            <th>Mfg</th>
+                                            <th>Updated on</th>
+                                            <th>Info</th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-items>
+                                        <tr id="{{items.resourceID}}" class="cursor {{items.styleName}}" [ngClass]="{'active': items.selected}" (click)="checkType(items);">
+                                            <td>
+                                                <div *ngIf="items.docType == 'folder'" class="doc-name-col mfg-col">
+                                                    <div class="doc-item">
+                                                        <div class="item-col icon mfg-col">
+                                                            <span class="document-img folder-bg"></span>
+                                                            <span *ngIf="items.logo !='' && items.logo!= null" class="mfg-logo-doc"><img src="{{items.logo}}" /></span>
+                                                            <span *ngIf="items.logo =='' || items.logo== null" class="mfg-logo-doc"><img src="assets/images/documents/sys-folder-thumb.png" /></span>                                                            
+                                                        </div>                                                                                                          
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="items.docType == 'file'" class="doc-name-col">
+                                                    <div class="info-attachments" *ngIf="items?.attachments?.length > 0">
+                                                        <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="items.resourceID" [action]="docAction" [attachments]="items.attachments"></app-attachment-view>
+                                                    </div>
+                                                    <span class="banner-image">
+                                                        <img *ngIf="items.contentPath != null" src="{{items.contentPath}}" width="42px" height="42px" />
+                                                        <img *ngIf="items.contentPath == null && items.styleName != null" src="assets/images/documents/{{items.styleName}}-icon.png" width="42px" height="42px" />
+                                                    </span>
+                                                    <span class="title "><span class="title-doc-list"><span class="title-doc-list-in" title="{{items.title}}">{{items.title}}<span class="list-id">,&nbsp;#{{items.resourceID}}</span></span></span></span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="doc-col file">                                                                   
+                                                    <span *ngIf="items.docType == 'file'" class="mfg">
+                                                        <div class="attchment-count" *ngIf="items?.attachments?.length > 1"><span>{{items?.attachments?.length}}</span></div>
+                                                    </span>                  
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="doc-col file">
+                                                    <span *ngIf="items.docType == 'folder'" class="mfg">{{items.folderName}}</span> 
+                                                    <span *ngIf="items.docType == 'file'" class="mfg">{{items.manufacturer}}</span>  
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="doc-col file">
+                                                    <span *ngIf="items.docType == 'folder'" class="updated-on">{{items.updatedOn}}</span>
+                                                    <span *ngIf="items.docType == 'file'" class="updated-on">{{items.updatedOnMobile}}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div *ngIf="items.docType == 'folder'" class="doc-count">
+                                                    <div class="doc-col file">
+                                                        <span class="count-row" *ngIf="items.fileCount > 0">
+                                                            <span class="count-col filecount">{{items.fileCount}}</span>
+                                                            <span class="count-col file-text">File<span *ngIf="items.fileCount > 1">s</span></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="items.docType == 'file'" class="doc-col file">
+                                                    <span class="empty text-center">-</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-template>    
+                                </p-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div *ngIf="items?.length == 0 && emptyFlag" [style.height.px]="innerHeight - 50">
+                    <app-empty-container [contentTypeValue]="contentTypeValue" [showType]="displayNoRecordsShow"></app-empty-container>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+</div>
+

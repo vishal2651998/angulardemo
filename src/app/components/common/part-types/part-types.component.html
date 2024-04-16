@@ -1,0 +1,36 @@
+<div *ngIf="partLoading" class="cust-select workstreams">
+    <mat-form-field class="custom-mat-sel">
+        <mat-select #select (openedChange)="openedChange($event)" placeholder="Select Workstream(s)" [formControl]="partFormControl" [(ngModel)]="dbSelectedType" multiple disableOptionCentering>
+            <div class="select-container" *ngIf="partLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" placeholder="Search Workstreams" aria-label="Search Workstream" matInput [formControl]="partSearchTextboxControl">
+                        <button *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon class="make-close">close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(typeFilteredOptions | async).length == 0" class="no-result">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="select.close()">Close</div>
+                <div *ngIf="(typeFilteredOptions | async).length > 0" class="select-all">
+                    <mat-checkbox [(ngModel)]="allSelected"
+                                    [ngModelOptions]="{standalone: true}"
+                                    (change)="toggleAllSelection()">Select All</mat-checkbox>
+                </div>
+                <mat-option (onSelectionChange)="selectionChange($event)" (click)="optionClick()" *ngFor="let option of typeFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="partLoadingSelect">
+    <div *ngIf="partFormControl.value != ''" class="selected-items">
+        <div *ngFor="let item of partItems; let t=index" class="tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

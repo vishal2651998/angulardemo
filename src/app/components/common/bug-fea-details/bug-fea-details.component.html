@@ -1,0 +1,19 @@
+<div class="cursor media-collapse-arrows" (click)="toggleAction()">
+    <img src="assets/images/landing-page/side-panel-arrow.png" alt="collapse" />
+</div>
+<div *ngIf="infoLoading" class="edit-media-loader text-center"><img src="assets/images/loading.svg" alt="Loader" />
+</div>
+<div *ngIf="!infoLoading" class="media-details info-page">
+    <div [style.height.px]="innerInfoHeight" [perfectScrollbar]="sconfig">
+        <div><span class="titles">{{title}}</span></div>
+        <div class="space"><span class="description">{{description}}</span></div>
+        <div *ngIf="attachments.length != 0" class="line"></div>
+        <div *ngIf="attachments.length != 0" class="info-attachments">
+            <app-attachment-view [loading]="infoLoading" [action]="action" [attachments]="attachments">
+            </app-attachment-view>
+        </div>
+        <div class="view-details text-center cursor-pointer" (click)="viewMore()">View More Details</div>
+        <!-- <div class="same-problem text-center cursor-pointer">I have the same problem</div> -->
+    </div>
+    </div>
+    

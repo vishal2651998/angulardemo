@@ -1,0 +1,584 @@
+<div  *ngIf="!loading" id="header">
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header> 
+</div>
+<div class="prob-new">
+    <div *ngIf="loading" class="dash-loader cust-loader cust-loader2"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont col-lg-10 col-xl-10 step1">
+        
+        <div class="form-cont" [ngClass]="{'col-lg-12': step1Action}">
+            <form class="form-horizontal" [formGroup]="ppfrForm" >
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="teamSystem" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>                                  
+                        <div *ngIf="!saveButtonEnable" class="btn next save disabled">
+                            Submit <img src="assets/images/parts/save-draft.png" />
+                        </div>
+                        <div *ngIf="saveButtonEnable"  class="btn next save" (click)="submitAction('save')">
+                            Submit <img src="assets/images/parts/save-draft.png" />
+                        </div>
+                        <!--div *ngIf="!saveButtonEnable" class="btn next save disabled">
+                            Publish <img src="assets/images/parts/publish.png" />
+                        </div>
+                        <div *ngIf="saveButtonEnable"  class="btn next save" (click)="submitAction('save')">
+                            Publish <img src="assets/images/parts/publish.png" />
+                         </div-->
+                    </div>
+                </div> 
+                
+                <div [style.height.px]="innerHeight">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig">                         
+                        <div class="form-items">
+                            <div *ngIf="step1Action">
+
+                                <div class="row prob-form-row">
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 margin0 padding0">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-workstream.png"></span><span class="lable-text">Select Workstream</span><span class="required-text">Required</span>
+                                            </div>
+                                            <div class="part-text-row form-group p-multi-select">
+                                                <p-multiSelect [showToggleAll]="false" class="split-col catg-col" appendTo="body" formControlName="wsFormControl" [options]="workstreamItems" [filter]="true" showClear="false"
+                                                    ([ngModel])="workstreamId" [defaultLabel]="defaultWSLabel"
+                                                    [ngClass]="{ 'is-invalid': workstreamValid }"
+                                                    (onChange)="selectedItems($event)"
+                                                    optionLabel="name" >
+                                                </p-multiSelect> 
+
+                                                <div class="ws-display">
+                                                    <div *ngIf="workstreamSelection?.length > 0" class="selected-items">
+                                                        <div *ngFor="let item of workstreamSelection; let t=index" class="tag-text">
+                                                            <span>{{item.name}}</span>
+                                                            <i class="material-icons tag-close"
+                                                                (click)="disableWSSelection(item.id)">close</i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div> 
+                                        
+                                        <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 margin0 padding0">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-title.png"></span><span class="lable-text">Kaizen Title</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Enter Title" formControlName="kaizenTitle"
+                                                ([ngModel])="kaizenTitle"                                                
+                                                maxlength="200" /> 
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/model.png"></span><span class="lable-text">Model</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Model" formControlName="model"
+                                                [(ngModel)]="model"                                                
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-number.png"></span><span class="lable-text">Reg No .NIA</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Reg No." formControlName="regnonia"
+                                                [(ngModel)]="regnonia" maxlength="40" (keypress)="restrictNumeric($event)"                                              
+                                                />
+                                            </div>
+                                        </div>                                         
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-theme.png"></span><span class="lable-text">Theme</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Theme" formControlName="theme"
+                                                [(ngModel)]="theme"                                                 
+                                                maxlength="" />
+                                            </div>
+                                        </div>                                      
+                                    </div>
+
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-complaints.png"></span><span class="lable-text">No. of Complaints Reported</span>
+                                            </div>
+                                            <div class="part-text-row form-group">                                               
+                                                <input class="inputbox" matInput placeholder="No. of Complaints Reported" formControlName="complaintsReported"
+                                                [(ngModel)]="complaintsReported"                                                
+                                                maxlength="" />                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-severity.png"></span><span class="lable-text">Severity</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Severity" formControlName="sevirity"
+                                                [(ngModel)]="sevirity"                                               
+                                                maxlength="" />
+                                            </div>
+                                        </div>                                         
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-finish.png"></span><span class="lable-text">Kaizen Finish</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Kaizen Finish" formControlName="kaizenFinish"
+                                                [(ngModel)]="kaizenFinish"                                                
+                                                maxlength="" />
+                                            </div>
+                                        </div>                                     
+                                    </div>
+
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">                                        
+                                        <div class="col-lg-3 col-md-3 col-xl-3 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-unit.png"></span><span class="lable-text">Unit</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Unit" formControlName="kaizenUnit"
+                                                [(ngModel)]="kaizenUnit" maxlength=""  />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-xl-3 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-map.png"></span><span class="lable-text">Area</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Area" formControlName="kaizenArea"
+                                                [(ngModel)]="kaizenArea" maxlength=""  />
+                                            </div>
+                                        </div>
+                                       <div class="col-lg-3 col-md-3 col-xl-3 col-sm-12 margin0 padding0 paddingRt20">
+                                        <div class="part-label-row">
+                                            <span class="label-icon"><img src="assets/images/kaizen/k-calendar.png"></span><span class="lable-text">Year</span>
+                                        </div>
+                                        <div class="part-text-row form-group cursor"> 
+                                            <p-dropdown class="select-ts-order" formControlName="kaizenYear" appendTo="body" [options]="selectedYearOptions" placeholder="" optionValue="code" optionLabel="name" ></p-dropdown>
+                                        </div>
+                                        </div>
+                                        <div class="col-lg-3 col-md-3 col-xl-3 col-sm-12 margin0 padding0">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-number.png"></span><span class="lable-text">SI No</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="SI No" formControlName="kaizenSino"
+                                                [(ngModel)]="kaizenSino"maxlength="40" (keypress)="restrictNumeric($event)" />
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-map.png"></span><span class="lable-text">Territory</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Territory" formControlName="territory"
+                                                [(ngModel)]="territory"                                               
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                             <div class="part-label-row">
+                                                 <span class="label-icon"><img src="assets/images/kaizen/k-frame.png"></span><span class="lable-text">Frame #</span>
+                                             </div>
+                                             <div class="part-text-row form-group">
+                                                 <input class="inputbox" matInput placeholder="Frame Number" formControlName="frameNumber"
+                                                 [(ngModel)]="frameNumber"                                                  
+                                                 maxlength="17" />                                                 
+                                             </div>
+                                         </div>
+                                         <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/kaizen/k-kms.png"></span><span class="lable-text">KM</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox pR50" matInput placeholder="ODO" formControlName="KMSReading"
+                                                [(ngModel)]="KMSReading"                                                
+                                                maxlength="40" (keypress)="restrictNumeric($event)" (ngModelChange)="addComma($event,'kms','type0',0)"   />
+                                                <div class="input-odo cursor"><span class="text">Km</span></div>
+                                            </div>
+                                        </div>
+                                       
+                                     </div>
+                                     
+                                    
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">                                                                       
+                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 ">  
+                                                <div class="menu-container">
+                                                    <div class="prob-form-row">                                    
+                                                        <div class="k-more-details" >More Details</div>                                                           
+                                                         
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 ">
+                                                            <div class="part-label-row">
+                                                                <span class="label-icon"><img src="assets/images/kaizen/k-problem.png"></span><span class="lable-text">Problem / Present Status</span>
+                                                            </div>
+                                                            <div class="part-text-row form-group">
+                                                                <p-editor placeholder="Problem / Present Status" [(ngModel)]="problemPresentDesc" formControlName="problemPresentDesc"  (onTextChange)="changeDesc($event,'desc1')" [style]="{'height': '180px'}">
+                                                                    <p-header>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-bold" aria-label="Bold"></button>
+                                                                            <button class="ql-italic" aria-label="Italic"></button>
+                                                                            <button class="ql-underline" aria-label="Underline"></button>
+                                                                        
+                                                                            <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                                            <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                                            </select>
+                                                                            <button class="ql-list" value="ordered"></button>
+                                                                            <button class="ql-list" value="bullet"></button>
+                                                                            <select title="Text Alignment" class="ql-align" >
+                                                                                <option selected>Gauche</option>
+                                                                                <option value="center" label="Center"></option>
+                                                                                <option value="right" label="Right"></option>
+                                                                                <option value="justify" label="Justify"></option>
+                                                                            </select>            
+                                                                        
+                                                                             </span>
+                                                                    </p-header>
+                                                                </p-editor>
+                                                            </div>
+                                                        </div> 
+                                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 ">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-obser.png"></span><span class="lable-text">Observations</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <p-editor [(ngModel)]="observationDesc" placeholder="Observations" formControlName="observationDesc" (onTextChange)="changeDesc($event,'desc2')" [style]="{'height': '180px'}">
+                                                                        <p-header>
+                                                                            <span class="ql-formats">
+                                                                                <button class="ql-bold" aria-label="Bold"></button>
+                                                                                <button class="ql-italic" aria-label="Italic"></button>
+                                                                                <button class="ql-underline" aria-label="Underline"></button>
+                                                                            
+                                                                                <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                                                <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                                                </select>
+                                                                                <button class="ql-list" value="ordered"></button>
+                                                                                <button class="ql-list" value="bullet"></button>
+                                                                                <select title="Text Alignment" class="ql-align" >
+                                                                                    <option selected>Gauche</option>
+                                                                                    <option value="center" label="Center"></option>
+                                                                                    <option value="right" label="Right"></option>
+                                                                                    <option value="justify" label="Justify"></option>
+                                                                                </select>            
+                                                                            
+                                                                                </span>
+                                                                        </p-header>
+                                                                    </p-editor>
+                                                                </div>
+                                                            </div>                                        
+                                                        </div>
+                                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 ">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-analysis.png"></span><span class="lable-text">Analysis</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <p-editor [(ngModel)]="analysisDesc" placeholder="Analysis" formControlName="analysisDesc" (onTextChange)="changeDesc($event,'desc3')" [style]="{'height': '180px'}">
+                                                                        <p-header>
+                                                                            <span class="ql-formats">
+                                                                                <button class="ql-bold" aria-label="Bold"></button>
+                                                                                <button class="ql-italic" aria-label="Italic"></button>
+                                                                                <button class="ql-underline" aria-label="Underline"></button>
+                                                                            
+                                                                                <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                                                <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                                                </select>
+                                                                                <button class="ql-list" value="ordered"></button>
+                                                                                <button class="ql-list" value="bullet"></button>
+                                                                                <select title="Text Alignment" class="ql-align" >
+                                                                                    <option selected>Gauche</option>
+                                                                                    <option value="center" label="Center"></option>
+                                                                                    <option value="right" label="Right"></option>
+                                                                                    <option value="justify" label="Justify"></option>
+                                                                                </select>            
+                                                                            
+                                                                                   </span>
+                                                                        </p-header>
+                                                                    </p-editor>
+                                                                </div>
+                                                            </div>                                        
+                                                        </div> 
+                                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 ">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-actiontaken.png"></span><span class="lable-text">Action Taken</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <p-editor [(ngModel)]="actionTakenDesc" placeholder="Action Taken" formControlName="actionTakenDesc" (onTextChange)="changeDesc($event,'desc4')" [style]="{'height': '180px'}">
+                                                                        <p-header>
+                                                                            <span class="ql-formats">
+                                                                                <button class="ql-bold" aria-label="Bold"></button>
+                                                                                <button class="ql-italic" aria-label="Italic"></button>
+                                                                                <button class="ql-underline" aria-label="Underline"></button>
+                                                                            
+                                                                                <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                                                <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                                                </select>
+                                                                                <button class="ql-list" value="ordered"></button>
+                                                                                <button class="ql-list" value="bullet"></button>
+                                                                                <select title="Text Alignment" class="ql-align" >
+                                                                                    <option selected>Gauche</option>
+                                                                                    <option value="center" label="Center"></option>
+                                                                                    <option value="right" label="Right"></option>
+                                                                                    <option value="justify" label="Justify"></option>
+                                                                                </select>            
+                                                                            
+                                                                                   </span>
+                                                                        </p-header>
+                                                                    </p-editor>
+                                                                </div>
+                                                            </div>                                        
+                                                        </div> 
+                                                    </div>
+                                                </div>                                                           
+                                            </div>
+                                        </div>
+                                                                           
+                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 ">  
+                                                <div class="menu-container">
+                                                    <div class="prob-form-row">                                    
+                                                        <div class="k-results-benefits" >Results / Benefits</div>                                                           
+                                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-number.png"></span><span class="lable-text">No of Vehicles modified</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="No of Vehicles modified" formControlName="vehiclesModified"
+                                                                    [(ngModel)]="vehiclesModified" maxlength="40" (keypress)="restrictNumeric($event)"                                                 
+                                                                    maxlength="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                 <div class="part-label-row">
+                                                                     <span class="label-icon"><img src="assets/images/kaizen/k-cost.png"></span><span class="lable-text">Modification Expenses / Cost Estimate</span>
+                                                                 </div>
+                                                                 <div class="part-text-row form-group">
+                                                                     <input class="inputbox" matInput placeholder="Modification Expenses / Cost Estimate" formControlName="expensesCostEstimate"
+                                                                     [(ngModel)]="expensesCostEstimate"                                                  
+                                                                     maxlength="" />                                                 
+                                                                 </div>
+                                                             </div>
+                                                             <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 ">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-implement.png"></span><span class="lable-text">Easy to implement </span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Easy to implement" formControlName="easyImplement"
+                                                                    [(ngModel)]="easyImplement"                                                 
+                                                                    maxlength="" />                                                 
+                                                                </div>
+                                                            </div>
+                                                           
+                                                         </div>
+
+                                                         <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-cost.png"></span><span class="lable-text">Cost Benefit / Savings</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Cost Benefit / Savings" formControlName="costSavings"
+                                                                    [(ngModel)]="costSavings"                                                  
+                                                                    maxlength="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                 <div class="part-label-row">
+                                                                     <span class="label-icon"><img src="assets/images/kaizen/k-solution.png"></span><span class="lable-text">Side Effect of the solution</span>
+                                                                 </div>
+                                                                 <div class="part-text-row form-group">
+                                                                     <input class="inputbox" matInput placeholder="Side Effect of the solution" formControlName="sideEffectSolution"
+                                                                     [(ngModel)]="sideEffectSolution"                                                 
+                                                                     maxlength="" />                                                 
+                                                                 </div>
+                                                             </div>
+                                                             <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 ">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-post-edit.png"></span><span class="lable-text">Post Modification Check</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Post Modification Check" formControlName="modificationCheck"
+                                                                    [(ngModel)]="modificationCheck"                                                  
+                                                                    maxlength="" />                                                 
+                                                                </div>
+                                                            </div>
+                                                           
+                                                         </div>
+
+                                                        <div class="vehicle-form" *ngIf="dynamicAddFlag2">  
+                                                            <div class="part-label-row">
+                                                                <span class="label-icon"><img src="assets/images/kaizen/k-complaints.png"></span><span class="lable-text">Scope & plan for Horizontal Deployment</span>
+                                                            </div>
+                                                            <div *ngFor="let occuranceForm of o.controls; let i = index" class="sform-div">
+                                                                <div [formGroup]="occuranceForm">
+                                                                    <div class="row col-lg-12 vehicle-row">    
+                                                                        <div class="col-lg-12 col-md-12">
+                                                                            <mat-error class="page-error-text" *ngIf="occuranceFormInfo[i].valid" >Enter minimum one field</mat-error>
+                                                                        </div>                                                             
+                                                                        <div class="col-lg-3 col-md-6">
+                                                                            <div class="part-label-row part-label-row-new">
+                                                                                <span class="label-icon label-icon-new"><img src="assets/images/kaizen/k-number.png"></span><span class="lable-text">S. No.</span>
+                                                                            </div>
+                                                                            <div class="part-text-row form-group">
+                                                                                <input class="inputbox" matInput placeholder="S.No." maxlength="40" (keypress)="restrictNumeric($event)" [(ngModel)]="occuranceFormInfo[i].occSno" formControlName="occSno" (input)="inputChange('type2',$event,i)" />                                                                        
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-6">
+                                                                            <div class="part-label-row part-label-row-new">
+                                                                                <span class="label-icon label-icon-new"><img src="assets/images/kaizen/k-item.png"></span><span class="lable-text">Item</span>
+                                                                            </div>
+                                                                            <div class="part-text-row form-group">
+                                                                                <input class="inputbox" matInput placeholder="Item" maxlength="17" [(ngModel)]="occuranceFormInfo[i].occScopeItem" formControlName="occScopeItem" (input)="inputChange('type2',$event,i)" />                                                                        
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-6">
+                                                                            <div class="part-label-row">
+                                                                                <span class="label-icon "><img src="assets/images/kaizen/k-resp.png"></span><span class="lable-text">Resp</span>
+                                                                            </div>
+                                                                            <div class="part-text-row form-group">
+                                                                                <input class="inputbox" matInput placeholder="Resp" maxlength="" [(ngModel)]="occuranceFormInfo[i].occResp" formControlName="occResp" (input)="inputChange('type2',$event,i)" />                                                                       
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-3 col-md-6">
+                                                                            <div class="part-label-row">
+                                                                                <span class="label-icon"><img src="assets/images/kaizen/k-status.png"></span><span class="lable-text">Status</span>
+                                                                            </div>
+                                                                            <div class="part-text-row form-group">
+                                                                                <input class="inputbox " matInput placeholder="Status" maxlength="" [(ngModel)]="occuranceFormInfo[i].occStatus" formControlName="occStatus" (input)="inputChange('type2',$event,i)" />
+                                                                            </div>
+                                                                        </div> 
+                                                                        
+                                                                        <div class="vehicle-row-actions">
+                                                                            <div *ngIf="occuranceFormInfo[i].addFlag && occuranceFormInfo[i].actionFlag" (click)="addSections2(actionInit, i+1)" class="action-icon add-icon add-btn-pos-occ" title="Add" [ngClass]="{ 'disabled' : !occuranceFormInfo[i].actionFlag }"></div>
+                                                                            <div *ngIf="occuranceFormInfo[i].removeFlag && occuranceFormInfo[i].actionFlag" (click)="removeConfirm('type2',i)" class="action-icon remove-icon remove-btn-pos-occ" title="Remove" [ngClass]="{ 'disabled' : !occuranceFormInfo[i].actionFlag }"></div>
+                                                                            <div *ngIf="occuranceFormInfo[i].addFlag && !occuranceFormInfo[i].actionFlag" class="action-icon add-icon add-btn-pos-occ" title="Add" [ngClass]="{ 'disabled' :!occuranceFormInfo[i].actionFlag }"></div>
+                                                                            <div *ngIf="occuranceFormInfo[i].removeFlag && !occuranceFormInfo[i].actionFlag" class="action-icon remove-icon remove-btn-pos-occ" title="Remove" [ngClass]="{ 'disabled' : !occuranceFormInfo[i].actionFlag }"></div>
+                                                                        </div>                                                                                                                           
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                                                                                                                                                
+                                                    </div>
+                                                </div>                                                           
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0">  
+                                                <div class="menu-container">
+                                                    <div class="prob-form-row">                                    
+                                                        <div class="k-other-details" >Other Details</div>                                                           
+                                                        <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-problem.png"></span><span class="lable-text">Customer Complaint</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Customer Complaint" formControlName="customerComplaint"
+                                                                    [(ngModel)]="customerComplaint"                                                 
+                                                                    maxlength="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                 <div class="part-label-row">
+                                                                     <span class="label-icon"><img src="assets/images/kaizen/k-user.png"></span><span class="lable-text">Presented by</span>
+                                                                 </div>
+                                                                 <div class="part-text-row form-group">
+                                                                     <input class="inputbox" matInput placeholder="Presented by" formControlName="presentedBy"
+                                                                     [(ngModel)]="presentedBy"                                                  
+                                                                     maxlength="17" />                                                 
+                                                                 </div>
+                                                             </div>
+                                                             <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-obser.png"></span><span class="lable-text">Observation</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Observation" formControlName="otherObservation"
+                                                                    [(ngModel)]="otherObservation"                                                 
+                                                                    maxlength="" />                                                 
+                                                                </div>
+                                                            </div>
+                                                           
+                                                         </div>
+
+                                                         <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-dealer.png"></span><span class="lable-text">Dealership Name</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Dealership Name" formControlName="dealerName"
+                                                                    [(ngModel)]="dealerName"                                                  
+                                                                    maxlength="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                                                 <div class="part-label-row">
+                                                                     <span class="label-icon"><img src="assets/images/kaizen/k-actiontaken.png"></span><span class="lable-text">Action Taken</span>
+                                                                 </div>
+                                                                 <div class="part-text-row form-group">
+                                                                     <input class="inputbox" matInput placeholder="Action Taken" formControlName="otherActionTaken"
+                                                                     [(ngModel)]="otherActionTaken"                                                  
+                                                                     maxlength="" />                                                 
+                                                                 </div>
+                                                             </div>
+                                                             <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0">
+                                                                <div class="part-label-row">
+                                                                    <span class="label-icon"><img src="assets/images/kaizen/k-map.png"></span><span class="lable-text">Place</span>
+                                                                </div>
+                                                                <div class="part-text-row form-group">
+                                                                    <input class="inputbox" matInput placeholder="Place" formControlName="otherPlace"
+                                                                    [(ngModel)]="otherPlace"                                                  
+                                                                    maxlength="" />                                                 
+                                                                </div>
+                                                            </div>
+                                                           
+                                                         </div>
+
+                                                         <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0">
+                                                                <div class="prob-form-row attachment-row">
+                                                                    <div class="attachment-row ">
+                                                                        <div class="post-error-msg post-link-error" *ngIf="postServerError">{{postServerErrorMsg}}</div>
+                                                                        <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                                                                        <app-attachment-view [action]="EditAttachmentAction" [access]="pageAccess"  [attachments]="attachmentItems" (attachmentAction)="attachmentAction($event)"></app-attachment-view>                                                
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                                                                                                                                              
+                                                    </div>
+                                                </div>                                                           
+                                            </div>
+                                        </div>
+                                                                     
+                                                                              
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div> 
+
+    </div>
+</div>

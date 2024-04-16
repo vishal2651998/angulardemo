@@ -1,0 +1,2591 @@
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<div id="header" *ngIf="!msTeamAccess">
+    <app-product-header [pageData]="headerData"></app-product-header>
+</div>
+<div class="left-section-sidebar">
+    <div class="first-left-width">
+        <nav id="nav-sidebar">
+            <app-marketplace-sidebar [activeMenuItem]="'market-place/cart'"
+                accessModule="{{bodyClass}}"></app-marketplace-sidebar>
+        </nav>
+    </div>
+</div>
+
+<div *ngIf="!showSuccessPopup" class="prob-index split-sec1 right-section">
+    <div class="cart-head d-flex  justify-content-between">
+        <div class="d-flex align-items-center">
+            <img src="assets/images/service-provider/cart-light-black.png" alt="" width="26px" height="23px">
+            <span style="font-size: 22px; margin-left: 12px;color: #4c4b4b;font-weight: bold;">Shopping Cart</span>
+        </div>
+        <ng-container *ngIf="cart && cart.cartId">
+            <span class="d-flex align-items-center justify-content-between">
+                <div class="sales-person-details">
+                    <span style="color:#444444; margin-right:5px;line-height:1.6">Selected Sales Person:</span>
+                    <span (click)="showCartUserPopup = true;" class="d-flex align-items-center cursor-pointer" style="line-height:1.6">
+                        <img style="align-self:center;border-radius:20px" width="20px" height="20px" [src]="cart?.userDetail?.UserProfileImage"
+                            onerror="this.src='assets/images/service-provider/user.png'">
+                        <span style="margin-left:5px;color:#010101">{{cart.userDetail ? cart?.userDetail?.FirstName +
+                            cart?.userDetail?.LastName : 'N/A'}}</span>
+                    </span>
+                </div>
+                <span class="top-total" *ngIf="cart && selectedInfoType != 'paymentDetails'"><b>Total Cart Price:
+                    </b> <span class="new-text">{{getTotalPrice('all', true)}}</span> </span>
+                <span class="payicon" *ngIf="cart && selectedInfoType == 'paymentDetails'"><img
+                        src="assets/images/service-provider/360-payments.png" alt=""></span>
+            </span>
+        </ng-container>
+    </div>
+    <div class="loading-small-screen-scroll center" align="center" *ngIf="showLoader"><img
+            src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!showLoader && cartFilled" class="prob-new" style="display: flex; flex-wrap: wrap;">
+        <div class="col-lg-2 left-sidebar-wrapper pr-0" style="padding-left: 24px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black p-0 left-sidebar-content">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+                    <ng-template #infoTemplate>
+                        <ng-container *ngFor="let info of defaultInfoType">
+                            <div *ngIf="info.isVisible" (click)="changeInfoType(info.type)"
+                                [style]="info.disable ? 'pointer-events: none;opacity:0.4;': 'null'"
+                                class="cursor-pointer custom-padding-nav-menu {{selectedInfoType == info.type ?'select-nav-menu' : ''}}">
+                                <img height="19px" [src]="selectedInfoType == info.type ? info.imgSrcSelected :info.imgSrc"
+                                    style="margin-right: 5px;" width="19px">
+                                <span
+                                    [class]="selectedInfoType == info.type ? 'side-menu-text-style-selected' : 'side-menu-text-style'">{{info.label}}</span>
+                            </div>
+                        </ng-container>
+                    </ng-template>
+                        <!--responsive large screen -->
+                        <div class="cart-lg-none-sidebar"> <ng-container *ngTemplateOutlet="infoTemplate"></ng-container></div>
+                        <!--responsive small screen -->
+                        <div class="dropdown cart-lg-sidebar">
+                            <a href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">
+                                <span>{{selectedInfoField()}}</span> 
+                                <i class="pi pi-chevron-down"></i>
+                            </a>
+                            <div class="dropdown-menu expanded-dropdown" aria-labelledby="dropdownMenuLink">
+                                <ng-container *ngTemplateOutlet="infoTemplate"></ng-container>
+                            </div>
+                        </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row new-pro-cont col-lg-10 step1 mt-0 right-content-wrapper right-main-content">
+            <div class="form-cart col-lg-12 right-content-height">
+                <form [formGroup]="cartForm">
+                    <!-------training tab start-------->
+                    <div formArrayName="trainings" *ngIf="selectedInfoType == 'training'" class="row training-tab-row">
+                        <div class="col-lg-12">
+
+                            <div class="full-marketplace-Cart-style" [formGroupName]="trainingIndex"
+                                *ngFor="let training of cart?.trainings; let trainingIndex = index">
+                                <div
+                                    class="cart-heading-div bg-light-grey d-flex justify-content-between align-items-center">
+                                    <h4>Training: {{trainingIndex + 1}} ID# {{training.id}}</h4>
+                                    <div class="d-flex align-items-center">
+                                        <a *ngIf="training?.price != 0" class="round-override-btn d-flex align-items-center" (click)="showPricingPopup(trainingIndex, null)" >
+                                            <span class="icon">
+                                                <img height="19px" src="assets/images/service-provider/override-white.png" width="16px">
+                                            </span>
+                                            <span>Override Pricing</span>
+                                        </a>
+                                        <a (click)="cancelTraining(trainingIndex)" class="round-main-btn border-btn"><span
+                                                class="icon"><i class="fa fa-trash" aria-hidden="true"></i></span>Remove</a>
+                                    </div>
+
+                                </div>
+                                <div class="training-info-div d-flex justify-content-between">
+                                    <div class="cart-info-left-div d-flex">
+                                        <div class="img-div">
+                                            <img [src]="training?.bannerImageUrl"
+                                                onerror="this.src='assets/images/service-provider/training-blank-1.png'">
+                                        </div>
+                                        <div class="inner-content">
+                                            <h5>{{training?.trainingName}}</h5>
+                                            <p class="date-time"
+                                                *ngIf="training?.trainingMode == 'Seminar' || training?.trainingMode == 'Webinar'">
+                                                {{training?.trainingMode}},
+                                                <span *ngIf="training?.startDate != training?.endDate">
+                                                    {{training?.startDate | date:'MMM dd'}} - {{training?.endDate |
+                                                    date:'MMM dd YYYY'}},
+                                                </span>
+                                                <span *ngIf="training?.startDate == training?.endDate">
+                                                    {{training?.endDate | date:'MMM dd YYYY'}},
+                                                </span>
+                                                <span
+                                                    *ngIf="training?.inPersonTrainingData.length > 0 && training?.inPersonTrainingData[0].startTime">
+                                                    {{training?.inPersonTrainingData[0].startTime | date:'h:mm a'}} -
+                                                    {{training?.inPersonTrainingData[0].endTime | date:'h:mm a'}},
+                                                    {{training?.inPersonTrainingData[0].timeZone}}
+                                                </span>
+                                            </p>
+                                            <p class="discount-off" *ngIf="training?.isBirdPrice == '1'">Early bird
+                                                discount price:
+                                                <span class="green-text font-wt-600">${{training?.birdPrice | number:'1.2-2'}} </span>
+                                                <span
+                                                    class="purple-text font-wt-600 font-wt-600">-{{training?.birdPercentage}}%
+                                                    off
+                                                </span>Valid up to {{training?.expiryDateBirdPrice | date: 'MMM dd
+                                                YYYY'}}
+                                            </p>
+                                            <p class="regular-price">Regular Price: <span
+                                                    class="green-text font-wt-600">${{training.price | number:'1.2-2'}}</span>
+                                                <span *ngFor="let policy of training?.policies_slugs" class="policies"
+                                                    style="margin-left:40px"
+                                                    (click)="goToPolicy(policy.type,training?.id,null)">{{policy.name}}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="cart-info-right-div text-right">
+                                        <p><b>No. of participant: {{participants(trainingIndex).controls.length}}</b>
+                                        </p>
+                                        <p><b>Total Training Price: <span
+                                                    class="green-text font-wt-600">${{participants(trainingIndex).controls.length
+                                                    * (training?.isBirdPrice == '1' ? training?.birdPrice :
+                                                    training.price) | number:'1.2-2' }}</span></b></p>
+                                        <p *ngIf="trainingsPrice(trainingIndex)?.isOverRidePrice == true">
+                                            <span class="info-img" style="cursor:pointer;position:relative">
+                                                <img style="width:15px;margin-right:5px" src="assets/images/service-provider/overRide-info.png" alt="">
+                                                <div class="tooltip-sec" style="text-align:left">
+                                                    {{trainingsPrice(trainingIndex)?.overRidePriceReason}}
+                                                </div>
+                                            </span>
+                                            <b style="color:#fa972d">Override Training Price <span style="color:#000">{{ '(Discount ' + (trainingsPrice(trainingIndex)?.overRidePercent || 100) + '%) : '}}</span><span
+                                                    class="green-text font-wt-600">${{participants(trainingIndex).controls.length
+                                                    * (trainingsPrice(trainingIndex)?.overRidePrice)  | number:'1.2-2' }}</span></b></p>
+                                        
+                                    </div>
+                                </div>
+                                <!------------->
+
+                                <div formArrayName="participants" class="participant-form-row">
+                                    <ng-container [formGroupName]="participantIndex"
+                                        *ngFor="let participant of participants(trainingIndex)?.controls; let participantIndex = index;">
+                                        <div class="add-participant d-flex align-items-center">
+                                            <img src="assets/images/service-provider/participant-white.png"
+                                                style="width:18px;height:15px" class="participant-img"><span>Participant
+                                                {{participantIndex + 1}}</span>
+                                            <div class="custom-checkbox" *ngIf="training?.trainingMode != 'Webinar'">
+                                                <label class="container">Don't know the name yet
+                                                    <input type="checkbox" formControlName="noDetailsCheck"
+                                                        (change)="onDetailsCheckChange(trainingIndex, participantIndex, $event)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <span *ngIf="participantIndex != 0"
+                                                (click)="deleteParticipant(trainingIndex, participantIndex)"
+                                                class="cursor-pointer ml-auto" style="padding-right:15px">
+                                                <img src="assets/images/service-provider/white-minus.png"
+                                                    style="width:19px;margin-right:5px" class="orange-minus">
+                                                Remove Participant
+                                            </span>
+
+                                        </div>
+                                        <div class="row form-div-main">
+                                            <div class="col-6">
+                                                <div class="row">
+                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                                        <div class="label">
+                                                            <span class="popup-text-style">First Name</span>
+                                                        </div>
+                                                        <div class="p-inputgroup">
+                                                            <span class="p-inputgroup-addon">
+                                                                <img height="20px"
+                                                                    src="assets/images/service-provider/user.png"
+                                                                    width="20px">
+                                                            </span>
+                                                            <input formControlName="firstName"
+                                                                class="p-inputtext p-component"
+                                                                placeholder="Enter First Name" type="text"
+                                                                [disabled]="participant.get('noDetailsCheck').value == true"
+                                                                (blur)="updateCartForm()"
+                                                                (keyup)="savePrevInfo('participantForm',false)">
+                                                        </div>
+                                                        <div class="error-msg"
+                                                            *ngIf="cartFormSubmitted && participants(trainingIndex).at(participantIndex).get('firstName').invalid">
+                                                            First Name is required
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                                        <div class="label">
+                                                            <span class="popup-text-style">Last Name</span>
+                                                        </div>
+                                                        <div class="p-inputgroup">
+                                                            <span class="p-inputgroup-addon">
+                                                                <img height="20px"
+                                                                    src="assets/images/service-provider/user.png"
+                                                                    width="20px">
+                                                            </span>
+                                                            <input formControlName="lastName"
+                                                                class="p-inputtext p-component"
+                                                                placeholder="Enter Last Name" type="text"
+                                                                [disabled]="participant.get('noDetailsCheck').value == true"
+                                                                (blur)="updateCartForm()"
+                                                                (keyup)="savePrevInfo('participantForm', false)">
+                                                        </div>
+                                                        <div class="error-msg"
+                                                            *ngIf="cartFormSubmitted && participants(trainingIndex).at(participantIndex).get('lastName').invalid">
+                                                            Last Name is required
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="row">
+                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                                        <div class="label">
+                                                            <span class="popup-text-style">Email</span>
+                                                        </div>
+                                                        <div class="p-inputgroup">
+                                                            <span class="p-inputgroup-addon">
+                                                                <img height="20px"
+                                                                    src="assets/images/service-provider/mail-grey.png"
+                                                                    width="20px">
+                                                            </span>
+                                                            <input formControlName="email" type="text"
+                                                                placeholder="Enter Email"
+                                                                class="p-inputtext p-component ng-pristine ng-invalid"
+                                                                [disabled]="participant.get('noDetailsCheck').value == true"
+                                                                (blur)="updateCartForm();checkSimilarEmail(trainingIndex,participantIndex)"
+                                                                (keyup)="savePrevInfo('participantForm', false)">
+                                                        </div>
+                                                        <div
+                                                            *ngIf="cartFormSubmitted && participants(trainingIndex).at(participantIndex).get('email').invalid">
+                                                            <div class="error-msg"
+                                                                *ngIf="!customValidator && participants(trainingIndex).at(participantIndex).get('email').errors['required']">
+                                                                Email is required
+                                                            </div>
+                                                            <div class="error-msg"
+                                                                *ngIf="!customValidator && participants(trainingIndex).at(participantIndex).get('email').errors['email']">
+                                                                Enter valid email
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="!participants(trainingIndex).at(participantIndex).get('email').value && customValidator && cart.trainings[trainingIndex].trainingMode == 'Webinar'"
+                                                            class="error-msg">
+                                                            Email already in use
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                                        <div class="label justify-content-start">
+                                                            <span class="popup-text-style">Mobile Number</span>
+                                                            <span *ngIf="textMessageData !=''" class="info-img"
+                                                                style="cursor:pointer">
+                                                                <img style="width:15px"
+                                                                    src="assets/images/service-provider/info-orange.png"
+                                                                    alt="">
+                                                                <div class="tooltip-sec">
+                                                                    {{textMessageData}}
+                                                                </div>
+                                                            </span>
+                                                        </div>
+                                                        <div class="p-inputgroup cart-phone-field">
+                                                            <span class="p-inputgroup-addon">
+                                                                <img height="20px"
+                                                                    src="assets/images/service-provider/calling.png"
+                                                                    width="20px">
+                                                            </span>
+                                                            <ngx-intl-tel-input style="width: 100%"
+                                                                [cssClass]="'custom border-left-0'"
+                                                                class="KA_input_text_Phone_new"
+                                                                [preferredCountries]="preferredCountries"
+                                                                [enableAutoCountrySelect]="true"
+                                                                [enablePlaceholder]="true"
+                                                                customPlaceholder="Mobile Number"
+                                                                [searchCountryFlag]="true" [phoneValidation]="true"
+                                                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                                                [selectFirstCountry]="true"
+                                                                [selectedCountryISO]="selectedCountryIS0"
+                                                                [maxLength]="10" [separateDialCode]="separateDialCode"
+                                                                [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                                                formControlName="phoneNumber"
+                                                                (ngModelChange)="updateCartPhone()"
+                                                                (keyup)="savePrevInfo('participantForm', false)">
+                                                            </ngx-intl-tel-input>
+                                                        </div>
+                                                        <div class="error-msg"
+                                                            *ngIf="cartFormSubmitted && participants(trainingIndex).at(participantIndex).get('phoneNumber').invalid">
+                                                            <span class="error-msg"
+                                                                *ngIf="participants(trainingIndex).at(participantIndex).get('phoneNumber').errors && !participants(trainingIndex).at(participantIndex).get('phoneNumber').errors['required']">
+                                                                Enter Valid Phone number
+                                                            </span>
+                                                            <span class="error-msg"
+                                                                *ngIf="participants(trainingIndex).at(participantIndex).get('phoneNumber').errors && participants(trainingIndex).at(participantIndex).get('phoneNumber').errors['required']">
+                                                                Phone Number is required
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="participantIndex == 0 && trainingIndex == 0 && textMessageData"
+                                                        class="col-12 d-flex flex-start align-items-center email-phone-info"
+                                                        [class.position-relative]="participants(trainingIndex).length > 1">
+                                                        <img src="assets/images/service-provider/info-dark-grey.png"
+                                                            alt="" width="15px">
+                                                        <i>{{textMessageData}}</i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="hr-space"
+                                            *ngIf="participantIndex != (participants(trainingIndex).controls.length - 1)">
+                                        </div>
+                                    </ng-container>
+                                    <div class="training-info-btn-div" [class.mb-4]="!training?.manual">
+                                        <button (click)="addParticipant(trainingIndex)"
+                                            class="round-main-btn btn border-btn orange-border"
+                                            [disabled]="!(participants(trainingIndex).controls.length == 0 || participants(trainingIndex).at(participants(trainingIndex)?.controls?.length - 1)?.valid)">
+                                            <span class="icon"><i class="fa fa-plus"
+                                                    aria-hidden="true"></i></span>Register another participant
+                                        </button>
+                                        <span class="error-msg px-2" style="vertical-align: middle;"
+                                            *ngIf="cartFormSubmitted && participants(trainingIndex).length == 0">Minimun
+                                            one Participant is required</span>
+                                    </div>
+                                </div>
+                                <!----manuals with trainings--------->
+                                <hr *ngIf="training?.manual" style="margin:25px 0px">
+                                <div class="training-manual-card-div d-flex justify-content-between"
+                                    *ngIf="training?.manual">
+                                    <div class="cart-info-left-div">
+                                        <div class="title">
+                                            <h5 class="d-flex align-items-center">
+                                                {{training?.manualPurchase && training?.manualPurchase == '2' ? 'THE FOLLOWING MANUAL IS INCLUDED WITH THIS TRAINING' : 'RECOMMENDED MANUAL FOR THIS TRAINING'}}
+                                                <img *ngIf="training?.manualPurchase && training?.manualPurchase == '2'"
+                                                    style="width:22px;margin-left:10px"
+                                                    src="assets/images/service-provider/tick-filled-light.png" alt="">
+                                            </h5>
+                                        </div>
+                                        <div class="manual-cart-content-div d-flex">
+                                            <div class="img-div">
+                                                <img [src]="training?.manual?.bannerImageUrl"
+                                                    onerror="this.src='assets/images/service-provider/manual-placeholder.png'">
+                                            </div>
+                                            <div class="inner-content">
+                                                <h5>{{training?.manual.manualName}}</h5>
+                                                <p class="sku-txt">SKU: {{training?.manual?.sku}}</p>
+                                                <p class="price-text">
+                                                    <ng-container
+                                                        *ngIf="training?.manual.isDiscount == '1';else discountFalse">
+                                                        <span
+                                                            class="green-text font-wt-600">${{training.manual.discountPrice  | number:'1.2-2'}}</span>
+                                                        <span class="cut-text grey-text">${{training.manual.price | number:'1.2-2'}}
+                                                        </span>
+                                                        <span
+                                                            class="off-text purple-text font-wt-600 font-wt-600">{{training.manual.discountPercentage}}%
+                                                            off
+                                                        </span>
+                                                    </ng-container>
+                                                    <ng-template #discountFalse>
+                                                        <span class="green-text font-wt-600">${{training.manual.price | number:'1.2-2'}}
+                                                        </span>
+                                                    </ng-template>
+                                                    <!-- <span *ngIf="training?.manualPurchase && training?.manualPurchase != '2'" class="round-main-btn manual-count-box training-manual-count-box ">
+                                                            <a class="subtract" *ngIf="getTrainingManualCount(trainingIndex).value > 0" (click)="setTrainingManualCount(trainingIndex,'sub')"><img
+                                                                    src="assets/images/service-provider/minus-sign.png"></a>
+                                                            <span [class.access-disabled]="getTrainingManualCount(trainingIndex).value == participants(trainingIndex).length" *ngIf="getTrainingManualCount(trainingIndex).value == 0" (click)="setTrainingManualCount(trainingIndex,'add')"
+                                                                style="cursor: pointer;">Add</span>
+                                                            <span *ngIf="getTrainingManualCount(trainingIndex).value > 0">{{getTrainingManualCount(trainingIndex).value}}</span>
+                                                            <a class="add" [class.access-disabled]="getTrainingManualCount(trainingIndex).value == participants(trainingIndex).length" *ngIf="getTrainingManualCount(trainingIndex).value > 0" (click)="setTrainingManualCount(trainingIndex,'add')"><img
+                                                                    src="assets/images/service-provider/add-new.png"></a>
+                                                        </span> -->
+                                                    <span *ngFor="let policy of training?.manual.policies_slugs"
+                                                        class="policies" style="margin-left:40px"
+                                                        (click)="goToPolicy(policy.type,null,training?.manual.id)">{{policy.name}}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cart-info-right-div text-right" [ngStyle]="training?.manual.price == 0 ? {'padding-top': '15px'} : ''"
+                                        *ngIf="training?.manualPurchase && training?.manualPurchase != '2'">
+                                        <!-- override price  -->
+                                        <a *ngIf="training?.manual.price != 0" style="width:fit-content" class="round-override-btn d-flex align-items-center mr-0 ml-auto" (click)="showPricingPopup(trainingIndex, null , true)" >
+                                            <span class="icon">
+                                                <img height="19px" src="assets/images/service-provider/override-white.png" width="16px">
+                                            </span>
+                                            <span>Override Pricing</span>
+                                        </a>
+                                        <p><b>No. of manuals: {{getTrainingManualCount(trainingIndex).value}}</b></p>
+                                        <p><b>Total Manual Price: <span class="green-text font-wt-600">
+                                                    ${{(getTrainingManualCount(trainingIndex).value *
+                                                    (training?.manual.isDiscount == '1' ?
+                                                    training.manual.discountPrice : training.manual.price)) | number:'1.2-2'}}</span></b>
+                                        </p>
+                                        <p *ngIf="trainingsPrice(trainingIndex)?.manualIsOverRidePrice == true">
+                                            <span class="info-img" style="cursor:pointer;position:relative">
+                                                <img style="width:15px;margin-right:5px" src="assets/images/service-provider/overRide-info.png" alt="">
+                                                <div class="tooltip-sec" style="text-align:left">
+                                                    {{trainingsPrice(trainingIndex)?.manualoverRidePriceReason}}
+                                                </div>
+                                            </span>
+                                            <b style="color:#fa972d">Override Manual Price
+                                            <span style="color:#000">{{ '(Discount ' + (trainingsPrice(trainingIndex)?.manualOverRidePercent || 100) + '%) : '}}</span><span
+                                            class="green-text font-wt-600">${{getTrainingManualCount(trainingIndex).value
+                                            * (trainingsPrice(trainingIndex)?.manualOverRidePrice) }}</span></b>
+                                        </p>
+                                        <p *ngIf="training?.manualPurchase && training?.manualPurchase != '2'"
+                                            class="round-main-btn manual-count-box training-manual-count-box "
+                                            style="margin:0px !important">
+                                            <a class="subtract" *ngIf="getTrainingManualCount(trainingIndex).value > 0"
+                                                (click)="setTrainingManualCount(trainingIndex,'sub')"><img
+                                                    src="assets/images/service-provider/minus-sign.png"></a>
+                                            <span
+                                                [class.access-disabled]="getTrainingManualCount(trainingIndex).value == participants(trainingIndex).length"
+                                                *ngIf="getTrainingManualCount(trainingIndex).value == 0"
+                                                (click)="setTrainingManualCount(trainingIndex,'add')"
+                                                style="cursor: pointer;">Add</span>
+                                            <span
+                                                *ngIf="getTrainingManualCount(trainingIndex).value > 0">{{getTrainingManualCount(trainingIndex).value}}</span>
+                                            <a class="add"
+                                                [class.access-disabled]="getTrainingManualCount(trainingIndex).value == participants(trainingIndex).length"
+                                                *ngIf="getTrainingManualCount(trainingIndex).value > 0"
+                                                (click)="setTrainingManualCount(trainingIndex,'add')"><img
+                                                    src="assets/images/service-provider/add-new.png"></a>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="disabled-manual-counts"
+                                    [class.with-discount]="training?.manual?.isDiscount && training?.manual?.isDiscount == '1'"
+                                    *ngIf="getTrainingManualCount(trainingIndex).value == participants(trainingIndex).length">
+                                    <img src="assets/images/service-provider/info-dark-grey.png" alt="" width="15px">
+                                    <i>Maximum number of manuals at this price are limited by the number of training
+                                        participants</i>
+                                </div>
+                            </div>
+                            <!-- company form starts -->
+                            <div class="full-marketplace-Cart-style">
+                                <form [formGroup]="userForm"
+                                    class="cart-heading-div bg-light-grey d-flex justify-content-start align-items-center">
+                                    <h4>Primary Contact</h4>
+                                    <div class="custom-checkbox custom-checkbox-green">
+                                        <label class="container">Same as 1st participant information
+                                            <input type="checkbox" formControlName="sameAsCheck"
+                                                (change)="savePrevInfo('participantForm', false)">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                </form>
+                                <!-- user Form start & company form-->
+                                <ng-container *ngTemplateOutlet="userAndcompany"></ng-container>
+                            </div>
+                            <div class="end-btns-div d-flex justify-content-between mb-4">
+                                <div class="end-btn-left">
+                                    <a (click)="continueShopping()" class="simple-btn dark-blue"
+                                        style="height:40px;line-height:1">Continue Shopping<img
+                                            src="assets/images/service-provider/white-cart.png"></a>
+                                </div>
+                                <div class="end-btn-right">
+                                    <a class="simple-btn btn sky-blue next-btn" (click)="goToNextTab('training')"
+                                        style="line-height:1"><span>Next</span><img
+                                            src="assets/images/service-provider/btn-white-arrow.png"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-------training tab end-------->
+
+                    <!-------Manuals tab start-------->
+                    <div formArrayName="manuals" *ngIf="selectedInfoType == 'manuals'" class="row manuals-tab-row">
+                        <div class="col-lg-12">
+                            <div class="full-marketplace-Cart-style" [formGroupName]="manualsIndex"
+                                *ngFor="let manual of cart?.manuals; let manualsIndex = index">
+                                <div
+                                    class="cart-heading-div bg-light-grey d-flex justify-content-between align-items-center">
+                                    <h4>Manual: {{manualsIndex + 1}} ID# {{manual.id}}</h4>
+                                    <div class="d-flex align-items-center">
+                                        <a *ngIf="manual?.price != 0" class="round-override-btn d-flex align-items-center" (click)="showPricingPopup(null, manualsIndex)" >
+                                            <span class="icon">
+                                                <img height="19px" src="assets/images/service-provider/override-white.png" width="16px">
+                                            </span>
+                                            <span>Override Pricing</span>
+                                        </a>
+                                        <a (click)="cancelManual(manualsIndex)" class="round-main-btn border-btn"><span
+                                                class="icon"><i class="fa fa-trash" aria-hidden="true"></i></span>Remove</a>
+                                    </div>
+                                </div>
+                                <div
+                                    class="training-manual-card-div manuals-card-div d-flex justify-content-between align-items-center">
+                                    <div class="manual-cart-content-div d-flex">
+                                        <div class="img-div"><img [src]="manual?.bannerImageUrl"
+                                                onerror="this.src='assets/images/service-provider/manual-placeholder.png'">
+                                        </div>
+                                        <div class="inner-content">
+                                            <h5>{{manual.manualName}}</h5>
+                                            <p class="sku-txt">SKU: {{manual?.sku}}</p>
+                                            <p class="price-text">
+                                                <ng-container *ngIf="manual.isDiscount == '1';else discountFalse">
+                                                    <span
+                                                        class="green-text font-wt-600">${{manual.discountPrice}}</span>
+                                                    <span class="cut-text grey-text">${{manual.price | number:'1.2-2'}} </span>
+                                                    <span
+                                                        class="off-text purple-text font-wt-600 font-wt-600">{{manual.discountPercentage}}%
+                                                        off
+                                                    </span>
+                                                </ng-container>
+                                                <ng-template #discountFalse>
+                                                    <span class="green-text font-wt-600">${{manual.price | number:'1.2-2'}} </span>
+                                                </ng-template>
+                                                <!-- <span class="round-main-btn manual-count-box">
+                                                        <a class="subtract" *ngIf="getManualCount(manualsIndex).value > 0" (click)="setmanualCount(manualsIndex,'sub')"><img
+                                                                src="assets/images/service-provider/minus-sign.png"></a>
+                                                        <span *ngIf="getManualCount(manualsIndex).value == 0" (click)="setmanualCount(manualsIndex,'add')"
+                                                            style="cursor: pointer;">Add</span>
+                                                        <span *ngIf="getManualCount(manualsIndex).value > 0">{{getManualCount(manualsIndex).value}}</span>
+                                                        <a class="add" *ngIf="getManualCount(manualsIndex).value > 0" (click)="setmanualCount(manualsIndex,'add')"><img
+                                                                src="assets/images/service-provider/add-new.png"></a>
+                                                    </span> -->
+                                                <span *ngFor="let policy of manual?.policies_slugs" class="policies"
+                                                    style="margin-left:40px"
+                                                    (click)="goToPolicy(policy.type,null,manual?.id)">{{policy.name}}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="cart-info-right-div text-right">
+                                        <p><b>QTY : {{getManualCount(manualsIndex).value}}</b></p>
+                                        <p><b>Total Manual Price : <span class="green-text font-wt-600">
+                                                    ${{(getManualCount(manualsIndex).value * (manual?.isDiscount == '1' ?
+                                                    manual.discountPrice : manual.price)) | number:'1.2-2'}}</span></b></p>
+                                        <p *ngIf="manualPrice(manualsIndex).isOverRidePrice == true">
+                                            <span class="info-img" style="cursor:pointer;position:relative">
+                                                <img style="width:15px;margin-right:5px" src="assets/images/service-provider/overRide-info.png" alt="">
+                                                <div class="tooltip-sec" style="text-align:left">
+                                                    {{manualPrice(manualsIndex)?.overRidePriceReason}}
+                                                </div>
+                                            </span>
+                                            <b style="color:#fa972d">Override Manual Price
+                                            <span style="color:#000">{{ '(Discount ' + (manualPrice(manualsIndex)?.overRidePercent || 100) + '%) : '}}</span>
+                                            <span class="green-text font-wt-600"> ${{(getManualCount(manualsIndex).value *  manualPrice(manualsIndex)?.overRidePrice) | number:'1.2-2'}}</span></b>
+                                        </p>
+                                        <p class="round-main-btn manual-count-box" style="margin:0px !important">
+                                            <a class="subtract" *ngIf="getManualCount(manualsIndex).value > 0"
+                                                (click)="setmanualCount(manualsIndex,'sub')"><img
+                                                    src="assets/images/service-provider/minus-sign.png"></a>
+                                            <span *ngIf="getManualCount(manualsIndex).value == 0"
+                                                (click)="setmanualCount(manualsIndex,'add')"
+                                                style="cursor: pointer;">Add</span>
+                                            <span
+                                                *ngIf="getManualCount(manualsIndex).value > 0">{{getManualCount(manualsIndex).value}}</span>
+                                            <a class="add" *ngIf="getManualCount(manualsIndex).value > 0"
+                                                (click)="setmanualCount(manualsIndex,'add')"><img
+                                                    src="assets/images/service-provider/add-new.png"></a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- company form starts -->
+                            <div class="full-marketplace-Cart-style" *ngIf="cart.trainings.length == 0">
+                                <form [formGroup]="userForm"
+                                    class="cart-heading-div bg-light-grey d-flex justify-content-start align-items-center">
+                                    <h4>Primary Contact</h4>
+                                </form>
+                                <!-- user Form start & company form-->
+                                <ng-container *ngTemplateOutlet="userAndcompany"></ng-container>
+                            </div>
+                            <div class="end-btns-div d-flex justify-content-between mb-4">
+                                <div class="end-btn-left">
+                                    <a *ngIf="cart.trainings.length > 0" class="simple-btn dark-blue prev-btn"
+                                        (click)="goToPreviousTab('manuals')"><img
+                                            src="assets/images/service-provider/btn-white--prev-arrow.png">Prev</a>
+                                    <a *ngIf="cart.trainings.length == 0" (click)="continueShopping()"
+                                        class="simple-btn dark-blue" style="height:40px;line-height:1">Continue
+                                        Shopping<img src="assets/images/service-provider/white-cart.png"></a>
+                                </div>
+                                <div class="end-btn-right">
+                                    <a class="simple-btn sky-blue next-btn" (click)="goToNextTab('manuals')"
+                                        style="line-height:1"><span>Next</span><img
+                                            src="assets/images/service-provider/btn-white-arrow.png"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-------Manuals tab end-------->
+                    <!-------shipping tab start-------->
+                    <div *ngIf="selectedInfoType == 'shippingInfo'" class="row shipping-info-tab-row">
+                        <div class="col-lg-12">
+                            <form [formGroup]="shippingForm" class="full-marketplace-Cart-style">
+                                <div
+                                    class="cart-heading-div bg-light-grey d-flex justify-content-start align-items-center">
+                                    <h4>Shipping Info</h4>
+                                    <div
+                                    class="custom-checkbox custom-checkbox-green">
+                                        <label class="container">Same as Primary Contact
+                                            <input type="checkbox" formControlName="sameAsCheck"
+                                                (change)="savePrevInfo('shippingForm', true)">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="participant-form-row company-detail-form-row mt-2 mb-3">
+                                    <div class="row form-div-main">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">First Name</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="20px"
+                                                        src="assets/images/service-provider/user.png"
+                                                        width="20px"></span><input class="p-inputtext p-component"
+                                                    formControlName="firstName" placeholder="Enter First Name"
+                                                    type="text" (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm',false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['firstName'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['firstName'].errors && shippingInfoForm['firstName'].errors['required']">
+                                                    First Name is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Last Name</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="20px"
+                                                        src="assets/images/service-provider/user.png"
+                                                        width="20px"></span><input class="p-inputtext p-component"
+                                                    formControlName="lastName" placeholder="Enter Last Name" type="text"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm',false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['lastName'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['lastName'].errors && shippingInfoForm['lastName'].errors['required']">
+                                                    Last Name is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-div-main">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Email</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="20px"
+                                                        src="assets/images/service-provider/mail-grey.png"
+                                                        width="20px"></span><input
+                                                    class="p-inputtext p-component ng-pristine ng-invalid"
+                                                    formControlName="email" placeholder="Enter Email" type="text"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm',false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['email'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['email'].errors['required']">
+                                                    Email is required
+                                                </div>
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['email'].errors['email']">
+                                                    Enter valid email
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Phone Number</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="20px"
+                                                        src="assets/images/service-provider/calling.png"
+                                                        width="20px"></span>
+                                                <ngx-intl-tel-input style="width: 100%"
+                                                    [cssClass]="'custom border-left-0'" class="KA_input_text_Phone_new"
+                                                    [preferredCountries]="preferredCountries"
+                                                    [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                                                    customPlaceholder="Mobile Number" [searchCountryFlag]="true"
+                                                    [phoneValidation]="true"
+                                                    [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                                    [selectFirstCountry]="true"
+                                                    [selectedCountryISO]="selectedCountryIS0" [maxLength]="10"
+                                                    [separateDialCode]="separateDialCode"
+                                                    [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                                    formControlName="phoneNumber" (ngModelChange)="updateCartPhone()"
+                                                    (keyup)="savePrevInfo('shippingForm', false)">
+                                                </ngx-intl-tel-input>
+                                            </div>
+                                            <div
+                                                *ngIf="shippingInfoForm['phoneNumber'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['phoneNumber'].errors && shippingInfoForm['phoneNumber'].errors['required']">
+                                                    Phone number is required
+                                                </div>
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['phoneNumber'].errors && !shippingInfoForm['phoneNumber'].errors['required']">
+                                                    Enter Valid Phone number
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-div-main">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Business Name</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="19px"
+                                                        src="assets/images/service-provider/company-feild.png"
+                                                        width="14px"></span><input class="p-inputtext p-component"
+                                                    formControlName="name" placeholder="Business Name" type="text"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm', false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['name'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['name'].errors && shippingInfoForm['name'].errors['required']">
+                                                    Business Name is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-div-main">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Address 1</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="19px"
+                                                        src="assets/images/service-provider/map-pin.png"
+                                                        width="14px"></span><input class="p-inputtext p-component"
+                                                    formControlName="address1" placeholder="Address 1" type="text"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm', false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['address1'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['address1'].errors && shippingInfoForm['address1'].errors['required']">
+                                                    Address 1 is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Address 2</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="19px"
+                                                        src="assets/images/service-provider/map-pin.png"
+                                                        width="14px"></span><input
+                                                    class="p-inputtext p-component ng-untouched ng-pristine ng-valid"
+                                                    placeholder="Address 2" formControlName="address2" type="text"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm', false)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row form-div-main">
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">State</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="20px"
+                                                        src="assets/images/service-provider/map-pin.png"
+                                                        width="20px"></span>
+                                                <p-dropdown class="width-100-perc " appendTo="body" [filter]="true"
+                                                    name="stateValue"
+                                                    styleClass="width-100-perc custom-dropdown-design-company-4 height-custom select-feild p-0"
+                                                    formControlName="state" [options]="companyStateDropdownData"
+                                                    placeholder="Select State" optionLabel="name" optionValue="id"
+                                                    [group]="true" (blur)="updateCartForm()"
+                                                    (onChange)="savePrevInfo('shippingForm', false)">
+                                                    <ng-template let-group pTemplate="group">
+                                                        <div class="p-d-flex p-ai-center">
+                                                            <span>{{group.name}}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </p-dropdown>
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['state'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['state'].errors && shippingInfoForm['state'].errors['required']">
+                                                    State is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">City</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="19px"
+                                                        src="assets/images/service-provider/map-pin.png"
+                                                        width="14px"></span><input
+                                                    class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                                                    placeholder="City" formControlName="city" type="text"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm', false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['city'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['city'].errors && shippingInfoForm['city'].errors['required']">
+                                                    City is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                                            <div class="label">
+                                                <span class="popup-text-style">Zip</span>
+                                            </div>
+                                            <div class="p-inputgroup">
+                                                <span class="p-inputgroup-addon"><img height="18px"
+                                                        src="assets/images/service-provider/map-circle-pin-grey.png"
+                                                        width="12px"></span><input class="p-inputtext p-component"
+                                                    placeholder="Zip" type="text" formControlName="zip"
+                                                    (blur)="updateCartForm()"
+                                                    (keyup)="savePrevInfo('shippingForm', false)">
+                                            </div>
+                                            <div *ngIf="shippingInfoForm['zip'].invalid && shippingFormSubmitted">
+                                                <div class="error-msg"
+                                                    *ngIf="shippingInfoForm['zip'].errors && shippingInfoForm['zip'].errors['required']">
+                                                    Zip is required
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="end-btns-div d-flex justify-content-between mb-4">
+                                <div class="end-btn-left">
+                                    <a class="simple-btn dark-blue prev-btn"
+                                        (click)="goToPreviousTab('shippingInfo')"><img
+                                            src="assets/images/service-provider/btn-white--prev-arrow.png">Prev</a>
+                                </div>
+                                <div class="end-btn-right">
+                                    <button class="simple-btn btn sky-blue next-btn"
+                                        (click)="goToNextTab('shippingInfo')"><span>Next</span><img
+                                            src="assets/images/service-provider/btn-white-arrow.png"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-------shipping tab end-------->
+
+                    <!-------Cardholder details tab start-------->
+                    <div *ngIf="selectedInfoType == 'cardholderDetails'" class="row payment-summary-tab-row">
+                        <div class="col-lg-12">
+                            <ng-container
+                                *ngTemplateOutlet="paymentDetailsForm; context: {readonly:false}"></ng-container>
+                            <div class="end-btns-div d-flex justify-content-between mb-4">
+                                <div class="end-btn-left">
+                                    <a class="simple-btn dark-blue prev-btn"
+                                        (click)="goToPreviousTab('cardholderDetails')"><img
+                                            src="assets/images/service-provider/btn-white--prev-arrow.png">Prev</a>
+                                </div>
+                                <div class="end-btn-right">
+                                    <button class="simple-btn btn sky-blue next-btn"
+                                        (click)="goToNextTab('CardholderDetails')"><span>Next</span><img
+                                            src="assets/images/service-provider/btn-white-arrow.png"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- cardholder details end -->
+
+                    <!-- Summary Tab start -->
+                    <div *ngIf="selectedInfoType == 'summary'" class="row payment-summary-tab-row">
+                        <div class="col-lg-12">
+                            <div class="all-summary-details" *ngIf="cart?.trainings.length > 0">
+                                <div class="price-summary-title font-wt-600 mb-2">
+                                    Training Price Summary
+                                </div>
+                                <div class="summary-box" *ngFor="let training of cart?.trainings; let ti = index;">
+                                    <div class="slip-summary-ttl d-flex">
+                                        <img src="assets/images/service-provider/hands_electrical.png"
+                                            style="width: 20px; margin-right: 7px;">
+                                        <div class="img-title font-wt-600">
+                                            {{training?.trainingName}}
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner d-flex justify-content-between">
+                                        <div class="detail-left">
+                                            No. of Participants
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="ng-star-inserted">{{participants(ti).controls.length}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner d-flex justify-content-between">
+                                        <div class="detail-left">
+                                            Regular Price
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="ng-star-inserted"
+                                                [class.text-decoration-line-through]="training?.isBirdPrice == '1'">
+                                                <span
+                                                    *ngIf="training?.isBirdPrice != '1' && training?.price != '0'">{{participants(ti).controls.length
+                                                    +' x '}}</span> {{training?.price | currency: 'USD':true:'1.2-2'}}
+                                                <span *ngIf="training?.isBirdPrice != '1' && training?.price != '0'"> =
+                                                    {{(participants(ti).controls.length * training?.price) | currency:
+                                                    'USD':true:'1.2-2' }} </span></span>
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner d-flex justify-content-between"
+                                        *ngIf="training?.isBirdPrice == '1'">
+                                        <div class="detail-left">
+                                            Early Bird {{'Discount Price (' + training?.birdPercentage + '% off)'}}
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="ng-star-inserted">{{participants(ti).controls.length +' x '+
+                                                (training?.birdPrice |
+                                                currency:
+                                                'USD':true:'1.2-2')}} = {{(participants(ti).controls.length *
+                                                training?.birdPrice) | currency: 'USD':true:'1.2-2'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner d-flex justify-content-between"
+                                    *ngIf="trainingsPrice(ti).isOverRidePrice == true">
+                                        <div class="detail-left">
+                                        {{'Override Price (' + (trainingsPrice(ti)?.overRidePercent || 100) + '% off)'}}
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="ng-star-inserted">{{participants(ti).controls.length +' x '+
+                                                ((trainingsPrice(ti)?.overRidePrice || 0) |
+                                                currency:
+                                                'USD':true:'1.2-2')}} = {{(participants(ti).controls.length *
+                                                    (trainingsPrice(ti)?.overRidePrice || 0)) | currency: 'USD':true:'1.2-2'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner d-flex justify-content-between">
+                                        <div class="detail-left">
+                                            Tax ({{cart?.trainingSalesTaxPercentage || 0}}%)
+                                        </div>
+                                        <div class="detail-right">
+                                            {{((cart?.trainingSalesTaxPercentage || 0) *
+                                            (participants(ti).controls.length * (trainingsPrice(ti)?.overRidePrice ? trainingsPrice(ti)?.overRidePrice : training?.birdPrice ? training?.birdPrice :
+                                            training?.price)))/100 | currency: 'USD':true:'1.2-2'}}
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner d-flex justify-content-between">
+                                        <div class="detail-left">
+                                            Subtotal
+                                        </div>
+                                        <div class="detail-right">
+                                            {{(((cart?.trainingSalesTaxPercentage || 0) *
+                                            (participants(ti).controls.length * (trainingsPrice(ti)?.isOverRidePrice ? (trainingsPrice(ti)?.overRidePrice || 0) : training?.birdPrice ? training?.birdPrice :
+                                            training?.price)))/100) + participants(ti).controls.length *
+                                            (trainingsPrice(ti)?.isOverRidePrice ? (trainingsPrice(ti)?.overRidePrice || 0) : training?.birdPrice ? training?.birdPrice :
+                                            training?.price) | currency: 'USD':true:'1.2-2'}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                        <div class="detail-left">
+                                            <b>Sub Total</b>
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="font-wt-600">{{getTotalPrice('trainingsSalesWithoutTax')}}</span>
+                                        </div>
+                                    </div> -->
+                                <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between"
+                                        *ngIf="cart?.trainingSalesTaxPercentage">
+                                        <div class="font-wt-600 detail-left">
+                                            Sales Tax ({{cart?.trainingSalesTaxPercentage}}%)
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="font-wt-600">{{getTotalPrice('trainingsSales')}}</span>
+                                        </div>
+                                    </div> -->
+                                <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                    <div class="detail-left font-wt-600">
+                                        Total Training Price
+                                    </div>
+                                    <div class="detail-right">
+                                        <span class="font-wt-600">{{getTotalPrice('training')}}</span><!----><!---->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- manuals summary -->
+                            <div class="all-summary-details">
+                                <ng-container *ngIf="totalManuals().length > 0">
+                                    <div class="price-summary-title font-wt-600 mb-2">
+                                        Manual Price Summary
+                                    </div>
+                                    <div class="summary-box" *ngFor="let manual of totalManuals(); let mi = index">
+                                        <div class="slip-summary-ttl d-flex">
+                                            <img src="assets/images/service-provider/manual-black.png"
+                                                style="width: 18px;margin-right: 7px;">
+                                            <div class="img-title font-wt-600">
+                                                {{manual.manualName}}
+                                                <span *ngIf="manual.trainingManualInfo">
+                                                    ({{manual.trainingManualInfo}})
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="slip-details-inner d-flex justify-content-between">
+                                            <div class="detail-left">
+                                                QTY
+                                            </div>
+                                            <div class="detail-right">
+                                                <span class="ng-star-inserted">{{manual.count}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="slip-details-inner d-flex justify-content-between">
+                                            <div class="detail-left">
+                                                Price
+                                            </div>
+                                            <div class="detail-right">
+                                                <span class="ng-star-inserted"
+                                                    [class.text-decoration-line-through]="manual?.isDiscount == '1'">{{manual.price|
+                                                    currency:
+                                                    'USD':true:'1.2-2'}}</span>
+                                            </div>
+                                        </div>
+                                        <div class="slip-details-inner d-flex justify-content-between"
+                                            *ngIf="manual?.isDiscount == '1'">
+                                            <div class="detail-left">
+                                                {{'Discount Price (' + manual?.discountPercentage + '% off)'}}
+                                            </div>
+                                            <div class="detail-right">
+                                                <span>{{manual.count}} x {{manual.discountPrice| currency:
+                                                    'USD':true:'1.2-2'}} = {{(manual.count * manual.discountPrice)|
+                                                    currency: 'USD':true:'1.2-2' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="slip-details-inner d-flex justify-content-between"
+                                            *ngIf="manual.isOverRidePrice == true" >
+                                            <div class="detail-left">
+                                                {{'Override Price (' + (manual.overRidePercent || 100) + '% off)'}}
+                                            </div>
+                                            <div class="detail-right">
+                                                <span>{{manual.count}} x {{(manual.overRidePrice || 0) | currency:
+                                                    'USD':true:'1.2-2'}} = {{(manual.count * (manual.overRidePrice || 0) )|
+                                                    currency: 'USD':true:'1.2-2' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="slip-details-inner d-flex justify-content-between">
+                                            <div class="detail-left">
+                                                Tax ({{cart?.manualSalesTaxPercentage || 0}}%)
+                                            </div>
+                                            <div class="detail-right">
+                                                {{((cart?.manualSalesTaxPercentage || 0) * (manual.count *
+                                                    (manual.overRidePrice || manual?.discountPrice ||
+                                                manual?.price)))/100 | currency: 'USD':true:'1.2-2'}}
+                                            </div>
+                                        </div>
+                                        <div class="slip-details-inner d-flex justify-content-between">
+                                            <div class="detail-left">
+                                                Subtotal
+                                            </div>
+                                            <div class="detail-right">
+                                                {{(((cart?.manualSalesTaxPercentage || 0) * (manual.count *
+                                                (manual.isOverRidePrice ? manual.overRidePrice :( manual?.discountPrice ||
+                                                manual?.price))))/100 + manual.count * (manual.isOverRidePrice ? manual.overRidePrice :( manual?.discountPrice ||
+                                                manual?.price))) | currency: 'USD':true:'1.2-2'}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                        <div class="font-wt-600 detail-left">
+                                            Sub Total
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="font-wt-600 ng-star-inserted">{{getTotalPrice('manualsSalesWithoutTax')}}</span>
+                                        </div>
+                                    </div> -->
+                                    <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                        <div class="font-wt-600 detail-left">
+                                            Shipping Cost
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="font-wt-600">${{defaultShippingCost}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                        <div class="font-wt-600 detail-left">
+                                            Tax on shipping ({{cart.manualSalesTaxPercentage || 0}}%)
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="font-wt-600">${{cart.shippingTax}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="shippingForm.valid"
+                                        class="slip-details-inner final bg-light-grey row mr-0">
+                                        <div class="font-wt-600 col-6 px-0">
+                                            Shipping To
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="font-wt-600">{{shippingInfoForm['firstName'].value + ' ' +
+                                                shippingInfoForm['lastName'].value}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="shippingForm.valid"
+                                        class="slip-details-inner final bg-light-grey row mr-0">
+                                        <div class="font-wt-600 col-6 px-0">
+                                            Shipping Address
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="font-wt-600">{{shippingInfoForm['address1'].value +
+                                                (shippingInfoForm['address2'].value
+                                                ?
+                                                (', ' + shippingInfoForm['address2'].value) : '') + ', ' +
+                                                shippingInfoForm['state'].value + ',
+                                                ' +
+                                                shippingInfoForm['city'].value + ', ' +
+                                                shippingInfoForm['zip'].value}}</span>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between"
+                                        *ngIf="cart?.manualSalesTaxPercentage">
+                                        <div class="font-wt-600 detail-left">
+                                            Sales Tax ({{cart?.manualSalesTaxPercentage}}%)
+                                        </div>
+                                        <div class="detail-right">
+                                            <span class="font-wt-600 ng-star-inserted">{{getTotalPrice('manualsSales')}}</span>
+                                        </div>
+                                    </div> -->
+                                    <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                        <div class="detail-left">
+                                            <b>Total Manual Price</b>
+                                        </div>
+                                        <div class="detail-right">
+                                            <span
+                                                class="ng-star-inserted"><b>{{getTotalPrice('manual')}}</b></span><!----><!---->
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <div class="slip-details-inner final d-flex justify-content-between">
+                                    <div class="detail-left">
+                                        <b class="green-text">Total Cart Price</b>
+                                    </div>
+                                    <div class="detail-right">
+                                        <span class="green-text"><b>{{getTotalPrice('all')}}</b></span><!----><!---->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="end-btns-div d-flex justify-content-between mb-4">
+                                <div class="end-btn-left">
+                                    <a class="simple-btn dark-blue prev-btn" (click)="goToPreviousTab('summary')"><img
+                                            src="assets/images/service-provider/btn-white--prev-arrow.png">Prev</a>
+                                </div>
+                                <div class="end-btn-right">
+                                    <button *ngIf="getTotalPrice('all', false, false) == '0.00'"
+                                        class="simple-btn btn sky-blue next-btn" (click)="registerUser()">ORDER</button>
+
+                                    <button *ngIf="getTotalPrice('all', false, false) != '0.00'"
+                                        class="simple-btn btn sky-blue next-btn"
+                                        (click)="goToNextTab('summary')"><span>Next</span><img
+                                            src="assets/images/service-provider/btn-white-arrow.png"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!------- summary tab end-------->
+
+                    <!-------Payment Details tab start-------->
+                    <div *ngIf="selectedInfoType == 'paymentDetails'" class="row payment-details-tab-row">
+                        <div class="col-lg-12">
+                            <ng-container
+                                *ngTemplateOutlet="paymentDetailsForm; context: { readonly:readable}"></ng-container>
+
+                            <div class="full-marketplace-Cart-style">
+                                <div
+                                    class="cart-heading-div bg-light-grey d-flex justify-content-between align-items-center">
+                                    <span style="font-size: 20px !important;" *ngIf="!paymentMethod">Select Payment Type
+                                        To Continue</span>
+                                    <span class="main-popup-ttl credit-card-text" *ngIf="paymentMethod == 'card'">Credit
+                                        Card Details</span>
+                                    <img *ngIf="paymentMethod == 'card'" width="auto" height="30px"
+                                        src="assets/images/service-provider/360-payments.png" alt="">
+                                    <span *ngIf="paymentMethod == 'check'">Check Details</span>
+                                </div>
+                                <div id="payment-methods" *ngIf="!paymentMethod && showPaymentFields"
+                                    class="col-md-8 payment-methods-selection">
+                                    <div
+                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin row">
+                                        <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payment-box">
+                                            <div class="payment-method-options" (click)="setPaymentMethod('card')">
+                                                <img src="assets/images/service-provider/payment-method-card.webp">
+                                            </div>
+                                            <div class="type-text">Credit Card</div>
+                                        </div>
+
+                                        <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payment-box">
+                                            <div class="payment-method-options" (click)="setPaymentMethod('check')">
+                                                <img src="assets/images/service-provider/payment-method-check.png"
+                                                    style="height: 50px; margin-top: -11px;">
+                                            </div>
+                                            <div class="type-text">Check</div>
+                                        </div>
+
+                                        <div class="col-12 col-xl-4 col-lg-4 col-md-4 col-sm-12 payment-box">
+                                            <div class="payment-method-options disabled">
+                                                <img
+                                                    src="assets/images/service-provider/payment-method-coa-disabled.png">
+                                            </div>
+                                            <div class="type-text disabled">COA</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="payment-method-detail">
+                                        {{(paymentMethod == 'card' ? 'Credit Card' : paymentMethod) | titlecase}} Details
+                                    </div> -->
+                                <div
+                                    class="cart-payment-details participant-form-row company-detail-form-row mt-2 mb-3 row">
+                                    <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12 col-12 margin-10px"
+                                        *ngIf="paymentMethod == 'card'">
+                                        <span class="card-number-style">Card Number</span>
+                                        <div class="payment-field" id="ccnumber"></div>
+                                        <span id="cardnumber" class="error-card" style="display: none;">Card number is
+                                            required</span>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12 col-12 margin-10px"
+                                        *ngIf="paymentMethod == 'card'">
+                                        <span class="card-number-style">Expiry Date</span>
+                                        <div class="payment-field" id="ccexp"></div>
+                                        <span id="expirydate" class="error-card" style="display: none;">Expiry date is
+                                            required</span>
+                                    </div>
+                                    <div class="col-xl-4 col-lg-6 col-md-4 col-sm-12 col-12 margin-10px"
+                                        *ngIf="paymentMethod == 'card'">
+                                        <span class="card-number-style">CVV</span>
+                                        <div class="payment-field" id="cvv"></div>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px"
+                                        *ngIf="paymentMethod == 'check'">
+                                        <span class="card-number-style">Check Number</span>
+                                        <input type="text" style="width: 100%;" pInputText placeholder="Check Number"
+                                            (keyup)="checkValidtionField('checkNumber')" [(ngModel)]="checkNumber">
+                                        <span id="checkNumber" class="error-card" style="display: none;">Check number is
+                                            required</span>
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 margin-10px"
+                                        *ngIf="paymentMethod == 'check'">
+                                        <span class="card-number-style">Bank Name</span>
+                                        <input type="text" style="width: 100%;" pInputText placeholder="Bank Name"
+                                            (keyup)="checkValidtionField('bankName')" [(ngModel)]="bankName">
+                                        <span id="bankName" class="error-card" style="display: none;">Bank name is
+                                            required</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="end-btns-div d-flex justify-content-between mb-4">
+                                <div class="end-btn-left"><a class="simple-btn dark-blue prev-btn"
+                                        (click)="goToPreviousTab('paymentDetails')"><img
+                                            src="assets/images/service-provider/btn-white--prev-arrow.png">Prev</a>
+                                </div>
+                                <div class="end-btn-right with-text-div d-flex align-items-center"><span
+                                        class="font-wt-600 grand-total pr-2 d-block">Total Cart Price</span><span
+                                        class="green-text font-wt-600 t-price pr-2 d-block">{{getTotalPrice('all')}}</span>
+                                    <button *ngIf="!hidePaymentButton" type="submit" id="payButton"
+                                        [disabled]="hidePaymentButton" (click)="handleSubmit()"
+                                        class="simple-btn sky-blue next-btn h-40 pay-now"><span>Pay Now</span><img
+                                            src="assets/images/service-provider/tick-inactive.png"></button>
+                                    <button *ngIf="hidePaymentButton" type="button"
+                                        class="btn btn-primary btn-block custom-loader-button-design"><img
+                                            src="assets/images/service-provider/loader.svg"
+                                            onload="SVGInject(this)" /></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-------Payment Details tab end-------->
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <ng-container *ngIf="!showLoader && !cartFilled" >
+        <div class="empty-card-section">
+            <img src="assets/images/service-provider/cart-clear-grey.png" alt="Loader" />
+            <span>Shopping cart is empty.</span>
+        </div>
+    </ng-container>
+</div>
+
+
+
+<!-------payment-successful-carts-page start-------->
+<div *ngIf="showSuccessPopup" class="prob-index split-sec1 right-section" style="overflow: auto;height:90vh !important;">
+<section class="payment-successful-carts-page mt-3" >
+    <div class="container">
+        <div class="successful-top-content dark-green-bg">
+            <div class="success-content-block">
+                <div class="img-div"><img height="84px" src="assets/images/service-provider/success.png" width="84px">
+                </div>
+                <h4 class="ttl">Payment successful</h4>
+                <p class="trans-no" *ngIf="successData?.transactionid">Transaction Number:
+                    {{successData?.transactionid}}</p>
+                <p class="info-success-txt">We've emailed you the receipt</p><a class="border-btn home-btn"
+                    routerLink="/market-place"><img src="assets/images/service-provider/white-home.png">Go to home</a>
+                <!-- <p class="refund-policy-icon-div cursor-pointer"><img src="assets/images/service-provider/refund-yellow-mid.png"><span>Refund Policy</span></p> -->
+            </div>
+        </div>
+        <div class="successful-bottom-content">
+            <div class="row payment-summary-tab-row">
+                <div class="col-lg-12">
+                    <div *ngIf="slipMemo?.trainings.length > 0" class="all-summary-details">
+                        <div class="price-summary-title font-wt-600 mb-2">
+                            Training Price Summary
+                        </div>
+                        <div class="summary-box" *ngFor="let training of slipMemo?.trainings; let ti = index;">
+                            <div class="slip-summary-ttl d-flex">
+                                <img src="assets/images/service-provider/hands_electrical.png"
+                                    style="width: 20px; margin-right: 7px;">
+                                <div class="img-title font-wt-600">
+                                    {{training?.trainingName}}
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between">
+                                <div class="detail-left">
+                                    No. of Participants
+                                </div>
+                                <div class="detail-right">
+                                    <span class="ng-star-inserted">{{training.numberOfSeats}}</span>
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between">
+                                <div class="detail-left">
+                                    Regular Price
+                                </div>
+                                <div class="detail-right">
+                                    <span class="ng-star-inserted"
+                                        [class.text-decoration-line-through]="training?.isBirdPrice == '1'">
+                                        <span
+                                            *ngIf="training?.isBirdPrice != '1' && training?.price != '0'">{{training.numberOfSeats
+                                            +' x '}}</span>{{training?.price | currency: 'USD':true:'1.2-2'}}<span
+                                            *ngIf="training?.isBirdPrice != '1' && training?.price != '0'"> =
+                                            {{(training.numberOfSeats * training?.price) | currency: 'USD':true:'1.2-2'
+                                            }}</span></span>
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between"
+                                *ngIf="training?.isBirdPrice == '1'">
+                                <div class="detail-left">
+                                    Early Bird {{'Discount Price (' + training?.birdPercentage + '% off)'}}
+                                </div>
+                                <div class="detail-right">
+                                    <span class="ng-star-inserted">{{training.numberOfSeats +' x '+ (training?.birdPrice
+                                        |
+                                        currency:
+                                        'USD':true:'1.2-2')}} = {{(training.numberOfSeats * training?.birdPrice) |
+                                        currency: 'USD':true:'1.2-2' }}</span>
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between"
+                                *ngIf="training.isOverRidePrice == true">
+                                <div class="detail-left">
+                                    {{'Override Price (' + (training?.overRidePercent || 100) + '% off)'}}
+                                </div>
+                                <div class="detail-right">
+                                    <span class="ng-star-inserted">{{training.numberOfSeats +' x '+ ((training?.overRidePrice || 0) | currency:'USD':true:'1.2-2')}} = {{(training.numberOfSeats * (training?.overRidePrice || 0)) |
+                                        currency: 'USD':true:'1.2-2' }}</span>
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between">
+                                <div class="detail-left">
+                                    Tax ({{slipMemo?.trainingSalesTaxPercentage || 0}}%)
+                                </div>
+                                <div class="detail-right">
+                                    {{((slipMemo?.trainingSalesTaxPercentage || 0) * (training.numberOfSeats *
+                                    (training?.overRidePrice || training?.birdPrice ||
+                                    training?.price)))/100 | currency: 'USD':true:'1.2-2'}}
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between">
+                                <div class="detail-left">
+                                    Subtotal
+                                </div>
+                                <div class="detail-right">
+                                    {{(((slipMemo?.trainingSalesTaxPercentage || 0) * (training.numberOfSeats *
+                                    (training?.overRidePrice || training?.birdPrice ||
+                                    training?.price)))/100 + (training.numberOfSeats * ( training?.overRidePrice || training?.birdPrice ||
+                                    training?.price))) | currency: 'USD':true:'1.2-2'}}
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                            <div class="detail-left">
+                                <b>Sub Total</b>
+                            </div>
+                            <div class="detail-right">
+                                <span class="font-wt-600">${{slipMemo.trainingTotalPrice - slipMemo.trainingSalesTax}}</span>
+                            </div>
+                        </div> -->
+                        <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between"
+                            *ngIf="slipMemo?.trainingSalesTaxPercentage">
+                            <div class="font-wt-600 detail-left">
+                                Sales Tax ({{slipMemo?.trainingSalesTaxPercentage}}%)
+                            </div>
+                            <div class="detail-right">
+                                <span class="font-wt-600">${{slipMemo.trainingSalesTax}}</span>
+                            </div>
+                        </div> -->
+                        <div *ngIf="slipMemo?.trainingTotalPrice" class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                            <div class="detail-left font-wt-600">
+                                Total Training Price
+                            </div>
+                            <div class="detail-right">
+                                <span class="font-wt-600">${{slipMemo.trainingTotalPrice}}</span><!----><!---->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="all-summary-details">
+                        <ng-container *ngIf="slipMemo.totalManuals.length > 0">
+                            <div class="price-summary-title font-wt-600 mb-2">
+                                Manual Price Summary
+                            </div>
+                            <div class="summary-box" *ngFor="let manual of slipMemo.totalManuals; let mi = index">
+                                <div class="slip-summary-ttl d-flex">
+                                    <img src="assets/images/service-provider/hands_electrical.png"
+                                        style="width: 20px;margin-right: 7px;">
+                                    <div class="img-title font-wt-600">
+                                        {{manual.manualName}}
+                                        <span *ngIf="manual.trainingManualInfo">
+                                            ({{manual.trainingManualInfo}})
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="slip-details-inner d-flex justify-content-between">
+                                    <div class="detail-left">
+                                        QTY
+                                    </div>
+                                    <div class="detail-right">
+                                        <span class="ng-star-inserted">{{manual.count}}</span>
+                                    </div>
+                                </div>
+                                <div class="slip-details-inner d-flex justify-content-between">
+                                    <div class="detail-left">
+                                        Price
+                                    </div>
+                                    <div class="detail-right">
+                                        <span class="ng-star-inserted"
+                                            [class.text-decoration-line-through]="manual?.isDiscount == '1'">{{manual.price|
+                                            currency:
+                                            'USD':true:'1.2-2'}}</span>
+                                    </div>
+                                </div>
+
+                                <div class="slip-details-inner d-flex justify-content-between"
+                                    *ngIf="manual?.isDiscount == '1'">
+                                    <div class="detail-left">
+                                        {{'Discount Price (' + manual?.discountPercentage + '% off)'}}
+                                    </div>
+                                    <div class="detail-right">
+                                        <span>{{manual.count}} x {{manual.discountPrice| currency: 'USD':true:'1.2-2'}}
+                                            = {{(manual.count * manual.discountPrice) | currency:
+                                            'USD':true:'1.2-2'}}</span>
+                                    </div>
+                                </div>
+                                <div class="slip-details-inner d-flex justify-content-between"
+                                *ngIf="manual.isOverRidePrice == true" >
+                                <div class="detail-left">
+                                    {{'Override Price (' + (manual.overRidePercent || 100) + '% off)'}}
+                                </div>
+                                <div class="detail-right">
+                                    <span>{{manual.count}} x {{(manual.overRidePrice || 0) | currency:
+                                        'USD':true:'1.2-2'}} = {{(manual.count * (manual.overRidePrice || 0) )|
+                                        currency: 'USD':true:'1.2-2' }}</span>
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between">
+                                <div class="detail-left">
+                                    Tax ({{slipMemo?.manualSalesTaxPercentage || 0}}%)
+                                </div>
+                                <div class="detail-right">
+                                    {{((slipMemo?.manualSalesTaxPercentage || 0) * (manual.count *
+                                        (manual.overRidePrice || manual?.discountPrice ||
+                                    manual?.price)))/100 | currency: 'USD':true:'1.2-2'}}
+                                </div>
+                            </div>
+                            <div class="slip-details-inner d-flex justify-content-between">
+                                <div class="detail-left">
+                                    Subtotal
+                                </div>
+                                <div class="detail-right">
+                                    {{(((slipMemo?.manualSalesTaxPercentage || 0) * (manual.count *
+                                    (manual.isOverRidePrice ? manual.overRidePrice :( manual?.discountPrice ||
+                                    manual?.price))))/100 + manual.count * (manual.isOverRidePrice ? manual.overRidePrice :( manual?.discountPrice ||
+                                    manual?.price))) | currency: 'USD':true:'1.2-2'}}
+                                </div>
+                            </div>
+                            </div>
+                            <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                            <div class="font-wt-600 detail-left">
+                                Sub Total
+                            </div>
+                            <div class="detail-right">
+                                <span class="font-wt-600 ng-star-inserted">${{slipMemo.manualTotalPrice - slipMemo.manualSalesTax - slipMemo.manualShippingCost}}</span>
+                            </div>
+                        </div> -->
+                            <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                <div class="font-wt-600 detail-left">
+                                    Shipping Cost
+                                </div>
+                                <div class="detail-right">
+                                    <span class="font-wt-600">${{defaultShippingCost}}</span>
+                                </div>
+                            </div>
+                            <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                <div class="font-wt-600 detail-left">
+                                    Tax on shipping ({{slipMemo?.shippingTaxPercent}}%)
+                                </div>
+                                <div class="detail-right">
+                                    <span class="font-wt-600">${{slipMemo?.shippingTax}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="shippingForm.valid" class="slip-details-inner final bg-light-grey row mr-0">
+                                <div class="font-wt-600 col-2 px-0">
+                                    Shipping To
+                                </div>
+                                <div class="col-10">
+                                    <span class="font-wt-600">{{shippingInfoForm['firstName'].value + ' ' +
+                                        shippingInfoForm['lastName'].value}}</span>
+                                </div>
+                            </div>
+                            <div *ngIf="shippingForm.valid" class="slip-details-inner final bg-light-grey row mr-0">
+                                <div class="font-wt-600 col-2 px-0">
+                                    Shipping Address
+                                </div>
+                                <div class="col-10">
+                                    <span class="font-wt-600">{{shippingInfoForm['address1'].value +
+                                        (shippingInfoForm['address2'].value
+                                        ?
+                                        (', ' + shippingInfoForm['address2'].value) : '') + ', ' +
+                                        shippingInfoForm['state'].value + ',
+                                        ' +
+                                        shippingInfoForm['city'].value + ', ' + shippingInfoForm['zip'].value}}</span>
+                                </div>
+                            </div>
+                            <!-- <div class="slip-details-inner final bg-light-grey d-flex justify-content-between"
+                            *ngIf="slipMemo?.manualSalesTaxPercentage">
+                            <div class="font-wt-600 detail-left">
+                                Sales Tax ({{slipMemo.manualSalesTaxPercentage}}%)
+                            </div>
+                            <div class="detail-right">
+                                <span class="font-wt-600 ng-star-inserted">${{slipMemo.manualSalesTax}}</span>
+                            </div>
+                        </div> -->
+                            <div class="slip-details-inner final bg-light-grey d-flex justify-content-between">
+                                <div class="detail-left">
+                                    <b>Total Manual Price</b>
+                                </div>
+                                <div class="detail-right">
+                                    <span
+                                        class="ng-star-inserted"><b>${{slipMemo.manualTotalPrice}}</b></span><!----><!---->
+                                </div>
+                            </div>
+                        </ng-container>
+                        <div class="slip-details-inner final d-flex justify-content-between">
+                            <div class="detail-left">
+                                <b class="green-text">Total Cart Price</b>
+                            </div>
+                            <div class="detail-right">
+                                <span class="green-text"><b>${{slipMemo.amount}}</b></span><!----><!---->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+<!-------payment-successful-carts-page end-------->
+
+<!-- add saved participants popup -->
+<p-dialog styleClass="service-provider-address-popup" [(visible)]="previousParticipantsPopup" [modal]="true"
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <ng-template pTemplate="header">
+        <span>Saved Participants</span>
+        <div style="display: flex; align-items: center">
+            <!-- <div class="add-button-design-new cursor-pointer" (click)="setAddressValue()">
+        <i class="cursor-pointer pi pi-check" style="margin-right: 5px;"></i> Add
+      </div> -->
+            <i (click)="cancelSelectParticipants()" class="cursor-pointer pi pi-times color-grey"></i>
+        </div>
+    </ng-template>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding: 0 25px;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-participant-view-design cursor-pointer"
+            *ngFor="let participant of filteredParticipants; let pIndex = index">
+            <div class="custom-checkbox custom-checkbox-green ml-0">
+                <label class="container">
+                    <input type="checkbox" [checked]="participant?.selected ? true : false"
+                        (change)="addParticipantsToList(pIndex, $event)">
+                    <span class="checkmark"></span>
+                    <span>{{(participant.firstName ) +', '+ (participant.lastName ) + ', ' + (participant.email ) + ', '
+                        +
+                        (participant?.phoneNumber?.internationalNumber)}}</span>
+                </label>
+            </div>
+        </div>
+        <span style="margin-top: 10px;" (click)="addSelectedParticipants()"
+            class="round-main-btn btn sky-blue green-button"><img style="margin-right: 5px" width="14px" height="14px"
+                src="assets/images/service-provider/white-tick.png" /> Add Selected</span>
+        <span style="margin-top: 10px;" (click)="cancelSelectParticipants()"
+            class="round-main-btn btn border-btn orange-border">
+            <i _ngcontent-adp-c626="" aria-hidden="true" class="fa fa-plus"></i> Add New</span>
+    </div>
+</p-dialog>
+<!-- add saved participants popup end-->
+
+
+<p-dialog styleClass="service-provider-address-popup" [(visible)]="showAddressPopup" [modal]="true"
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <ng-template pTemplate="header">
+        <span>Select Address</span>
+        <div style="display: flex; align-items: center">
+            <!-- <div class="add-button-design-new cursor-pointer" (click)="setAddressValue()">
+        <i class="cursor-pointer pi pi-check" style="margin-right: 5px;"></i> Add
+      </div> -->
+            <i (click)="showAddressPopup = false" class="cursor-pointer pi pi-times color-grey"></i>
+        </div>
+    </ng-template>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding: 0 25px;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-address-view-design cursor-pointer"
+            *ngFor="let address of companyAddressOptions; let addressIndex = index"
+            (click)="setAddressValueClicked(addressIndex)">
+            <p-radioButton styleClass="margin-right-10px" name="showResponsiveView" value="{{addressIndex}}"
+                [(ngModel)]="selectedAddress"></p-radioButton>
+            <span>{{convertAddressString(address)}}</span>
+        </div>
+        <span style="margin-top: 10px;" (click)="setAddressValueNull()"
+            class="add-new-address-design cursor-pointer"><img style="margin-right: 5px" width="14px" height="14px"
+                src="assets/images/service-provider/add-plus.png" /> New Address</span>
+    </div>
+</p-dialog>
+
+<ng-template #paymentDetailsForm let-readonly="readonly">
+
+    <form [formGroup]="cardholderForm" class="full-marketplace-Cart-style">
+        <fieldset [disabled]='readonly'>
+            <div class="cart-heading-div bg-light-grey d-flex justify-content-start w-100 align-items-center">
+                <h4>Cardholder Details</h4>
+                <div *ngIf="!readonly" class="custom-checkbox custom-checkbox-green">
+                    <label class="container">{{ cart?.trainings.length > 0 ? 'Same as Primary Contact' : 'Same as
+                        Shipping Contact'}}
+                        <input type="checkbox" formControlName="sameAsCheck"
+                            (change)="savePrevInfo('cardholderForm', true)">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <span *ngIf="readonly" (click)="readable = false" class="ml-auto cursor-pointer">
+                    <img height="20px" src="assets/images/service-provider/edit-black.png" width="20px">
+                </span>
+            </div>
+            <div class="participant-form-row company-detail-form-row mt-2 mb-3">
+                <div class="row form-div-main">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">First Name</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="20px"
+                                    src="assets/images/service-provider/user.png" width="20px"></span><input
+                                class="p-inputtext p-component" formControlName="firstName"
+                                placeholder="Enter First Name" type="text" (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['firstName'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['firstName'].errors && cardholderInfoForm['firstName'].errors['required']">
+                                First Name is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Last Name</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="20px"
+                                    src="assets/images/service-provider/user.png" width="20px"></span><input
+                                class="p-inputtext p-component" formControlName="lastName" placeholder="Enter Last Name"
+                                type="text" (blur)="updateCartForm()" (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['lastName'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['lastName'].errors && cardholderInfoForm['lastName'].errors['required']">
+                                Last Name is required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-div-main">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Email</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="20px"
+                                    src="assets/images/service-provider/mail-grey.png" width="20px"></span><input
+                                class="p-inputtext p-component ng-pristine ng-invalid" formControlName="email"
+                                placeholder="Enter Email" type="text" (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['email'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg" *ngIf="cardholderInfoForm['email'].errors['required']">
+                                Email is required
+                            </div>
+                            <div class="error-msg" *ngIf="cardholderInfoForm['email'].errors['email']">
+                                Enter valid email
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Phone Number</span>
+                        </div>
+                        <div class="p-inputgroup cart-phone-field">
+                            <span class="p-inputgroup-addon"><img height="20px"
+                                    src="assets/images/service-provider/calling.png" width="20px"></span>
+                            <ngx-intl-tel-input style="width: 100%" [cssClass]="'custom border-left-0'"
+                                class="KA_input_text_Phone_new" [preferredCountries]="preferredCountries"
+                                [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                                customPlaceholder="Mobile Number" [searchCountryFlag]="true" [phoneValidation]="true"
+                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                [selectFirstCountry]="true" [selectedCountryISO]="selectedCountryIS0" [maxLength]="10"
+                                [separateDialCode]="separateDialCode" [numberFormat]="PhoneNumberFormat.National"
+                                name="phone" formControlName="phoneNumber" (ngModelChange)="updateCartPhone()"
+                                (keyup)="savePrevInfo('cardholderForm', false)">
+                            </ngx-intl-tel-input>
+                        </div>
+                        <div *ngIf="cardholderInfoForm['phoneNumber'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['phoneNumber'].errors && cardholderInfoForm['phoneNumber'].errors['required']">
+                                Phone Number is required
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['phoneNumber'].errors && !cardholderInfoForm['phoneNumber'].errors['required']">
+                                Enter Valid Phone number
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-div-main">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Business Name</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/company-feild.png" width="14px"></span><input
+                                class="p-inputtext p-component" formControlName="name" placeholder="Business Name"
+                                type="text" (blur)="updateCartForm()" (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="shippingInfoForm['name'].invalid && shippingFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="shippingInfoForm['name'].errors && shippingInfoForm['name'].errors['required']">
+                                Business Name is required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-div-main">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Address 1</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                                class="p-inputtext p-component" formControlName="address1" placeholder="Address 1"
+                                type="text" (blur)="updateCartForm()" (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['address1'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['address1'].errors && cardholderInfoForm['address1'].errors['required']">
+                                Address 1 is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Address 2</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                                class="p-inputtext p-component ng-untouched ng-pristine ng-valid"
+                                formControlName="address2" placeholder="Address 2" type="text" (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['address2'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['address2'].errors && cardholderInfoForm['address2'].errors['required']">
+                                Address 2 is required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-div-main">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">State</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="20px"
+                                    src="assets/images/service-provider/map-pin.png" width="20px"></span>
+                            <p-dropdown class="width-100-perc" [disabled]='readonly' appendTo="body" [filter]="true"
+                                name="stateValue"
+                                styleClass="width-100-perc custom-dropdown-design-company-4 height-custom select-feild p-0"
+                                formControlName="state" [options]="companyStateDropdownData" placeholder="Select State"
+                                optionLabel="name" optionValue="id" [group]="true"
+                                (onChange)="savePrevInfo('cardholderForm', false)">
+                                <ng-template let-group pTemplate="group">
+                                    <div class="p-d-flex p-ai-center">
+                                        <span>{{group.name}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+                        </div>
+                        <div *ngIf="cardholderInfoForm['state'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['state'].errors && cardholderInfoForm['state'].errors['required']">
+                                State is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">City</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                                class="p-inputtext p-component ng-pristine ng-invalid ng-touched" placeholder="City"
+                                formControlName="city" type="text" (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['city'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['city'].errors && cardholderInfoForm['city'].errors['required']">
+                                City is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Zip</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="18px"
+                                    src="assets/images/service-provider/map-circle-pin-grey.png"
+                                    width="12px"></span><input class="p-inputtext p-component" formControlName="zip"
+                                placeholder="Zip" type="text" (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('cardholderForm', false)">
+                        </div>
+                        <div *ngIf="cardholderInfoForm['zip'].invalid && cardholderFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="cardholderInfoForm['zip'].errors && cardholderInfoForm['zip'].errors['required']">
+                                Zip is required
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+</ng-template>
+
+<p-dialog styleClass="service-provider-address-popup" [(visible)]="emptyCartPopup && !showSuccessPopup" [modal]="true"
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <ng-template pTemplate="header">
+        <span>CART IS EMPTY!</span>
+        <!-- <div style="display: flex; align-items: center">
+            <i (click)="emptyCartPopup = false" class="cursor-pointer pi pi-times color-grey"></i>
+        </div> -->
+    </ng-template>
+    <div class="col-12" style="padding: 0 25px;">
+        <div class="col-8 py-4 offset-2 text-center">
+            <span>Your cart is empty, click the below button to
+                continue your shopping</span>
+        </div>
+        <div class="col-8 offset-2 cursor-pointer">
+            <a (click)="goToMarketPlace()" class="justify-content-center btn simple-btn dark-blue">Continue
+                Shopping<img src="assets/images/service-provider/white-cart.png"></a>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-dialog
+    styleClass="service-provider-address-popup {{paymentLoading ? 'cart-payment-loading-popup service-payment-loading-popup' : '' || paymentFailurePopup ? 'service-payment-failure-provider-popup cart-payment-loading-popup'  : ''}}"
+    [modal]="true" [(visible)]="paymentLoading || paymentFailurePopup"
+    [breakpoints]="{'1024px': '70vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '70vw'}" [draggable]="false">
+    <div class="cart-svg-color-change" [hidden]="!paymentLoading">
+        <img src="assets/images/service-provider/loading-animation-processing-payment.svg" onload="SVGInject(this)" />
+        <div class="Completing-your-purchase">
+            {{paymentMethod == 'card' ? 'Completing your purchase' : 'Processing..'}}
+        </div>
+        <div class="Please-remain-on-the-page-and-do-not-close-your-browser-or-go">
+            Please remain on the page and do not close your browser <br />or go back until you see a confirmation..
+        </div>
+    </div>
+
+    <div *ngIf="paymentFailurePopup" class="flex-column flex-center padding-right-left-30px">
+        <div class="cart-custom-failer-backgroud-color">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-end">
+                <button style="background: transparent; border: none; box-shadow: none;" (click)="closePopup()" pButton
+                    type="button" icon="pi pi-times" iconPos="left"></button>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-40px">
+                    <img width="84px" height="84px" src="assets/images/service-provider/failed.png" />
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px">
+                    {{paymentMessage}}
+                </div>
+            </div>
+        </div>
+        <span class="w-100 " style="text-align: center; padding: 20px;">
+            <button pButton type="button" (click)="tryAgain()"
+                style="background: transparent; color: #e35757; border-color: #e35757; padding: 5px 40px; box-shadow: none;"
+                label="Try Again"></button>
+        </span>
+    </div>
+</p-dialog>
+<!-- removing trainings popup -->
+<p-dialog styleClass="remove-participant-popup" class="remove-participant-popup" [(visible)]="removeTrainingPopup"
+    [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+    <div class="participant-remove-popup">
+        <div class="warning">Do you want to Remove the Training ?</div>
+        <div class="pt-2">
+            <button class="btn mr-2" style="background-color: #469073;color:white"
+                (click)="removeTraining()">Yes</button>
+            <button class="btn" style="background-color: #888;color:white"
+                (click)="removeTrainingPopup = !removeTrainingPopup">No</button>
+        </div>
+    </div>
+</p-dialog>
+<!-- removing Manuals popup  -->
+<p-dialog styleClass="remove-participant-popup" class="remove-participant-popup" [(visible)]="removeManualPopup"
+    [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+    <div class="participant-remove-popup">
+        <div class="warning">Do you want to Remove the Manual ?</div>
+        <div class="pt-2">
+            <button class="btn mr-2" style="background-color: #469073;color:white" (click)="removeManual()">Yes</button>
+            <button class="btn" style="background-color: #888;color:white"
+                (click)="removeManualPopup = !removeManualPopup">No</button>
+        </div>
+    </div>
+</p-dialog>
+<!-- remove participants from trainings -->
+<p-dialog styleClass="remove-participant-popup remove-participant" class="remove-participant-popup remove-participant"
+    [(visible)]="participantClearPopup" [style]="{width: '30vw'}" [modal]="true" [showHeader]="false">
+    <div class="participant-remove-popup">
+        <div class="warning">Do you want to Remove the Participant ?</div>
+        <div class="pt-2">
+            <button class="btn mr-2" style="background-color: #469073;color:white"
+                (click)="removeParticipant()">Yes</button>
+            <button class="btn" style="background-color: #888;color:white"
+                (click)="participantClearPopup = !participantClearPopup">No</button>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog styleClass="remove-participant-popup remove-participant" (onHide)="removeCancelledItems()"
+    class="remove-participant-popup remove-participant" [(visible)]="cancelledItem" [style]="{width: '30vw'}"
+    [modal]="true" [showHeader]="false">
+    <div class="participant-remove-popup">
+        <div class="warning">Your Training/Manual has been cancelled by the admin.We are going to remove it from your
+            cart </div>
+        <div class="pt-2">
+            <button class="btn mr-2" style="background-color: #469073;color:white"
+                (click)="removeCancelledItems()">OK</button>
+        </div>
+    </div>
+</p-dialog>
+
+<!-- overRide pricing -->
+<p-dialog styleClass="service-provider-pricing-popup" *ngIf="displayPricingPopup" [(visible)]="displayPricingPopup" [modal]="true" [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <ng-template pTemplate="header">
+      <div>
+        <span>Override Pricing - {{overRideDetails.name}}</span>
+        </div>
+      <div class="flex-align-center">
+        <button class="pri-button-update" (click)="updateAlternatePrice()" type="button">Update <i style="margin-left: 5px; font-size: 14px;" class="pi pi-check"></i></button>
+        <i style="color: #c4cbdb; margin-left: 10px;" (click)="closePricingPopup()" class="cursor-pointer pi pi-times"></i>
+      </div>
+    </ng-template>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center">
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+        <div class="custom-box-design-pricing">
+          <img width="20px" height="20px" src="assets/images/service-provider/dollar-green.png" />
+        </div>
+        <div>
+          <span class="no-margin pricing-label-design">Regular Price</span>
+          <p class="no-margin pricing-value-design">{{overRideDetails.regular}}</p>
+       </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+        <div class="custom-box-design-pricing">
+          <img width="13px" height="23px" src="assets/images/service-provider/dollar-simple-green.png" />
+        </div>
+        <div>
+          <span class="no-margin pricing-label-design">{{overRideDetails.type == 'training'? 'Early Bird Pricing' : 'Discount Price'}}</span>
+          <p class="no-margin pricing-value-design">{{overRideDetails.discount}}</p>
+        </div>
+      </div>
+      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+        <div class="custom-box-design-pricing">
+          <img width="18px" height="16px" src="assets/images/service-provider/percentage-green.png" />
+        </div>
+        <div>
+          <span class="no-margin pricing-label-design">Discounted</span>
+          <p class="no-margin pricing-value-design">{{overRideDetails.discountPercent}}</p>
+        </div>
+      </div>
+        <div *ngIf="!isTrainingManualOverride && overRidePriceTrainingIndex != null"
+            class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+            <div class="custom-box-design-pricing">
+                <img width="18px" height="20px" src="assets/images/service-provider/calender-green.png" />
+            </div>
+            <div *ngIf="!isTrainingManualOverride && overRidePriceTrainingIndex != null">
+                <span
+                    class="no-margin pricing-label-design">Expire{{checkBirdPriceAvailablity(cart?.trainings[overRidePriceTrainingIndex]?.expiryDateBirdPrice)?'s':'d'}}
+                    on</span>
+                <p class="no-margin pricing-value-design">{{cart?.trainings[overRidePriceTrainingIndex]?.expiryDateBirdPrice &&
+                    cart?.trainings[overRidePriceTrainingIndex]?.birdPrice &&
+                    cart?.trainings[overRidePriceTrainingIndex]?.birdPrice != '0' ?
+                    getDateFormat(cart?.trainings[overRidePriceTrainingIndex]?.expiryDateBirdPrice) : '-'}}</p>
+            </div>
+        </div>
+    </div>
+    <hr style="margin: 30px 0;"/>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+        <span class="checkbox-label-design">Check here for alternate pricing</span> <p-checkbox styleClass="custom-highlight-checkbox" [(ngModel)]="alternatePricing" [binary]="true" (onChange)="updateIsBirdPriceValue()"></p-checkbox>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+        <span class="checkbox-label-design">Check here to offer this training at no charge</span> <p-checkbox styleClass="custom-highlight-checkbox" [(ngModel)]="freeOffer" [binary]="true" (onChange)="updateFreeOfferValue()"></p-checkbox>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding {{!alternatePricing ? 'low-opacity' : ''}}">
+      <form [formGroup]="alternatePricingForm">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+          <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px no-padding">
+              <span class="pricing-popup-text-style">Alternative price</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 no-padding">
+              <div class="p-inputgroup new-design-text-2">
+                <span class="p-inputgroup-addon"><img width="12px" height="20px" src="assets/images/service-provider/dollar-simple.png"></span>
+                <input type="text" [attr.disabled]="alternatePricing ? null: false" [(ngModel)]="birdValue" pInputText placeholder="Enter alternative price" formControlName="birdPrice" (keyup)="updateBirdPriceValue($event?.target?.value)" (blur)="updateBirdPriceValue($event?.target?.value)">
+              </div>
+            </div>
+            <div style="font-size: 14px;" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin" *ngIf="alternatePricingFormControl?.birdPrice?.errors?.required && pricingFormSubmitted">
+              Alternate price is required
+            </div>
+            <div style="font-size: 14px;" *ngIf="showBirdPriceValidation" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+              Early bird price must be less than regular price
+            </div>
+          </div>
+          <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding flex-center-end" style="padding-bottom: 10px!important;">
+            <span class="or-label-design">(OR)</span>
+          </div>
+          <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px no-padding">
+              <span class="pricing-popup-text-style">Alternative discount </span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 no-padding">
+              <div class="p-inputgroup new-design-text-2">
+                <span class="p-inputgroup-addon"><img width="17px" height="15px" src="assets/images/service-provider/percentage.png"></span>
+                <input type="text" [attr.disabled]="alternatePricing ? null: false" [(ngModel)]="birdPercentage" pInputText placeholder="Enter alternative discount" formControlName="birdPercentage" (keyup)="updateBirdPercentageValue($event?.target?.value)" (blur)="updateBirdPercentageValue($event?.target?.value)">
+              </div>
+            </div>
+            <div style="font-size: 14px;" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin" *ngIf="alternatePricingFormControl?.birdPercentage?.errors?.required && pricingFormSubmitted">
+              Alternate discount is required
+            </div>
+          </div>
+          <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px no-padding">
+              <span class="pricing-popup-text-style">Reason</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 no-padding">
+              <div class="p-inputgroup new-design-text-2 reason">
+                <!-- <span class="p-inputgroup-addon"><img width="17px" height="15px" src="assets/images/service-provider/percentage.png"></span> -->
+                <textarea [attr.disabled]="alternatePricing || freeOffer ? null: false" [(ngModel)]="birdValueReason" pInputText placeholder="Enter reason" formControlName="birdValueReason"></textarea>
+              </div>
+            </div>
+            <div style="font-size: 14px;" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin" *ngIf="alternatePricingFormControl?.birdValueReason?.errors?.required && pricingFormSubmitted">
+                Reason is required
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </p-dialog>
+<!-- salesPerson popoup -->
+<app-popup *ngIf="showCartUserPopup" access="market-place" title="Update Sales Person" buttonTitle="Continue"
+    (sendUserData)="getCartUserData($event)" (closeUserPopup)="closeCartSalePersonPopup()" [isMultipleSalesPerson]="false"
+    [isRequired]="true" [selectedSalesPersonId]="[cart.userId]" [currentUser]="cart.userDetail" [salesPersonsList]="cart.userDetail"></app-popup>
+
+    <!-- common user && company form -->
+    <ng-template #userAndcompany>
+        <form [formGroup]="userForm">
+            <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding participant-form-row">
+                <div class="form-div-main py-2 row">
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">First Name</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <img height="20px" src="assets/images/service-provider/user.png"
+                                    width="20px">
+                            </span>
+                            <input formControlName="firstName" class="p-inputtext p-component"
+                                placeholder="Enter First Name" type="text"
+                                (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('userForm', true)">
+                        </div>
+                        <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                            *ngIf="userFormControl?.firstName.errors?.required && userFormSubmitted">
+                            First name is required
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Last Name</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <img height="20px" src="assets/images/service-provider/user.png"
+                                    width="20px">
+                            </span>
+                            <input formControlName="lastName" class="p-inputtext p-component"
+                                placeholder="Enter Last Name" type="text"
+                                (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('userForm', true)">
+                        </div>
+                        <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                            *ngIf="userFormControl?.lastName.errors?.required && userFormSubmitted">
+                            Last name is required
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Email</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <img height="20px" src="assets/images/service-provider/user.png"
+                                    width="20px">
+                            </span>
+                            <input formControlName="email" class="p-inputtext p-component"
+                                placeholder="Enter Email" type="text" (blur)="updateCartForm()"
+                                (keyup)="savePrevInfo('userForm', true)">
+                        </div>
+                        <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                            *ngIf="userFormControl?.email.errors?.required && userFormSubmitted">
+                            Email is required
+                        </div>
+                        <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                            *ngIf="userFormControl?.email.errors?.email && userFormSubmitted">
+                            Enter valid email
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Phone Number</span>
+                        </div>
+                        <div class="p-inputgroup cart-phone-field">
+                            <span class="p-inputgroup-addon">
+                                <img height="20px"
+                                    src="assets/images/service-provider/calling.png"
+                                    width="20px">
+                            </span>
+                            <ngx-intl-tel-input style="width: 100%"
+                                [cssClass]="'custom border-left-0'"
+                                class="KA_input_text_Phone_new"
+                                [preferredCountries]="preferredCountries"
+                                [enableAutoCountrySelect]="true" [enablePlaceholder]="true"
+                                customPlaceholder="Mobile Number" [searchCountryFlag]="true"
+                                [phoneValidation]="true"
+                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                [selectFirstCountry]="true"
+                                [selectedCountryISO]="selectedCountryIS0" [maxLength]="10"
+                                [separateDialCode]="separateDialCode"
+                                [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                formControlName="phoneNumber"
+                                (ngModelChange)="updateCartPhone()"
+                                (keyup)="savePrevInfo('userForm', false)">
+                            </ngx-intl-tel-input>
+                        </div>
+                        <div *ngIf="userFormControl?.phoneNumber.invalid && userFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="userFormControl?.phoneNumber.errors['required']">
+                                Phone number is required
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="!userFormControl?.phoneNumber.errors['required']">
+                                Enter Valid Phone number
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- user Form end-->
+        <form [formGroup]="companyForm" class="participant-form-row company-detail-form-row"
+            style="padding-bottom:15px !important">
+            <div class="row form-div-main">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="label">
+                        <span class="popup-text-style">Business Phone Number</span>
+                    </div>
+                    <div class="p-inputgroup cart-phone-field">
+                        <span class="p-inputgroup-addon">
+                            <img height="20px"
+                                src="assets/images/service-provider/calling.png"
+                                width="20px">
+                        </span>
+                        <p-dropdown class="width-100-perc" appendTo="body" [filter]="true"
+                        name="phoneNumber"
+                        styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+                        formControlName="phoneNumber" [options]="businessData"
+                        placeholder="Select Phone Number" optionLabel="phoneNumber" (onFilter)="getBusinessDetails('phoneNumber', $event)" optionValue="phoneNumber"
+                        (onHide)="businessDataName('phoneNumber')" resetFilterOnHide = true filterPlaceholder="Search Phone#" >
+                            <ng-template let-group pTemplate="group">
+                                <div class="p-d-flex p-ai-center">
+                                    <span>{{group.phoneNumber}}</span>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                    <div *ngIf="compform?.phoneNumber.invalid && companyFormSubmitted">
+                        <div class="error-msg"
+                            *ngIf="compform?.phoneNumber.errors['required']">
+                            Phone number is required
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="!compform?.phoneNumber.errors['required']">
+                            Enter Valid Phone number
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
+                    <div class="label d-flex justify-content-between">
+                        <span class="popup-text-style">Business Name</span>
+                        <span class="popup-text-style cursor-pointer" (click)="openBusinessNew()" style="color: #469073;">
+                            <img style="margin-right: 5px;" width="14px" height="14px" src="assets/images/service-provider/add-plus.png" />
+                            New Business Name
+                        </span>
+                    </div>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><img height="19px"
+                                src="assets/images/service-provider/company-feild.png" width="14px"></span>
+                        <p-dropdown class="width-100-perc" appendTo="body" [filter]="true"
+                        name="name"
+                        styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+                        formControlName="name" [options]="businessData"
+                        placeholder="Select Business Name" optionLabel="name" (onFilter)="getBusinessDetails('name', $event)" optionValue="name"
+                        (onHide)="businessDataName('name')" resetFilterOnHide = true filterPlaceholder="Search Business Name"  >
+                            <ng-template let-group pTemplate="group">
+                                <div class="p-d-flex p-ai-center">
+                                    <span>{{group.name}}</span>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                    <div *ngIf="compform['name'].invalid && companyFormSubmitted">
+                        <div class="error-msg"
+                            *ngIf="compform['name'].errors && compform['name'].errors['required']">
+                            Name is required
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-div-main">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="label">
+                        <span class="popup-text-style">Address 1</span>
+                        <ng-container *ngIf="multipleAddressAvailable && companyAddressOptions">
+                            <span *ngIf="companyAddressOptions.length > 1 || showChangeAddress"
+                                class="add-new-address-design cursor-pointer"
+                                (click)="showAddressPopup = true" style="color:#469073"><img
+                                    style="margin-right: 4px; object-fit: contain;" width="13px" height="18px"
+                                    src="assets/images/service-provider/map-pin-green.png" />
+                                Change Address</span>
+                            <span
+                                *ngIf="companyAddressOptions.length == 1 && !showChangeAddress"
+                                class="add-new-address-design cursor-pointer" style="color:#469073"
+                                (click)="setAddressValueNullClicked()"><img
+                                    style="margin-right: 5px;" width="14px" height="14px"
+                                    src="assets/images/service-provider/add-plus.png" /> New Address</span>
+                        </ng-container>
+                    </div>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><img height="19px"
+                                src="assets/images/service-provider/map-pin.png"
+                                width="14px"></span><input class="p-inputtext p-component"
+                            formControlName="address1" placeholder="Address 1" type="text"
+                            (blur)="updateCartForm()"
+                            (keyup)="savePrevInfo('userForm', $event)">
+                    </div>
+                    <div *ngIf="compform['address1'].invalid && companyFormSubmitted">
+                        <div class="error-msg"
+                            *ngIf="compform['address1'].errors && compform['address1'].errors['required']">
+                            Address 1 is required
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="label">
+                        <span class="popup-text-style">Address 2</span>
+                    </div>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><img height="19px"
+                                src="assets/images/service-provider/map-pin.png"
+                                width="14px"></span><input
+                            class="p-inputtext p-component ng-untouched ng-pristine ng-valid"
+                            placeholder="Address 2" formControlName="address2" type="text"
+                            (blur)="updateCartForm()"
+                            (keyup)="savePrevInfo('userForm', $event)">
+                    </div>
+                </div>
+            </div>
+            <div class="row form-div-main">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="label">
+                        <span class="popup-text-style">State</span>
+                    </div>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><img height="20px"
+                                src="assets/images/service-provider/map-pin.png" width="20px">
+                        </span>
+                        <p-dropdown class="width-100-perc" appendTo="body" [filter]="true"
+                            name="stateValue"
+                            styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+                            formControlName="state" [options]="companyStateDropdownData"
+                            placeholder="Select State" optionLabel="name" optionValue="id"
+                            [group]="true"
+                            (onBlur)="updateCartForm();savePrevInfo('userForm', $event)">
+                            <ng-template let-group pTemplate="group">
+                                <div class="p-d-flex p-ai-center">
+                                    <span>{{group.name}}</span>
+                                </div>
+                            </ng-template>
+                        </p-dropdown>
+
+                    </div>
+                    <div *ngIf="compform['state'].invalid && companyFormSubmitted">
+                        <div class="error-msg"
+                            *ngIf="compform['state'].errors && compform['state'].errors['required']">
+                            State is required
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="label">
+                        <span class="popup-text-style">City</span>
+                    </div>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><img height="19px"
+                                src="assets/images/service-provider/map-pin.png"
+                                width="14px"></span><input
+                            class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                            placeholder="City" formControlName="city" type="text"
+                            (blur)="updateCartForm()"
+                            (keyup)="savePrevInfo('userForm', $event)">
+                    </div>
+                    <div *ngIf="compform['city'].invalid && companyFormSubmitted">
+                        <div class="error-msg"
+                            *ngIf="compform['city'].errors && compform['city'].errors['required']">
+                            City is required
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="label">
+                        <span class="popup-text-style">Zip</span>
+                    </div>
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon"><img height="18px"
+                                src="assets/images/service-provider/map-circle-pin-grey.png"
+                                width="12px"></span>
+                        <input class="p-inputtext p-component" placeholder="Zip"
+                            formControlName="zip" type="text" (blur)="updateCartForm()"
+                            (keyup)="savePrevInfo('userForm', $event)">
+                    </div>
+                    <div *ngIf="compform['zip'].invalid && companyFormSubmitted">
+                        <div class="error-msg"
+                            *ngIf="compform['zip'].errors && compform['zip'].errors['required']">
+                            Zip is required
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </ng-template>
+
+    <p-dialog styleClass="service-provider-pricing-popup" *ngIf="businessFormPopup" [(visible)]="businessFormPopup"
+        [modal]="true" [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}"
+        [draggable]="false">
+        <ng-template pTemplate="header">
+            <div>
+                <span>New Business</span>
+            </div>
+            <div class="flex-align-center">
+                <button class="pri-button-update" (click)="newBusinessUpdate()" type="button">Save <i
+                        style="margin-left: 5px; font-size: 14px;" class="pi pi-check"></i></button>
+                <i style="color: #c4cbdb; margin-left: 10px;" (click)="businessFormPopup = false"
+                    class="cursor-pointer pi pi-times"></i>
+            </div>
+        </ng-template>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+            <div class="loading-small-screen-scroll center" align="center" *ngIf="businessLoader"><img
+                    src="assets/images/loading.svg" alt="Loader" /></div>
+            <form [formGroup]="businessForm" class="participant-form-row company-detail-form-row"
+                style="padding-bottom:15px !important">
+                <div class="row form-div-main">
+                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Business Phone Number</span>
+                        </div>
+                        <div class="p-inputgroup cart-phone-field">
+                            <span class="p-inputgroup-addon">
+                                <img height="20px" src="assets/images/service-provider/calling.png" width="20px">
+                            </span>
+                            <!-- <input class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                                placeholder="Enter Phone" formControlName="phoneNumber" type="text"> -->
+                                <ngx-intl-tel-input style="width: 100%"
+                                                                [cssClass]="'custom border-left-0'"
+                                                                class="KA_input_text_Phone_new"
+                                                                [preferredCountries]="preferredCountries"
+                                                                [enableAutoCountrySelect]="true"
+                                                                [enablePlaceholder]="true"
+                                                                customPlaceholder="Mobile Number"
+                                                                [searchCountryFlag]="true" [phoneValidation]="true"
+                                                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                                                [selectFirstCountry]="true"
+                                                                [selectedCountryISO]="selectedCountryIS0"
+                                                                [maxLength]="10" [separateDialCode]="separateDialCode"
+                                                                [numberFormat]="PhoneNumberFormat.National" name="phone"
+                                                                formControlName="phoneNumber">
+                                                            </ngx-intl-tel-input>
+                        </div>
+                        <div *ngIf="businessInfoForm?.phoneNumber.invalid && businessFormSubmitted">
+                            <div class="error-msg" *ngIf="businessInfoForm?.phoneNumber.errors['required']">
+                                Phone number is required
+                            </div>
+                            <div class="error-msg" *ngIf="!businessInfoForm?.phoneNumber.errors['required']">
+                                Enter Valid Phone number
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
+                        <div class="label d-flex justify-content-between">
+                            <span class="popup-text-style">Business Name</span>
+    
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/company-feild.png" width="14px"></span>
+                            <input class="p-inputtext p-component ng-pristine ng-invalid ng-touched"
+                                placeholder="Enter Business Name" formControlName="name" type="text" (keyup)="checkBusinessValidation()" >
+                        </div>
+                        <div *ngIf="businessInfoForm['name'].invalid && businessFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="businessInfoForm['name'].errors && businessInfoForm['name'].errors['required']">
+                                Name is required
+                            </div>
+                        </div>
+                        <div *ngIf="businessValidation?.isValid" class="error-msg">
+                            {{businessValidation?.message}}
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-div-main">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Address 1</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                                class="p-inputtext p-component" formControlName="address1" placeholder="Address 1"
+                                type="text">
+                        </div>
+                        <div *ngIf="businessInfoForm['address1'].invalid && businessFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="businessInfoForm['address1'].errors && businessInfoForm['address1'].errors['required']">
+                                Address 1 is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Address 2</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                                class="p-inputtext p-component ng-untouched ng-pristine ng-valid" placeholder="Address 2"
+                                formControlName="address2" type="text">
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-div-main">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">State</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="20px"
+                                    src="assets/images/service-provider/map-pin.png" width="20px">
+                            </span>
+                            <p-dropdown class="width-100-perc" appendTo="body" [filter]="true" name="stateValue"
+                                styleClass="width-100-perc custom-dropdown-design-company-4 height-custom p-0 select-feild"
+                                formControlName="state" [options]="companyStateDropdownData" placeholder="Select State"
+                                optionLabel="name" optionValue="id" [group]="true">
+                                <ng-template let-group pTemplate="group">
+                                    <div class="p-d-flex p-ai-center">
+                                        <span>{{group.name}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-dropdown>
+    
+                        </div>
+                        <div *ngIf="businessInfoForm['state'].invalid && businessFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="businessInfoForm['state'].errors && businessInfoForm['state'].errors['required']">
+                                State is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">City</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="19px"
+                                    src="assets/images/service-provider/map-pin.png" width="14px"></span><input
+                                class="p-inputtext p-component ng-pristine ng-invalid ng-touched" placeholder="City"
+                                formControlName="city" type="text">
+                        </div>
+                        <div *ngIf="businessInfoForm['city'].invalid && businessFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="businessInfoForm['city'].errors && businessInfoForm['city'].errors['required']">
+                                City is required
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="label">
+                            <span class="popup-text-style">Zip</span>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon"><img height="18px"
+                                    src="assets/images/service-provider/map-circle-pin-grey.png" width="12px"></span>
+                            <input class="p-inputtext p-component" placeholder="Zip" formControlName="zip" type="text">
+                        </div>
+                        <div *ngIf="businessInfoForm['zip'].invalid && businessFormSubmitted">
+                            <div class="error-msg"
+                                *ngIf="businessInfoForm['zip'].errors && businessInfoForm['zip'].errors['required']">
+                                Zip is required
+                            </div>
+                        </div>
+    
+                    </div>
+                </div>
+            </form>
+    
+        </div>
+    </p-dialog>

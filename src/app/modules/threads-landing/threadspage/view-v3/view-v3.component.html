@@ -1,0 +1,208 @@
+<div [ngClass]="{'hide': !loading}" [style.height.px]="innerHeight">
+    <div class="loading-small-screen-scroll fix-center trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+
+<div [ngClass]="{'hide': loading}">
+    <div *ngIf="pageRefresh" (click)="tabonPageRefresh('1')" class="new-button-top">
+        <span  class="new-button-div"><img class="new-button-div-img" src="assets/images/thread-detail/thread-notifiy-icon.png" alt="Loader" />&nbsp;&nbsp;Tap to get new updates</span>
+        <!--span class="th-badge-content"><span class="text">{{this.postNotificationCount}}</span></span-->
+    </div>
+    <div *ngIf="threadActionRefresh && pushText != ''" class="new-button-top">
+        <span class="new-div"><img class="" src="assets/images/thread-detail/{{pushTextIcon}}-svg.svg"/>&nbsp;&nbsp;{{pushText}}</span>
+    </div>
+                 
+    <div class="th-error-div" *ngIf="threadViewError"><div class="error-msg">{{threadViewErrorMsg}}</div></div> 
+    <div  *ngIf="!threadViewError">
+        <div id="header" style="min-height:42px;" class="detail-page-header" >
+            <app-thread-detail-header *ngIf="pageDetailHeaderFlag" [pageData]="headerData" (threadDetailHeaderRef)="threadDetailHeaderRef = $event" (detailHeaderCallback)="detailHeaderCallback($event)" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+        </div>  
+        
+        <div *ngIf="emptyListFlag" [style.height.px]="innerHeight - 110">
+            <div class="no-item-list empty-container text-center">
+                <div class="item-empty-container item-empty-container-global empty-center">
+                    <img class="field-imge-store" width="92" height="76" src="assets/images/search-empty-banner-icon.png" alt="no-result">
+                    <p class="field-imge-p1" >No result found</p>  
+                </div>
+            </div>
+        </div>
+                
+        <div *ngIf="!emptyListFlag" class="thread-detail-section view-v3">
+            <div class="section-left thread-view-recent thread-view3-recent left-col-collapse" [style.height.px]="bodyHeight - 132">
+                <div *ngIf="leftPanel && enableCommentBox && !hideLeftSidePanel">
+                    <div *ngIf="!techSupportView && !hideLeftSidePanel">
+                        <app-thread-view-recent view="view-v3" [threadId]="threadId" (threadRecentComponentRef)="threadRecentRef = $event" (threadRecentCallBack)="threadRecentCallBack($event)" (threadViewRecentActionEmit)="threadViewRecentAction($event)"></app-thread-view-recent>
+                    </div>
+                </div>
+            </div>
+            <div class="section-middle thread-view-comments thread-view3-comments col-expand left-col-expand">
+                <div class="th-outer-col th-outer-col-2 fixes-view-col">
+                    <div [style.height.px]="innerHeight -84" class="thread-post-hover">
+                        <div class="arrow-tt-hide">
+                            <div popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="scrollbottom" popoverTitle="Goto Bottom" placement="bottom" triggers="hover" class="scroll-top-on" *ngIf="buttonTop" (click)="setActivePosition('bottom')"><img src="assets/images/thread-detail/goto-bottom-v2.png"></div>
+                            <ng-template #scrollbottom></ng-template>
+                            <div popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="scrolltop" popoverTitle="Goto Top" placement="top" triggers="hover" class="scroll-bottom-on" *ngIf="buttonBottom" (click)="setActivePosition('top')"><img src="assets/images/thread-detail/goto-top-v2.png"></div>
+                            <ng-template #scrolltop></ng-template>    
+                        </div>
+                        <div #top id="step" class="ps thread-post  threadPostcomment" (scroll)="scrolled($event)" [perfectScrollbar]="sconfig" >  
+                            <button style="visibility: hidden;" #print printTitle="Thread View" printSectionId="mytodosItemsId" ngxPrint styleSheetFile="assets/print.css" >Print</button> 
+                            <div id="mytodosItemsId" #tdpage class="thread-detail-page threadPostcommentDiv">                        
+                                <!-- notification -->
+                                <div *ngIf="nloading" class="post-div th-notification-loader-outer">
+                                    <div class="post-div-col post-div-left">                                
+                                        <div class="th-notification-loader">
+                                            <img src="assets/images/loading.svg" alt="Loader" />
+                                        </div>                                                                                     
+                                    </div>
+                                    <div class="post-div-col post-div-right">&nbsp;</div>
+                                </div>
+                                <!-- notification -->
+                                <app-thread-detail-view detailView="view-v3" (activePosition)="setActivePosition($event)" (threadTranslateActionEmit)="threadTranslateAction($event)" 
+                                 [innerHeight]="innerHeight" (detailViewComponentRef)="detailViewRef = $event" (detailViewCallBack)="detailViewCallBack($event)" ></app-thread-detail-view>
+                            </div>  
+                        </div>
+                    </div> 
+                </div>               
+            </div>
+        </div>     
+    </div>        
+</div>
+
+
+<p-dialog header="Select your feedback" [modal]="true" [draggable]="false" [resizable]="false"  [(visible)]="visibledealerClosePopup" styleClass="p-fluid feedbackoptionssupport">
+  <div style="width: 100%;">
+    <div *ngFor="let feedbackList of supportFeedbackList;" class="feedback-status-main-content" >
+        <div [style.background-color]="feedbackList.bgColor" class="inner-feedback-content cursor feedback-id{{feedbackList.id}}" (click)="feedbackSubmit(feedbackList.id)">
+            <div class="feedback-status-name" style=" color: #fff;font-size: 14px;padding-top: 10px;">
+                <div class="text-center text-content-feedback-img"><img src="assets/images/thread/{{feedbackList.imgClass}}"></div>
+                <div class="text-center text-content-feedback-name">
+                    {{feedbackList.name}}
+                </div>    
+            </div>
+        </div>
+        </div>
+    </div>
+</p-dialog>
+
+
+<p-toast position="top-right"  key="c" (onClose)="onReject(incrementToast)">
+    <ng-template let-message pTemplate="message">
+        <div (click)="tapontoast(message.summary)" class="p-flex cursor push-message-toast  p-flex-column" style="flex: 1">
+            <div class="row col-lg-12 col-md-12 col-sm-12 main-content" >
+               <div class="col-lg-3 col-md-3 col-sm-3 bg-toast-message-type">
+                <div class="img-notification">
+                  
+                <img *ngIf="(message.summary.displayType=='1' || message.summary.displayType=='2') && message.summary.subType!=5" src="assets/images/notifications/group-thread-toast.png">
+                <img *ngIf="message.summary.displayType=='3'" src="assets/images/notifications/group-announcement-push.png">
+                <img *ngIf="message.summary.displayType=='7'" src="assets/images/notifications/group-document-toast.png">
+                <img *ngIf="message.summary.displayType=='4'" src="assets/images/notifications/group-1.png">
+                <img *ngIf="message.summary.displayType=='1' && message.summary.subType=='5'" src="assets/images/notifications/dispatch-toast.png">
+              </div> 
+                 </div>
+              <div class="col-lg-9 col-md-9 col-sm-9 sub-content"> 
+              <div *ngIf="message.summary.displayType=='4'" class="summery-heading">{{message.summary.title}}</div>
+                <div *ngIf="message.summary.displayType=='4'" class="inner-content-text" [innerHTML]="message.detail"></div>
+                <div *ngIf="message.summary.displayType!='4'"  [innerHTML]="message.detail"></div>
+            </div>
+              </div>
+            
+        </div>
+    </ng-template>
+</p-toast>
+
+<p-dialog [header]="false" [modal]="true" [draggable]="false" [resizable]="false" [(visible)]="moreInfoFlag"
+ [position]="dialogPosition" class="v3-mask">
+    <h1 style="font-weight: normal">
+        <span class="head truncate">More Additional Info</span>
+        <span class="sidebar-close-icon cursor text-right" (click)="closeSidebar('more-info')"></span>
+    </h1>
+    <div class="content" [style.height.px]="innerHeight-14">
+        <div class="vehicle-info" [perfectScrollbar]="dconfig">
+            <div class="items" *ngFor="let item of detailInfo;">
+                <div class="item-row">
+                    <div class="item-col key">
+                        <span class="truncate" title="{{item.name}}">{{item.name}}</span>
+                    </div>
+                    <div class="item-col value text-right">
+                        <span class="truncate" title="{{item.value}}">{{item.value}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<p-dialog *ngIf="!loading" [header]="false" [modal]="true" [draggable]="false" [resizable]="false" [(visible)]="feedbackFormFlag"
+ [position]="dialogPosition" class="v3-mask">
+    <h1 style="font-weight: normal">
+        <span class="head truncate">
+            <div class="head-text">Feedback</div>
+        </span>
+        <span class="sidebar-close-icon cursor text-right" (click)="closeSidebar('feedback')"></span>
+    </h1>
+    <div class="feedback-content" [style.height.px]="innerHeight-14">
+        <div *ngIf="feedbackLoading" class="loading-small-screen-scroll trst" align="center">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+        </div>
+        <div *ngIf="!feedbackLoading && !feedbackFormValid">
+            <form class="form-horizontal" [formGroup]="feedbackForm">
+                <div class="form-items {{tf.fieldClass}}" *ngFor="let tf of feedbackFields; let ti = index;">
+                    <div *ngIf="tf.isRequired" class="required-text text-right {{tf.fieldName}}">{{requiredText}}</div>
+                    <div class="field-label {{tf.fieldName}} {{tf.fieldIcon}} item-label">{{tf.fieldLabel}}</div>
+                    <div class="field-item">
+                        <div *ngIf="tf.fieldType == 'radio'">
+                            <div class="radio-button">
+                                <label class="cursor" [ngClass]="{'active': opt.isChecked }"
+                                    *ngFor="let opt of tf.selectionItems; let oi = index" id="radio-{{opt.id}}">
+                                    <input type="radio" [name]="opt.name" [formControlName]="tf.fieldName" [value]="opt.id" [checked]="opt.isChecked"
+                                        (change)="onChange(tf.fieldName, tf, $event, oi)" [(ngModel)]="tf.selectedValue">
+                                    <span class="checkmark" [ngClass]="{'active': opt.isChecked}"></span>
+                                    {{opt.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div *ngIf="tf.fieldType == 'textarea'">
+                            <textarea rows="5" placeholder="{{tf.fieldPlacehoder}}" formControlName="{{tf.fieldName}}" [ngModel]="tf.selectedValue"
+                                autocomplete="off" (ngModelChange)="onChange(tf.fieldName, tf, $event)"></textarea>
+                        </div>
+                        <div *ngIf="tf.fieldType == 'text-editor'">
+                            <ckeditor [editor]="Editor" [config]="configCke" (drop)="dropEvent($event,tf)"
+                            formControlName="{{tf.fieldName}}"
+                            [(ngModel)]="tf.selectedValue" 
+                            (change)="onEditorChange(tf.fieldName, tf, $event)"
+                            ></ckeditor>
+                        </div>
+                        <div *ngIf="feedbackFormSubmit && feedbackForm.controls[tf.fieldName].errors" class="invalid-feedback"
+                            [ngClass]="{'invalid-field': tf.submitted && !tf.valid}">
+                            <div id="valid-error" class="field-err" *ngIf="feedbackForm.controls[tf.fieldName].errors.required">{{tf.requiredText}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-action text-right">
+                    <button icon="pi pi-check" pButton pRipple type="button" label="Submit" class="p-button-rounded p-button-danger feedback-submit" [ngClass]="{'setOpacity5': feedbackFormValid}" (click)="saveData()"></button>
+                </div>
+            </form>
+
+            <div class="bottom-content">
+                <div class ="bc-row">
+                    <div class="bc-col bc-col-1"></div>
+                    <div class="bc-col bc-col-2 text-center"><span>OR</span></div>
+                    <div class="bc-col bc-col-3"></div>
+                </div>
+                <div class ="bc-row bc-row-cont">
+                    <div class="bct-row-1 text-center">Email Us</div>
+                    <div class="bct-row-2 text-center">
+                        <span class="support">support@collabtic.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!feedbackLoading && feedbackFormValid">
+            <div class="loading-small-screen-scroll trst success" align="center">
+                {{feedbackSucess}}
+            </div> 
+        </div>
+    </div>
+</p-dialog>

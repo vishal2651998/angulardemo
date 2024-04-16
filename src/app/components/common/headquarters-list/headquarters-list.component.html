@@ -1,0 +1,966 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div class="loading-small-screen-scroll-hq" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div *ngIf="lazyLoading" class="cust-loader"></div>
+
+<div *ngIf="!loading">
+
+    <div *ngIf="!itemEmpty && headquartersFlag && !attributeFlag">
+        <div [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'">
+            <div class="ps" [perfectScrollbar]="sconfig">
+                
+                <div class="container padd-right0">
+                    <div class="">
+                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                            
+                            <div class="width-100"> 
+
+                                <div class="outer-hq-container" *ngFor="let hqdata of headquaterData; let i = index" [ngClass]="{ 'mtop30' : i != 0 }">
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row" id="loc-head-row">
+                                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                    <img class="loc-head-img" src="assets/images/hq/hq-location-icon.png">
+                                                    <span class="loc-head-text">
+                                                        <!-- {{hqdata.dynamictext | titlecase}}  -->
+                                                        <span *ngIf="hqdata.default == '1'">Primary Location</span><span *ngIf="hqdata.default == '2'"> Secondary Location</span>
+                                                    </span>
+                                                </div>
+                                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right">
+                                                    <img title="Edit" (click)="serviceAction('edit', 'headquarter', hqdata, 'HQ');" class="loc-head-edit-img cursor" src="assets/images/hq/hq-edit-icon.png">
+                                                    <!-- <img title="Delete"  (click)="serviceActionDelete(hqdata.dataId,'HQ');" class="loc-head-delete-img cursor" src="assets/images/hq/hq-delete-icon.png"> -->
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-cont-row" >
+                                                <div class="col-xl-7 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >
+                                                        <div class="location-thumb" [ngStyle]="{'background-image': 'url(' + hqdata.dataImg + ')'}" [ngClass]="{ 'dynamic-img' : hqdata.dataImgFlag }"></div>
+                                                        <div class="location-info" style="padding-left: 15px;">
+                                                            <span class="text-1">{{hqdata.dataName}}</span>
+                                                            <span style="height: 40px;" title="{{hqdata.address}}" class="hq-address-bg-hq text-2-hq">
+                                                                <div>
+                                                                    {{hqdata?.address1 ? hqdata?.address1 : ''}}{{hqdata?.address1 && hqdata?.address2 ? ',' : ''}} {{hqdata?.address2 ? hqdata?.address2 : ''}} 
+                                                                </div>
+                                                                <div>
+                                                                    {{hqdata?.city ? hqdata?.city  : ''}}{{hqdata?.city && hqdata?.state ? ',' : ''}} {{' ' + hqdata?.state ? hqdata?.state : ''}}{{hqdata?.zip ? ' ' + hqdata?.zip: ''}} 
+                                                                </div>
+                                                            </span>
+                                                            <span title="{{hqdata.email}}" class="hq-email-bg-hq text-2-hq">{{hqdata.email}}</span>
+                                                            <span *ngIf="hqdata.phone != ''" title="{{hqdata.dialCode}} {{hqdata.phone}}" class="hq-phone-bg-hq text-2-hq">{{hqdata.dialCode}} {{hqdata.phone}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                                <div class="col-xl-5 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >
+                                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">                                                     
+                                                            <div class="img-col-hq">
+                                                                <iframe width="100%" height="169px" [id]="hqdata.gmapcanvas" [src]="hqdata.googleMapInfo" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                                                            </div>
+                                                        </div>                                                
+                                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right">
+                                                            <div class="opt-div-hq opt-div-mb" *ngIf="i==0">
+                                                                <span class="opt-div-text-hq">Location has a service facility?</span>
+                                                                <div class="opt-div-seltext-hq">
+                                                                    <span class="cursor" *ngIf="!servicefacilityflagYes" (click)="changeCheckbox('yes-r1',true)">
+                                                                        <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;YES
+                                                                    </span>
+                                                                    <span class="cursor" *ngIf="servicefacilityflagYes" (click)="changeCheckbox('yes-r1',false)">
+                                                                        <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;YES
+                                                                    </span>
+                                                                    <span>&nbsp;&nbsp;&nbsp;</span>
+                                                                    <span class="cursor" *ngIf="!servicefacilityflagNo" (click)="changeCheckbox('no-r1',true)">
+                                                                        <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;NO
+                                                                    </span>
+                                                                    <span class="cursor" *ngIf="servicefacilityflagNo" (click)="changeCheckbox('no-r1',false)">
+                                                                        <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;NO
+                                                                    </span>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="opt-div-hq" *ngIf="i==0">
+                                                                <span class="opt-div-text-hq">Is this a training center?</span>
+                                                                <div class="opt-div-seltext-hq">
+                                                                    <span class="cursor" *ngIf="!trainingCenterflagYes" (click)="changeCheckbox('yes-r2',true)">
+                                                                        <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;YES
+                                                                    </span>
+                                                                    <span class="cursor" *ngIf="trainingCenterflagYes" (click)="changeCheckbox('yes-r2',false)">
+                                                                        <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;YES
+                                                                    </span>
+                                                                    <span>&nbsp;&nbsp;&nbsp;</span>
+                                                                    <span class="cursor" *ngIf="!trainingCenterflagNo" (click)="changeCheckbox('no-r2',true)">
+                                                                        <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;NO
+                                                                    </span>
+                                                                    <span class="cursor" *ngIf="trainingCenterflagNo" (click)="changeCheckbox('no-r2',false)">
+                                                                        <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;NO
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <app-user-grid-info *ngIf="hqdata.userinfoFlag" [userInfoData] = "hqdata.userInfoData" (updateEvent)="onEventUpdate($event)" class="user-info-data"></app-user-grid-info>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <div *ngIf="headquaterData?.length > 0" class="width-100">
+                                    <span class="add-action-btn cursor" style="margin:20px 0 20px 0" (click)="serviceAction('new', 'headquarter', '', 'HQ')">
+                                        <img src="assets/images/customers/add-icon.png">                                                
+                                        <span >Add Secondary Headquarter Location</span>
+                                    </span>
+                                </div>
+                            
+                            </div>
+                            <div class="clear"></div>
+                           
+
+                                <div class="width-100 mbottom5">                                
+                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >
+                                        
+                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding outer-hq-container">
+
+                                                <ng-container *ngFor="let data of headquaterlist">
+                                                    <ng-container [ngSwitch]="data.displayOrder">
+                                                        <ng-container *ngSwitchCase="1" [ngTemplateOutlet]="regionTemp" [ngTemplateOutletContext]="{regionData:data}"></ng-container>
+                                                        <ng-container *ngSwitchCase="2" [ngTemplateOutlet]="zoneTemp" [ngTemplateOutletContext]="{zoneData:data}"></ng-container>
+                                                        <ng-container *ngSwitchCase="3" [ngTemplateOutlet]="territoryTemp" [ngTemplateOutletContext]="{territoryData:data}"></ng-container>
+                                                      </ng-container>
+                                                      
+                                                </ng-container>
+                                                <ng-template #regionTemp let-regionData='regionData'>
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding text-center padd-30 border-right">
+                                                        <div class="bottom-section-square level-col-1"></div>                                                        
+                                                        <div class="bottom-section-title-row">
+                                                            <span class="hq-text-edit">{{regionData.name}}</span>
+                                                            <img *ngIf="regionData.editAccess===1" class="hq-icon-edit" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Region',regionData.id,regionData.name)"> 
+                                                        </div> 
+                                                        <div class="region-detail-row" *ngIf="regionData.items.length > 0">
+                                                            <ul>
+                                                                <li *ngFor="let region of regionData.items">
+                                                                    <a class="pl-1 px-2" (click)="viewLevelDetail(regionData.id,regionData.name,region.id,region.name)">{{region.name}}</a>
+                                                                </li>                                                                
+                                                            </ul>
+                                                        </div>                                                       
+                                                        <div class="bottom-section-btn-row" *ngIf="regionData.createAccess===1">
+                                                            <span class="new-action-btn cursor" (click)="serviceAction('new', 'level1','',regionData.name)">
+                                                                <img src="assets/images/customers/add-icon.png">                                                
+                                                                <span >ADD NEW</span>
+                                                            </span>
+                                                        </div>   
+                                                        <div *ngIf="!regionDetailLinkFlag && detailLinkFlag" class="adjust-height"></div>                                                     
+                                                    </div>
+                                                </ng-template>
+                                                <ng-template #zoneTemp let-zoneData='zoneData'>
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding text-center padd-30 border-right">
+                                                        <div class="bottom-section-square level-col-2"></div> 
+                                                        <div class="bottom-section-title-row">
+                                                            <span class="hq-text-edit">{{zoneData.name}}</span>
+                                                            <img class="hq-icon-edit" *ngIf="zoneData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Zone',zoneData.id,zoneData.name)"> 
+                                                        </div>
+                                                        <div  class="region-detail-row" *ngIf="zoneData.items.length > 0">
+                                                            <ul>
+                                                                <li *ngFor="let zone of zoneData.items">
+                                                                    <a class="pl-1 px-2" (click)="viewLevelDetail(zoneData.id,zoneData.name,zone.id,zone.name)">{{zone.name}}</a>
+                                                                </li>                                                                  
+                                                            </ul>
+                                                        </div>                                                         
+                                                        <div class="bottom-section-btn-row" *ngIf="zoneData.createAccess===1">
+                                                            <span class="new-action-btn cursor" (click)="serviceAction('new', 'level2','',zoneData.name)">
+                                                                <img src="assets/images/customers/add-icon.png">                                                
+                                                                <span >ADD NEW</span>
+                                                            </span>
+                                                        </div>
+                                                        <div *ngIf="!zoneDetailLinkFlag && detailLinkFlag" class="adjust-height"></div>
+                                                    </div>
+                                                </ng-template>
+                                               <ng-template #territoryTemp let-territoryData='territoryData'>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding text-center padd-30">
+                                                    <div class="bottom-section-square level-col-3"></div>         
+                                                    <div class="bottom-section-title-row">
+                                                        <span class="hq-text-edit">{{territoryData.name}}</span>
+                                                        <img class="hq-icon-edit" *ngIf="territoryData.editAccess===1"  src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Territory',territoryData.id,territoryData.name)"> 
+                                                    </div>   
+                                                    <div  class="region-detail-row" *ngIf="territoryData.items.length > 0">
+                                                        <ul>
+                                                            <li *ngFor="let territory of territoryData.items">
+                                                                <a class="pl-1 px-2" (click)="viewLevelDetail(territoryData.id,territoryData.name,territory.id,territory.name)">{{territory.name}}</a>                                                         
+                                                            </li>                                                                                                                   
+                                                        </ul>
+                                                    </div>                                                      
+                                                    <div class="bottom-section-btn-row" *ngIf="territoryData.createAccess===1">
+                                                        <span class="new-action-btn cursor" (click)="serviceAction('new', 'level3', '', territoryData.name)">
+                                                            <img src="assets/images/customers/add-icon.png">                                                
+                                                            <span >ADD NEW</span>
+                                                        </span>
+                                                    </div>
+                                                    <div *ngIf="!territoriesdetailLinkFlag && detailLinkFlag" class="adjust-height"></div>
+                                                </div>
+                                               </ng-template>
+                                                
+                                            </div>                                                
+                                                                           
+                                    </div>                                    
+                                </div>
+    
+                                <div class="width-100 mbottom5">                                
+                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >                                    
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                                            <ng-container *ngFor="let data of headquaterlist">
+                                                <ng-container [ngSwitch]="data.displayOrder">
+                                                    <ng-container *ngSwitchCase="4" [ngTemplateOutlet]="shopsTemp" [ngTemplateOutletContext]="{shopsData:data}"></ng-container>
+                                                    <ng-container *ngSwitchCase="5" [ngTemplateOutlet]="toolsTemp" [ngTemplateOutletContext]="{toolsData:data}"></ng-container>
+                                                    <ng-container *ngSwitchCase="6" [ngTemplateOutlet]="userTemp" [ngTemplateOutletContext]="{userData:data}"></ng-container>
+                                                  </ng-container>
+                                                  
+                                            </ng-container>
+                                            <ng-template #shopsTemp let-shopsData='shopsData'>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 padd-left0 mtop25">
+                                                    <div class="text-center outer-hq-container display-flex padd-20 cursor "  (click)="navigateTo('shops')">
+                                                        <div class="bottom-section-square de-col-4 inline-grid"></div> 
+                                                        <div class="bottom-section-row-rt inline-grid">
+                                                            <div class="bottom-section-title-row mtop0">
+                                                                <span class="hq-text-edit">{{shopsData.name}}</span>
+                                                                <img class="hq-icon-edit" *ngIf="shopsData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Shops',shopsData.id,shopsData.name);$event.stopPropagation();"> 
+                                                            </div>
+                                                            <div class="detail-row de-col-4 cursor" *ngIf="shopsCountAll>0">{{shopsCountAll}}</div>                                                                                                        
+                                                            <div class="detail-row de-col-4 cursor" *ngIf="shopsCountAll==0">-</div>                                                                                                        
+                                                            <div (click)="openAddShopModal();$event.stopPropagation();" class="bottom-section-btn-row" *ngIf="shopsData.createAccess===1">
+                                                                <span class="new-action-btn cursor">
+                                                                    <img src="assets/images/customers/add-icon.png">                                                
+                                                                    <span >NEW {{shopsData.name}}</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>                                                                                                 
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template #toolsTemp let-toolsData='toolsData'>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mtop25" >
+                                                    <div class="text-center outer-hq-container display-flex padd-20 cursor" (click)="navigateTo('tools')">
+                                                        <div class="bottom-section-square inline-grid de-col-5"></div>
+                                                        <div class="bottom-section-row-rt inline-grid">   
+                                                            <div class="bottom-section-title-row mtop0" >
+                                                                <span class="hq-text-edit">{{toolsData.name}}</span>
+                                                                <img class="hq-icon-edit" *ngIf="toolsData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Tools & Equipment',toolsData.id,toolsData.name);$event.stopPropagation();"> 
+                                                            </div>
+                                                            <div class="detail-row de-col-4 cursor" *ngIf="toolsCountAll > 0">{{toolsCountAll}}</div>                                                                           
+                                                            <div class="detail-row de-col-4 cursor" *ngIf="toolsCountAll == 0">-</div>                                                                           
+                                                            <!--div class="bottom-section-btn-row" *ngIf="toolsData.createAccess===1">
+                                                                <span class="new-action-btn cursor">
+                                                                    <img src="assets/images/customers/add-icon.png">                                                
+                                                                    <span >ADD {{toolsData.name}}</span>
+                                                                </span>
+                                                            </div--> 
+                                                        </div>                                               
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template #userTemp let-userData='userData'>
+                                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mtop25 cursor" style="padding-right: 0;">
+                                                    <div class="text-center outer-hq-container display-flex padd-20 cursor" (click)="navigateTo('users')">
+                                                        <div class="bottom-section-square inline-grid de-col-6"></div>  
+                                                        <div class="bottom-section-row-rt inline-grid"> 
+                                                            <div class="bottom-section-title-row mtop0">
+                                                                <span class="hq-text-edit">{{userData.name}}</span>
+                                                                <img class="hq-icon-edit" *ngIf="userData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Users',userData.id,userData.name);$event.stopPropagation();"> 
+                                                            </div>   
+                                                            <div *ngIf="usersCountAll > 0" class="detail-row de-col-4 cursor">{{usersCountAll}}</div>                                             
+                                                            <div *ngIf="usersCountAll == 0" class="detail-row de-col-4 cursor">-</div>                                             
+                                                            <!--div class="bottom-section-btn-row"  *ngIf="userData.createAccess===1">
+                                                                <span class="new-action-btn cursor">
+                                                                    <img src="assets/images/customers/add-icon.png">                                                
+                                                                    <span >ADD {{userData.name}}</span>
+                                                                </span>
+                                                            </div-->
+                                                        </div>                                                
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                          
+                        
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>  
+    </div>
+
+    <div *ngIf="!itemEmpty && attributeFlag && !headquartersFlag">
+        <div [style.height]="'calc(100vh - '+nonEmptyHeight+'px)'">
+            <div class="ps" [perfectScrollbar]="sconfig">
+                
+                <div class="container padd-right0">
+                    <div class="">
+                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                            
+                            <div class="outer-hq-container" *ngFor="let adata of attributeData; let i = index">
+                                <div class="outer-head-row">
+                                    <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row" id="loc-head-row" >
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                <img class="loc-head-img" src="assets/images/hq/hq-location-icon.png">
+                                                <span class="loc-head-text">
+                                                    <!-- {{adata.dynamictext | titlecase}}  -->
+                                                    <span *ngIf="adata.default == '1'">Primary Location</span><span *ngIf="adata.default == '2'"> Secondary Location</span>
+                                                </span>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right">
+                                                <img title="Edit" (click)="serviceAction('edit', 'level', adata, adata.titletext);" class="loc-head-edit-img cursor" src="assets/images/hq/hq-edit-icon.png">
+                                                <!-- <img title="Delete"  (click)="serviceActionDelete(adata.dataId,adata.titletex);" class="loc-head-delete-img cursor" src="assets/images/hq/hq-delete-icon.png"> -->
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-cont-row" >
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >
+                                                    <div class="location-thumb" [ngStyle]="{'background-image': 'url(' + adata.dataImg + ')'}" [ngClass]="{ 'dynamic-img' : adata.dataImgFlag }"></div>
+                                                    <div class="location-info" style="padding-left: 15px;">
+                                                        <span class="text-1">{{adata.dynamictext}}</span>
+                                                        <span *ngIf="adata.address != ''" title="{{adata.address}}"  class="hq-address-bg-hq text-2-hq">{{adata.address}}</span>
+                                                        <span *ngIf="adata.email != ''" title="{{adata.email}}"  class="hq-email-bg-hq text-2-hq">{{adata.email}}</span>
+                                                        <span *ngIf="adata.phone != ''" title="{{adata.dialCode}} {{adata.phone}}" class="hq-phone-bg-hq text-2-hq">{{adata.dialCode}} {{adata.phone}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >
+                                                    <div *ngIf="adata.levelAddressFlag == ''" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                        <img class="img-col-hq" src="assets/images/hq/detail-default-img.png" />
+                                                    </div> 
+                                                    <div *ngIf="adata.levelAddressFlag != ''" class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">                                                     
+                                                        <div class="img-col-hq">
+                                                            <iframe width="100%" height="169px" [id]="adata.gmapcanvas" [src]="adata.googleMapInfo" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                                                        </div>
+                                                    </div>                                                
+                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right">
+                                                        <div class="opt-div-hq opt-div-mb" *ngIf="i==0">
+                                                            <span class="opt-div-text-hq">Location has a service facility?</span>
+                                                            <div class="opt-div-seltext-hq">
+                                                                <span class="cursor" *ngIf="!servicefacilityflagYes" (click)="changeCheckbox('yes-r1',true)">
+                                                                    <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;YES
+                                                                </span>
+                                                                <span class="cursor" *ngIf="servicefacilityflagYes" (click)="changeCheckbox('yes-r1',false)">
+                                                                    <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;YES
+                                                                </span>
+                                                                <span>&nbsp;&nbsp;&nbsp;</span>
+                                                                <span class="cursor" *ngIf="!servicefacilityflagNo" (click)="changeCheckbox('no-r1',true)">
+                                                                    <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;NO
+                                                                </span>
+                                                                <span class="cursor" *ngIf="servicefacilityflagNo" (click)="changeCheckbox('no-r1',false)">
+                                                                    <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;NO
+                                                                </span>
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="opt-div-hq" *ngIf="i==0">
+                                                            <span class="opt-div-text-hq">Is this a training center?</span>
+                                                            <div class="opt-div-seltext-hq">
+                                                                <span class="cursor" *ngIf="!trainingCenterflagYes" (click)="changeCheckbox('yes-r2',true)">
+                                                                    <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;YES
+                                                                </span>
+                                                                <span class="cursor" *ngIf="trainingCenterflagYes" (click)="changeCheckbox('yes-r2',false)">
+                                                                    <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;YES
+                                                                </span>
+                                                                <span>&nbsp;&nbsp;&nbsp;</span>
+                                                                <span class="cursor" *ngIf="!trainingCenterflagNo" (click)="changeCheckbox('no-r2',true)">
+                                                                    <img src="assets/images/hq/hq-radio-normal.png" />&nbsp;NO
+                                                                </span>
+                                                                <span class="cursor" *ngIf="trainingCenterflagNo" (click)="changeCheckbox('no-r2',false)">
+                                                                    <img src="assets/images/hq/hq-radio-selected.png" />&nbsp;NO
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    </div></div>
+
+                                        </div>
+                                        <app-user-grid-info *ngIf="adata.userinfoFlag" [userInfoData] = "adata.userInfoData" (updateEvent)="onEventUpdate($event)" class="user-info-data"></app-user-grid-info>
+                                    </div>
+                                </div>
+                                </div>                            
+                            </div>                            
+                            <div *ngIf="summaryData && summaryData.length > 0 && type == 'level'" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">
+                                <ng-container *ngFor="let data of summaryData">
+                                    <ng-container [ngSwitch]="data.displayOrder">
+                                        <ng-container *ngSwitchCase="4" [ngTemplateOutlet]="shopsTemp1" [ngTemplateOutletContext]="{shopsData:data}"></ng-container>
+                                        <ng-container *ngSwitchCase="5" [ngTemplateOutlet]="toolsTemp1" [ngTemplateOutletContext]="{toolsData:data}"></ng-container>
+                                        <!-- <ng-container *ngSwitchCase="6" [ngTemplateOutlet]="userTemp" [ngTemplateOutletContext]="{userData:data}"></ng-container> -->
+                                      </ng-container>
+                                      
+                                </ng-container>
+                                <ng-template #shopsTemp1 let-shopsData='shopsData'>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 padd-left0 mtop30">
+                                        <div class="text-center outer-hq-container display-flex padd-20 cursor" (click)="navigateTo('level-shops')">
+                                            <div class="bottom-section-square de-col-4 inline-grid"></div> 
+                                            <div class="bottom-section-row-rt inline-grid">
+                                                <div class="bottom-section-title-row mtop0">
+                                                    <span class="hq-text-edit">{{shopsData.name}}</span>
+                                                    <img class="hq-icon-edit" *ngIf="shopsData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Shops',shopsData.id,shopsData.name);$event.stopPropagation();"> 
+                                                </div>
+
+                                                <div style="height: 36px;" class="detail-row de-col-4 cursor">
+                                                    <span *ngIf="shopsCountLevel > 0">{{shopsCountLevel}}</span>
+                                                    <span *ngIf="shopsCountLevel == 0">-</span>
+                                                </div> 
+
+                                                <div (click)="openAddShopModal()" class="bottom-section-btn-row" *ngIf="shopsData.createAccess===1">
+                                                    <span class="new-action-btn cursor">
+                                                        <img src="assets/images/customers/add-icon.png">                                                
+                                                        <span >NEW {{shopsData.name}}</span>
+                                                    </span>
+                                                </div>
+                                            </div>                                                                                                 
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template #toolsTemp1 let-toolsData='toolsData'>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 mtop30">
+                                        <div class="text-center outer-hq-container display-flex padd-20 cursor" (click)="navigateTo('level-tools')">
+                                            <div class="bottom-section-square inline-grid de-col-5"></div>
+                                            <div class="bottom-section-row-rt inline-grid">   
+                                                <div class="bottom-section-title-row mtop0">
+                                                    <span class="hq-text-edit" >{{toolsData.name}}</span>
+                                                    <img class="hq-icon-edit" *ngIf="toolsData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Tools & Equipment',toolsData.id,toolsData.name);$event.stopPropagation();"> 
+                                                </div>
+
+                                                <div style="height: 36px;" class="detail-row de-col-4 cursor">
+                                                    <span *ngIf="toolsCountLevel != 0">{{toolsCountLevel}}</span>
+                                                    <span *ngIf="toolsCountLevel == 0">-</span>
+                                                </div> 
+
+                                                <div class="bottom-section-btn-row" *ngIf="toolsData.createAccess===1">
+                                                    <span class="new-action-btn cursor">
+                                                        <img src="assets/images/customers/add-icon.png">                                                
+                                                        <span >ADD {{toolsData.name}}</span>
+                                                    </span>
+                                                </div> 
+                                            </div>                                               
+                                        </div>
+                                    </div>
+                                </ng-template>
+                                <ng-template #userTemp let-userData='userData'>
+                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 padd-right0 mtop30">
+                                        <div class="text-center outer-hq-container display-flex padd-20  cursor" (click)="navigateTo('users')">
+                                            <div class="bottom-section-square inline-grid de-col-6"></div>  
+                                            <div class="bottom-section-row-rt inline-grid"> 
+                                                <div class="bottom-section-title-row mtop0">
+                                                    <span class="hq-text-edit">{{userData.name}}</span>
+                                                    <img class="hq-icon-edit" *ngIf="userData.editAccess===1" src="assets/images/hq/hq-text-edit.png" (click)="openRenamePopup('Users',userData.id,userData.name);$event.stopPropagation();"> 
+                                                </div>   
+                                                <div *ngIf="usersDetailLinkFlag" class="detail-row de-col-4 cursor" >{{userData.items.length}}</div>                                             
+                                                <div class="bottom-section-btn-row"  *ngIf="userData.createAccess===1">
+                                                    <span class="new-action-btn cursor">
+                                                        <img src="assets/images/customers/add-icon.png">                                                
+                                                        <span >ADD {{userData.name}}</span>
+                                                    </span>
+                                                </div>
+                                            </div>                                                
+                                        </div>
+                                    </div>
+                                </ng-template>
+                              
+                            </div>                    
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>  
+    </div>
+
+    <div *ngIf="itemEmpty && !displayNoRecords" [style.height]="'calc(100vh - '+emptyHeight+'px)'">
+        <!--<div class="item-empty-container item-empty-container-hq">
+            <div class="empty-cont">
+                <div class="empty-res">
+                    <img class="blank" src="assets/images/hq/hq-blank-img.png" alt="HQ" />
+                    <p class="makepopuptext-spa">Get started by tapping on "New HQ".</p>   
+                    <span *ngIf="createAccess" class="new-prob blank" (click)="serviceAction('new', 'headquarter', '', 'HQ');">New HQ</span>                 
+                </div>                
+            </div> 
+        </div>-->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" > 
+                    <div class="outer-hq-container">
+                        <div class="outer-head-row">
+                            <div class="container">
+                              <div class="row">                                        
+                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-cont-row" >                                           
+                                    <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding" >
+                                        <div class="home-thumb"></div>
+                                        <div class="home-info">
+                                            <span class="text-1">Welcome to the program.</span>
+                                            <span class="text-2">Please start by setting up the <span class="gtext">DEKRA</span> network.</span>                                                    
+                                            <span class="setup-net-btn" (click)="serviceAction('new', 'headquarter', '', 'HQ');">
+                                                <img src="assets/images/hq/setup-network-btn-icon.png" />
+                                                <span >Setup Network</span>
+                                            </span>
+                                        </div>
+                                    </div>  
+                                </div>                                   
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="actionFlag" [baseZIndex]="100" position="right"
+    [dismissible]="false"  modal="true">
+   
+    <div class="action-form"> 
+        <form *ngIf="actionForm == 'headquarter' || actionForm == 'level1' || actionForm == 'level2' || actionForm == 'level3'" [formGroup]="serviceShopForm">
+
+            <div class="service-form-actions">
+                <div class="service-form-row service-form-row-hq">
+                    <h2 style="font-weight: normal">
+                        <span class="truncate">{{actionTitle}}</span>
+                    </h2>
+                    <div class="action-buttons action-buttons-hq ">
+                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                        class="p-button-rounded button-save button-save-hq cursor" (click)="formAction('submit')"></button>
+                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="left" label=""
+                        class="p-button-rounded button-save button-save-hq button-spin"></button>
+                        <span class="btn-close" *ngIf="!formProcessing" (click)="formAction('cancel')">
+                            <img src="assets/images/hq/hq-popup-close-icon.png" alt="HQ" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-form-fields">
+
+                <div class="service-form-row up-image-row">
+                    <div class="up-image-div"
+                    [ngClass]="{ 'is-invalid': showImg, 'dynamic-img' : responceImgFlag }"
+                    [ngStyle]="{'background-image': 'url(' + showImg + ')'}"></div>
+                    <div class="up-image-text">
+                        <div class="text-row">Upload Logo/Image</div>
+                        <div class="add-action-btn cursor" (click)="updateGrapic('new')">                           
+                            <img src="assets/images/hq/hq-media-green-upload-icon.png">
+                            <span>Upload</span>
+                         </div>
+                         <ng-template #uploadInfoContent>
+                            <div class="edit-history-div">Supported file types: .jpg, .png</div>    
+                        </ng-template> 
+                        <span class="cursor" style="margin-left: -10px;"><img src="assets/images/thread-detail/trim-info.png" tooltipClass="upload-info-tooltip" container="body" triggers="hover" (click)="$event.stopPropagation();" [autoClose]="true" placement="bottom-right" [ngbTooltip]="uploadInfoContent"></span>
+                   
+                    </div>
+                </div>
+
+                <div *ngIf="actionForm == 'level2' || actionForm == 'level3'">
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/level-icon.png" alt="service" class="mr-2 new-request-icon" />
+                                <span class="split-col text-col">{{headQuarterService.levelOneName}}</span>
+                                <span class="split-col req-col">Required</span>
+                            </label>
+                        </div>
+                        <div class="field">                          
+                            <p-dropdown [options]="selectedLevelOneOptions" optionLabel="name" 
+                            [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.selecetedLevelOne.errors) }"
+                            [filter]="true"  resetFilterOnHide="true" filterBy="name"
+                            placeholder="Select {{headQuarterService.levelOneName}}" (onChange)="levelChanged('change1', $event)" optionValue="id" 
+                            formControlName="selecetedLevelOne" class="p-dropdown-servicetype"></p-dropdown> 
+                            <div *ngIf="serviceShopSubmit && shf.selecetedLevelOne.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.selecetedLevelOne.errors.required">Select {{headQuarterService.levelOneName}}</div>
+                            </div>
+                        </div>                
+                    </div>                    
+                </div>
+
+                <div *ngIf="actionForm == 'level3'">
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/level-icon.png" alt="service" class="mr-2 new-request-icon" />
+                                <span class="split-col text-col">{{headQuarterService.levelTwoName}}</span>
+                                <span class="split-col req-col">Required</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            
+                            <p-dropdown class="p-dropdown-servicetype"
+                            [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.selecetedLevelTwo.errors) }"
+                            [filter]="true"  resetFilterOnHide="true" filterBy="name"                            
+                             [options]="selectedLevelTwoOptions" formControlName="selecetedLevelTwo" 
+                            placeholder="Select {{headQuarterService.levelTwoName}}" optionLabel="name" optionValue="id" 
+                            (onChange)="levelChanged('change2', $event)" >                                                            
+                            </p-dropdown> 
+                            <div *ngIf="serviceShopSubmit && shf.selecetedLevelTwo.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.selecetedLevelTwo.errors.required">Select {{headQuarterService.levelTwoName}}</div>
+                            </div>
+                        </div>                
+                    </div>                    
+                </div>
+
+
+                
+                <div class="service-form-row">
+                    <div class="label">
+                        <label *ngIf="actionForm == 'headquarter'">
+                            <img  src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">{{fieldName}} Name</span>
+                            <span class="split-col req-col">Required</span>
+                        </label>
+                        <label *ngIf="actionForm == 'level1' || actionForm == 'level2' || actionForm == 'level3'">
+                            <img  src="assets/images/dispatch/svg/level-icon.png" alt="service" class="mr-2" />
+                            <span class="split-col text-col">{{fieldName}} Name</span>
+                            <span class="split-col req-col">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="dataName"
+                        [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.dataName.errors) || existErrorFlag }"
+                        placeholder="Enter {{fieldName}} Name" maxlength="50" />
+                        <div *ngIf="serviceShopSubmit && shf.dataName.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.dataName.errors.required">{{fieldName}} Name is required</div>
+                        </div>
+                        <div *ngIf="existErrorFlag" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="existErrorFlag">{{existErrorMsg}}</div>
+                        </div>
+                    </div>                
+                </div>
+
+                <div class="service-form-row" *ngIf="actionForm == 'headquarter'">
+
+                    <div class="location-cont-hq">
+                        <p-checkbox id="bannerfit_checkbox1"
+                            formControlName="cbox1"
+                            [(ngModel)]="cbox1"    
+                            [binary]="true" inputId="binary" label="Owner"></p-checkbox>
+                        
+                       <p-checkbox id="bannerfit_checkbox2"
+                            formControlName="cbox2"
+                            [(ngModel)]="cbox2"  
+                            [binary]="true" inputId="binary" label="Franchise"></p-checkbox>
+                            <div id="valid-error" class="field-err" style="margin:4px" *ngIf="(!this.cbox1 && !this.cbox2 && serviceShopSubmit)">Please select one option</div>
+
+                    </div>
+
+                    <div>
+                        <p-radioButton formControlName="locationAddType" [(ngModel)] = "locationAddType" value="1" label="Primary Location"></p-radioButton>
+                        <p-radioButton formControlName="locationAddType" [(ngModel)] = "locationAddType" value="2" label="Secondary location"></p-radioButton>
+                    </div>
+                </div>                  
+                
+                <div class="service-form-row" *ngIf="actionForm != 'headquarter'">                    
+                    <!-- toggle -->
+                    <div class="cursor toggle-box-hq togglebox">                        
+                        <span class="toggle-col toggle-option">
+                            <p-inputSwitch formControlName="levelAddressFlag" [(ngModel)]="levelAddressFlag" (onChange)="onToggleBoxChange($event.checked)">
+                            </p-inputSwitch>
+                        </span>
+                        <span class="toggle-col field-label">Want to add address?</span>
+                    </div>
+                    <!-- toggle -->
+                </div>  
+                <div *ngIf="levelAddressFlag">
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <span class="split-col text-col">Address1</span>
+                                <span class="split-col req-col">Required</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <input type="text" pInputText class="input-bg map-input" formControlName="addressLine1" placeholder="Enter Address1" maxlength="100" />
+                            <!--input type="text" pInputText class="input-bg map-input" formControlName="addressLine1" placeholder="Enter Address1" maxlength="100" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.addressLine1.errors)}" />
+                            <div *ngIf="serviceShopSubmit && shf.addressLine1.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.addressLine1.errors.required">Address1 is required</div>
+                            </div-->
+                        </div>                
+                    </div>
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <span class="split-col text-col">Address2</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <input type="text" pInputText class="input-bg map-input" formControlName="addressLine2" placeholder="Enter Address2" maxlength="100" />
+                        </div>                
+                    </div>  
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <span class="split-col text-col">City</span>
+                                <span class="split-col req-col">Required</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <input type="text" pInputText class="input-bg map-input" formControlName="city" placeholder="Enter City" maxlength="50" />
+                            <!--input type="text" pInputText class="input-bg map-input" formControlName="city" placeholder="Enter City" maxlength="50" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.city.errors)}" />
+                            <div *ngIf="serviceShopSubmit && shf.city.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.city.errors.required">City is required</div>
+                            </div-->
+                        </div>                
+                    </div>
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <span class="split-col text-col">State</span>
+                                <span class="split-col req-col">Required</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <p-dropdown class="p-dropdown-servicetype" [filter]="true" name="stateValue" formControlName="state" [options]="companyStateDropdownData" placeholder="Select State" optionLabel="name" optionValue="id" [group]="true" (onChange)="stageChanged($event)">
+                                <ng-template let-group pTemplate="group">
+                                <div class="p-d-flex p-ai-center">
+                                    <span>{{group.name}}</span>
+                                </div>
+                                </ng-template>
+                            </p-dropdown>
+                            <!--input type="text" pInputText class="input-bg map-input" formControlName="state" placeholder="Enter State" maxlength="50" /-->
+                            <!--input type="text" pInputText class="input-bg map-input" formControlName="state" placeholder="Enter State" maxlength="50" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.state.errors)}" />
+                            <div *ngIf="serviceShopSubmit && shf.state.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.state.errors.required">State is required</div>
+                            </div-->
+                        </div>                
+                    </div>
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                <span class="split-col text-col">Zip</span>
+                                <span class="split-col req-col">Required</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" />
+                            <!--input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.zip.errors)}" />
+                            <div *ngIf="serviceShopSubmit && shf.zip.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.zip.errors.required">Zip is required</div>
+                            </div-->
+                        </div>                
+                    </div>  
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/email-icon.png" alt="service" class="mr-2 new-request-icon" />
+                                <span class="split-col text-col">Email</span>
+                                <!-- <span class="split-col req-col">Required</span> -->
+                            </label>
+                        </div>
+                        <div class="field">
+                            <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                                maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.email.errors)}" />
+                            <div *ngIf="serviceShopSubmit && shf.email.errors" class="invalid-feedback">
+                                <div id="valid-error" class="field-err" *ngIf="shf.email.errors">Email is invalid</div>
+                            </div>
+                        </div>                
+                    </div>              
+                    <div class="service-form-row">
+                        <div class="label">
+                            <label>
+                                <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="mr-2 new-request-icon" />
+                                <span class="split-col text-col">Phone</span>
+                                <!-- <span class="split-col req-col">Required</span> -->
+                            </label>
+                        </div>
+                        <div class="field">
+                            <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                                formControlName="phone" minlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && (shf.phone.value.length == 0 || phoneNumberValid))}">
+                            <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                                <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                                <app-country-phonenumber *ngIf="actionFlag && levelAddressFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                            </div>
+                            <div *ngIf="serviceShopSubmit" class="invalid-feedback">
+                                <!--div id="valid-error" class="field-err" *ngIf="shf.phone.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                                <div id="valid-error" class="field-err" *ngIf="(shf.phone.value.length > 0 && shf.phone.value.length < 10 )">Invalid phone number</div>                        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </form>  
+        
+        <form *ngIf="actionForm == 'contact'" [formGroup]="serviceContactForm">            
+            <div class="service-form-actions">
+                <div class="service-form-row service-form-row-hq">
+                    <h2 style="font-weight: normal">
+                        <span class="truncate">{{actionTitle}}</span>
+                    </h2>
+                    <div class="action-buttons action-buttons-hq ">
+                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                        class="p-button-rounded button-save button-save-hq cursor" (click)="formAction('submit')"></button>
+                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="left" label=""
+                        class="p-button-rounded button-save button-save-hq button-spin"></button>
+                        <span class="btn-close" *ngIf="!formProcessing" (click)="formAction('cancel')">
+                            <img src="assets/images/hq/hq-popup-close-icon.png" alt="HQ" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="service-form-fields">
+                <div class="service-form-row ">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">First Name</span>
+                            <span class="split-col req-col">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="firstName"
+                            [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.firstName.errors) }"
+                            placeholder="Enter First Name" maxlength="50" />
+                        <div *ngIf="serviceContactSubmit && scf.firstName.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="scf.firstName.errors.required">First name is required</div>
+                        </div>
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Last Name</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="lastName" 
+                            placeholder="Enter Last Name" maxlength="50" [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.lastName.errors)}" />
+                        <div *ngIf="serviceContactSubmit && scf.lastName.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="scf.lastName.errors.required">Last name is required</div>
+                        </div>
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/email-icon.png" alt="Email" class="icons-size mr-2 new-request-icon mail" />
+                            <span class="split-col text-col">Email</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                            maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.email.errors)}" />
+                        <div *ngIf="serviceContactSubmit && scf.email.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="scf.email.errors">Email is invalid</div>
+                        </div>
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Phone</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                            formControlName="phone" minlength="10" [ngClass]="{ 'is-invalid': (serviceContactSubmit && (scf.phone.value.length == 0 || phoneNumberValid))}">
+                        <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                            <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                            <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                        </div>
+                        <div *ngIf="serviceContactSubmit" class="invalid-feedback">
+                            <!--div id="valid-error" class="field-err" *ngIf="scf.phoneNumber.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                            <div id="valid-error" class="field-err" *ngIf="(scf.phone.value.length > 0 && scf.phone.value.length < 10) || (scf.phone.value.length == 0) ">Invalid phone number</div>                        
+                        </div>
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/hq/hq-user-title.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Title</span>                            
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="title" 
+                            placeholder="Enter Title" maxlength="50" />                       
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/hq/hq-user-title.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Business Role</span>                            
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="businessRole" 
+                            placeholder="Enter Business Role" maxlength="50" />
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/hq/hq-user-dept.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Dept</span>                            
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="dept" 
+                            placeholder="Enter Dept" maxlength="50" />                       
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/common/tag-ref-icon.png" alt="service" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">ID#</span>                            
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text"  pInputText class="input-bg map-input" formControlName="userRefId" 
+                            placeholder="ID#" maxlength="50" />
+                        
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Manager Name</span>                            
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="managername" 
+                            placeholder="Manager Name" maxlength="50"  />
+                        
+                    </div>                
+                </div>
+            </div>            
+        </form>
+    </div>
+</p-sidebar> 
+
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="addUserVisible" [baseZIndex]="100" position="right"
+    [dismissible]="false" modal="true">
+    <app-user-add *ngIf="addUserVisible" [userData] = "userData" (saveUser)="onDrawerDismiss($event)"></app-user-add>
+</p-sidebar>

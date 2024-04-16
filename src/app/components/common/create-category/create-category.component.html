@@ -1,0 +1,76 @@
+
+<div *ngIf="!deleteCategoryFlag">
+    <form [formGroup]="changePasswordForm" (ngSubmit)="actionSubmit()" autocomplete="off">
+        <div class="modal-body">
+            <div class="cpwd-form-row">
+                <div class="cpwd-form-control">
+                  
+                    <div class="cpwd-form-field">
+                        <div class="field-col bg-col cat-bg"></div>
+                        <div class="field-col text-col alt-text">
+                            <input [type]="'text'" matInput placeholder="{{enterTxt}} {{textcategoryName}}" formControlName="categoryName" ([ngModel])="categoryName" maxlength="{{NewCategoryNumberLenth}}" (keyup)="categorycreatevalidate($event)" [ngClass]="{ 'is-invalid': changPasswordSubmitted && c.categoryName.errors }" [readonly]="submitLoading">
+                           
+                        </div>
+                        <div class="invalid-feedback" align="left" style="display: inline-block;width:80%;">
+                            <div [ngClass]="{'show': invalidOldPwdMsg}" class="field-err" >{{invalidOldPwdMsg}}</div>
+                        </div>
+                        <div align="right" style="display: inline-block;width:17%;text-align: right;" class="category-text-count">{{strlengthforuser}}/{{NewCategoryNumberLenth}}</div>
+                        
+                               
+                       
+                    </div>
+                </div>
+            </div>
+            
+           
+            
+        </div>
+        <div class="modal-footer">
+            <div class="confirm-actions">
+                <button type="button" class="btn action-btn cancel" [ngClass]="{'setOpacity3': submitLoading}"  (click)="cancelAction()">Cancel<span class="cancel-btn"></span></button>
+                <button type="submit" class="btn action-btn submit" [ngClass]="{'setOpacity3': !submitFlag || submitLoading}">save
+                    <span *ngIf="!submitLoading" class="submit-btn save-btn"></span>                
+                </button>
+                <span *ngIf="submitLoading" class="load-btn"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span>
+            </div>
+        </div>
+    </form>
+    </div>
+    
+    <div *ngIf="deleteCategoryFlag">    
+        <div class="modal-body">   
+            <div class="del-row" *ngIf="!noFilesFlag">
+                <span class="checkbox-col">
+                    <span class="chk-img" (click)="checkboxChange(checkboxFlag2,'type2')">
+                        <img *ngIf="checkboxFlag2" src="assets/images/announcement/radiobox-selected.png" />
+                        <img *ngIf="!checkboxFlag2" src="assets/images/announcement/radiobox-normal.png" />
+                    </span>
+                </span>                               
+                <span class="text-col">Delete all files</span>
+            </div>            
+            <div class="del-row text-center" *ngIf="noFilesFlag">
+                <span class="checkbox-col">
+                    <span class="chk-img">
+                        <img *ngIf="checkboxFlag2" src="assets/images/announcement/radiobox-selected.png" />
+                        <img *ngIf="!checkboxFlag2" src="assets/images/announcement/radiobox-normal.png" />
+                    </span>
+                </span>                               
+                <span class="text-col">Delete category</span>
+            </div>
+            <div class="invalid-feedback" align="left" style="display: inline-block;width:80%;">
+                <div [ngClass]="{'show': invalidOldPwdMsg}" class="field-err" >{{invalidOldPwdMsg}}</div>
+            </div>  
+        </div>
+        <div class="modal-footer">
+            <div class="confirm-actions">
+                <button type="button" class="btn action-btn cancel" [ngClass]="{'setOpacity3': submitLoading}"  (click)="cancelAction()">Cancel<span class="cancel-btn"></span></button>                
+                <button *ngIf="checkboxFlag1 || checkboxFlag2" class="btn action-btn submit" [ngClass]="{'setOpacity3': submitLoading}" (click)="actionDelete()">delete
+                    <span *ngIf="!submitLoading" class="submit-btn yes-btn-delete"></span>
+                </button>
+                <button *ngIf="!checkboxFlag1 && !checkboxFlag2" class="btn action-btn submit setOpacity3" >delete
+                    <span *ngIf="!submitLoading" class="submit-btn yes-btn-delete"></span>
+                </button>
+                <span *ngIf="submitLoading" class="load-btn"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span>
+            </div>
+        </div>    
+    </div>

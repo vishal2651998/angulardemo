@@ -1,0 +1,32 @@
+<div *ngIf="loading" class="login-loader text-center"><img src="assets/images/filter/filter-loading.svg" alt="Loader" width="100" height="100" /></div>    
+<div *ngIf="!loading"  class="main-container" [ngClass] ="{ 'setDivopacity': loading }" > 
+    <div class="mcont-col-1">
+        <div class="header-logo" [ngClass]="{ 'canoo-logo': domainId == '69'}" ><span [ngClass]="{ 'bgsize-cover': domainId == '24' , 'bgsize-90': domainId == '68' }"  [style.background-image]="'url(' + headerLogo + ')'"></span></div>
+        <div class="mcont-inner-div">
+            <!-- Enter Domain Name -->
+            <div class="mcont-inner-col">
+                <img class="modal-email-img" src="assets/images/login/modal-email-img.png" />
+                <div class="heading">Great! Account is verified</div>
+                <div class="label mgr-label">Please select your manager from the list</div>
+                <form [formGroup]="addMangerForm">
+                    <div class="input-group marginTop" [ngClass]="{ 'active': managerNameInputFlag}" (click)="selectManager()">
+                        <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': managerNameInputFlag}"></div>
+                        <input readonly type="text" class="form-control inputtext" matInput placeholder="Select Manager" [(ngModel)]="managerName" formControlName="managerName" maxlength="40" />                                                                    
+                        <div class="input-group-postpend-arrow down"></div>                        
+                    </div>                                        
+                    <div *ngIf="serverError" class="login-invalid-feedback">
+                        <img src="assets/images/login/error-img.png" /> <span>{{serverErrorMsg}}</span>
+                    </div>   
+                    <div *ngIf="continueEnable && !loading1" class="action-button deactive"><button class="btn-text">CONTINUE</button></div>
+                    <div *ngIf="!continueEnable && !loading1" class="action-button" (click)="addManager()"><button class="btn-text">CONTINUE</button></div>    
+                    <div *ngIf="continueEnable && loading1" class="action-button"><button class="btn-text"><span class="setOpacity3">CONTINUE&nbsp;&nbsp;</span><span class="loading-svg"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span></button></div>                                                    
+                </form>
+            </div>                      
+        </div>
+        <!--<app-auth-footer></app-auth-footer>-->
+    </div>
+    <div class="mcont-col-2" [style.height.px]="innerHeight">
+        <app-auth-right-panel class="business-bg"></app-auth-right-panel>
+    </div>    
+</div>
+

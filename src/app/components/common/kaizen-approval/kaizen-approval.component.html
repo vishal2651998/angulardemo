@@ -1,0 +1,40 @@
+<div *ngIf="loading" class="documents-thumb-view" [style.height.px]="innerHeight">
+    <div class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+</div>
+
+<div *ngIf="!loading && statusList!='' && !approvedListFlag" class="approval-level-container ps" [perfectScrollbar]="sconfig">
+    <div class="approval-level-row" *ngIf="statusList!='' && !approvedListFlag">
+        <div *ngFor="let list of statusList; let i=index;let last=last;" class="level-status-div {{list.name}}" (click)="changeStatus(list.statusId)">
+            <div class="ls-div-lt {{list.name}}">
+                <span [ngStyle]="{'background-image': 'url(assets/images/kaizen/' + list.imageClass + '.png)'}"></span>
+            </div>
+            <div class="ls-div-rt">
+                <div class="ls-div-rt-count">{{list.count}}</div>
+                <div class="ls-div-rt-text">{{list.title}}</div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<div *ngIf="!loading" class="documents-thumb-view" [ngClass]="{'bg-color': files.length == 0 || approvedListFlag }" [style.height.px]="innerHeight">
+    <div *ngIf="lazyLoading"><div class="cust-loader esc-loader lazy-loader cust-lazy-loader doc-loader-new-one"></div></div>
+    <div *ngIf="files.length > 0" class="ps thread-scroll-container" id="documentList" id="documentList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+        <div class="documents-grid-row documents-app-grid-row" >
+            <div class="doc-items" >
+                <div class="doc-list1">
+                    <div *ngIf="contentLoading && itemOffset == 0" class="cust-loader doc-loader cont-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>                    
+                    <div id="fileList" class="list-items list-view noTop" ngClass="{'opacity': opacityFlag}" *ngIf="fileView && files.length > 0">
+                        <app-kz-list *ngIf="!approvedListFlag" [items]="files" [thumbView]="!thumbView" (scrollActionEmit)="scrollAction($event)" (emptyActionEmit)="emptyAction($event)"></app-kz-list>
+                        <app-approved-kz-list *ngIf="approvedListFlag" [items]="files" [thumbView]="!thumbView" (scrollActionEmit)="scrollAction($event)" (emptyActionEmit)="emptyAction($event)"></app-approved-kz-list>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="contentLoading && itemOffset == 0 && !opacityFlag" class="cust-loader doc-loader cont-loader" [ngClass]="{'landing-cont-loader': accessFrom == 'landingpage'}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <!--app-empty-container *ngIf="( (!contentLoading && ( files.length == 0 && !opacityFlag )))" [contentTypeValue]="contentTypeValue"></app-empty-container-->  
+    <app-empty-container *ngIf="( (!contentLoading && ( files.length == 0 && !opacityFlag )))" [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newThreadInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="createThreadUrl"></app-empty-container> 
+</div>
+
+
+

@@ -1,0 +1,524 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div *ngIf="shopId && (!user.data || !user.data.shopId)" class="loading-small-screen-scroll trst" style="left:56% !important">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+
+    <div *ngIf="shopId && user.data && user.data.shopId" class="loading-small-screen-scroll trst">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+    <div *ngIf="!shopId  && (!user.data || !user.data.shopId) " class="loading-small-screen-scroll trst" style="">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+
+    <div *ngIf="!shopId && user.data && user.data.shopId" class="loading-small-screen-scroll trst" style="left:56% !important">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div *ngIf="!locationToolsFlag && !productDetailsFlag && !loading">
+    <div style="left:47%" *ngIf="lazyLoading"
+        class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{access}}-list-lazy-loader">
+        <!-- <img style="left:50%" src="assets/images/landing-page/loading-more.svg" alt="Loader" /> -->
+    </div>
+    <div class="prob-list-cont">
+        <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new {{access}}-grid-row"
+            [style.height.px]="innerHeight">
+            <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs"
+                [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+                <p-table *ngIf="!shopId" #table [columns]="toolsListColumns" [scrollable]="true"
+                    [totalRecords]="toolsList.length" id="file-datatable"
+                    class="file-datatable thread-list-table shop-list-table ro-list" [value]="toolsList"
+                    [ngClass]="{'opacity': opacityFlag, 'hide': displayNoRecords}"
+                    [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'" (scroll)="scroll($event)" (onLazyLoad)="lazyLoad($event)" [lazy]="true">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                          <col *ngFor="let col of columns" [style]="{width: col.width}">
+                        </colgroup>
+                      </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr *ngIf="!displayNoRecords">
+                            <th *ngFor="let col of columns"  [pSortableColumn]="col.sortName">
+                                <span [ngClass]="{'pl-3' : col.field == 'image'}">{{col.header}}</span>
+                                <span *ngIf="col.field == 'cert'">&nbsp;&nbsp;<img
+                                        src="assets/images/escalations/escalation-help-white.png" alt=""></span>
+                                        <ng-container *ngIf="col.sortName">
+                                        <p-sortIcon  [field]="col.sortName"></p-sortIcon>
+                                        <p-columnFilter type="text" [field]="col.sortName" display="menu"></p-columnFilter>
+                                        </ng-container>
+                            </th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-toolsList let-i="rowIndex">
+                        <tr class="cursor" [ngClass]="{'bg-selected': lastSelectedTool == toolsList.id}">
+                            <td (click)="productDetails(toolsList)" class="px-0 pl-3">
+
+                                <span class="toolImg">
+                                    <span class="toolImg-span-lt" *ngIf="toolsList.cert">
+                                        <div class="" >
+                                            <img src="assets/images/hq/error-img-small.png" alt="">
+                                            <img src="assets/images/hq/success-tick-small.png" alt="">
+                                        </div>
+                                    </span>
+                                    <span class="toolImg-span-rt">
+                                        <!--span class="toolImg"></span-->
+                                        <!-- <span class="toolImg" [ngClass]=" { 'toolImg-dbg' : toolsList.isdefaultImg == 0 }" [ngStyle]="{'background-image': 'url(' + toolsList.bannerImages[0].url + ')'}"></span> -->
+                                        <span
+                                            *ngIf="toolsList?.uploadContents?.length > 0 && toolsList?.uploadContents[0]?.thumbFilePath"
+                                            class="upper-image-div-new" class="toolImg">
+                                            <img [src]="toolsList.uploadContents[0]?.thumbFilePath">
+                                        </span>
+                                        <span style="background-color: #abb2bd;"
+                                            *ngIf="toolsList.uploadContents?.length <= 0 " class="toolImg">
+                                            <img style="padding: 7px;width: 37px !important;height: 33px !important;" class="upper-image-div-new"
+                                                src="assets/images/hq/tools-default-image.png">
+                                        </span>
+                                    </span>
+                                </span>
+
+                            </td>
+
+                            <td (click)="productDetails(toolsList)" class="px-0 pl-3">
+                                <span class="overflow-text-table"
+                                *ngIf="toolsList.id != ''">{{toolsList.id}}</span>
+                                <span *ngIf="toolsList.id == ''">-</span>
+                            </td>
+                            
+                            <!-- Category column -->
+                            <td class="px-0 ellip-word" (click)="productDetails(toolsList)">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.categoryInfo && toolsList.categoryInfo.name">{{toolsList.categoryInfo.name}}</span>
+                                <span *ngIf="!toolsList.categoryInfo || !toolsList.categoryInfo.name">-</span>
+                            </td>
+                            <!-- Vendor column -->
+                            <td (click)="productDetails(toolsList)" class="w3 tool-thl-col-3">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.vendorInfo?.name != ''">{{toolsList.vendorInfo?.name}}</span>
+                                <span *ngIf="toolsList.vendorInfo?.name == ''">-</span>
+                            </td>
+                            <!-- model column -->
+                            <td class="w7 tool-thl-col-7" (click)="productDetails(toolsList)">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.modelInfo && toolsList.modelInfo.name && toolsList.modelInfo.name != ''">{{toolsList.modelInfo.name}}</span>
+                                <span
+                                    *ngIf="!toolsList.modelInfo || !toolsList.modelInfo.name || toolsList.modelInfo.name == ''">-</span>
+                            </td>
+                             <!-- Brand column -->
+                             <td class="w2 tool-thl-col-2 ellip-word" (click)="productDetails(toolsList)" >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.productNameInfo && toolsList.productNameInfo.name">{{toolsList.productNameInfo.name}}</span>
+                                <span *ngIf="!toolsList.productNameInfo || !toolsList.productNameInfo.name">-</span>
+                            </td>
+                             <!-- Type column -->
+                             <td class="w2 tool-thl-col-2 ellip-word" (click)="productDetails(toolsList)" >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.toolTypeInfo && toolsList.toolTypeInfo.name">{{toolsList.toolTypeInfo.name}}</span>
+                                <span *ngIf="!toolsList.toolTypeInfo || !toolsList.toolTypeInfo.name">-</span>
+                            </td>
+                            <!-- Certifiaction column -->
+                            <!-- <td class="w5 tool-thl-col-5" style="text-align: center !important;" (click)="toolsLocation(toolsList)" >
+                                <span class="overflow-text-table" *ngIf="toolsList.certification">
+                                    <img style="margin-right:30%;height: 18px; width: 18px;" class="check-bg-img"
+                                        src="assets/images/checkbox-active.png" alt="">
+                                </span>
+                                <span class="overflow-text-table" *ngIf="!toolsList.certification">
+                                    <img style="margin-right:30%;height: 18px; width: 18px;"
+                                        src="assets/images/hq/checkbox-normal.png" alt="">
+                                </span>
+                            </td> -->
+                                 <!-- Department column -->
+                                 <!-- <td class="w7 tool-thl-col-7" (click)="toolsLocation(toolsList)">
+                                    <span class="overflow-text-table"
+                                        *ngIf="toolsList.departmentInfo && toolsList.departmentInfo.name ">{{toolsList.departmentInfo.name}}</span>
+                                    <span *ngIf="!toolsList.departmentInfo || !toolsList.departmentInfo.name">-</span>
+                                </td> -->
+                                <td (click)="toolsLocation(toolsList)" class="w9 tool-thl-col-9" >
+                                    <span class="overflow-text-table text-action-link"
+                                        *ngIf="!!toolsList.qty" style="cursor: pointer;" >{{toolsList.qty}}</span>
+                                    <span *ngIf="!toolsList.qty || toolsList.qty == ''">-</span>
+                                </td>
+                                <td (click)="toolsLocation(toolsList)"  class="w4 tool-thl-col-4" *ngIf="this.access != 'shop-tools'"
+                                   >
+                                    <span style="cursor: pointer;" class="overflow-text-table text-action-link"
+                                        *ngIf="!!toolsList.locationCount">{{toolsList.locationCount}}</span>
+                                    <span *ngIf="!toolsList.locationCount || toolsList.locationCount == ''">-</span>
+                                </td>
+                                 <!-- Entered By column -->
+                             <td class="w2 tool-thl-col-2 ellip-word" (click)="productDetails(toolsList)" >
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList && toolsList.enteredBy">{{toolsList.enteredBy}}</span>
+                                <span *ngIf="!toolsList || !toolsList.enteredBy">-</span>
+                            </td>
+                           
+                            <!-- Manufacturer column -->
+                            <!-- <td class="w7 tool-thl-col-7" (click)="toolsLocation(toolsList)">
+                                <div class="">
+                                    <span class="overflow-text-table"
+                                        *ngIf="toolsList.mfgInfo && toolsList.mfgInfo.name">{{toolsList.mfgInfo.name}}</span>
+                                    <span *ngIf="!toolsList.mfgInfo || !toolsList.mfgInfo.name ">-</span>
+                                </div>
+                            </td> -->
+                            <!-- Category column -->
+                            <!-- <td (click)="toolsLocation(toolsList)" class="w5 tool-thl-col-3">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.categoryInfo && toolsList.categoryInfo.name">{{toolsList.categoryInfo.name}}</span>
+                                <span *ngIf="!toolsList.mfgInfo || !toolsList.mfgInfo.name">-</span>
+                            </td> -->
+                       
+
+
+
+                            <!-- <td class="w8 tool-thl-col-8" >
+                                <div class="">
+                                    <span class="overflow-text-table" *ngIf="toolsList.part != ''">{{toolsList.part}}</span>
+                                    <span class="no-value-text" *ngIf="toolsList.part == ''">Not available</span>
+                                </div>
+                            </td> -->
+                            <td class="w1 tool-thl-col-1  col-sticky" style="text-align: end !important;">
+                                <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" class="list-menu-content active"
+                                        backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul class="more-actions">
+                                                <li  (click)="addTools(toolsList.id)" class="cursor active" (click)="menuTrigger.closeMenu()"><img
+                                                        src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                <li *ngIf="domainId == 1" (click)="deleteTools(toolsList.id)" class="cursor active" (click)="menuTrigger.closeMenu()"><img
+                                                        src="assets/images/delete.png" alt="Edit">&nbsp;&nbsp;Delete</li>
+                                                <!--li class="cursor active" (click)="menuTrigger.closeMenu();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li-->
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+
+
+                </p-table>
+
+                <p-table *ngIf="shopId" dataKey="id" [expandedRowKeys]="expandedRows" #table
+                    [columns]="toolsListColumns" [scrollable]="true" [totalRecords]="toolsList.length"
+                    id="file-datatable" class="file-datatable thread-list-table shop-list-table ro-list"
+                    [value]="toolsList" [ngClass]="{'opacity': opacityFlag, 'hide': displayNoRecords}"
+                    [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'" (scroll)="scroll($event)" (onLazyLoad)="lazyLoad($event)" [lazy]="true">
+                    <ng-template pTemplate="colgroup" let-columns>
+                        <colgroup>
+                          <col *ngFor="let col of columns">
+                        </colgroup>
+                      </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                        <tr *ngIf="!displayNoRecords">
+                            <th *ngFor="let col of columns" class="{{col.columnpclass}}" [pSortableColumn]="col.sortName">
+                                <span>{{col.header}}</span>
+                                <span *ngIf="col.field == 'cert'">&nbsp;&nbsp;<img src="assets/images/escalations/escalation-help-white.png"
+                                        alt=""></span>
+                                <ng-container *ngIf="col.sortName">
+                                    <p-sortIcon [field]="col.sortName"></p-sortIcon>
+                                    <p-columnFilter type="text" [field]="col.sortName" display="menu"></p-columnFilter>
+                                </ng-container>
+                            </th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-toolsList let-i="rowIndex" let-expanded="expanded">
+                        <tr class="cursor" style="cursor: pointer;" id="{{toolsList.id}}" (click)="table.toggleRow(toolsList, $event)">
+                            <td class="w3 tool-thl-col-3">
+
+                                <span class="toolImg">
+                                    <button type="button" (click)="rowChange();table.toggleRow(toolsList, $event)"
+                                        pButton pRipple [pRowToggler]="toolsList"
+                                        class="expanded-button p-button-text p-button-rounded p-button-plain"
+                                        [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    <span class="toolImg-span-lt" *ngIf="toolsList.cert">
+                                        <div class="" >
+                                            <img src="assets/images/hq/error-img-small.png" alt="">
+                                            <img src="assets/images/hq/success-tick-small.png" alt="">
+                                        </div>
+                                    </span>
+                                    <span class="toolImg-span-rt">
+                                        <!--span class="toolImg"></span-->
+                                        <!-- <span class="toolImg" [ngClass]=" { 'toolImg-dbg' : toolsList.isdefaultImg == 0 }" [ngStyle]="{'background-image': 'url(' + toolsList.bannerImages[0].url + ')'}"></span> -->
+                                        <span
+                                            *ngIf="toolsList.uploadContents?.length > 0 && toolsList.uploadContents[0]?.thumbFilePath"
+                                            class="upper-image-div-new" class="toolImg" style="margin-left: auto; margin-right: 45%;">
+                                            <img [src]="toolsList.uploadContents[0]?.thumbFilePath">
+                                        </span>
+                                        <span style="background-color: #abb2bd;margin-left: auto; margin-right: 45%;display: flex;align-items: center;"
+                                            *ngIf="toolsList.uploadContents?.length <= 0 " class="toolImg">
+                                            <img style="padding: 7px;width: 37px !important;height: 33px !important;" class="upper-image-div-new"
+                                                src="assets/images/hq/tools-default-image.png">
+                                        </span>
+                                    </span>
+                                </span>
+
+                            </td>
+                            <td class="w1 tool-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.id != ''">{{toolsList.toolId}}</span>
+                                <span *ngIf="toolsList.id == ''">-</span>
+                            </td>
+                            <!-- Vendor column -->
+                            <td class="w3 tool-thl-col-3">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.vendorInfo?.name != ''">{{toolsList.vendorInfo?.name}}</span>
+                                <span *ngIf="toolsList.vendorInfo?.name == ''">-</span>
+                            </td>
+                            <!-- model column -->
+                            <td class="w3 tool-thl-col-3">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.modelInfo && toolsList.modelInfo.name && toolsList.modelInfo.name != ''">{{toolsList.modelInfo.name}}</span>
+                                <span
+                                    *ngIf="!toolsList.modelInfo || !toolsList.modelInfo.name || toolsList.modelInfo.name == ''">-</span>
+                            </td>
+                            <!-- Certifiaction column -->
+                            <!-- <td class="w5 tool-thl-col-5 textcenter">
+                                <span class="overflow-text-table" *ngIf="toolsList.cert">
+                                    <img style="margin-right: 45px; height: 18px; width: 18px;" class="check-bg-img"
+                                        src="assets/images/checkbox-active.png" alt="">
+                                </span>
+                                <span class="overflow-text-table" *ngIf="!toolsList.cert">
+                                    <img style="margin-right: 45px; height: 18px; width: 18px;"
+                                        src="assets/images/hq/checkbox-normal.png" alt="">
+                                </span>
+                            </td> -->
+                            <!-- Brand column -->
+                            <td class="w2 tool-thl-col-2 ellip-word">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.productNameInfo && toolsList.productNameInfo.name">{{toolsList.productNameInfo.name}}</span>
+                                <span *ngIf="!toolsList.productNameInfo || !toolsList.productNameInfo.name">-</span>
+                            </td>
+                            <!-- Type column -->
+                            <td class="w2 tool-thl-col-2 ellip-word">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.toolTypeInfo && toolsList.toolTypeInfo.name">{{toolsList.toolTypeInfo.name}}</span>
+                                <span *ngIf="!toolsList.toolTypeInfo || !toolsList.toolTypeInfo.name">-</span>
+                            </td>
+                            <!-- Manufacturer column -->
+                            <!-- <td class="w7 tool-thl-col-7">
+                                <div class="">
+                                    <span class="overflow-text-table"
+                                        *ngIf="toolsList.mfgInfo && toolsList.mfgInfo.name">{{toolsList.mfgInfo.name}}</span>
+                                    <span *ngIf="!toolsList.mfgInfo || !toolsList.mfgInfo.name ">-</span>
+                                </div>
+                            </td> -->
+                            <!-- Category column -->
+                            <td class="w2 tool-thl-col-2 ellip-word">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.categoryInfo && toolsList.categoryInfo.name">{{toolsList.categoryInfo.name}}</span>
+                                <span *ngIf="!toolsList.categoryInfo || !toolsList.categoryInfo.name">-</span>
+                            </td>
+                            <!-- Department column -->
+                            <!-- <td class="w7 tool-thl-col-7">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.departmentInfo && toolsList.departmentInfo.name ">{{toolsList.departmentInfo.name}}</span>
+                                <span *ngIf="!toolsList.departmentInfo || !toolsList.departmentInfo.name">-</span>
+                            </td> -->
+                            <td class="w9 tool-thl-col-9">
+                                <span class="overflow-text-table text-action-link"
+                                    *ngIf="!!toolsList.qty">{{toolsList.qty}}</span>
+                                <span *ngIf="!toolsList.qty || toolsList.qty == ''">-</span>
+                            </td>
+                            <!-- <td *ngIf="this.access != 'shop-tools'" class="w4 tool-thl-col-4">
+                                <span class="overflow-text-table text-action-link"
+                                    *ngIf="!!toolsList.loc">{{toolsList.loc}}</span>
+                                <span *ngIf="!toolsList.loc || toolsList.loc == ''">-</span>
+                            </td> -->
+
+
+
+                            <!-- <td class="w8 tool-thl-col-8" >
+                                <div class="">
+                                    <span class="overflow-text-table" *ngIf="toolsList.part != ''">{{toolsList.part}}</span>
+                                    <span class="no-value-text" *ngIf="toolsList.part == ''">Not available</span>
+                                </div>
+                            </td> -->
+
+                            <!-- Entered By column -->
+                            <td class="w2 tool-thl-col-2 ellip-word">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList && toolsList.enteredBy">{{toolsList.enteredBy}}</span>
+                                <span *ngIf="!toolsList || !toolsList.enteredBy">-</span>
+                            </td>
+
+                            <td class="w1 tool-thl-col-1 col-sticky">
+                                <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" class="list-menu-content active"
+                                        backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul (click)="onSelectProduct(toolsList)" class="more-actions">
+                                                <li class="cursor active" (click)="menuTrigger.closeMenu()"><img
+                                                        src="assets/images/add-icon.png" alt="Edit">&nbsp;&nbsp;Add Tool/Equipment to Shop</li>
+                                                <!--li class="cursor active" (click)="menuTrigger.closeMenu();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li-->
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="rowexpansion" let-toolsList>
+                        <tr style="cursor: pointer;">
+                            <td colspan="10" style="padding: 0 !important;">
+                                <div class="location-data-div">
+                                    <div >
+                                        <div class="">
+                                            <ng-container *ngIf="toolsList.products && toolsList.products.length > 0">
+                                                <div *ngFor="let loc of toolsList.products let t=index"  (click)="viewProductHistory(loc,toolsList)" style="margin-left: 50px;" class="d-flex align-items-center flex-grow-1">
+                                                 <div class="d-flex align-items-center" style="width:36%">
+                                                     <div class="inn-loc-th-col inn-loc-th-col-2">
+                                                         <span class="loc-label-text">Serial#: </span><span class="loc-normal-text">{{loc.serialNo}}</span>
+                                                     </div>
+                                                 
+                                                     <div class="inn-loc-th-col inn-loc-th-col-6 align-items-center d-flex ml-2" style="line-height:1">
+                                                         <img src="assets/images/hq/close-round.png">
+                                                         <span class="loc-label-text ml-1">Data-Integrity: </span>
+                                                         <span class="text-danger font-weight-bold ml-2">Not-Validated</span>
+                                                     </div>
+                                                 </div>
+                                                 <div class="d-flex align-items-center">
+                                                     <div class="inn-loc-th-col inn-loc-th-col-6 align-items-center d-flex" style="line-height:1">
+                                                         <span class="loc-label-text ml-1">Purchase Date: </span>
+                                                         <span class="font-weight-bold ml-2">{{loc.purchaseDate != '0000-00-00 00:00:00' && loc.purchaseDate ? (loc.purchaseDate | localDatePipe | date: 'MMM d, yyyy ') : '-'}}</span>
+                                                     </div>
+                                                 
+                                                     <div class="inn-loc-th-col inn-loc-th-col-6 align-items-center d-flex" style="margin-left:98px">
+                                                         <span class="overflow-text-table text-action-link ml-2">View Inspection</span>
+                                                     </div>
+                                                 </div>
+                                                </div>
+                                            </ng-container>
+                                               
+
+
+                                            <!-- <div class="" >
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                                    <div class="loc-list-col-1">
+                                                        <div class="inn-loc-th-col inn-loc-th-col-1">
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="loc-list-col-2">
+                                                        <div class="inn-loc-th-col inn-loc-th-col-2">
+                                                            <span class="loc-label-text">Serial#: </span><span class="loc-normal-text">5469</span>
+                                                        </div>
+                                                    </div>
+                                                                                                 
+                                                    <div class="loc-list-col-6">
+                                                        <div class="inn-loc-th-col inn-loc-th-col-6 align-items-center">
+                                                            <img src="assets/images/hq/close-round.png">
+                                                            <span class="loc-label-text ml-1">Status: </span>
+                                                            <span class="text-danger font-weight-bold ml-2">Not-Validated</span>
+                                                        </div>
+                                                    </div>
+                                                                                            
+                                                </div>  
+                                            </div> 
+                                            <div class="" >
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding">
+                                                    <div class="loc-list-col-1">
+                                                        <div class="inn-loc-th-col inn-loc-th-col-1">
+                                                        </div>                                                
+                                                    </div>
+                                                    <div class="loc-list-col-2">
+                                                        <div class="inn-loc-th-col inn-loc-th-col-2">
+                                                            <span class="loc-label-text">Serial#: </span><span class="loc-normal-text">5469</span>
+                                                        </div>
+                                                    </div>
+                                                                                                 
+                                                    <div class="loc-list-col-6">
+                                                        <div class="inn-loc-th-col inn-loc-th-col-6 align-items-center d-flex">
+                                                            <img src="assets/images/hq/close-round.png">
+                                                            <span class=" ml-1 loc-label-text">Status: </span>
+                                                            <span class="text-danger font-weight-bold ml-2">Not-Validated</span>
+                                                        </div>
+                                                    </div>
+                                                                                            
+                                                </div>  
+                                            </div>  -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                        </tr>
+                    </ng-template>
+
+                </p-table>
+
+            </div>
+        </div>
+    </div>
+    <div *ngIf="itemEmpty">
+        <div style=" box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+        background: white;position: relative;" *ngIf="toolsList && toolsList.length == 0" [style.height.px]="innerHeight">
+            <div class="empty-show-container">
+                <div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div *ngIf="this.access == 'all-tools'"
+                                    class="d-flex align-items-center justify-content-center flex-column">
+                                    <div style="border: #8d8d8d solid 1px;padding: 30px;" class="rounded-circle">
+                                        <img src="assets/images/hq/tools-blank.png">
+                                    </div>
+                                    <div>
+                                        <p *ngIf="domainId == 1" style="color: #444444; font-size: 13px; margin-top: 15px;" class="fs-14 shop-txt"><i>Tap on the ‘Add Tool/Equipment to Network’ button to
+                                            Add Tool/Equipment</i></p> 
+                                    </div>
+
+                                    <div *ngIf="domainId == 1" (click)="addTools()" class="m-0 add-action-btn cursor">
+                                        <img src="assets/images/hq/add-icon.png">
+                                        <span>Add Tool/Equipment to Network</span>
+                                    </div>
+                                </div>
+                                <div *ngIf="this.access != 'all-tools'"
+                                    class="d-flex align-items-center justify-content-center flex-column">
+                                    <div style="border: #8d8d8d solid 1px;padding: 30px;" class="rounded-circle" >
+                                        <img src="assets/images/hq/tools-blank.png">
+                                    </div>
+                                    <div>
+                                        <p style="color: #444444; font-size: 13px; margin-top: 15px;" class="fs-14 shop-txt"><i>Tap on the ‘Add Tool & Equipment to Shop button to Add
+                                            Tool/Equipment</i></p>
+                                    </div>
+
+                                    <div (click)="addProduct()" class="m-0 add-action-btn cursor">
+                                        <img src="assets/images/hq/add-icon.png">
+                                        <span>Add Tool & Equipment to Shop</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="locationToolsFlag">
+    <div style="width: 100%; display: block;">
+        <app-tools-list-locations #productHistoryComponentRef *ngIf="locationToolsFlag"
+            [attributesInfo]="toolsAttributesInfo" [toolsData]="toolsPageData"
+            [toolsLocationPageData]="toolsLocationPageData" (toolsListComponentRef)="toolsLocationListPageRef = $event"
+            (toolsLocationCallback)="toolsLocationListPageCallback($event)"></app-tools-list-locations>
+    </div>
+</div>
+
+<div *ngIf="productDetailsFlag">
+    <div style="width: 100%; display: block;">
+        <app-product-details [selectedProduct]=selectedProduct *ngIf="productDetailsFlag"></app-product-details>
+    </div>
+</div>
+
+<div *ngIf="addProductsFlag">
+    <div style="width: 100%; display: block;">
+        <app-add-product></app-add-product>
+    </div>
+</div>

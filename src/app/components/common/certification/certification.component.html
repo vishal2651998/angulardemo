@@ -1,0 +1,106 @@
+<div class="modal-container custom-modal manage-modal" id="wrapper">
+    <div class="modal-header">
+        <h6 class="modal-title" title="{{title}}">Certification <span *ngIf="type=='edit'">Edit</span></h6>
+        <div class="actions">
+            <!--<div *ngIf="!loading" class="action-col cursor clear hide" (click)="clearSelection()" [ngClass]="{'show': (headerCheck == 'checked' || headerCheck == 'all'), 'hide': (headerCheck == 'unchecked' || loading)}">Clear All</div>-->
+            <div *ngIf="!loading" class="action-col apply" (click)="applySelection()" title="Save" [ngClass]="{'cursor active': ( headerCheck == 'checked' || headerCheck == 'all'), 'inactive': (headerCheck == 'unchecked' || loading)}">Save</div>
+                               
+            <form *ngIf="!loading" class="search-form" [formGroup]="searchForm" (ngSubmit)="submitSearch()">
+                <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/search-icon.png"></a>
+                <input *ngIf="!actionFlag" type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                <input *ngIf="actionFlag" type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" disabled="true">
+                <a *ngIf="searchClose && !actionFlag" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/search-icon.png"></a>
+            </form>
+            <span (click)="close()" class="cursor close">
+                <img *ngIf="!loading" src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body">       
+        <div class="center-scroll-to scrollbar scrollbar-primary thin"  [style.height.px]="innerHeight">   
+            <div class="modal-cert">
+                <div *ngIf="loading" class="loading-image"><img src="assets/images/loading.svg" alt="Loader" width="60"/></div>     
+                <div *ngIf="!loading && !empty" id="manageTable">
+                    <div class="ps">
+                        <table class="manage-table split-table">
+                            <thead *ngIf="!loading" class="manage-header">
+                                <tr class="header-row">
+                                    <th class="col1-width">                                
+                                        <div class="title">
+                                            <!--<span class="cursor checkbox {{headercheckDisplay}} {{headerCheck}} hide" (click)="itemSelection('all',0, 0, 0, headerCheck)"></span>-->
+                                            <span class="title-text">Certification List</span>
+                                        </div>
+                                    </th>
+                                    <th class="col2-width">
+                                        <div class="title-text">Certification Date</div>                           
+                                    </th>
+                                    <th class="col3-width">
+                                        <div class="title-text">Expiration Date</div> 
+                                    </th>                  
+                                </tr>                                                              
+                            </thead>
+                            <tbody *ngIf="loading" class="manage-items">
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="!loading" class="manage-items"> 
+                                <tr *ngIf="cError">
+                                    <td class="cont col-width" colspan="3"> <div><span class="profile-invalid-feedback sname-error cert-error">{{cErrorMsg}}</span></div></td>
+                                </tr>   
+                                <tr *ngFor="let item of listItems; let i = index;">
+                                    <td class="cont col-width" colspan="3">
+                                        <div class="cert-title" [ngClass]="{'hide': !item.displayFlag}">{{item.name}}</div>                                        
+                                        <table class="table-width">
+                                            <tbody> 
+                                                <tr class="item-list cursor" *ngFor="let inItem of item.contents; let j = index;" [ngClass]="{'hide': !inItem.displayFlag}">
+                                                    <td class="choose col1-width" (click)="itemSelection('single',i, j, inItem.contentId, !inItem.checkFlag)">
+                                                        <span class="checkbox" [ngClass]="{'active': inItem.checkFlag, 'inactive': !inItem.checkFlag}"></span>                                           
+                                                        <span>{{item.contents[j].contentInfo}}</span>
+                                                    </td>
+                                                    <td class="col2-width">
+                                                        <div class="title-text" [ngClass]="{'hide': !inItem.checkFlag}">
+                                                            <p-calendar 
+                                                            [(ngModel)]="item.contents[j].cdate" [showIcon]="true" [touchUI]="true" 
+                                                            dateFormat="M dd, yy" [inputId]="'touchui-cdate-'+item.contents[j].contentId"                                                              
+                                                            (onSelect)="onTextChange($event)" >
+                                                            </p-calendar>
+                                                        </div>                                                                                 
+                                                    </td>
+                                                    <td class="col3-width">
+                                                         <div class="title-text" [ngClass]="{'hide': !inItem.checkFlag}">
+                                                            <div class="title-text" >
+                                                                <p-calendar 
+                                                                [(ngModel)]="item.contents[j].edate" [showIcon]="true" [touchUI]="true" 
+                                                                dateFormat="M dd, yy"  [inputId]="'touchui-edate-'+item.contents[j].contentId"                                                              
+                                                                (onSelect)="onTextChange($event)" >
+                                                                </p-calendar>
+                                                            </div>  
+                                                         </div> 
+                                                    </td>  
+                                                </tr>                                            
+                                            </tbody>                                            
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="!loading && empty" class="no-item-list">
+                    <div class="item-empty-container">
+                        <div class="empty-cont">
+                            <div class="text-center empty-res">
+                                <div class="empty-bg"></div>
+                                <div>{{successMsg}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+    </app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+    </app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+        <nav id="nav-sidebar">
+            <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+        </nav>
+    </div>
+</div>
+<div class="prob-index split-sec1">
+    <div class="container-fluid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+            <!-- -->
+            <div class="threads-page-filter padding-right-class" [ngClass]="{ 'filter-show-hide' : !expandFlag, 'col col-lg-2  col-md-2 col-xl-2 col-sm-2 ': expandFlag }">
+                <div class="text-thread-title" [ngClass]="{ 'hide' : !expandFlag } ">
+                    <span class="thread-img knowledge-ic">
+                        <img src="assets/images/knowledge_article_heading.svg" onload="SVGInject(this)">
+                    </span>
+                    <span class="knowledge_article__heading">Knowledge Article</span>
+                </div>
+                <div class="cbt-filter thread-filter"
+                    [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                    <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                    (callback)="filterCallback($event)" (filterAction)="applyFilter($event)"></app-filter>
+                    <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+                    (callback)="filterCallback($event)" (filterAction)="applyFilter($event)"></app-filter>
+                </div>
+            </div>
+            <div class="center-middle-width-container col"  
+            [ngClass]="{ 'col-lg-8 col-md-8 col-xl-8 col-sm-8' : expandFlag && rightPanel , 'col-lg-10 col-md-10 col-xl-10 col-sm-10' : (expandFlag && !rightPanel) || (!expandFlag && rightPanel) ,'col-lg-12 col-md-12 col-xl-12 col-sm-12' : !expandFlag && !rightPanel }"
+            >
+                <div class="center-middle-width padding-common" [ngClass]="{ 'filter-expand ': expandFlag, 'filter-collapse': !expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}"
+                >
+                    <div class="thread-top-section">
+                        <div class="thread-top-left">
+                            <div *ngIf="kaCategoryNew && createAccess && delayDisplay" class="cursor thread-add-new" tooltipClass="doc-type-tooltip" triggers="click" [autoClose]="true" placement="right"
+                            [ngbTooltip]="kaTypes" >
+                                <span><i style="font-size: 13px;margin-right: 4px;"
+                                        class="pi pi-plus"></i></span><span>Add New</span>
+                            </div>
+                            <div *ngIf="!kaCategoryNew && createAccess && delayDisplay" (click)="navPage()" class="cursor thread-add-new" >
+                                <span><i style="font-size: 13px;margin-right: 4px;"
+                                        class="pi pi-plus"></i></span><span>New Knowledge Articles</span>
+                            </div>
+                            <ng-template #kaTypes>
+                                <ul class="doc-type">
+                                    <li class="cursor doc-type-list {{type.class}}" [ngClass]="{'hide': type.hideFlag}"
+                                        *ngFor="let type of kaTypeLists;" (click)="navPage(type.class)">
+                                        <div class="doc-type-info">
+                                            <div class="title">{{type.title}}</div>                                            
+                                        </div>
+                                    </li>
+                                </ul>
+                            </ng-template>
+                            <div class="thread-sort-option">
+                                <!-- <p-dropdown class="select-thread-sort"  appendTo="body" [options]="threadSortOptions" [(ngModel)]="selectedCity1" placeholder="" optionLabel="name" (onChange)="selectEventSort($event)" ></p-dropdown>
+                           </div> 
+                           <div  class="thread-order-option">
+                            <p-dropdown class="select-thread-order"  appendTo="body" [options]="threadOrderOptions" [(ngModel)]="selectedCity2" placeholder="" optionLabel="name" (onChange)="selectEventOrder($event)" ></p-dropdown>
+                           </div>  -->
+                            </div>
+                            <div class="thread-top-right">
+                                <!--app-common-notifications *ngIf="msTeamAccess"></app-common-notifications-->
+                                <div (click)="taponpin()" class="icon-right cursor">
+                                    <img *ngIf="!yourpined" src="assets/images/pin-icon-normal.png">
+                                    <img *ngIf="yourpined" src="assets/images/pin-icon-active.png">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clear"></div>  
+                        
+                        <div *ngIf="apiUrl.kaCategory && displayPage">
+                            <app-ka-category-solr [pageDataInfo]="pageData" [filterOptions]="filterOptions"
+                                (toggle)="expandAction($event)" (filterOutput)="filterOutput($event)">
+                            </app-ka-category-solr>
+                        </div>
+                        <div *ngIf="!apiUrl.kaCategory && displayPage">
+                            <app-knowledge-articles-solr [pageDataInfo]="pageData" [filterOptions]="filterOptions"
+                                (toggle)="expandAction($event)" (accessLevelValue)="accessLevelValu($event)" (filterOutput)="filterOutput($event)">
+                            </app-knowledge-articles-solr>
+                        </div>
+
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right-middle-width-container landing-padding0  col col-lg-2  col-md-2 col-xl-2 col-sm-2 padding-right-class"
+            [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+                <div class="right-width-column padding-common">
+                    <app-domain-members [disableRightPanel]="disableRightPanel"></app-domain-members>
+                </div>
+            </div>
+            <!-- <div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+                    <app-domain-members></app-domain-members>
+                </div> -->
+        </div>
+    </div>
+</div>

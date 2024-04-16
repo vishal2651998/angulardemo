@@ -1,0 +1,80 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="d-flex">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar *ngIf="!user || !user.data.shopId" [pageData]="sidebarActiveClass" accessModule="headquarters"
+                    (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+                <app-sidebar *ngIf="user && user.data.shopId" [pageData]="sidebarActiveClass" accessModule="all-users"
+                    (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="right-section" style="width: calc(100% - 60px) !important;">
+        <div class="prob-index system-setting">
+            <div class="container-fluid">
+                <div class="center-middle-width-container">
+                    <div class="center-middle-width padding-common padding-common-hq">
+                        <div class="d-flex align-items-center justify-content-between w-100">
+                            <div class="ml-2 hq-head">
+                                <div class="hq-head-row-0" *ngIf="!user.data || !user.data.shopId">
+                                    <span class="hq-head-breadcrumb-text cursor mr-2"
+                                        (click)="back('Headquarters')">Headquarters</span>
+                                    <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                    <span class="hq-head-breadcrumb-text cursor ml-2">Users</span>
+                                    <!-- <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+                                    <!-- <span class="hq-head-breadcrumb-text">{{featuredActionName}}</span> -->
+                                </div>
+                                <div class="hq-head-row-1">
+                                    <img class="hq-head-img" src="../../../../assets/images/hq/user-head-default.png"
+                                        alt="" />
+                                    <span class="hq-head-text ms-2 fw-bold">All Users</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-end" style="width: 80%;">
+                            <div *ngIf="loadingShops && (!user.data || !user.data.shopId)" class="col-sm-2 text-center" >
+                                <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+                            </div>
+                            <p-dropdown  *ngIf="!loadingShops && (!user.data || !user.data.shopId)"
+                                [showClear]="true" (onChange)="onClear($event)"
+                                [(ngModel)]="shopSelectedId" (click)="manageShopList()"
+                                appendTo="body" [options]="shopList" optionLabel="name"
+                                optionValue="id" class="p-dropdown-workflowtype col-3"
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                placeholder="Select Shop">
+                            </p-dropdown>
+                                <div class="m-0 user-btn cursor" *ngIf="itemTotal>0">
+                                    <span style="color: #878b91;">TOTAL USERS</span><span class="total-user">{{itemTotal}}</span>
+                                </div>
+                              
+                                <div (click)="addUser()" class="m-0 add-action-btn cursor">
+                                    <img src="assets/images/hq/add-icon.png">
+                                    <span>New User</span>
+                                </div>
+                                <div class="m-0 border-0 add-action-btn setOpacity5">
+                                    <img src="assets/images/export-green-icon.png">
+                                    <span>Template</span>
+                                </div>
+                                <div class="m-0 pl-0 border-0 add-action-btn setOpacity5">
+                                    <img src="assets/images/common/cdownload-icon.png">
+                                    <span>Download Shops</span>
+                                </div>
+                                <div class="m-0 pl-0 border-0 add-action-btn setOpacity5">
+                                    <img src="assets/images/hq/hq-media-green-upload-icon.png">
+                                    <span>Upload Shops</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="width: 100%; display: block;">
+                            <app-user-list #userComponent *ngIf="userListFlag" [userPageData]="userPageData"  (userIndexListComponentRef)="userListPageRef = $event" (userCallback)="userIndexListPageCallback($event)"></app-user-list>                        
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

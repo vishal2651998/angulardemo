@@ -1,0 +1,112 @@
+<div class="modal-container custom-modal make-modal manage-modal" id="wrapper">
+    <div class="modal-header">
+        <h6 class="modal-title">{{makeTxt}}</h6>
+        <span class="cursor add-make add-turn" (click)="manageMakeToggle()">{{addMakeOnTxt}}</span>
+        <span class="cursor add-make" [ngClass]="{'active': !makeActionFlag, 'deactive': makeActionFlag}" (click)="manageMake('new', 0)">{{addMakeTxt}}</span>
+        <div class="actions">
+            <form class="search-form" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+                <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/search-icon.png"></a>
+                <input type="text" autocomplete="off" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search Make" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/search-icon.png"></a>   
+            </form>
+            <span (click)="close()" class="cursor close">
+                <img *ngIf="!makeLoading" src="assets/images/matrix/make-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div *ngIf="!makeEmpty" id="makeTable" class="container scrollbar scrollbar-primary thin" [style.height.px]="height">
+            <div *ngIf="makeSuccess" class="parent-succ-div">
+                <div class="success-msg"><span>{{successMsg}}</span></div>
+            </div>
+            <table class="make-table">
+                <thead class="make-header">
+                    <tr>
+                        <th>{{makeTxt}}</th>
+                        <th colspan="2">{{wsTxt}}</th>
+                        <th>Access</th>
+                    </tr>
+                </thead>
+                <tbody *ngIf="makeLoading" class="make-items">
+                    <tr>
+                        <td colspan="2">
+                            <div class="loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="!makeLoading" class="make-items">
+                    <tr class="item-list" *ngFor="let item of makeList; let i = index;" [ngClass]="{'action': item.action != ''}">
+                        <ng-template #ws>
+                            <div class="action">
+                                <ul class="ws-list scrollbar scrollbar-primary thin" [ngClass]="{'custom-height': item.workstreamList?.length > 6}">
+                                    <li *ngFor="let ws of item.workstreamList;">{{ws.name}}</li>
+                                </ul>
+                            </div>
+                        </ng-template>
+                        <ng-template #actions>
+                            <div class="action">
+                                <ul class="more-actions">
+                                    <li class="cursor" (click)="manageMake('edit', i)"><img src="assets/images/edit.png" alt="Edit">Edit</li>
+                                    <!--li class="cursor"><img src="assets/images/delete.png" alt="Delete">Delete</li-->
+                                </ul>
+                            </div>
+                        </ng-template>
+                        <td [ngClass]="{'make-edit': item.action != ''}">
+                            <span *ngIf="item.action == '' || (item.action != '' && item.isPredefined == 1)">{{item.makeName}}</span>
+                            <span class="model-input" *ngIf="item.action != '' && item.isPredefined == 0">
+                                <input type="text" class="form-control model-control" [ngClass]="{'is-invalid': item.makeExists}" id="makeName" value="{{makeVal}}" maxlength="50" autocomplete="off" placeholder="Enter Make Name" (input)="onChange(i, $event.target.value)">
+                                <div *ngIf="item.makeExists" class="invalid-feedback">Make already exists</div>
+                            </span>
+                        </td>
+                       
+                        <td [ngClass]="{'ws-select': item.action != ''}">
+                            <span *ngIf="item.action == '' && item.wsName != 'Multiple'">{{item.wsName}}</span>
+                            <span *ngIf="item.action == '' && item.wsName == 'Multiple'" class="cursor multiple custom-pop" popoverClass="custom-tooltip make-ws-tooltip" [ngbPopover]="ws" popoverTitle="" placement="right">{{item.wsName}}</span>
+                            <span *ngIf="item.action != ''">
+                                <app-workstream-list [filteredWorkstreams]="filteredWorkstreams" [workstreams]="workstreams" (selectedWorkstreams)="selectedWorkstreams($event)"></app-workstream-list>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="cursor field-box toggle-box togglebox" [ngClass]="{'active': checkedBox, 'inactive': checkedBox}">
+                                    <span class="toggle-col field-label"></span>
+                                    <span class="toggle-col toggle-option">
+                                        <p-inputSwitch  [(ngModel)]="item.checkedBox" (onChange)="onToggleBoxChange(item.id,i,$event.checked, -1,item.wsName)" ></p-inputSwitch>
+                                    </span>
+                                </div>
+                            </div>
+                            
+                        </td>
+                        <td>
+                            <div class="matrix-action">
+                                <span *ngIf="item.action == 'new' || item.action == 'edit'" class="active custom-icon action-icon">
+                                    <ul>
+                                        <li class="submit-icon" [ngClass]="{'active': submitActionFlag, 'deactive': !submitActionFlag}">
+                                            <img class="cursor" src="assets/images/checkbox-active.png" (click)="manageMake('submit', i)" />
+                                        </li>
+                                        <li class="close-icon"><img class="cursor" src="assets/images/close.png" (click)="manageMake('cancel', i)" /></li>
+                                    </ul>
+                                </span>
+                                
+                                <span *ngIf="item.action == ''" class="cursor custom-pop" [ngClass]="{'active': item.activeMore}" popoverClass="custom-tooltip make-more-tooltip" [ngbPopover]="actions" popoverTitle="" placement="left">
+                                    <img class="cursor more-icon" src="assets/images/more-icon.png" />
+                                </span>
+                            </div>                            
+                        </td>
+                       
+                       
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="makeEmpty" class="no-item-list" [style.height.px]="height">
+            <div class="item-empty-container">
+                <div class="empty-bg"></div>
+                <div class="empty-cont">
+                    <div class="text-center empty-res" [innerHTML]="successMsg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

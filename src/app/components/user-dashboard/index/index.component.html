@@ -1,0 +1,960 @@
+<div id="header">
+  
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch($event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch($event)"></app-product-header>
+</div>
+<div class="prob-index">
+<div class="probing-content" [style.height]="divHeight">
+<!--div class="container">
+    <div class="row">
+      <div class="col-4 text-left">
+          <div class="rounded bg-dark">
+        <span><img  src="assets/images/user-dashboard/active_gray_user_dashboard.png" width="19" height="17" style="vertical-align: middle;" /></span>
+        <span>Active users</span>
+    </div>  
+    </div>
+      
+      <div class="col text-right">
+        One of three columns
+      </div>
+    </div>
+  </div>-->
+  
+<!--
+<button pButton class="p-button-raised p-button-rounded p-button-sm" type="button" style="margin-right: 10px;    margin-left: 10px;" label="Active Users ({{totalRecords}})" ></button>
+
+<button pButton disabled type="button" class="p-button-raised p-button-rounded p-button-sm p-button-info" label="In Active Users" ></button>
+-->
+
+
+<div *ngIf="loading" class="cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+
+
+
+<p-table #dt id="user-dashboard-table-data" *ngIf="showuserdashboarddata" (onRowSelect)="onRowSelect($event)"    [resizableColumns]="true" columnResizeMode="expand" [columns]="selectedColumns" sortMode="single"  [resizableColumns]="true" columnResizeMode="expand" [styleClass]="'p-datatable-sm p-datatable-gridlines  user-dashboard-scroll user-dashboard-p-table thin p-datatable-responsive-demo'"   [columns]="cols" [frozenColumns]="frozenCols"
+ [autoLayout]="true"  frozenWidth="425px"  [value]="usersList"  
+ [scrollable]="true"  [resizableColumns]="true" (onLazyLoad)="loadPage($event)" [lazy]="true" [scrollHeight]="pTableHeight"
+    [totalRecords]="totalRecords" (scroll)="scroll($event)" >
+
+    <!-- Need to add lazy load for Dynamic Filter -->
+    <!--(onLazyLoad)="loadPage($event)" [lazy]="true"-->
+    
+    <ng-template pTemplate="colgroup" let-columns>
+        <colgroup>
+            <col *ngFor="let col of columns" [style]="{width: col.width}" >
+        </colgroup>
+    </ng-template>
+    <ng-template pTemplate="caption">
+        <div  class="userdashboard-list-head">
+    
+      <div class="prob-head-col head-col-1 text-left">
+        <span><img class="header-userdash-img" src="assets/images/user-dashboard/user_manage_icon.png"></span><span class="head-txt header-usermanage-title">{{pageaccesstitle}}</span>
+        
+        <span *ngIf="TVSDomain || TVSIBDomain" >
+            <p-dropdown class="p-table-choose-types"  appendTo="body" [options]="coluserTypesHeader" [(ngModel)]="selectedHeaderType" optionLabel="label" placeholder="" (onChange)="selectTypeLoad($event)" ></p-dropdown>            
+        </span>        
+        
+        <p-dropdown class="p-table-choose-types-dd"  appendTo="body" [options]="colTypesHeader" [(ngModel)]="selectedHeaderTypeUsers" optionLabel="label" placeholder="" (onChange)="selectTypeUsersLoad($event)" ></p-dropdown>            
+      
+        <!--span *ngIf="!publishbutton" class="tab tab-1 active action-col" (click)="showuserdashboard(1)">ACTIVE USERS <span class="totalrecdash total_active_userdash countcoloractive">({{totalRecordsActive}})</span></span>
+
+        <span *ngIf="!publishbutton" class="tab tab-2 action-col" (click)="showuserdashboard(3)">INACTIVE USERS <span class="totalrecdash total_iactive_userdash">({{totalRecordsInActive}})</span></span>
+
+        <span  *ngIf="!publishbutton" class="tab tab-3 action-col" (click)="showuserdashboard(4)">WAITING FOR APPROVAL <span class="totalrecdash total_waitingfor_userdash">({{totalRecordsWaitingFor}})</span></span>
+        -->
+        <span  *ngIf="!publishbutton && !fromssoFlag" class="tab tab-4 action-col active" (click)="AddUserDialog()" >Add User </span>
+        <span  *ngIf="(collabticDomain || domainId=='82') && !publishbutton && !fromssoFlag" class="tab tab-8 action-col active" (click)="inviteUserDialog()" >Invite User </span>
+        
+          
+        
+
+        <!--<span (click)="addNewcolumn()" class="tab tab-6 action-col ">Add Column  <span class="submit-btn"></span></span>-->
+        
+    </div>
+      
+      <div *ngIf="!ItemEmpty" class="prob-head-col head-col-2 text-right">
+       <span *ngIf="publishbutton" (click)="onCancelaction()"  class="tab tab-5 action-col ">Cancel <span class="cancel-btn"></span></span>
+        <span *ngIf="publishbutton" (click)="onPublishaction()" class="tab tab-6 action-col ">Save  <span class="submit-btn"></span></span>
+        
+       <!-- <div  class="confirm-actions" style="    padding: 20px 0px 20px 0px;">
+            <button class="btn action-btn cancel tab tab-5 action-col" (click)="onCancelaction()" >Cancel<span class="cancel-btn"></span></button>
+        <button   class="btn action-btn submit tab tab-6 action-col" (click)="onPublishaction()" type="button" >Save<span class="submit-btn"></span></button>
+            
+        </div>
+        selectedItemsLabel="{0} columns selected"
+        -->
+        
+        <span *ngIf="!publishbutton && userId=='505' && domainId=='1'" class="tab tab-7 action-col " (click)="exportallDomainDashboard()"><span class="export-btn"></span> EXPORT DOMAINS </span>
+        <span *ngIf="!publishbutton" class="tab tab-7 action-col " (click)="exportallUsersDashboard()"><span class="export-btn"></span> EXPORT AS EXCEL </span>
+        <!--<span *ngIf="!publishbutton" class="tab tab-7 action-col " (click)="exportallThreads()"><span class="export-btn"></span> EXPORT </span>-->
+       
+            <p-multiSelect class="p-table-choose-cols" *ngIf="!publishbutton" [options]="cols" [(ngModel)]="selectedColumns" optionLabel="header"
+        selectedItemsLabel="Choose Columns" [style]="{minWidth: '200px'}" placeholder="Choose Columns"></p-multiSelect>
+      
+      </div>
+    
+  </div>
+       
+        
+    </ng-template>
+    
+   
+    <ng-template pTemplate="header" let-columns>
+        <tr>
+            
+            <th  title="{{col.header}}"  class="p-table-header {{col.columnpclass}}" pResizableColumn [pSortableColumn]="col.field" [pSortableColumnDisabled]="col.field === 'profileImage' || col.field === 'LoginID' || col.field === 'toolbar'" *ngFor="let col of columns">
+                    <span *ngIf="col.field=='LoginID'"> <p-tableHeaderCheckbox></p-tableHeaderCheckbox></span>
+               
+                <div class="p-d-flex p-jc-between p-ai-center"  *ngIf="col.field!='profileImage' && col.field!='toolbar' && col.field!='LoginID'">
+                    {{col.header}}  
+                   <p-sortIcon [field]="col.field"></p-sortIcon>  <p-columnFilter  type="text" field="{{col.field}}" display="menu"></p-columnFilter> 
+                </div>
+                
+            </th>
+            
+
+
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-usersList let-rowData let-columns="columns">
+        
+        <tr class="p-table-rows" [pSelectableRow]="usersList">
+           
+            <td #ptabletdata  class="{{col.columnpclass}} text-center oneclassstep"  pEditableColumn  *ngFor="let col of columns">
+                <span  *ngIf="col.field=='LoginID'">  <p-tableCheckbox [value]="usersList"></p-tableCheckbox></span>
+                <div *ngIf="col.field=='profileImage' && col.field!='toolbar';else second" class="text-center">
+                   <a *ngIf="userparamDataValue!=6" target="_blank" href="profile/{{usersList.LoginID}}"> <img  src="{{rowData[col.field]}}" width="30" height="30" style="vertical-align: middle;    border-radius: 50%;" /></a>
+                   <a *ngIf="userparamDataValue==6" > <img  src="{{rowData[col.field]}}" width="30" height="30" style="vertical-align: middle;    border-radius: 50%;" /></a>
+                   
+                </div>
+                <ng-template #second>
+                <div class="p-text-center" *ngIf="col.field=='IsVerified' && col.field!='toolbar';else third">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <p-dropdown   appendTo="body" [options]="statuses" [(ngModel)]="rowData[col.field]" (onChange)="userVerifystatusfun($event,usersList.LoginID)" ></p-dropdown>
+                        </ng-template>
+                        <ng-template class="p-text-center" pTemplate="output">
+                            <div [id]="'verifyuseruser' + usersList.LoginID" [class]="'verifyuseruser' + usersList.LoginID"  [ngClass]="{'verifieduserstyle ': rowData[col.field] == 'Verified', 'notverifieduserstyle': rowData[col.field] == 'Not verified' }">
+                                
+                                
+                                <img *ngIf="rowData[col.field] == 'Verified'" src="assets/images/user-dashboard/userdash-verified-flag.png" alt="" /> 
+                                <img *ngIf="rowData[col.field] == 'Not verified'" src="assets/images/user-dashboard/userdash-not-verified.png" alt="" /> 
+                                {{rowData[col.field]}}
+                                <span  class="custom-dynamic-icon Verifiedediticon" >
+                                    <img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+                                <!--<span  class="custom-dynamic-icon accountTypeediticon" >
+                                    <img src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>-->
+                            </div>
+                            
+                           
+                        </ng-template>
+                    </p-cellEditor>
+                </div>
+            </ng-template>
+            <ng-template #third>
+                <div class="p-text-center" *ngIf="col.dynamicheader=='workstreams' && col.field!='toolbar';else statusColumn">
+                    <p-cellEditor>
+                        <ng-template pTemplate="input">
+                            <p-dropdown appendTo="body" [options]="workstreamstatus" (onChange)="onChangeworkstreams($event,col.workstreamId,usersList.LoginID)" [(ngModel)]="rowData[col.field]"></p-dropdown>
+                        </ng-template>
+                        <ng-template class="p-text-center" pTemplate="output">
+                            <div [id]="'workstreamforuser' + col.workstreamId + usersList.LoginID" [class]="'workstreamforuser' + col.workstreamId + usersList.LoginID"  [ngClass]="{'adminwsstyle ': rowData[col.field] == 'Admin', 'memberwsstyle': rowData[col.field] == 'Member' , 'selectwsstyle': rowData[col.field] == 'Select'}">
+                                {{rowData[col.field]}}
+                                <span  class="custom-dynamic-icon accountTypeediticon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+                            </div>
+                           
+                           
+                        </ng-template>
+                    </p-cellEditor>
+                </div>
+            </ng-template>
+            <ng-template #statusColumn >
+                <div *ngIf="col.field=='isactive';else loginDateColumn">
+                <p-cellEditor >
+                    <ng-template pTemplate="input">
+                        <p-dropdown appendTo="body" [options]="userActivestatus" (onChange)="userActivestatusfun($event,usersList.LoginID)" [(ngModel)]="rowData[col.field]"></p-dropdown>
+                    </ng-template>
+                    <ng-template class="text-center" pTemplate="output">
+                        <div [id]="'activeuser' + usersList.LoginID" [class]="'activeuser' + usersList.LoginID"  [ngClass]="{'activeuserstyle ': rowData[col.field] == 'Active', 'inactiveuserstyle': rowData[col.field] == 'In Active' }">
+
+                            {{rowData[col.field]}}
+                            <span  class="custom-dynamic-icon isactiveediticon" >
+                                <img  style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                            </span>
+
+                        </div>
+                       
+                       <!-- <div [style]="activeuserstyle" class="text-center"  >
+                            Active 
+                        </div>
+                       
+                        <div [style]="inactiveuserstyle"  class="text-center" *ngIf="rowData[col.field]=='0'">
+                            In Active
+                         </div>
+                        -->
+                    </ng-template>
+                    </p-cellEditor>
+                    
+                    </div>
+            </ng-template>
+            <ng-template #loginDateColumn >
+                <div title="{{rowData[col.field]}}" *ngIf="col.field=='last_updated_on' || col.field=='created_on';else accountTypeColumn">
+                    {{rowData[col.field]}}
+                </div>
+                </ng-template>
+
+                <ng-template #accountTypeColumn >
+                    <div *ngIf="col.field=='userRole';else BussinessRoleColumn">
+                    <p-cellEditor >
+                        <ng-template pTemplate="input">
+                            <p-dropdown appendTo="body" [options]="colaccountTypes" (onChange)="userAccountTypefun($event,usersList.LoginID)" [(ngModel)]="rowData[col.field]"></p-dropdown>
+                        </ng-template>
+                        <ng-template class="text-center" pTemplate="output">
+                            <div [id]="'accounttype' + usersList.LoginID" [class]="'accounttype' + usersList.LoginID" [ngClass]="{'accglobalstyle ': rowData[col.field] == 'Global Access','acccountrystyle ': rowData[col.field] == 'Country Admin','accsystemadmintyle ': rowData[col.field] == 'System Admin', 'accmanagerstyle': rowData[col.field] == 'Manager', 'accenduserstyle': rowData[col.field] == 'End-User' }">
+    
+                                {{rowData[col.field]}}
+                                <span  class="custom-dynamic-icon userrolelistediticon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+    
+                            </div>
+                         
+                        </ng-template>
+                        </p-cellEditor>
+                        
+                        </div>
+                </ng-template>
+
+                <ng-template #BussinessRoleColumn >
+                    <div *ngIf="col.field=='businessRole';else countryListColumn">
+                    <p-cellEditor >
+                        <ng-template pTemplate="input">
+                            <p-dropdown appendTo="body" [options]="colBusinessRoles" (onChange)="userBussinessRolefun($event,usersList.LoginID)" [(ngModel)]="rowData[col.field]"></p-dropdown>
+                        </ng-template>
+                        <ng-template class="text-center" pTemplate="output">
+                            <div [id]="'businessRole' + usersList.LoginID" [class]="'businessRole' + usersList.LoginID" [ngClass]="{'bussRoleVPstyle ': rowData[col.field] == 'VP','bussRoleDirectorstyle ': rowData[col.field] == 'Director', 'bussRoleCSMstyle': rowData[col.field] == 'CSM', 'bussRoleTechstyle': rowData[col.field] == 'Technician' }">
+    
+                                {{rowData[col.field]}}
+                                <span  class="custom-dynamic-icon userrolelistediticon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+    
+                            </div>
+                         
+                        </ng-template>
+                        </p-cellEditor>
+                        
+                        </div>
+                </ng-template>
+
+                <ng-template #countryListColumn >
+                    <div *ngIf="col.field=='countrySelection' && domainId=='97';else assigneeRoleListColumn">
+                    <!--<p-cellEditor >
+                        <ng-template pTemplate="input">
+                            <p-multiSelect appendTo="body" optionLabel="label" selectedItemsLabel="{0} countries"  [options]="colCountriesSelection" (onChange)="userCountryRolefun($event,usersList.LoginID)" dataKey="value" placeholder="Select Country"  [(ngModel)]="rowData[col.field]"></p-multiSelect>
+                        </ng-template>
+                        <ng-template class="text-center" pTemplate="output">
+                            <span [id]="'countrySelection' + usersList.LoginID" [class]="'countrySelection' + usersList.LoginID" *ngIf="rowData[col.field]?.label">
+                               
+                                {{rowData[col.field].label}}
+                            </span>
+                            <span [id]="'countrySelection' + usersList.LoginID" [class]="'countrySelection' + usersList.LoginID" *ngIf="!rowData[col.field]?.label">
+                               
+                               
+                                <span [id]="'countrySelection' + usersList.LoginID " *ngFor="let countryitems of rowData[col.field]; let r = index">
+                                {{countryitems.label}} {{r === rowData[col.field].length -1 ? '' : ',&nbsp;' }}
+                                    </span>
+                            </span>
+                           
+                            <span [id]="'countrySelection' + usersList.LoginID" [class]="'countrySelection' + usersList.LoginID" *ngIf="rowData[col.field].length==0">
+    
+                                Select
+                            </span>
+                                <span  class="custom-dynamic-icon countrySelectionicon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+    
+                            
+                         
+                        </ng-template>
+                        </p-cellEditor>-->
+
+                        <p-multiSelect class="user-country-dropdown" appendTo="body" optionLabel="label" [maxSelectedLabels]="2" selectedItemsLabel="{0} countries"  [options]="colCountriesSelection" (onChange)="userCountryRolefun($event,usersList.LoginID)" dataKey="value" placeholder="Select Country"  [(ngModel)]="rowData[col.field]"></p-multiSelect>
+                        
+                        </div>
+                </ng-template>
+                <ng-template #assigneeRoleListColumn >
+                    <div *ngIf="col.field=='assigneeRole';else managersListColumn">                        
+                        <p-cellEditor >
+                            <ng-template pTemplate="input">
+                                <p-dropdown [filter]="true" appendTo="body" [options]="colAssigneRoles" (onChange)="userAssigneeRolefun($event,usersList.LoginID)" [(ngModel)]="rowData[col.field]">
+                                    <ng-template let-shop pTemplate="item">
+                                        <div class="shop-item" *ngIf="shop.value == 'Add New'" (click)="addNewRole(usersList.LoginID,$event)">
+                                            <div><span style="color: red;">{{shop.value}}</span></div>
+                                        </div>                                        
+                                        <div class="option-item" *ngIf="shop.value != 'Add New'">{{shop.value}}</div>  
+                                    </ng-template>
+                                </p-dropdown>
+                                <!--input style="width: 80%;" [id]="'assigneeList' + usersList.LoginID" (change)="updateAssigneeRole($event,usersList.LoginID)" pInputText type="text" placeholder="Enter"  [(ngModel)]="rowData[col.field]"-->                            
+                            </ng-template>
+                            <ng-template pTemplate="output">
+                                <div class="text-left" [id]="'assigneeList' + usersList.LoginID" [class]="'managersList' + usersList.LoginID" >
+        
+                                    <span title="{{rowData[col.field]}}" *ngIf="rowData[col.field] != ''">{{rowData[col.field]}}</span>
+                                    <span *ngIf="rowData[col.field] == ''">Not Available&nbsp;</span>
+                                    
+                                    <span  class="custom-dynamic-icon ManagerNameediticon" >
+                                        <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                    </span>
+        
+                                </div>
+                             
+                            </ng-template>
+                        </p-cellEditor>
+                    </div>
+                </ng-template>
+
+                <ng-template #managersListColumn >
+                    <div *ngIf="col.field=='ManagerName';else waitingforApprovalColumn">
+                    <p-cellEditor >
+                        <ng-template pTemplate="input">
+                            <p-dropdown appendTo="body" [options]="userManagersList" (onChange)="userManagersfun($event,usersList.LoginID)" [(ngModel)]="rowData[col.field]"></p-dropdown>
+                        </ng-template>
+                        <ng-template class="text-center" pTemplate="output">
+                            <div title="{{rowData[col.field]}}" class="text-left" [id]="'managersList' + usersList.LoginID" [class]="'managersList' + usersList.LoginID" >
+    
+                                {{rowData[col.field]}}
+                                <span  class="custom-dynamic-icon ManagerNameediticon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+    
+                            </div>
+                         
+                        </ng-template>
+                        </p-cellEditor>
+                        
+                        </div>
+                </ng-template>
+
+                <ng-template #waitingforApprovalColumn  >
+                    <div *ngIf="col.field=='waitingforApproval' && watitingforapprovalVisible==true;else otherColumn">
+                    <p-cellEditor >
+                        <ng-template pTemplate="input">
+                            <p-dropdown appendTo="body" [options]="waitingforApprovalues" (onChange)="userwaitingForapprovalfun($event,usersList.LoginID)" [(ngModel)]="rowData[col.field]"></p-dropdown>
+                        </ng-template>
+                        <ng-template class="text-center" pTemplate="output">
+                            <div [id]="'waitingforapproval' + usersList.LoginID" [class]="'waitingforapproval' + usersList.LoginID" [ngClass]="{'waitingforstyle ': rowData[col.field] == 'Waiting for approval', 'activatewstyle': rowData[col.field] == 'Approved'}">
+    
+                                {{rowData[col.field]}}
+                                <span  class="custom-dynamic-icon waitingforApprovalediticon" >
+                                    <img style="vertical-align:revert" src="assets/images/user-dashboard/editinner.png" alt="Matrix Action" />
+                                </span>
+                            </div>
+                         
+                        </ng-template>
+                        </p-cellEditor>
+
+                        
+                        
+                        </div>
+                </ng-template>
+
+            
+
+                <ng-template #otherColumn >
+                    <div *ngIf="col.field=='countrySelection' && TVSIBDomain">
+                        <span [id]="'countrySelection' + usersList.LoginID " *ngFor="let countryitems of rowData[col.field]; let r = index">
+                            {{countryitems.label}} {{r === rowData[col.field].length -1 ? '' : ',&nbsp;' }}
+                                </span>
+                        </div>
+                    <div title="{{rowData[col.field]}}" [ngClass]="{'text-left ': col.field=='EMPLOYEE_AADHAR_NO' || col.field=='EDUCATION' || col.field=='EMP_EDU_ID' || col.field=='GROUP_DESC' || col.field=='SUBGROUP_DESC' || col.field=='COMP_KNOWLDGE_OTHERS' || col.field=='COMP_KNOWLEDGE_PROGRAMMING_LANGUAGE' || col.field=='COMP_KNOWLEDGE_MS_OFFICE' || col.field=='DL_EXPIRY_DATE' || col.field=='DL_NO' || col.field=='IS_DRIVING_LICENSE' || col.field=='WORK_EXP_COMPANY' || col.field=='WORK_EXP_MONTHS' || col.field=='WORK_EXP_YRS' || col.field=='MARRIED' || col.field=='SON_DAU_OF' || col.field=='GENDER' || col.field=='ACTIVE' || col.field=='MODIFIED_ON' || col.field=='CREATED_ON' || col.field=='PAN_NO' || col.field=='EMAIL_ID' || col.field=='LOCAL_PHONE_NO' || col.field=='LOC_ADDRESS' || col.field=='PERM_PHONE_NO' || col.field=='PIN_CODE' || col.field=='STATE_ID' || col.field=='CITY' || col.field=='LANDMARK' || col.field=='ADDRESS_LINE_3' || col.field=='ADDRESS_LINE_2' || col.field=='ADDRESS_LINE_1' || col.field=='LEAVE_DATE' || col.field=='JOIN_DATE' || col.field=='DATE_OF_BIRTH' || col.field=='EMP_BRANCH_ID'  || col.field=='branchName'  ||  col.field=='EMP_SUBGRP_ID'  || col.field=='EMPLOYEE_NAME'  || col.field=='EMPLOYEE_ID'  || col.field=='contactPersonPhone'  || col.field=='contactPersonName'  ||col.field=='contactPersonEmail'  || col.field=='state'  || col.field=='city'  || col.field=='territory'  ||col.field=='zone'  ||col.field=='userarea'  || col.field=='dealerName'  || col.field=='dealerCode'  || col.field=='FirstName'  || col.field=='bussTitle' || col.field=='LastName' || col.field=='EmailAddress' || col.field=='Username'}" [class]="'overflowclassdash'" *ngIf="col.field!='toolbar' && col.field!='countrySelection' && col.field!='LoginID';else toolbarColumn">
+                    
+                        {{rowData[col.field]}}
+                       
+                            
+
+                           
+                        
+                        
+                      </div>  
+                    
+                </ng-template>
+                <ng-template #toolbarColumn >
+                    <div class="ptablemenubar" *ngIf="col.field=='toolbar'" [ngClass] = "{ 'hide' : userparamDataValue=='6' }">
+                        <span  class="custom-icon-user-dashboard more-icon" [matMenuTriggerFor]="menu">
+                            <img src="assets/images/more-icon.png" alt="Matrix Action" />
+                        </span>
+                        <mat-toolbar color="primary">
+ 
+                            <!--<button mat-icon-button [matMenuTriggerFor]="menu">
+                              <mat-icon>menu</mat-icon>
+                            </button>-->
+                            <mat-menu #menu="matMenu" backdropClass="ptabletmenu">
+                                <button mat-menu-item (click)="showprofilePage(usersList.LoginID)">
+                                    <mat-icon class="material-icon-pd user-view-profile" matSuffix></mat-icon>
+                                    <span >View Profile</span>
+                                  </button>
+                              <button *ngIf="ssoEnabled!='1'" mat-menu-item (click)="showDialog(usersList)">
+                                <mat-icon class="material-icon-pd reset-pass-user-icon-dash" matSuffix></mat-icon>
+                                <span >Reset password</span>
+                              </button>
+                              <button mat-menu-item (click)="EditUserDialog(usersList,$event)">
+                                <mat-icon class="material-icon edit-user-icon-dash" matSuffix></mat-icon>
+                                <span  >Edit</span>
+                              </button>
+                              <button *ngIf="platfromId=='1' || platfromId=='2'" mat-menu-item (click)="DeleteUserDialog(usersList,$event)">
+                                <mat-icon class="material-icon delete-user-icon-dash" matSuffix></mat-icon>
+                                <span  >Delete</span>
+                              </button>
+                              <button *ngIf="(platfromId=='1' || platfromId=='2') && userparamDataValue == '5'" mat-menu-item (click)="RestoreUserDialog(usersList,$event)">
+                                <mat-icon class="material-icon-pd user-view-profile" matSuffix></mat-icon>
+                                <span  >Restore</span>
+                              </button>
+                             <!-- <button mat-menu-item>
+                                <mat-icon>videocam</mat-icon>
+                                <span>Let's talk</span>
+                              </button>
+                              <button mat-menu-item>
+                                <mat-icon>exit_to_app</mat-icon>
+                                <span>Logout</span>
+                              </button>
+                            -->
+                            </mat-menu>
+                         
+                          
+                        </mat-toolbar>
+                      </div>  
+                    
+                </ng-template>
+                
+                
+                
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<div class="probing-content" [style.height]="pTableHeight" *ngIf="!loading && noUserListFound">
+    <div class="no-item-list-usr">
+    <div class="no-item-list empty-container no-res-list text-center">
+        <div class="item-empty-container">       
+            <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+            <p *ngIf="noUserList == '1'" class="item-empty-para empty-res padd-top-20">No result found</p>
+            <p *ngIf="noUserList == '0'" class="item-empty-para empty-res padd-top-20">Nothing to show</p>   
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<input id="hiddendashparam" type="hidden" #hiddendashparam="ngModel" [(ngModel)]="userdashboardparam" 
+ name="hiddendashparam">
+</div>
+</div>
+<p-dialog header="Export"  [(visible)]="excelreportdiaLog" styleClass="p-fluid userexport-dialog">
+<div align="center" style="padding: 40px 0px 19px 0px;color:#ff890b;">
+    <span>Exporting user data to Excel</span><!--<span class="loading-wait"></span>-->
+
+    </div>
+    
+</p-dialog>
+
+<p-dialog (onHide)="cancelresetpopup()" header="Reset Password" [(visible)]="displaydiaLog" [modal]="true" styleClass="p-fluid resetpassword-dialog" showEffect="fade" closeOnEscape="true" [style]="{width: '50vw'}">
+    
+    <div  *ngIf="displaydiaLog" class="resetpassword-dialog-content">
+    <!--{{resetpasswordForm.value | json}}-->
+        <form [formGroup]="resetpasswordForm" (ngSubmit)="onSubmitresetForm(usersLis.LoginID)" #f="ngForm" novalidate>
+           <!-- {{resetpasswordForm.value | json}}-->
+   
+<div>
+
+    <div class="resetpassword-dialog-text">Reset password for  {{usersLis.FirstName | uppercase}} {{usersLis.LastName | uppercase}} at   <span style="color: red;">{{usersLis.EmailAddress}}</span></div>
+
+
+    <div class="reset-radiobutton">
+        <mat-radio-group formControlName="Resetradioaction" (change)="onChangeRadio($event)" [(ngModel)]="radioOptions">
+    <mat-radio-button [checked]="defaultpasswordcheck"   value="1">Default Password: <span style="color:blue;">password123</span></mat-radio-button>
+        <mat-radio-button [checked]="custompasswordcheck"    value="2">
+           <div class="cust-select">
+                <mat-icon class="material-icon reset-icon-dash" matSuffix></mat-icon>
+                <input [class.is-invalid]="passwordValidationError || (displayValidationforreset && registerFormControl.Resetpasswordcontent.touched && registerFormControl.Resetpasswordcontent.invalid)" (keyup)="checkresetpasstext($event)" [(ngModel)]="ResetpasswordcontentValue" formControlName="Resetpasswordcontent" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Alternate Password" (change)="checkPwdStrongValidation('reset')" />
+                <span *ngIf="successPasswordTextIcon" class="success-ok-tick-span"><span class="success-ok-tick"><img src="assets/images/green-ok.png"></span></span>
+                <span *ngIf="!passwordchecker && !accounthaspasswordError" class="new-user-default-text">Min. 6 chars</span>
+                <span *ngIf="!passwordchecker && accounthaspasswordError" class="text-danger">Password should not be empty. Min. 6 chars</span>
+                <span *ngIf="passwordchecker" class="new-user-default-div">
+                    <span *ngIf="!passwordValidationError && !disableDefaultPasswordText" class="new-user-default-text">Min. 8 chars, one uppercase, one lowercase & one special character</span>
+                    <span *ngIf="passwordValidationError || registerFormControl.Resetpasswordcontent.touched && registerFormControl.Resetpasswordcontent.invalid " class="new-user-error-text">{{passwordValidationErrorMsg}}</span>
+                </span>      
+           </div>
+           
+
+        </mat-radio-button>
+       
+        <small style="color:red;font-size: 12px;padding-left:15px;position: relative;top: -12px;left: 12px;" *ngIf="resetpassvalidationmsg">{{resetpassvalidationmsg}}</small>
+        </mat-radio-group>
+       
+    </div>
+        <div class="resetpass-custum-text">We’ll send an email to the user with the new password</div>
+     
+</div>
+
+        <br/>
+       
+        <div  class="confirm-actions">
+            <button [disabled]="displayValidationforreset && registerFormControl.Resetpasswordcontent.invalid"  class="btn action-btn submit" type="submit" >Reset<span class="submit-btn"></span></button>
+            <button class="btn action-btn cancel" (click)="cancelresetpopup()" >Cancel<span class="cancel-btn"></span></button>
+            
+        </div>
+        
+       
+   </form>
+</div>
+   
+</p-dialog>
+
+<p-dialog header="Edit User" [(visible)]="displaydiaLogEdit" [modal]="true" styleClass="p-fluid" [style]="{width: '50vw'}">
+   
+    <div  *ngIf="displaydiaLogEdit" class="newuser-dialog-content edituser-dialog-content">
+<div>
+
+    <form [formGroup]="edituserForm" (ngSubmit)="onSubmitedituserForm(usersLis.LoginID)" #uef="ngForm" novalidate>
+
+        <div class="cust-select" *ngIf="domainId!='165'">
+            <mat-icon class="material-icon useremail-icon-dash" matSuffix></mat-icon>
+            <input [class.is-invalid]="UserEditFormControl.editUserEmailAddress.touched && UserEditFormControl.editUserEmailAddress.invalid" (keyup)="checkfirstnametext($event)" value="{{usersLis.EmailAddress}}"  formControlName="editUserEmailAddress" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Email Address" />
+   
+       </div>
+       
+        <div class="cust-select">
+            <mat-icon class="material-icon designation-icon-dash" matSuffix></mat-icon>
+            <input (keyup)="checkfirstnametext($event)" value="{{usersLis.bussTitle}}"  formControlName="editUserBussTitle" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Business Role" />
+   
+       </div>
+       <div *ngIf="addUserType1 && (domainId!='165')">
+            <div class="cust-select">
+                <mat-icon class="material-icon firstname-icon-dash" matSuffix></mat-icon>
+                <input [class.is-invalid]="UserEditFormControl.editUserFirstname.touched && UserEditFormControl.editUserFirstname.invalid" (keyup)="checkfirstnametext($event)" value="{{usersLis.FirstName}}"  formControlName="editUserFirstname" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="First name" />
+
+            </div>
+            <div class="cust-select">
+                <mat-icon class="material-icon firstname-icon-dash" matSuffix></mat-icon>
+                <input [class.is-invalid]="UserEditFormControl.editUserLastname.touched && UserEditFormControl.editUserLastname.invalid" (keyup)="checklastanmetext($event)" value="{{usersLis.LastName}}"  formControlName="editUserLastname" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Last name" />
+
+            </div>
+        </div>
+        <div *ngIf="addUserType2">
+            <div class="cust-select">
+                <mat-icon class="material-icon firstname-icon-dash" matSuffix></mat-icon>
+                <input [class.is-invalid]="UserEditFormControl.editDealerName.touched && UserEditFormControl.editDealerName.invalid" (keyup)="checkfirstnametext($event)" value="{{usersLis.dealerName}}"  formControlName="editDealerName" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Dealer name" />
+
+            </div>
+            <div class="cust-select">
+                <mat-icon class="material-icon firstname-icon-dash" matSuffix></mat-icon>
+                <input [class.is-invalid]="UserEditFormControl.editDealerCode.touched && UserEditFormControl.editDealerCode.invalid" (keyup)="checklastanmetext($event)" value="{{usersLis.dealerCode}}"  formControlName="editDealerCode" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Dealer Code" />
+
+            </div>
+            <div *ngIf="TVSIBDomain">
+                <div class="cust-select">
+                    <mat-icon class="material-icon firstname-icon-dash" matSuffix></mat-icon>
+                    <input value="{{usersLis.contactPersonName}}"  formControlName="editcontactPersonName" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Contact Person" />
+    
+                </div>
+                <div class="cust-select">
+                    <mat-icon class="material-icon user-phone-dash" matSuffix></mat-icon>
+                    <input [class.is-invalid]="UserEditFormControl.editcontactPersonPhone.touched && UserEditFormControl.editcontactPersonPhone.invalid" value="{{usersLis.contactPersonPhone}}"  formControlName="editcontactPersonPhone" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Contact Phone" maxlength="15" />
+    
+                </div>
+                <div class="cust-select">
+                    <mat-icon class="material-icon useremail-icon-dash" matSuffix></mat-icon>
+                    <input [class.is-invalid]="UserEditFormControl.editcontactPersonEmail.touched && UserEditFormControl.editcontactPersonEmail.invalid" value="{{usersLis.contactPersonEmail}}"  formControlName="editcontactPersonEmail" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Contact Email" />
+    
+                </div>
+            </div>
+            <div *ngIf="TVSDomain">
+                <div class="cust-select cust-select-disabled">
+                    <mat-icon class="material-icon user-type-location" matSuffix></mat-icon>
+                    <p-dropdown formControlName="editUserTerritory"  class="input-with-icon-inside-select mat-typography" appendTo="body" readonly="true" [options]="territoryContentList" filter="true" ></p-dropdown>    
+                </div>                      
+                                                
+                <div class="cust-select cust-select-disabled">
+                    <mat-icon class="material-icon user-type-location" matSuffix></mat-icon>
+                    <p-dropdown formControlName="editUserArea" class="input-with-icon-inside-select mat-typography" appendTo="body" readonly="true" [options]="areaContentList" filter="true" ></p-dropdown>    
+                </div>
+                
+                <div class="cust-select cust-select-disabled">
+                    <mat-icon class="material-icon user-type-location" matSuffix></mat-icon>
+                    <p-dropdown formControlName="editUserZone" class="input-with-icon-inside-select mat-typography" appendTo="body" readonly="true" [options]="zoneContentList" filter="true" ></p-dropdown>    
+                </div>
+            </div>
+                            
+                
+            </div>
+
+       
+        <div *ngIf="!alreadyExistFlag">
+            <div class="text-danger" *ngIf="updateuservalidationmsg">{{updateuservalidationmsg}}</div>
+            <div  class="confirm-actions" style="padding:20px 0 0 0;">
+                <button *ngIf="addUserType1" [disabled]="(UserEditFormControl.editUserEmailAddress.invalid) || (UserEditFormControl.editUserFirstname.invalid) || (UserEditFormControl.editUserLastname.invalid)"  class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button>
+                <button *ngIf="addUserType2 && TVSDomain" [disabled]="(UserEditFormControl.editUserEmailAddress.invalid) || (UserEditFormControl.editDealerName.invalid) || (UserEditFormControl.editDealerCode.invalid)"  class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button>
+                <button *ngIf="addUserType2 && TVSIBDomain" [disabled]="(UserEditFormControl.editUserEmailAddress.invalid) || (UserEditFormControl.editDealerName.invalid) || (UserEditFormControl.editDealerCode.invalid) || (UserEditFormControl.editcontactPersonEmail.touched && UserEditFormControl.editcontactPersonEmail.invalid)"  class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button>
+                <button class="btn action-btn cancel" (click)="cancelEdituserpopup()" >Cancel<span class="cancel-btn"></span></button>
+                
+            </div>
+        </div>
+        <div *ngIf="alreadyExistFlag">
+            <div *ngIf="addUserType2">
+                <div class="add-user-type2 redbg">
+                    <span class="plain-text">New dealer code already exists. Overwrite it?</span>
+                    <span (click)="overwriteYes(usersLis.LoginID)" class="yes-btn cursor">YES<img src="assets/images/user-dashboard/us-yes-icon.png" /></span>
+                    <span (click)="overwriteNo()" class="no-btn cursor">NO<img src="assets/images/user-dashboard/us-cancel-icon.png" /></span>
+                </div>
+            </div>
+        </div>
+        
+    </form>
+
+</div>
+        <br/>
+       
+        
+        
+        </div>
+   
+    
+   
+</p-dialog>
+
+<p-dialog header="Add user"  [(visible)]="displaydiaLogSSO" [modal]="true" styleClass="p-fluid" >
+    
+    <div  *ngIf="displaydiaLogSSO" class="newuser-dialog-content">
+        <div style="padding-top: 15px;line-height: 26px;">
+            Your account is using Single Sign On. Please go to the URL and login with your company credentials.
+            </div>
+            </div>
+            </p-dialog>
+
+<p-dialog header="Add New User" (onHide)="cancelnewusrpopup()" [(visible)]="displaydiaLogAdd" [modal]="true" styleClass="p-fluid" [style]="{width: '50vw'}">
+    
+    <div  *ngIf="displaydiaLogAdd" class="newuser-dialog-content">
+        <div>
+    
+            
+           
+                <form [formGroup]="newuserForm" (ngSubmit)="onSubmitNewuserForm()" #unf="ngForm" novalidate>       
+                        
+                    <div class="" *ngIf="TVSDomain || TVSIBDomain">
+                        <div class="cust-select" style="padding-top:30px;">
+                            <mat-icon class="material-icon user-type-dash" matSuffix></mat-icon>
+                            <p-dropdown  placeholder="Select User Type*"  formControlName="newUserType"  class="input-with-icon-inside-select mat-typography" appendTo="body" [options]="coluserTypesNewUser" filter="true" (onChange)="onChange($event.value)" ></p-dropdown>
+                            <span *ngIf="userTypehasDropDownErrorType && findnewformflag"  class="text-danger">Select User Type</span>
+                        </div>
+                    </div>
+
+                   
+                    <div [ngClass] = "{ 'setOpacity5' : !newUserTypeFlagDefault }" >
+                        <div class="cust-select" [ngClass] = " { 'cust-select-p10' : (TVSDomain || TVSIBDomain), 'cust-select-p30' : (!TVSDomain && !TVSIBDomain) } " >
+                            <mat-icon class="material-icon useremail-icon-dash" matSuffix></mat-icon>
+                            <input (keyup)="checkemailvalidationnew($event)"  [class.is-invalid]="isEmailExist || (UserNewFormControl.newUserEmailAddress.touched && UserNewFormControl.newUserEmailAddress.invalid)" (keyup)="checkfirstnametext($event)" value=""  [(ngModel)]="newUserEmailAddress" formControlName="newUserEmailAddress"  class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Enter Email Address*" />
+                            <small class="text-danger" *ngIf="isEmailExist && findnewformflag">Email already exists</small>
+                    </div> 
+                    
+                    <div class="cust-select">
+                        <mat-icon class="material-icon reset-icon-dash" matSuffix></mat-icon>
+                        <input [class.is-invalid]="passwordValidationError || UserNewFormControl.newUserTmpPassword.touched && UserNewFormControl.newUserTmpPassword.invalid" (keyup)="checkpasswordtext($event)" value=""  formControlName="newUserTmpPassword" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Enter temporary password*" (change)="checkPwdStrongValidation('new')" />
+                        <!--<small class="text-success">Min 6 chars</small>-->
+                        <span *ngIf="successPasswordTextIcon" class="success-ok-tick-span"><span class="success-ok-tick"><img src="assets/images/green-ok.png"></span></span>
+                        <span *ngIf="!passwordchecker && !accounthaspasswordError" class="new-user-default-text">Min. 6 chars</span>
+                        <span *ngIf="!passwordchecker && accounthaspasswordError" class="text-danger">Password should not be empty. Min. 6 chars</span>
+                        <span *ngIf="passwordchecker" class="new-user-default-div">
+                            <span *ngIf="!passwordValidationError && !disableDefaultPasswordText" class="new-user-default-text">Min. 8 chars, one uppercase, one lowercase & one special character</span>
+                            <span *ngIf="passwordValidationError || UserNewFormControl.newUserTmpPassword.touched && UserNewFormControl.newUserTmpPassword.invalid " class="new-user-error-text">{{passwordValidationErrorMsg}}</span>
+                        </span>
+                    </div>
+                    
+                        <div class="inner-row inner-row1"  *ngIf="addUserType1">
+                        <div class="col-sm-6 col-lg-6 displayinline">    
+                            <div class="cust-select-inner-row"  >
+                                <mat-icon class="material-icon-inner firstname-icon-dash" matSuffix></mat-icon>
+                                <input [class.is-invalid]="UserNewFormControl.newUserFirstname.touched && UserNewFormControl.newUserFirstname.invalid" (keyup)="checkfirstnametext($event)" value=""  formControlName="newUserFirstname" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="First Name*" />       
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-6 displayinline">               
+                            <div class="cust-select-inner-row">
+                                <mat-icon class="material-icon-inner firstname-icon-dash" matSuffix></mat-icon>
+                                <input [class.is-invalid]="UserNewFormControl.newUserLastname.touched && UserNewFormControl.newUserLastname.invalid" (keyup)="checkfirstnametext($event)" value=""  formControlName="newUserLastname" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Last Name*" />           
+                        </div>
+                        </div>          
+                        </div>
+
+                        <div *ngIf="addUserType2">                       
+                           
+                            <div class="inner-row inner-row2">
+                               <div class="col-sm-6 col-lg-6 displayinline">    
+                                   <div class="cust-select-inner-row">
+                                       <mat-icon class="material-icon-inner firstname-icon-dash" matSuffix></mat-icon>
+                                       <input [class.is-invalid]="UserNewFormControl.newUserDealerName.touched && UserNewFormControl.newUserDealerName.invalid" (keyup)="checkfirstnametext($event)" value=""  formControlName="newUserDealerName" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Dealer Name*" />       
+                                   </div>
+                               </div>
+                               <div class="col-sm-6 col-lg-6 displayinline">               
+                                   <div class="cust-select-inner-row">
+                                       <mat-icon class="material-icon-inner firstname-icon-dash" matSuffix></mat-icon>
+                                       <input [class.is-invalid]="UserNewFormControl.newUserDealerCode.touched && UserNewFormControl.newUserDealerCode.invalid" (keyup)="checkfirstnametext($event)" value=""  formControlName="newUserDealerCode" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Dealer Code*" />           
+                                   </div>
+                               </div>          
+                           </div>
+   
+                           <div class="inner-row inner-row2">
+                               <div class="col-sm-6 col-lg-6 displayinline">    
+                                   <div class="cust-select-inner-row">
+                                       <mat-icon class="material-icon-inner user-type-location" matSuffix></mat-icon>
+                                       <input value=""  formControlName="newUserAddress1" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Address 1" />       
+                                   </div>
+                               </div>
+                               <div class="col-sm-6 col-lg-6 displayinline">               
+                                   <div class="cust-select-inner-row">
+                                       <mat-icon class="material-icon-inner user-type-location" matSuffix></mat-icon>
+                                       <input value=""  formControlName="newUserAddress2" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Address 2" />           
+                                   </div>
+                               </div>          
+                           </div>
+   
+                           
+                           <div class="" *ngIf="TVSIBDomain">
+                            <div class="inner-row inner-row2">
+                                <div class="col-sm-6 col-lg-6 displayinline">    
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon-inner user-type-location" matSuffix></mat-icon>
+                                        <input value=""  formControlName="newUserCity" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="City" />       
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-6 displayinline">               
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon-inner user-type-location" matSuffix></mat-icon>
+                                        <input value=""  formControlName="newUserState" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="State" />           
+                                    </div>
+                                </div>          
+                            </div>
+                            <div class="inner-row inner-row2">
+                                <div class="col-sm-6 col-lg-6 displayinline">    
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon-inner firstname-icon-dash" matSuffix></mat-icon>
+                                        <input value=""  formControlName="contactPersonName" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Contact Name" />       
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-6 displayinline">               
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon-inner user-phone-dash" matSuffix></mat-icon>
+                                        <input [class.is-invalid]="(UserNewFormControl.contactPersonPhone.touched && UserNewFormControl.contactPersonPhone.invalid)" value=""  formControlName="contactPersonPhone" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Contact Phone" maxlength="15" />           
+                                    </div>
+                                </div>          
+                            </div>
+                            
+                            <div class="cust-select">
+                                <mat-icon class="material-icon useremail-icon-dash" matSuffix></mat-icon>
+                                <input [class.is-invalid]="(UserNewFormControl.contactPersonEmail.touched && UserNewFormControl.contactPersonEmail.invalid)" (keyup)="checkfirstnametext($event)" value=""  formControlName="contactPersonEmail" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Contact Email" />                                    
+
+                            </div>
+                        </div>
+
+                           <div class="" *ngIf="TVSDomain">
+                            <div class="inner-row inner-row2">
+                                <div class="col-sm-6 col-lg-6 displayinline">    
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon user-type-location new-pdd-icon" matSuffix></mat-icon>
+                                        <p-dropdown formControlName="newUserCity"  class="input-with-icon-inside-select mat-typography new-pdd" appendTo="body" [options]="cityContentList" filter="true" ></p-dropdown>    
+                                    </div>
+                                </div>
+                                                              
+                                <div class="col-sm-6 col-lg-6 displayinline">               
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon-inner user-type-location" matSuffix></mat-icon>
+                                        <input value=""  formControlName="newUserState" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="State" />           
+                                    </div>
+                                </div>                                
+                                         
+                            </div>
+                                   
+                            <div class="cust-select" style="padding: 10px 10px 10px 10px">
+                                <mat-icon class="material-icon user-type-location" matSuffix></mat-icon>
+                                <p-dropdown formControlName="newUserTerritory"  class="input-with-icon-inside-select mat-typography" appendTo="body" [options]="territoryContentList" filter="true" ></p-dropdown>    
+                            </div>                      
+                            
+                            <div class="inner-row inner-row2">
+                                <div class="col-sm-6 col-lg-6 displayinline">               
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon user-type-location new-pdd-icon" matSuffix></mat-icon>
+                                        <p-dropdown formControlName="newUserArea"  class="input-with-icon-inside-select mat-typography new-pdd" appendTo="body" [options]="areaContentList" filter="true" ></p-dropdown>    
+                                     </div>
+                                </div>
+                                <div class="col-sm-6 col-lg-6 displayinline">    
+                                    <div class="cust-select-inner-row">
+                                        <mat-icon class="material-icon user-type-location new-pdd-icon" matSuffix></mat-icon>
+                                        <p-dropdown formControlName="newUserZone"  class="input-with-icon-inside-select mat-typography new-pdd" appendTo="body" [options]="zoneContentList" filter="true" ></p-dropdown>    
+                                    </div>
+                                </div>
+                                          
+                            </div>
+                                                        
+                           </div>
+                       </div>
+
+                        
+
+                        <div class="cust-select" style="padding: 0px 10px 20px 10px;"  *ngIf="addUserType1">
+                            <mat-icon class="material-icon account-type-dash" matSuffix></mat-icon>
+                            <p-dropdown   placeholder="Select Account Type*" (onChange)="onChangeAccountType($event.value)" formControlName="newUserAccountType"  class="input-with-icon-inside-select mat-typography" appendTo="body" [options]="colaccountTypesNewUser" filter="true" ></p-dropdown>
+                            <span *ngIf="accounthasDropDownError && findnewformflag" class="text-danger">Select Account Type</span>
+                        </div>
+
+                        <!--<div class="cust-select" style="padding: 0px 10px 20px 10px;" [ngClass]="{ 'setOpacity7' : isEnableCountry }"  *ngIf="TVSIBDomain"  (click)="manageList('country')">
+                            <mat-icon class="material-icon user-country-dash" matSuffix></mat-icon>
+                            <p-multiSelect readonly="true" [disabled]="isEnableCountry" [class.is-invalid]="UserNewFormControl.newUserCountry.touched && UserNewFormControl.newUserCountry.invalid"  #drop [defaultLabel]="multiselectdefaultCLabelName" [(ngModel)]="filteredCountries" formControlName="newUserCountry"  class="input-with-icon-inside-select {{multiselectdefaultLabel}} mat-typography" ></p-multiSelect>
+                            <span *ngIf="accounthasCountryError" class="text-danger">Select Country</span>
+                        </div>-->
+                        <mat-chip-list aria-label="selection">
+                            <mat-chip  [ngStyle]="{'color':'white','background':'#242A3A'}"
+                                class="example-box"
+                                cdkDrag
+                                *ngFor="let item of filteredCountries; let t=index">
+                                {{item}}
+                            <mat-icon (click)="disableCountrySelection(t)" [ngStyle]="{'color':'white'}">clear</mat-icon>
+                            </mat-chip>                 
+                        </mat-chip-list>
+                
+                        <div class="cust-select" style="padding: 0px 10px 10px 10px;"  *ngIf="addUserType1">
+                            <mat-icon class="material-icon business-title-dash" matSuffix></mat-icon>   
+                            <input value=""  formControlName="newUserBussTitle" class="form-control input-with-icon-inside mat-typography" type="text" placeholder="Business Role" />    
+                        </div>
+                
+                        <div class="cust-select" *ngIf="addUserType1 && !tvsAgency">
+                            <mat-icon class="material-icon user-manager-dash" matSuffix></mat-icon>
+                            <p-dropdown formControlName="newUserManager"  [disabled]="isCheckednoManager" class="input-with-icon-inside-select mat-typography" appendTo="body" [options]="userManagersList" filter="true" ></p-dropdown>    
+                        </div>
+                        <div class="cust-select" style="padding: 0px 10px 10px 10px;" *ngIf="addUserType1 && !tvsAgency">
+                            <mat-slide-toggle [(ngModel)]="isCheckednoManager"  formControlName="newUserNoManager"  >I don't know Manager name</mat-slide-toggle> 
+                        </div>       
+                    
+                        <div class="cust-select">
+                            <mat-icon class="material-icon user-workstream-dash" matSuffix></mat-icon>
+                            <p-multiSelect [disabled]="isDisableWorkstream" [class.is-invalid]="UserNewFormControl.newUserworkstream.touched && UserNewFormControl.newUserworkstream.invalid"  #drop [defaultLabel]="multiselectdefaultLabelName"  (onChange)="binSelect($event)" [(ngModel)]="workstreamArrayval" formControlName="newUserworkstream"  class="input-with-icon-inside-select {{multiselectdefaultLabel}} mat-typography" appendTo="body" [options]="workstreamsListdropdown"  optionLabel="name" ></p-multiSelect>
+                            <span *ngIf="accounthasWorkstreamError" class="text-danger">Select Workstreams</span>
+                        </div>
+
+                        <mat-chip-list aria-label="selection">
+                            <mat-chip  [ngStyle]="{'color':'white','background':'#242A3A'}"
+                                class="example-box"
+                                cdkDrag
+                                *ngFor="let workstreamitems of workstreamArrayval">
+                                {{workstreamitems.name}}
+                            <mat-icon (click)="delete(drop,workstreamitems.id)" [ngStyle]="{'color':'white'}">clear</mat-icon>
+                            </mat-chip>                 
+                        </mat-chip-list>
+                    </div>
+                    
+                   
+                    <div class="text-danger" *ngIf="updateuservalidationmsg">{{updateuservalidationmsg}}</div>
+                    <div  class="confirm-actions" style="padding: 10px 0px 0px 0px;">
+                        <button *ngIf="addUserType2 && TVSDomain" [ngClass] = "{ 'setOpacity5' : !newUserTypeFlagDefault }" [disabled]="displaydiaLogAssignFlag && isEmailExist || newformDisable || fieldEnable || (UserNewFormControl.newUserTmpPassword.invalid) || (UserNewFormControl.newUserEmailAddress.invalid) || (UserNewFormControl.newUserDealerName.invalid) || (UserNewFormControl.newUserDealerCode.invalid) || (!workstreamValpushFlag)"   class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button>
+                        <button *ngIf="addUserType2 && TVSIBDomain" [ngClass] = "{ 'setOpacity5' : !newUserTypeFlagDefault }" [disabled]="displaydiaLogAssignFlag && isEmailExist || newformDisable || fieldEnable || (UserNewFormControl.newUserTmpPassword.invalid) || (UserNewFormControl.newUserEmailAddress.invalid) || (UserNewFormControl.newUserDealerName.invalid) || (UserNewFormControl.newUserDealerCode.invalid) || (UserNewFormControl.contactPersonPhone.touched && UserNewFormControl.contactPersonPhone.invalid) || (UserNewFormControl.contactPersonEmail.touched && UserNewFormControl.contactPersonEmail.invalid) || (!workstreamValpushFlag)"   class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button>
+                        <button *ngIf="addUserType1" [ngClass] = "{ 'setOpacity5' : !newUserTypeFlagDefault }" [disabled]="displaydiaLogAssignFlag && isEmailExist || newformDisable || fieldEnable || (UserNewFormControl.newUserTmpPassword.invalid) || (UserNewFormControl.newUserEmailAddress.invalid) || (UserNewFormControl.newUserFirstname.invalid) || (UserNewFormControl.newUserLastname.invalid) || (!accounthasDropDownErrorFlag) || (!workstreamValpushFlag && !TVSIBDomain) || (!workstreamValpushFlag && TVSIBDomain && !isDisableWorkstream) "   class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button>
+                        <!--button [disabled]="isEmailExist || newformDisable || fieldEnable || (UserNewFormControl.newUserTmpPassword.touched && UserNewFormControl.newUserTmpPassword.invalid) || (UserNewFormControl.newUserEmailAddress.touched && UserNewFormControl.newUserEmailAddress.invalid) || (UserNewFormControl.newUserFirstname.touched && UserNewFormControl.newUserFirstname.invalid) || (UserNewFormControl.newUserLastname.touched && UserNewFormControl.newUserLastname.invalid)"   class="btn action-btn submit" type="submit" >Save<span class="submit-btn"></span></button-->
+                        <button class="btn action-btn cancel" (click)="cancelnewusrpopup()" >Cancel<span class="cancel-btn"></span></button>            
+                    </div>
+                    <!--<button (click)="delete(drop)">DELETE</button>-->
+                   
+                </form>
+          
+
+            
+        
+    </div>
+        </div>
+        
+        
+   
+    
+   
+</p-dialog>
+
+<p-dialog header="Alert!" (onHide)="cancelAssignpopup()" [(visible)]="displaydiaLogAssign" [modal]="true" styleClass="p-fluid dialog-assign" style="width: '30vw !important'">
+    
+    <div  *ngIf="displaydiaLogAssign" class="newuser-dialog-content">
+        <div class="newuser-dialog-content assign-dialog-content">
+            <span class="content-text"><span class="red-text">{{assignEmailId}} </span>already exists. </span>            
+            <span class="content-text">Assign user to {{assignCountry}}?</span>
+        </div>
+        <div class="text-danger" *ngIf="updateuservalidationmsg">{{updateuservalidationmsg}}</div>
+        <div class="confirm-actions">
+            <button (click)="cancelAssignpopup()"class="btn action-btn cancel">No<span class="cancel-btn"></span></button>
+            <button [ngClass]="{ 'setOpacity5' : updateAssignTextFlag }" (click)="updateAssignpopup()" class="btn action-btn submit ng-star-inserted ">Yes<span class="submit-btn submit-btn-assign"></span></button>
+            
+        </div>    
+        
+    </div>
+</p-dialog>
+
+<p-dialog [header]="false" [(visible)]="displayPosition" [position]="position" styleClass="p-fluid user-dashboard-scroll-popup" [modal]="true"  [baseZIndex]="10000"
+    [draggable]="false" [resizable]="false">
+   
+    <img style="object-fit: cover;width: 87%;" src="assets/images/user-dashboard/usr-manage-mouse.png">
+    <img class="cursor btn-action" (click)="updateuserScollPopup()" src="assets/images/user-dashboard/mouse-usr-action.png">
+</p-dialog>
+
+<p-dialog [header]="false" [(visible)]="inviteSuccessFlag"  [closable]="false" [modal]="true" styleClass="p-fluid ro-success-msg-dialog-popup"> 
+    <div class="automated-msg-container">  
+        <div class="green-div">
+            <div>
+                <img src="assets/images/repair-order/ro-success-tick.png">  
+            </div>
+            <div *ngIf="inviteUserCount>0">  
+                <p class="text-1">Invitation were sent to {{inviteUserCount}} {{inviteUserText}}.</p>                
+            </div>
+        </div>  
+        <div class="white-div">     
+            <div *ngIf="existUserCount>0">          
+                <p class="text-3">Following {{existUserText}} already exist.</p>
+                <p class="text-2">{{existUserArr}}</p>
+            </div> 
+            <div class="cursor btn-div" (click)="closeInviteSuccess()">
+                <span>OK<img src="assets/images/tick-active.png"></span>                
+            </div>
+        </div>    
+    </div>  
+</p-dialog>
+<p-dialog [(visible)]="updateAssRoleModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal dispatch-modal-width">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Assignee Role</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SAVE"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{ 'setOpacity5' : assRoleText == '' }" (click)="saveAssigneeRole()"></button>
+            <!-- [disabled]="serviceForm.invalid" -->
+        </div>
+    </ng-template>
+
+    <div class="row my-3">      
+        <div class="col-12">
+            <div>
+                <label>
+                    <img src="assets/images/repair-order/assignee-role.png" alt=""
+                        class="mr-2 new-request-icon" />
+                    <span style="color: #9b9a9a;">Assignee Role</span>
+                </label>
+                <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+            </div>
+            <div class="input-text-row form-group firstname">
+               
+              <input #myInput2 class="inputbox" tabindex="0" (change)="assigneeroleChange()" [(ngModel)]="assRoleText" matInput placeholder="Enter AssigneeRole"                                                           
+                maxlength="" />                                                        
+            </div>
+            <div class="text-err">{{assRoleTextError}}</div>
+        </div>        
+    </div> 
+    
+</p-dialog>
+
+

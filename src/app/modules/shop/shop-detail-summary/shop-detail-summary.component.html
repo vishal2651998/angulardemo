@@ -1,0 +1,1083 @@
+<p-toast position="top-center" class="custom-toast" ></p-toast>
+<div class="hq-head d-flex" >
+    <div>
+        <div class="hq-head-row-0" *ngIf="!hideBreadCrumbs">
+            <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="level && subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span>
+            <img *ngIf="level && subLevel" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span *ngIf="level && subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('Region')">{{headQuarterService.sublevelName}}</span>
+            <span *ngIf="!level && !subLevel" class="hq-head-breadcrumb-text cursor" (click)="back('allShops')">All Shops</span>
+            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+            <span class="hq-head-breadcrumb-text cursor">{{headQuarterService.currentShopName | titlecase}}</span>
+            <!-- <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+            <!-- <span class="hq-head-breadcrumb-text">{{featuredActionName}}</span> -->
+        </div>
+        <div class="hq-head-row-1">
+            <img class="hq-head-img" src="../../../../assets/images/shop/shop-icon.png" alt="" />
+            <span *ngIf="!user?.data || !user?.data?.shopId" class="hq-head-text">{{headQuarterService.currentShopName | titlecase}} (ID #{{headQuarterService.currentShopId}})</span>
+            <span *ngIf="user?.data && user?.data?.shopId" class="hq-head-text">Shop</span>
+        </div>
+
+    </div>
+</div>
+<div class="d-flex">
+    <app-shop-details-sidebar *ngIf="!user?.data || !user?.data?.shopId" [selectedTab]="'SUMMARY'"></app-shop-details-sidebar>
+    <div class="ts-list-rt transition filter-expand position-relative" [ngClass]="{'col-12':user.data && user.data.shopId}" *ngIf="displayFlag">
+        <div *ngIf="loading" class="loading-small-screen-scroll trst" align="center">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+        </div>
+        <div class="position-absolute w-100" [ngClass]="{'left-0':user?.data && user?.data?.shopId}">
+            <div [style.height]="'calc(100vh - 168px)'">
+                <div class="ps" [perfectScrollbar]="sconfig">
+                    <div class="container" [ngClass]="{'pl-0':user?.data && user?.data?.shopId}">
+                        <div class="">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">
+                                <div class="outer-hq-container">
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div
+                                                    class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row ">
+                                                    <div
+                                                        class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-left">
+                                                        <img class="loc-head-img" width="21" height="17" 
+                                                        style="position: relative;top: -3px;"
+                                                            src="assets/images/hq/shop-black.png">
+                                                        <span class="loc-head-text">Shop Details</span>
+                                                    </div>
+                                                    <div 
+                                                        class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding text-right">
+                                                        <img (click)="openEditShopModal()" title="Edit" class="loc-head-edit-img cursor"
+                                                            src="assets/images/hq/hq-edit-icon.png">
+                                                            <img title="Delete" (click)="serviceActionDelete(1,'HQ');" 
+                                                            class="loc-head-delete-img cursor"
+                                                            src="assets/images/hq/hq-delete-icon.png">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row shop-card">
+                                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                                    <div class="row pb-3 justify-content-between">
+                                                        
+                                                        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 px-0">
+                                                            <div *ngIf="!shopData?.logoUrl" class="location-thumb p-0"></div>
+                                                            <img *ngIf="shopData?.logoUrl" [src]="shopData?.logoUrl" class="location-thumb-1 p-0">
+
+                                                            <div class="location-info" style="padding-left: 15px;">
+                                                                <h5 class="location-title-heading">{{shopData?.name | titlecase}} (ID# {{shopData?.id}})
+                                                                </h5>
+                                                                <div class="d-flex mb-2">
+                                                                    <img src="../../../../assets/images/hq/hq-address-icon.png"
+                                                                        width="20" height="20" />
+                                                                    <span style="height: 40px;" class="text-2-shop" title="{{shopData?.city}}, {{shopData?.state}}">
+                                                                        <div>
+                                                                            {{shopData?.address1 ? shopData?.address1 : ''}}{{shopData?.address1 && shopData?.address2 ? ',' : ''}} {{shopData?.address2 ? shopData?.address2 : ''}} 
+                                                                        </div>
+                                                                        <div>
+                                                                            {{shopData?.city ? shopData?.city  : ''}}{{shopData?.city && shopData?.state ? ',' : ''}} {{' ' + shopData?.state ? shopData?.state : ''}}{{shopData?.zip ? ' ' + shopData?.zip: ''}} 
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="d-flex mb-2">
+                                                                    <img src="../../../../assets/images/hq/hq-email-icon.png"
+                                                                        width="20" height="20   " />
+                                                                    <span
+                                                                        class="text-2-shop" title="{{shopData?.emailAddress}}">{{shopData?.emailAddress ? shopData?.emailAddress : '-'}}</span>
+                                                                </div>
+                                                                <div class="d-flex mb-2">
+                                                                    <img src="../../../../assets/images/hq/hq-phone-icon.png"
+                                                                        width="20" height="20" />
+                                                                    <span class="text-2-shop fix-width" title="{{shopData?.dialCode}} {{shopData?.phoneNo}}">{{shopData?.dialCode ? shopData?.dialCode  : '-'}}
+                                                                        {{shopData?.phoneNo}}</span>
+                                                                    <img src="../../../../assets/images/timezone-green.png"
+                                                                        width="20" height="20" />
+                                                                    <span class="text-2-shop" title="{{shopData?.timezone}}"><span class="dark-grey">Time Zone: </span>{{shopData?.timezone ? shopData?.timezone : 'NA'}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 p-0">
+                                                            <div class="s-map-img-col">
+                                                                <iframe width="100%" height="124px" [id]="shopData.gmapcanvas" [src]="shopData.googleMapInfo" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 p-0">
+
+                                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 pl-4 pr-0">
+                                                                <div class="row">
+                                                                    <div class="col-sm-6 detail-data-shop pr-1 pl-3">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <img src="assets/images/dispatch/svg/service-form/shop_i.svg"
+                                                                                alt="service" onload="SVGInject(this)"
+                                                                                class="icons-size mr-2 new-request-icon" />
+                                                                            <label class="m-0">Parent</label>
+                                                                        </div>
+                                                                        <p class="detail-data-shop detail-data-shop-text ml-4 pl-1 mb-0">{{shopData?.parentName ? shopData?.parentName : '-'}}</p>
+                                                                    </div>
+                                                                    <div class="col-sm-6 detail-data-shop px-1">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <img src="../../../../../assets/images/shop/stacked-rectangle.png"
+                                                                                alt="service" class="mr-2 new-request-icon"
+                                                                                width="18" height="18" />
+                                                                            <label class="m-0">Shop Type</label>
+                                                                        </div>
+                                                                        <p class="detail-data-shop detail-data-shop-text ml-4 pl-1 mb-0" *ngIf="shopData?.shopTypeName != ''">{{shopData?.shopTypeName ? shopData?.shopTypeName : '-'}}</p>
+                                                                            <p class="detail-data-shop detail-data-shop-text ml-4 pl-1 mb-0" *ngIf="shopData?.shopTypeName == ''">-</p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 detail-data-shop mt-4 pr-1 pl-3">
+                                                                        <div class="d-flex align-items-center">
+                                                                            <!-- <img src="../../../../../assets/images/shop/dealer-code.png"
+                                                                                alt="service" width="19" height="19"
+                                                                                class="mr-2 new-request-icon" /> -->
+                                                                                <img src="../../../../assets/images/no-user-normal.png"
+                                                                                alt="service" width="19" height="19"
+                                                                                class="mr-2 new-request-icon" />
+                                                                            <label class="m-0">No.of Users </label>
+                                                                        </div>
+                                                                        <p class="detail-data-shop detail-data-shop-text ml-4 pl-1 mb-0"  *ngIf="shopData?.usersCount>0">{{shopData?.usersCount}}</p>
+                                                                        <p class="detail-data-shop detail-data-shop-text ml-4 pl-1 mb-0"  *ngIf="!shopData || shopData?.usersCount == 0">-</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>                                                    
+                                                </div>
+                                                <div class=" col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12"></div>
+                                                <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 pl-0 pb-3 cursor" *ngIf="shopData.collisionShops && shopData.collisionShops.length>0">
+                                                    <div class="coll-label">Collision Center</div>
+                                                    <div  class="coll-desc" *ngFor="let coll of shopData?.collisionShops" ><span (click)="navigatePage(coll.id)">{{coll.name}}</span></div>
+                                                </div>
+                                                <!-- <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 pb-3">                                                    
+                                                    <div class="row">
+                                                        <div class="col-lg-3 col-xl-3 col-md-3 col-sm-12 pl-0">
+                                                            <div class="user-card-new">
+                                                                <div class="d-flex">
+                                                                    <div class="box dealer-code-normal"></div>
+                                                                    <div class="right-section pl-3">
+                                                                        <p class="location-shop-head-txt mb-0">Dealer Code</p>
+                                                                        <p class="location-total mb-0" *ngIf="shopData?.usersCount>0">{{shopData?.usersCount}}</p>
+                                                                        <p class="location-total mb-0" *ngIf="!shopData || shopData?.usersCount == 0">-</p>
+        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-9 col-xl-9 col-md-9 col-sm-12 pl-0 pr-0">
+                                                            <div class="user-card-new">
+                                                                <div class="row no-gutters">
+                                                                    <div class="col-sm-4">
+                                                                        <div
+                                                                            class="d-flex align-items-center justify-content-between">
+                                                                            <div class="box region  w-80"></div>
+                                                                            <div class="right-section pl-3">
+                                                                                <p class="location-shop-head-txt mb-0">{{shopData?.levelOneParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelOneName != '' " >{{shopData?.levelOneName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelOneName == '' " >-</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+        
+        
+                                                                    <div class="col-sm-4">
+                                                                        <div
+                                                                            class="d-flex align-items-center justify-content-between">
+                                                                            <div class="box zone w-80"></div>
+                                                                            <div class="right-section pl-3">
+                                                                                <p class="location-shop-head-txt mb-0">{{shopData?.levelTwoParentName}}</p>                                                                                            
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelTwoName != '' " >{{shopData?.levelTwoName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelTwoName == '' " >-</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+        
+                                                                    <div class="col-sm-4">
+                                                                        <div
+                                                                            class="d-flex align-items-center justify-content-between">
+                                                                            <div class="box territory w-80"></div>
+                                                                            <div class="right-section pl-3">
+                                                                                <p class="location-shop-head-txt mb-0">{{shopData?.levelThreeParentName}}</p>                                                                                            
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelThreeName != '' " >{{shopData?.levelThreeName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelThreeName == '' " >-</p>
+                                                                            </div>
+                                                                        </div>
+        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                </div> -->
+                                                <div *ngIf="shopData?.primaryContacts.length" class=" col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 line-border"></div>
+                                                <div *ngIf="shopData?.primaryContacts.length" class=" col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 p-0 ">
+                                                    <div class="row">
+                                                        <span class="col-12 pb-3">
+                                                            <img class="loc-head-img" src="assets/images/hq/hq-user-icon.png">
+                                                            <span class="loc-head-utext">Primary Contacts</span>
+                                                        </span>
+                                                      <div class="col-12 d-flex " style="overflow-x: auto;" >
+                                                        <div *ngFor="let contacts of shopData?.primaryContacts" class="user-cont-row primary-contact-main">
+                                                            <div class="user-info-row user-info-row-grid primary-contact ">
+                                                                <div class="profile-user-thumb"></div>
+                                                                <div class="user-thumb-info">
+                                                                    <span class="primary-contact-user-name">{{contacts.Username ? contacts.Username : '-'}}</span>
+                                                                    <span class="d-flex align-items-center">
+                                                                        <img width="14px" height="10px" class="mr-2" src="assets/images/hq/user-email-icon.png" alt="" srcset="">
+                                                                        <span class="over-flow-text" title="{{contacts.EmailAddress ? contacts.EmailAddress : '-'}}">{{contacts.EmailAddress ? contacts.EmailAddress : '-'}}</span>
+                                                                    </span>
+                                                                    <span class="d-flex align-items-center">
+                                                                        <img width="14px" height="14px" class="mr-2" src="assets/images/hq/user-phone-icon.png" alt="" srcset="">
+                                                                        <span class="over-flow-text" title="(343) 434-3434">{{contacts.phoneNo ? contacts.phoneNo : '-'}}</span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="mtop30">
+                            
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding">
+                                <div class="outer-hq-container">
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row" >
+                                                <div class="" style="display: flex;flex-wrap: wrap;padding: 20px 14px 0 14px;" *ngIf="userType === 'DEKRA' || userType === 'SHOP'">
+                                                    <!-- <div class="col-4 p-2" role="button" (click)="currentActiveLink='volvo'" [ngClass]="currentActiveLink==='volvo' ? 'activated-tab' : ''">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <img src="../../../../assets/images/Volvo New 2021 Black.png" height="35" width="35" class="me-1" alt="">
+                                                            <p class="m-0 mx-2" style="font-weight: bold;">Volvo</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-5 p-2" role="button"(click)="currentActiveLink='gm'" [ngClass]="currentActiveLink==='gm' ? 'activated-tab' : ''">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <img src="https://cbt-demo-file-output.s3-accelerate.amazonaws.com/images/thumb_download645654667.jpg" height="35" width="35" class="me-1" alt="">
+                                                            <p class="m-0 mx-2"  style="font-weight: bold;">GM</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-5 p-2" role="button" (click)="currentActiveLink='vw'" [ngClass]="currentActiveLink==='vw' ? 'activated-tab' : ''">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <img src="https://cbt-demo-file-output.s3-accelerate.amazonaws.com/images/thumb_download645654667.jpg" height="35" width="35" class="me-1" alt="">
+                                                            <p class="m-0 mx-2"  style="font-weight: bold;">VW</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-5 p-2" role="button" (click)="currentActiveLink='mazda'" [ngClass]="currentActiveLink==='mazda' ? 'activated-tab' : ''">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <img src="../../../../assets/images/mazda-image.png" height="35" width="35" class="me-1" alt="">
+                                                            <p class="m-0 mx-2"  style="font-weight: bold;">Mazda</p>
+                                                        </div>
+                                                    </div> -->
+
+                                                        <ng-container *ngFor="let data of shopData.networkShopData">
+                                                            <div class="p-2 px-3" role="button" (click)="onClickOnShopTab(data); currentActiveLink = data?.networkname;"
+                                                                [ngClass]="currentActiveLink === data?.networkname ? 'activated-tab' : ''" style="width: max-content;">
+                                                                <div class="d-flex align-items-center justify-content-center" style="width: max-content;">
+                                                                    <img [src]="data?.logoUrl || '../../../../assets/images/mazda-image.png'" height="30" width="30"
+                                                                        class="me-1" alt="">
+                                                                    <p class="m-0 mx-2" style="font-weight: bold;">{{data?.networkname}}</p>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                </div>
+                                                <div class=" col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 line-border"></div>
+
+                                                <div class="col-12" style="display: flex;padding: 6px 14px 25px 14px;">
+                                                    <div class="col-lg-3 col-xl-3 col-md-3 col-sm-12 pl-0">
+                                                        <div class="user-card-new">
+                                                            <div class="d-flex">
+                                                                <div class="box dealer-code-normal"></div>
+                                                                <div class="right-section pl-3">
+                                                                    <p class="location-shop-head-txt mb-0">Dealer Code</p>
+                                                                    <ng-container *ngIf="userType === 'DEKRA' || userType === 'SHOP';else networkDealer">
+                                                                        <p class="location-total mb-0">{{networkShopDetail?.dealerCode ? networkShopDetail?.dealerCode : '-'}}</p>
+                                                                    </ng-container>
+                                                                    <ng-template #networkDealer>
+                                                                        <p class="location-total mb-0">{{shopData?.dealerCode ? shopData?.dealerCode : '-'}}</p>
+                                                                    </ng-template>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-9 col-xl-9 col-md-9 col-sm-12 pl-0 pr-0">
+                                                        <div class="user-card-new">
+                                                            <div class="row no-gutters">
+                                                                <div class="col-sm-4">
+                                                                    <div
+                                                                        class="d-flex align-items-center justify-content-between">
+                                                                        <div class="box region  w-80"></div>
+                                                                        <div class="right-section pl-3">
+                                                                            <ng-container *ngIf="userType === 'DEKRA' || userType === 'SHOP';else networkLevelOne">
+                                                                                <p class="location-shop-head-txt mb-0">{{networkShopDetail?.levelOneParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="networkShopDetail?.levelOneName != '' ">
+                                                                                    {{networkShopDetail?.levelOneName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="networkShopDetail?.levelOneName == '' ">-</p>
+                                                                            </ng-container>
+                                                                            <ng-template #networkLevelOne>
+                                                                                <p class="location-shop-head-txt mb-0">{{shopData?.levelOneParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelOneName != '' ">{{shopData?.levelOneName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelOneName == '' ">-</p>
+                                                                            </ng-template>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div
+                                                                        class="d-flex align-items-center justify-content-between">
+                                                                        <div class="box zone w-80"></div>
+                                                                        <div class="right-section pl-3">
+                                                                            <ng-container *ngIf="userType === 'DEKRA' || userType === 'SHOP';else networkLevelTwo">
+                                                                                <p class="location-shop-head-txt mb-0">{{networkShopDetail?.levelTwoParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="networkShopDetail?.levelTwoName != '' ">
+                                                                                    {{networkShopDetail?.levelTwoName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="networkShopDetail?.levelTwoName == '' ">-</p>
+                                                                            </ng-container>
+                                                                            <ng-template #networkLevelTwo>
+                                                                                <p class="location-shop-head-txt mb-0">{{shopData?.levelTwoParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelTwoName != '' ">{{shopData?.levelTwoName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelTwoName == '' ">-</p>
+                                                                            </ng-template>
+                                                                        </div>
+                                                                    </div>
+    
+                                                                </div>
+    
+                                                                <div class="col-sm-4">
+                                                                    <div
+                                                                        class="d-flex align-items-center justify-content-between">
+                                                                        <div class="box territory w-80"></div>
+                                                                        <div class="right-section pl-3">
+                                                                            <ng-container *ngIf="userType === 'DEKRA' || userType === 'SHOP';else networkLevelThree">
+                                                                                <p class="location-shop-head-txt mb-0">{{networkShopDetail?.levelThreeParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="networkShopDetail?.levelThreeName != '' ">
+                                                                                    {{networkShopDetail?.levelThreeName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="networkShopDetail?.levelThreeName == '' ">-</p>
+                                                                            </ng-container>
+                                                                            <ng-template #networkLevelThree>
+                                                                                <p class="location-shop-head-txt mb-0">{{shopData?.levelThreeParentName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelThreeName != '' ">{{shopData?.levelThreeName}}</p>
+                                                                                <p class="location-shop-total mb-0" *ngIf="shopData?.levelThreeName == '' ">-</p>
+                                                                            </ng-template>
+                                                                        </div>
+                                                                    </div>
+    
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                               
+                                                <div
+                                                    class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row" id="loc-head-row" style="border: none;">
+                                                    <img class="loc-head-img" src="assets/images/hq/filed-support.png">
+                                                    <span class="loc-head-text">Field Support</span>
+                                                </div>
+                                                <div class=" col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 line-border"></div>
+                                                <ng-container *ngIf="userType === 'DEKRA' || userType === 'SHOP';else userGridInfoTem">
+                                                    <app-user-grid-info *ngIf="shopData.userinfoFlag" [userInfoData]="userInfoData" class="user-info-data w-100"></app-user-grid-info>
+                                                </ng-container>
+                                                <ng-template #userGridInfoTem>
+                                                    <app-user-grid-info *ngIf="shopData.userinfoFlag" [userInfoData]="shopData.userInfoData" class="user-info-data w-100">
+                                                    </app-user-grid-info>
+                                                </ng-template>
+
+                                                
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mtop30 hide">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" width="21" height="17" 
+                                                            style="position: relative;top: -3px;margin-left: 0;"
+                                                                src="assets/images/hq/setting-gear-3.png">
+                                                            <!-- <span class="location-heading">DMS/SMS</span> -->
+                                                            <span class="location-heading">Systems / Technology</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="editValues('Systems/Technology')">
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <div *ngIf="!editSec.includes('Systems/Technology')" >
+                                                                <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                            </div>
+                                                            <div *ngIf="editSec.includes('Systems/Technology')" (click)="manageShopModify('Systems/Technology')" >
+                                                                <img src="assets/images/hq/check-green.png">
+                                                            <span class="text-left filed">Save</span>
+                                                            </div>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <!-- <div class="d-flex align-items-center franchies-box pt-3 mb-3"
+                                                *ngIf="dmsSelectedName && dmsSelectedName.length>0">
+                                                <div class="franchies-box-data" *ngFor="let dmsname of dmsSelectedName;; let t=index">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="fs-12 mr-2">{{dmsname}}</span>
+                                                        <img class="cursor"  (click)="removeSelection(t,'dms')" src="assets/images/close-icon.png" alt="" role="button"
+                                                            height="10" width="10" title="Remove">
+                                                    </div>
+                                                </div>                                           
+                                            </div> -->
+                                            <div *ngIf="shopSystemsTechnology && shopSystemsTechnology.length > 0">
+                                                <div class="row sales-hour" *ngFor="let techs of shopSystemsTechnology; index as index">
+                                                    <div class="col-3 p-0 d-flex justify-content-between sales-hour-row">
+                                                        <div class="dark-grey">{{techs.labelName}}</div>
+                                                    </div>
+                                                    <div class="col-3 p-0 d-flex align-items-center sales-hour-row">
+                                                        <div *ngIf="techs.name">{{techs.name}}</div>
+                                                        <i class="" style="color: #999999;" *ngIf="!techs.name">Not Provided</i>
+                                                        <img *ngIf="editSec.includes('Systems/Technology')" (click)="manageList('dms', techs.labelId)" class="ml-2 cursor-pointer" src="assets/images/hq/hq-text-edit.png" alt="" srcset="">
+                                                    </div>
+                                                </div>                                           
+                                            </div>                                        
+                                            <div class="d-flex align-items-center pt-2" *ngIf="shopSystemsTechnology.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-cd-wrap cd-ht mtop30"> 
+                            <app-user-profile-section [profileSectionData] = "systemsTechnologyData"></app-user-profile-section>
+                        </div>
+
+                        <div class="mtop30">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" src="assets/images/hq/franchies.png"
+                                                            style="margin-left: 0;">
+                                                            <span class="location-heading">Franchise</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="manageList('franchise')">
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="d-flex align-items-center franchies-box pt-3 mb-3"
+                                                *ngIf="franchiseSelectedName && franchiseSelectedName.length>0">
+                                                <div class="franchies-box-data" *ngFor="let shopFranchise of franchiseSelectedName; let t=index">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="fs-12 mr-2">{{shopFranchise}}</span>
+                                                        <!-- <img class="cursor" (click)="removeSelection(t,'franchise')" src="assets/images/close-icon.png" alt="" role="button"
+                                                            height="10" width="10" title="Remove" > -->
+                                                    </div>
+                                                </div>                                           
+                                            </div>
+                                            <div class="d-flex align-items-center pt-2" *ngIf="franchiseSelectedName.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-cd-wrap cd-ht mtop30"> 
+                            <app-user-profile-section [profileSectionData] = "subscriptionsPoliciesData"></app-user-profile-section>
+                        </div>
+
+                        <div class="mtop30 hide">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+                                    <div class="outer-head-row">
+                                        <div class="container pr-0">
+                                            <div class="row" style="padding-right: 15px;" >
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img"  style="margin-left: 0;"
+                                                                src="assets/images/hq/subscription.png">
+                                                            <!-- <span class="location-heading">Subscriptions</span> -->
+                                                            <span class="location-heading">Subscriptions / Policies</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="editValues('subscription')">
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <div *ngIf="!editSec.includes('subscription')">
+                                                                <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                            </div>
+                                                            <div *ngIf="editSec.includes('subscription')" (click)="manageShopModify('subscription')">
+                                                                <img src="assets/images/hq/check-green.png">
+                                                            <span class="text-left filed">Save</span>
+                                                            </div>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <!-- <div class="subscription-card-box ps pt-2" [perfectScrollbar]="sconfig" *ngIf="subscriptionSelect && subscriptionSelect.length>0"> -->
+                                            <div class="subscription-card-box ps pt-2">
+
+                                                <!-- <div >
+                                                    <div class="row border-bottom pb-2 no-gutters mb-2" *ngFor="let shopSupscription of subscriptionSelect; let t=index;">
+                                                        <div class="col-12">
+                                                            <div class="text-ndiv-hover">
+                                                                
+                                                                <div class="text-ndiv">
+                                                                    <p class="location-txt shop-d-txt mb-0">{{shopSupscription.name}}</p>
+                                                                    <img title="Remove" class="cursor remove-icon pl-2" (click)="removeSelection(t,'subscription')" src="assets/images/hq/hq-delete.png" alt="" role="button" height="15">                                                                
+                                                                </div>
+                                                                <span class="mr-4 certificate-txt">Enrolled: <span
+                                                                        class="dark-txt">
+                                                                        <span *ngIf="shopSupscription.startDate && shopSupscription.startDate !=''"> {{shopSupscription.startDate}}</span>
+                                                                        <span *ngIf="shopSupscription.startDate ==''">-</span>
+                                                                    </span></span>
+        
+                                                                <span class="mr-4 certificate-txt">Renewal:<span
+                                                                        class="dark-txt">
+                                                                        <span *ngIf="shopSupscription.endDate && shopSupscription.endDate !=''"> {{shopSupscription.endDate}}</span>
+                                                                        <span *ngIf="shopSupscription.endDate ==''">-</span></span></span>
+                                                            </div>
+                                                        </div>                                                    
+                                                    </div>  
+                                                </div> -->
+                                                <div *ngIf="shopSubscriptionsPolicies && shopSubscriptionsPolicies.length > 0">
+                                                    <div *ngFor="let policy of shopSubscriptionsPolicies; index as index" class="row sales-hour">
+                                                        <div class="col-3 p-0 d-flex justify-content-between sales-hour-row">
+                                                            <div class="dark-grey">{{policy.labelName}}</div>
+                                                        </div>
+                                                        <div class="col-3 p-0 d-flex align-items-center sales-hour-row">
+                                                            <div *ngIf="policy.name" >{{policy.name}}</div>
+                                                            <i class="" style="color: #999999;" *ngIf="!policy.name">Not Provided</i>
+                                                            <img *ngIf="editSec.includes('subscription')" (click)="manageList('subscriptionPolicy', policy.labelId)" class="ml-2 cursor-pointer" src="assets/images/hq/hq-text-edit.png" alt="" srcset="">
+                                                        </div>
+                                                    </div>                                           
+                                                </div> 
+                                            </div>
+                                            <!-- <div class="d-flex align-items-center pt-2" *ngIf="subscriptionSelect.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div> -->
+
+                                                <!--
+                                                <div class="row border-bottom pb-2 no-gutters mb-2">
+                                                    <div class="col-8">
+                                                        <div class="">
+                                                            <p class="location-txt mb-0">Garage keepers insurance
+                                                            </p>
+                                                            <span class="mr-4 certificate-txt">Enrolled: <span
+                                                                    class="dark-txt">24 Apr
+                                                                    , 2023</span></span>
+
+                                                            <span class="mr-4 certificate-txt">Renewal:<span
+                                                                    class="dark-txt">
+                                                                    19 Jan, 2024</span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="d-flex justify-content-end g-10" id="lightgallery">
+                                                            <a
+                                                                href="https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68">
+                                                                <img style="margin-right: 5px;border-radius: 4px" src="https://fastly.picsum.photos/id/10/2500/1667.jpg?hmac=J04WWC_ebchx3WwzbM-Z4_KC_LeLBWr5LZMaAkWkF68"
+                                                                    width="40" height="40" /></a>
+                                                            <a
+                                                                href="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU">
+                                                                <img style="margin-right: 5px;border-radius: 4px" src="https://fastly.picsum.photos/id/0/5000/3333.jpg?hmac=_j6ghY5fCfSD6tvtcV74zXivkJSPIfR9B8w34XeQmvU"
+                                                                    width="40" height="40" /></a>
+                                                            <a href="" class="txt-link-green d-flex justify-content-center align-items-center">+3</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row border-bottom pb-2 no-gutters mb-2">
+                                                    <div class="col-8">
+                                                        <div class="">
+                                                            <p class="location-txt mb-0">Garage keepers insurance
+                                                            </p>
+                                                            <span class="mr-4 certificate-txt">Enrolled: <span
+                                                                    class="dark-txt">24 Apr
+                                                                    , 2023</span></span>
+
+                                                            <span class="mr-4 certificate-txt">Renewal:<span
+                                                                    class="dark-txt">
+                                                                    19 Jan, 2024</span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="d-flex justify-content-end pr-3">
+                                                            <img src="../../../../assets/images/hq/Capture.PNG" alt=""
+                                                                width="40" height="40">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row no-gutters">
+                                                    <div class="col-8">
+                                                        <div class="">
+                                                            <p class="location-txt mb-0">Garage keepers insurance
+                                                            </p>
+                                                            <span class="mr-4 certificate-txt">Enrolled: <span
+                                                                    class="dark-txt">24 Apr
+                                                                    , 2023</span></span>
+
+                                                            <span class="mr-4 certificate-txt">Renewal:<span
+                                                                    class="dark-txt">
+                                                                    19 Jan, 2024</span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="d-flex justify-content-end pr-3">
+                                                            <img src="../../../../assets/images/hq/Capture.PNG" alt=""
+                                                                width="40" height="40">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                -->
+
+                                            
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-cd-wrap cd-ht mtop30"> 
+                            <app-user-profile-section [profileSectionData] = "shopCertification"></app-user-profile-section>
+                        </div>
+
+                        <div class="mtop30 hide">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img"  style="margin-left: 0;"
+                                                                src="assets/images/hq/certificate.png">
+                                                            <span class="location-heading">Certification</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="manageList('certification')">
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="subscription-card-box ps pt-2" [perfectScrollbar]="sconfig" *ngIf="certificationSelect && certificationSelect.length>0">
+
+                                                <div >
+                                                    <div class="row border-bottom pb-2 no-gutters mb-2" *ngFor="let shopCertification of certificationSelect; let t=index;">
+                                                        <div class="col-12">
+                                                            <div class="text-ndiv-hover">
+                                                                <div class="text-ndiv">
+                                                                    <p class="location-txt shop-d-txt mb-0">{{shopCertification.name}}</p>
+                                                                    <img title="Remove" class="cursor remove-icon pl-2" (click)="removeSelection(t,'certification')" src="assets/images/hq/hq-delete.png" alt="" role="button" height="15">                                                                
+                                                                </div>
+                                                            <span class="mr-4 certificate-txt">Certified on:<span
+                                                                        class="dark-txt">
+                                                                    <span *ngIf="shopCertification.startDate && shopCertification.startDate !=''">{{shopCertification.startDate}}</span>
+                                                                    <span *ngIf="shopCertification.startDate ==''">-</span>
+                                                                    </span></span>
+        
+                                                                <span class="mr-4 certificate-txt">Expiration:<span
+                                                                        class="dark-txt">
+                                                                        <span *ngIf="shopCertification.endDate && shopCertification.endDate !=''">{{shopCertification.endDate}}</span>
+                                                                    <span *ngIf="shopCertification.endDate ==''">-</span>
+                                                                    </span></span>
+                                                            </div>
+                                                        </div>                                                    
+                                                    </div>  
+                                                </div>
+
+                                            </div>
+                                            <div class="d-flex align-items-center pt-2" *ngIf="certificationSelect.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>                                        
+
+                                                    <!--
+                                                    <div class="pl-2 border-bottom pb-2">
+                                                        <p class="location-txt mb-0">Light and medium duty vehicles</p>
+                                                        <span class="mr-2 certificate-txt">Certified on: <span
+                                                                class="dark-txt">15 Mar, 2023</span></span>
+
+                                                        <span class="mr-2 certificate-txt">Certified on: <span
+                                                                class="dark-txt">15 Mar, 2023</span></span>
+                                                    </div>
+
+                                                    <div class="pl-2 border-bottom pb-2">
+                                                        <p class="location-txt mb-0">Hydraulic and Specialty Systems
+                                                            Repairs</p>
+                                                        <span class="mr-2 certificate-txt">Certified on: <span
+                                                                class="dark-txt">15 Mar, 2023</span></span>
+
+                                                        <span class="mr-2 certificate-txt">Certified on: <span
+                                                                class="dark-txt">15 Mar, 2023</span></span>
+                                                    </div>
+
+                                                    <div class="pl-2">
+                                                        <p class="location-txt mb-0">Electrical System Diagnostics and
+                                                            Repairs</p>
+                                                        <span class="mr-2 certificate-txt">Certified on: <span
+                                                                class="dark-txt">15 Mar, 2023</span></span>
+
+                                                        <span class="mr-2 certificate-txt">Certified on: <span
+                                                                class="dark-txt">15 Mar, 2023</span></span>
+                                                    </div>
+                                                    -->
+                                                </div>
+                                            </div>
+                                </div>
+                            </div>
+                        </div>
+
+                       
+
+                        <div class="mtop30">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" 
+                                                            style="position: relative;top: -3px;margin-left: 0;"
+                                                                src="assets/images/hq/setting-in-hand.png">
+                                                            <span class="location-heading">Type of Service offered</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="manageList('ServiceOffered')" >
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="d-flex align-items-center franchies-box pt-3 mb-3"
+                                                *ngIf="shopServicesOfferedSelectedName && shopServicesOfferedSelectedName.length>0">
+                                                <div class="franchies-box-data" *ngFor="let shopServicesOffered of shopServicesOfferedSelectedName;; let t=index">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="fs-12 mr-2">{{shopServicesOffered}}</span>
+                                                        <!-- <img class="cursor" src="assets/images/close-icon.png" alt="" role="button"
+                                                            height="10" width="10" title="Remove"> -->
+                                                    </div>
+                                                </div>                                           
+                                            </div>                                        
+                                            <div class="d-flex align-items-center pt-2" *ngIf="shopServicesOfferedSelectedName.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mtop30">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+                                    <div class="outer-head-row">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" src="assets/images/hq/star-in-gear.png"
+                                                            style="margin-left: 0;">
+                                                            <span class="location-heading">Other Facility Features</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="manageList('FacilityFeatures')" >
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="d-flex align-items-center franchies-box pt-3 mb-3"
+                                                *ngIf="shopFacilityFeaturesSelectedName && shopFacilityFeaturesSelectedName.length>0">
+                                                <div class="franchies-box-data" *ngFor="let shopFranchise of shopFacilityFeaturesSelectedName; let t=index">
+                                                    <div class="d-flex align-items-center">
+                                                        <span class="fs-12 mr-2">{{shopFranchise}}</span>
+                                                        <!-- <img class="cursor" src="assets/images/close-icon.png" alt="" role="button"
+                                                            height="10" width="10" title="Remove" > -->
+                                                    </div>
+                                                </div>                                           
+                                            </div>
+                                            <div class="d-flex align-items-center pt-2" *ngIf="shopFacilityFeaturesSelectedName.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mtop30">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-6 col-md-12 col-sm-12 flex-1 pl-0 outer-hq-container mr-3">
+
+                                    <div class="outer-head-row">
+                                        <div class="container pr-0">
+                                            <div class="row sales-hour-heading">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" 
+                                                            style="position: relative;top: -3px;margin-left: 0;"
+                                                                src="assets/images/hq/black-cal-icon.png">
+                                                            <span class="location-heading">Sales Hours</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="editValues('SalesHours')" >
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <div *ngIf="!editSec.includes('SalesHours')" >
+                                                                <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                            </div>
+                                                            <div *ngIf="editSec.includes('SalesHours')" (click)="manageShopModify('salesHour')" >
+                                                                <img src="assets/images/hq/check-green.png">
+                                                            <span class="text-left filed">Save</span>
+                                                            </div>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="mb-3 sales-hour-main" [perfectScrollbar]="sconfigX" *ngIf="shopSalesHours && shopSalesHours.length > 0" >
+                                                <div class="row sales-hour align-items-center {{editSec.includes('SalesHours') ? 'padding-y' : ''}} " *ngFor="let hours of shopSalesHours; let index=index">
+                                                        <div class="col-2 p-0 d-flex justify-content-between sales-hour-row">
+                                                            <div>{{hours.labelName}}</div>
+                                                            <!-- <div *ngIf="hours.name" >{{hours.name}}</div>
+                                                            <i class="dark-grey" *ngIf="!hours.name && !editSec.includes('SalesHours')">Not Provided</i> -->
+                                                        </div>
+                                                        <div class="col-10 edit-dlt-sec ">
+                                                            <!-- <img *ngIf="editSec.includes('SalesHours')" class="mr-2 cursor-pointer" src="assets/images/hq/hq-text-edit.png" alt="" srcset=""> -->
+                                                            <div class="{{hours.closed ? 'dark-grey' : ''}}" *ngIf="!editSec.includes('SalesHours')" >{{!hours.closed ? hours.name : 'Closed'}}</div>
+                                                            <!-- <i class="dark-grey" *ngIf="!hours.name && !editSec.includes('SalesHours')">Not Provided</i> -->
+                                                            <div *ngIf="editSec.includes('SalesHours')" class="d-flex align-items-center " >
+                                                                <span class="mr-1 f-size-14">From</span>
+                                                                <p-calendar  class="mr-1 time-dd" appendTo="body" [showIcon]="true" [timeOnly]="true" showTime="true" [hourFormat]="12" [(ngModel)]="hours.from" [disabled]="hours.closed"></p-calendar>
+                                                                <span class="mr-1 f-size-14">To</span>
+                                                                <p-calendar class="time-dd" appendTo="body" [showIcon]="true"  [timeOnly]="true" showTime="true" [hourFormat]="12" [(ngModel)]="hours.to" [disabled]="hours.closed"></p-calendar>
+                                                                <p-inputSwitch class="mr-1 sales-hour-switch" [(ngModel)]="hours.closed"></p-inputSwitch>
+                                                                <span class="mr-1 f-size-14">Closed</span>
+                                                            </div>
+                                                            <!-- <img class="cursor-pointer" src="assets/images/hq/hq-delete.png" alt="" srcset=""> -->
+                                                        </div>
+                                                </div>                                           
+                                            </div>                                        
+                                            <div class="d-flex align-items-center pt-2" *ngIf="shopSalesHours.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-6 col-md-12 col-sm-12  flex-1 pr-0 outer-hq-container">
+
+                                    <div class="outer-head-row">
+                                        <div class="container pr-0">
+                                            <div class="row sales-hour-heading">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" 
+                                                            style="position: relative;top: -3px;margin-left: 0;"
+                                                                src="assets/images/hq/black-cal-icon.png">
+                                                            <span class="location-heading">Service Hours</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="editValues('ServiceHours')" >
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <div *ngIf="!editSec.includes('ServiceHours')">
+                                                                <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                            </div>
+                                                            <div *ngIf="editSec.includes('ServiceHours')" (click)="manageShopModify('serviceHour')">
+                                                                <img src="assets/images/hq/check-green.png">
+                                                            <span class="text-left filed">Save</span>
+                                                            </div>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="mb-3 sales-hour-main" [perfectScrollbar]="sconfigX" *ngIf="shopServiceHours && shopServiceHours.length > 0" >
+                                                <div class="row sales-hour align-items-center {{editSec.includes('ServiceHours') ? 'padding-y' : ''}}  " *ngFor="let serviceHours of shopServiceHours; let t=index">
+                                                    <div class="col-2 p-0 d-flex justify-content-between sales-hour-row">
+                                                        <div>{{serviceHours.labelName}}</div>
+                                                        <!-- <div *ngIf="serviceHours.name" >{{serviceHours.name}}</div>
+                                                        <i class="dark-grey" *ngIf="!serviceHours.name">Not Provided</i> -->
+                                                    </div>
+                                                    <div class="col-10 edit-dlt-sec ">
+                                                        <!-- <img *ngIf="editSec.includes('ServiceHours')" class="mr-2 cursor-pointer" src="assets/images/hq/hq-text-edit.png" alt="" srcset=""> -->
+                                                        <div class="{{serviceHours.closed ? 'dark-grey' : ''}}" *ngIf="!editSec.includes('ServiceHours')" >{{!serviceHours.closed ? serviceHours.name : 'Closed'}}</div>
+                                                        <!-- <i class="dark-grey" *ngIf="!serviceHours.name && !editSec.includes('ServiceHours')">Not Provided</i> -->
+                                                        <div *ngIf="editSec.includes('ServiceHours')" class="d-flex align-items-center " >
+                                                            <span class="mr-1 f-size-14">From</span>
+                                                            <p-calendar  class="mr-1 time-dd" appendTo="body" [showIcon]="true" [timeOnly]="true" showTime="true" [hourFormat]="11" [(ngModel)]="serviceHours.from" [disabled]="serviceHours.closed"></p-calendar>
+                                                            <span class="mr-1 f-size-14">To</span>
+                                                            <p-calendar class="time-dd" appendTo="body" [showIcon]="true"  [timeOnly]="true" showTime="true" [hourFormat]="12" [(ngModel)]="serviceHours.to" [disabled]="serviceHours.closed"></p-calendar>
+                                                            <p-inputSwitch class="mr-1 sales-hour-switch" [(ngModel)]="serviceHours.closed"></p-inputSwitch>
+                                                            <span class="mr-1 f-size-14">Closed</span>
+                                                        </div>
+                                                        <!-- <img class="cursor-pointer" src="assets/images/hq/hq-delete.png" alt="" srcset=""> -->
+                                                    </div>
+                                                </div>                                           
+                                            </div>                                        
+                                            <div class="d-flex align-items-center pt-2" *ngIf="shopServiceHours.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>                       
+
+                        <div class="mtop30">
+                            <div class="col-lg-12 col-md-12 col-sm-12 no-margin no-padding row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 flex-1 outer-hq-container">
+
+                                    <div class="outer-head-row">
+                                        <div class="container pr-0">
+                                            <div class="row sales-hour-heading">
+                                                <div class="col-lg-12 col-md-12 col-sm-12 row no-margin no-padding loc-head-row-sec3"
+                                                    style="border:none; border-bottom: 1px solid #ededed;">
+                                                    <div
+                                                        class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding text-left">
+                                                        <span>
+                                                            <img class="loc-head-img" 
+                                                            style="position: relative;top: -3px;margin-left: 0;"
+                                                                src="assets/images/hq/links-chain.png">
+                                                            <span class="location-heading">Web Links</span>
+                                                        </span>
+                                                        <span class="cursor float-right" (click)="manageList('webLinks')">
+                                                            <!-- <img src="assets/images/customers/add-icon.png">
+                                                            <span class="text-left filed">Add</span> -->
+                                                            <img src="assets/images/customers/edit-icon.png">
+                                                            <span class="text-left filed">Edit</span>
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            <div class="mb-3 web-link-main" [perfectScrollbar]="sconfigX" >
+                                                <div class="row sales-hour" *ngFor="let links of shopWebLinksSelectedName;; let t=index">
+                                                    <div class="col-12 p-0 d-flex justify-content-between sales-hour-row">
+                                                        <a class="web-links" target="_blank" style="color: #0044cc !important;" href="https://{{links}}">{{links}}</a>
+                                                    </div>
+                                                </div>                                           
+                                            </div>                                        
+                                            <div class="d-flex align-items-center pt-2" *ngIf="shopWebLinksSelectedName.length == 0"
+                                            style="padding-left: 0px; padding-bottom: 0.5rem;">
+                                                <div class="mb-0 nothing-txt d-flex align-items-center">Nothing to Show</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>                          
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- add user sidebar -->
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="addUserVisible" [baseZIndex]="100" position="right"
+    [dismissible]="false" modal="true">
+    <app-user-add (saveUser)="onDrawerDismiss($event)"></app-user-add>
+</p-sidebar>

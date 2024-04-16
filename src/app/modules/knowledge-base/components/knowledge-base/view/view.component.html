@@ -1,0 +1,39 @@
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading">
+    <div class="detail-error-div " *ngIf="detailViewError"><div class="error-msg">{{detailViewErrorMsg}}</div></div> 
+    <div  *ngIf="!detailViewError">
+        <div id="header">
+            <app-dynamic-detail-header [pageData]="headerData" [otherSpecialData]="otherSpecialData" ></app-dynamic-detail-header>    
+        </div>  
+    </div>
+    <div class="dynamic-detail-section">
+        <div class="row col-lg-12 col-md-12 col-sm-12 paddingR0">
+            <div class="col-lg-1 col-md-1 col-sm-12">&nbsp;</div>           
+            <div class="col-lg-8 col-md-6 col-sm-12">
+                <app-dynamic-page-view></app-dynamic-page-view>
+            </div>
+            <div class="col-lg-3 col-md-5 col-sm-12">
+                <div class="detail-section-rt">
+                    <div class="empty-container">
+                        <div class="empty-res text-center">
+                            <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                            <div class="no-data-text">Nothing to show</div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

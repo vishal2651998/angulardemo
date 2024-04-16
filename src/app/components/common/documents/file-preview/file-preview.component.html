@@ -1,0 +1,12 @@
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading">
+    <div class="th-error-div" *ngIf="threadViewError"><div class="error-msg">{{threadViewErrorMsg}}</div></div> 
+    <div  *ngIf="!threadViewError">
+        <div id="header" class="detail-page-header">
+            <app-product-header [pageData]="headerData"></app-product-header>
+         </div> 
+         <div class="">
+            <iframe width="100%" [style.height.px]="innerHeight" frameBorder="0" [src]="urlSafe"></iframe>
+         </div>
+    </div>
+</div>

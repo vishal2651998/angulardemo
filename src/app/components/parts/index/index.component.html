@@ -1,0 +1,71 @@
+<div id="header" >
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index part-sec split-sec1">
+    <div *ngIf="!itemEmpty" class="part-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt" *ngIf="!msTeamAccess">
+                <span class="parts-head-ic">
+                    <img src="assets/images/parts/part-gray-icon.svg" onload="SVGInject(this)">
+                </span>
+                {{title}}
+            </span>
+            <span class="head-txt part-head-txt" *ngIf="msTeamAccess" tooltipClass="help-content-tooltip sidebarTeam sidebarTeam2" container="body" triggers="manual" [autoClose]="false" placement="right-top" [ngbTooltip]="partsTT" #ttparts="ngbTooltip">{{title}}</span>
+            <ng-template #partsTT>
+                <div class="tt-helpcontent-container">
+                    <div class="tt-bg-image {{thelpContentIconName}}"></div>
+                    <div class="tt-title">
+                        <div class="lt-img {{thelpContentIconName}}"></div>
+                        <div class="rt-text">{{thelpContentTitle}}</div>
+                    </div>
+                    <div class="tt-desp">{{thelpContentContent}}</div>
+                    <div class="tt-next-text" (click)="helpContent(thelpContentId)">DONE</div>
+                </div>
+            </ng-template>	
+            <span class="tab tab-1 cursor" [ngClass]="{'active': section == 1, 'hide': ((headerCheck == 'checked' && section == 2) || (headerCheck == 'all' && section == 2))}" (click)="sectionChange(1)">
+                <img src="assets/images/action-active.svg" onload="SVGInject(this)">
+                Active
+            </span>
+            <span class="tab tab-2 cursor" [ngClass]="{'active': section == 2, 'hide': ((headerCheck == 'checked' && section == 1) || (headerCheck == 'all' && section == 1))}" (click)="sectionChange(2)">
+                <img src="assets/images/action-deactive.svg" onload="SVGInject(this)">
+                Discontinued
+            </span>
+            <!-- <span *ngIf="createAccess" class="new-prob" [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all')}" (click)="navPart('new', 0)">{{pageCreateNew}}</span> -->
+            <!--div *ngIf="delayDisplay" class="cursor thread-add-new"  [ngClass]="{'thread-add-new-ms': msTeamAccess, 'ms-thread-add-web': msTeamAccess, 'hide': headerCheck == 'checked' || headerCheck == 'all' || !createAccess }" (click)="navPart('new',0)">                            
+                <span class=""><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >{{pageCreateNew}}</span>                            
+            </div-->
+            <span class="select-part-status">
+                <p-dropdown class="select-part-status-dd" appendTo="body" [options]="partPublishStatus" [(ngModel)]="selectedStatus" placeholder="" optionLabel="name" (onChange)="selectEventSort($event)" ></p-dropdown>
+            </span> 
+        </div>
+        <div class="prob-head-col head-col-2 text-right">
+            <span [ngClass]="{'show': (headerCheck == 'checked' || headerCheck == 'all'), 'hide': (headerCheck == 'unchecked' || loading)}">
+                <span class="action-col cursor clear" (click)="clearSelection()">Clear All</span>
+                <span *ngIf="section == 2" class="action-col cursor active" (click)="partsListAction(1)">Activate</span>
+                <span *ngIf="section == 1" class="action-col cursor deactive" (click)="partsListAction(2)">Discontinued</span>
+                <span class="action-col cursor delete hide">Delete</span>                    
+            </span>
+            <!--app-common-notifications *ngIf="msTeamAccess"></app-common-notifications--> 
+            <span *ngIf="!loading" class="action-col pin-col cursor" class="{{pinClass}}" [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || itemEmpty)}" (click)="pinnedPartList(!pinFlag)"></span>
+            <span *ngIf="!loading" class="action-col thumb-col cursor" [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView, 'hide': (headerCheck == 'checked' || headerCheck == 'all' || displayNoRecords || itemEmpty)}" title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType(thumbView)"></span>
+        </div>
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" (callback)="filterCallback($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" (callback)="filterCallback($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div>
+    <div class="probing-content cbt-content part-content part-content-new" [ngClass]="{'filter-expand': expandFlag, 'right-panel-expand part-right-side-none': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-parts-list [pageDataInfo]="pageData" (accessLevelValue)="accessLevelValu($event)"></app-parts-list>
+    </div>
+    <!--div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div-->
+</div>

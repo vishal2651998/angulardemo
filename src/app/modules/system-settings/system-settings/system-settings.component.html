@@ -1,0 +1,70 @@
+<div class="landing-page-container dispatch-container" id="parts">
+    <div class="container-fluid">
+      <div class="wrapper wrapper-threadpage">
+        <div class="container-fluid" id="content">
+          <div id="header">
+            <app-thread-detail-header [pageData]="headerData"></app-thread-detail-header>
+            <!--app-product-header [pageData]="headerData" (search)="applySearch($event)"></app-product-header-->
+        </div>
+        <div class="prob-index">
+            <div class="probing-content system-setting">
+                <div class="escalationv2-list-head head-row">
+                <div class="head-col-1">
+                    <img
+                    class="head-img"
+                    src="assets/images/system-settings/system-settings-head.png"
+                    />
+                    <span class="head-text">System Settings</span>
+                </div>
+                </div>
+                <div *ngIf="loading">
+                    <!--div class="loader"><img width="60" height="60" src="assets/images/loading.svg" alt="Loader" /></div-->
+                </div>       
+                <div *ngIf="!loading">
+                    <div class="ts-list-lt ts-list-bottom cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                        <div class="" >
+                            <div id="filter">
+                                <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()">
+                                    <div *ngIf="expandFlag">
+                                        <img src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+                                    </div>
+                                    <div *ngIf="!expandFlag">
+                                        <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+                                    </div>
+                                </div>
+                                <div class="filter-widgets ts-list-lt-center transition" *ngIf="expandFlag">
+                                    <div [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                                        <div class="ps" [perfectScrollbar]="sconfig">                            
+                                            <div class="user-row">
+                                                <div >
+                                                    <div *ngFor="let menu of menuItemsData; let i=index;" class="profile-row system-settings-menu-row" [routerLink]="menu.menulinkname" routerLinkActive="active" >
+                                                        <div class="profile-row-inner ">
+                                                            <span class="pimg {{menu.imageClass}}"></span>
+                                                            <span class="uname">{{menu.name}}</span>                                                  
+                                                        </div>                    
+                                                    </div>                                                                                                                                
+                                                </div>              
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ts-list-rt transition" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">        
+                        <div class="ts-list-rt-center">
+                            <div class="system-setting-container-outer" [ngClass]="{'message-container-outer': messageFlag}" [style.height]="'calc(100vh - '+innerHeight+'px)'">
+                              <router-outlet></router-outlet>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+            </div>
+        </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,104 @@
+<div class="file-list" *ngIf="thumbView">
+    <ngx-masonry [options]="{ gutter: 10 }" [updateLayout]="updateMasonryLayout" [ordered]="true">
+        <ng-container *ngFor="let item of items; let i = index;">
+            <div ngxMasonryItem class="document-card masonry-item" id="{{item.resourceID}}" [ngClass]="{'active': item.selected}" *ngIf="item" (click)="callbackClick(items, item)">
+                <div class="info-attachments" *ngIf="item?.attachments?.length > 0">
+                    <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="item.resourceID" [action]="docAction" [attachments]="item.attachments"></app-attachment-view>
+                </div>
+                <div class="attchment-count" *ngIf="item?.attachments?.length > 1"><span>{{item?.attachments?.length}}</span></div>
+                <ng-container *ngIf="item.flagId == 1 || item.flagId == 2 || item.flagId == 6 ">
+                    <div class="document-card-top cover-image {{item.styleName}} {{item.class}}"
+                        [ngStyle]="{'background-image': 'url(' + item.contentPath + ')'}">
+                        <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                        <!--div class="view-count">{{item.viewCount}}</div-->
+                        <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                    </div>
+                    <div class="document-card-bottom">
+                        <div class="text" title="{{item.title}}">{{item.title}}</div>
+                        <div class="path">
+                            <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                            </span>
+                            <span *ngIf="!item.isGenreal && item.mfg == ''">{{item.make}}</span>
+                            <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                            <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container
+                    *ngIf="item.flagId == 3 || item.flagId == 4 || item.flagId == 8 || item.flagId == 5 || item.flagId == 0">
+                    <div class="document-card-top {{item.styleName}}" [ngClass]="{'cover-image': item.logo != ''}" 
+                    [ngStyle]="item.logo != '' ? {'background-image': 'url(' + item.contentPath + ')'} : ''">
+                        <div class="doc-id" title="ID# {{item.resourceID}}">ID# <span> {{item.resourceID}} </span></div>
+                        <!--div class="view-count">{{item.viewCount}}</div-->
+                        <div class="view-count-new">{{item.viewCount}}&nbsp;&nbsp;<img src="assets/images/documents/eye-icon.png"></div>  
+                    </div>
+                    <div class="document-card-bottom">
+                        <div class="text" title="{{item.title}}">{{item.title}}</div>
+                        <div class="path">
+                            <span *ngIf="!item.isGenreal && item.mfg != ''">
+                                {{item.mfg}}<span class="chevron" *ngIf="!item.isGenreal && item.make != null"><img src="{{chevronImg}}" />{{item.make}}</span> 
+                            </span>
+                            <span *ngIf="!item.isGenreal && item.mfg == ''">
+                                {{item.make}}
+                            </span>
+                            <span class="chevron" *ngIf="!item.isGenreal && item.model != ''"><img src="{{chevronImg}}" />{{item.model}}</span> 
+                            <span class="chevron" *ngIf="!item.isGenreal && item.year != ''"><img src="{{chevronImg}}" />{{item.year}}</span>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+    </ngx-masonry>
+</div>
+<div class="table-view" *ngIf="!thumbView" [style.height]="'calc(100vh - '+secHeight+'px)'"> 
+    <div #top class="ps" id="documentTable">
+        <p-table [scrollable]="true" [totalRecords]="items.length" id="file-datatable" class="file-datatable doc-file-table" [scrollHeight]="'calc(100vh - '+listHeight+'px)'" (scroll)="scroll($event)" [value]="items" sortMode="multiple">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th class="dw1">Name</th>
+                    <th class="dw2">ID</th>
+                    <th class="dw3" *ngIf="mfg">Manufacturer</th>
+                    <th class="dw4">Make</th>
+                    <th class="dw5">Model</th>
+                    <th class="dw6">Updated On</th>
+                    <!--th>Status</th-->
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-items>
+                <tr id="{{items.resourceID}}" class="cursor {{items.styleName}}" [ngClass]="{'active': items.selected}">
+                    <td class="dw1" title="{{items.title}}" (click)="callbackClick(items, items)">
+                        <div class="info-attachments" *ngIf="items?.attachments?.length > 0">
+                            <app-attachment-view [galleryHiddenFlag]="galleryFlag" [dynamicGid]="items.resourceID" [action]="docAction" [attachments]="items.attachments"></app-attachment-view>
+                        </div>
+                        <div class="doc-name-col">
+                            <span class="split-col banner-image banner-image-new">
+                                <img *ngIf="items.contentPath != null" src="{{items.contentPath}}" width="42px" height="42px" />
+                                <img *ngIf="items.contentPath == null && items.styleName != null" src="assets/images/documents/{{items.styleName}}-icon.png" width="42px" height="42px" />
+                            </span>
+                            <span class="split-col title"><span class="wraptext">{{items.title}}</span></span>
+                        </div>
+                    </td>
+                    <td class="dw2" (click)="callbackClick(items, items)">{{items.resourceID}} 
+                        <div class="attchment-count" *ngIf="items?.attachments?.length > 1"><span>{{items?.attachments?.length}}</span></div>
+                    </td>
+                    <td class="dw3" *ngIf="mfg" (click)="callbackClick(items, items)" title="{{items.manufacturer}}"><span class="wraptext">{{items.manufacturer}}</span></td>
+                    <td class="dw4" (click)="callbackClick(items, items)" title="{{items.make}}"><span class="wraptext">{{items.make}}</span></td>
+                    <td class="dw5" (click)="callbackClick(items, items)" title="{{items.model}}">
+                        <!--<span class="cursor model" *ngIf="item.modelList.length > 1">Multiple</span>
+                        <span *ngIf="item.modelList.length <= 1">{{item.model}}</span>
+                        -->
+                        <span class="wraptext">{{items.model}}</span>
+                    </td>
+                    <td class="dw6" (click)="callbackClick(items, items)" title="{{items.updatedOnMobile | date:'mediumDate'}}">
+                        <div class="wraptext"> {{items.updatedOnMobile | date:'mediumDate'}} </div>
+                    </td>
+                    <!--td (click)="callbackClick(items, items)">
+                        <div class="published" *ngIf="items.isDraft == 0"> Published</div>
+                        <div class="draft" *ngIf="items.isDraft > 0"> Draft</div>
+                    </td-->
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+</div>

@@ -1,0 +1,346 @@
+::ng-deep .procedures {
+  .p-button.p-button-danger.p-button-outlined, .p-buttonset.p-button-danger > .p-button.p-button-outlined, .p-splitbutton.p-button-danger > .p-button.p-button-outlined {
+    background-color: transparent !important;
+    color: #D32F2F !important;
+    border: 1px solid !important;
+  }
+  app-action-button button.p-button.p-button-danger.p-button-outlined.active {
+    color: #ffffff !important;
+    background-color: #ff0200 !important;
+  }
+  .p-panel {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .p-panel-header {
+      display: none;
+    }
+
+    .ng-trigger-panelContent {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: 100%;
+
+      .p-panel-content {
+        height: auto !important;
+        flex: 1;
+        overflow: hidden;
+        padding: 0 8px 0 0;
+      }
+      .p-panel-content:hover {
+        overflow: auto;
+        padding: 0;
+      }
+    }
+
+    .p-panel-header {
+      // background: #5e646f;
+      background: #fff;
+      color: #fff;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      justify-content: start;
+      border-bottom: unset;
+      padding: 0.3rem;
+    }
+
+    .chip {
+      background-color: #62779f;
+      color: #fff;
+    }
+
+    .p-panel-content {
+      background: #fff;
+      overflow: auto;
+      position: relative;
+
+      .overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: #eff2f8;
+        -moz-opacity: 0.6;
+        filter: alpha(opacity=60);
+        opacity: 0.6;
+        z-index: 999;
+      }
+    }
+
+    .description {
+      background-color: #f2f6fd;
+      border: 1px solid #c7d3e9;
+      font-weight: bold;
+      ul {
+        list-style-type: disc !important;
+      }
+
+      .p-card-content {
+        padding: 0px !important;
+        font-size: 14px;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+
+      }
+
+
+      &.units-section {
+        background-color: #f4f5f8;
+        border: 1px solid #dee0e4;
+      }
+    }
+  }
+
+  .section {
+    a {
+      color: var(--skip) !important;
+      font-weight: 600;
+    }
+
+    .divider {
+      overflow: hidden;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      place-items: center;
+      // gap: 10px;
+
+      &::after {
+        content: "";
+        flex: 1;
+        margin-left: 1rem;
+        /* background-color: #D0D2E6; */
+        /* width: 100%; */
+        /* border: 1px solid #D0D2EE; */
+        height: 1px;
+        background-color: #d0d2d7;
+      }
+    }
+  }
+
+  .finish-menu-items {
+    .p-menu {
+      background-color: #313d55;
+
+      .p-menuitem-text {
+        color: #fff;
+      }
+    }
+  }
+}
+
+::ng-deep .w-40 {
+  width: 40% !important;
+}
+
+label.container {
+  width: auto !important;
+  height: 32px;
+  border-radius: 22px !important;
+  font-size: 15px !important;
+  padding: 3px 10px 0 39px !important
+}
+
+.container {
+
+  position: relative;
+  padding-left: 35px;
+  // margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  border: 1px solid #62779f;
+  ;
+  border-radius: 16px;
+  padding: 0px 14px 6px 46px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  border-radius: 16px;
+  border: 1px solid #62779f;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked~.checkmark {
+  background-color: #62779f;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked~.checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkmark:before {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked before */
+.container .checkmark:before {
+  display: block;
+}
+
+/* Style the checkmark/indicator before */
+.container .checkmark:before {
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: 0.5px solid #62779f;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+label {
+  width: 28% !important;
+  margin-bottom: 0px !important;
+  margin-left: 10px !important;
+
+}
+
+
+.actionInfoZindex {
+  z-index: 1000 !important;
+  position: relative !important;
+}
+
+.p-panel-content.ng-tns-c526-3 {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.h-100 {
+  height: calc(100vh - 95px) !important;
+  display: flex;
+}
+
+div#p-panel-1-content {
+  display: flex;
+  flex-direction: column;
+  height: 100% !important;
+}
+
+div#p-panel-1-content {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+}
+
+div#p-panel-1 {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.p-card-body {}
+
+.p-card-body {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+
+.inputNumber {
+  position: relative;
+
+  .prebutton {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    background: #eee;
+    border: 1px solid #ced4da;
+  }
+
+  .prebutton+input {
+    padding-left: 70px;
+    padding-right: 70px;
+  }
+
+  .afterButton {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+  }
+}
+
+.label-text {
+  font-size: 15px;
+  color: #62779f;
+}
+
+
+.p-button.finish {
+  background: #2196F3;
+  color: white;
+
+  &:disabled {
+    background: #bebfc3 !important;
+    border: none;
+  }
+}
+
+a.custom-color.divider {
+  color: #fa5b24 !important;
+}
+.custom-style-gts-ok {
+  padding: 0.5rem 1.5rem!important;
+  border-radius: 6px!important;
+}

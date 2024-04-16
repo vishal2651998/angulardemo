@@ -1,0 +1,66 @@
+<div id="header">
+  <div
+    class="td-head row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0 ng-star-inserted">
+    <div class="left-head col-4 col-lg-4 col-md-4 col-xl-4 col-sm-12 padding0 margin0"><span class="thread-text">
+        <span class="ng-star-inserted">GTS</span>
+        <span class="red-text">&nbsp;ID# {{ gtsId }}</span>
+      </span><span class="btn thread-status cursor-default"></span>
+    </div>
+    <div class="right-head col-8 col-lg-8 col-md-8 col-xl-8 col-sm-12 padding0 margin0">
+      <ul>
+        <li class="paddingL30">
+          <button (click)="exit()" mat-stroked-button title="Close" class="outline-btn">
+            <span>Exit</span>
+            <mat-icon style="transform:scale(0.7)">logout</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="loader" *ngIf="!gtsInfo">
+  <img src="assets/images/loading.svg" alt="Loader" width="60px" style=" left: 50% !important; top:40% !important;" />
+</div>
+
+<div class="parent p-3" *ngIf="gtsInfo"
+  [ngClass]="{'first':gtsApi.pageType == 'start-page','second':gtsApi.pageType != 'start-page'}">
+  <app-gts-sidebar [pageData]="gtsInfo" [innerHeight]="innerHeight"></app-gts-sidebar>
+
+  <ng-container *ngIf="gtsApi.isLoading">
+    <div style="display: flex; width: 100%; height: 100%; justify-content: center; align-items: center;">
+      <div class="loader" style="position: unset;">
+        <img src="assets/images/loading.svg" alt="Loader" width="60px"
+          style=" left: 50% !important; top:40% !important;" />
+      </div>
+    </div>
+  </ng-container>
+
+
+  <ng-container *ngIf="gtsApi.pageType == 'start-page' && !gtsApi.isLoading">
+    <app-start [gtsInfo]="gtsInfo" [pageData]="gtsRunTimeInfo" [innerHeight]="innerHeight"></app-start>
+  </ng-container>
+  <ng-container *ngIf="gtsApi.pageType != 'start-page' && !gtsApi.isLoading">
+    <app-procedure [gtsInfo]="gtsInfo" [innerHeight]="innerHeight"></app-procedure>
+  </ng-container>
+
+  <div *ngIf="gtsApi.pageType != 'start-page'" class="right-sidebar h-100" [style]="{width: '100%'}" >
+    <p-card header="All GTS Attachments" class="p-0 all-gts-attachments" styleClass="content-pad h-100 show-scroller-on-hover"
+      [style]="{borderRadius:'10px',maxHeight:innerHeight+'px'}">
+      <div class="Rounded-Rectangle-11" *ngIf="(!allAttachments || allAttachments?.length === 0) && !loadingdm">
+        <img src="assets/images/gts/sidebaricon.png" class="img img-fluid Vector-Smart-Object1" alt="">
+        <span class="Attachments-shown-here">
+          Attachments shown here.
+        </span>
+      </div>
+      <div class="loading-small-screen-div" [ngStyle]="{placeItems:'center'}" *ngIf="loadingdm">
+        <div class="loading-small-screen"  >
+          <img src="assets/images/loading.svg" alt="Loader" width="60px" />
+        </div>
+      </div>
+      <div *ngIf="allAttachments.length">
+        <app-attachment-view #childAttachmentComponent action="view" [dynamicGid]="1" [isStartGTSTest]="true" *ngIf="allAttachments.length" [attachments]="allAttachments"></app-attachment-view>
+        <div *ngIf="gettingAttachment" class="cust-loader esc-loader lazy-loader cust-lazy-loader"></div>
+      </div>
+    </p-card>
+  </div>
+</div>

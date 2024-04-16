@@ -1,0 +1,36 @@
+<div class="dash-head">
+  <app-dashboard-header *ngIf="!headerFlag" [pageData]="headerData"></app-dashboard-header>
+  <app-dashboard-header *ngIf="headerFlag" [pageData]="headerData"></app-dashboard-header>
+</div>
+
+<div class="dashboard-content mt-2" [ngClass]="{'filter-collapse': !expandFlag, 'filter-expand':expandFlag }">
+  <div class="dashboard-charts detail-chart da-chart">
+    <div class="row col-lg-12 col-md-12 col-sm-12 chart-row user-activities-chart-row">
+      <div class="col-lg-12 dash-chart-col user-activities-chart-col">
+        <div class="chart-col ps user-activities-chart-col-ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+          <div *ngIf="userActivitiesLoading" class="loader dash-loader"><img src="assets/images/blue-loading.svg"
+              alt="Loader" /></div>
+          <div *ngIf="!userActivitiesLoading && !userActivitiesDataAvail" class="empty-chart text-center"
+            style="margin: 5rem auto;">
+            <img src="assets/images/dashboard/empty-chart.png" alt="Empty Chart" /><br>
+            No Data
+          </div>
+          <div *ngIf="userActivitiesDataAvail" class="force-overflow w-100" id="barChart"
+            [ngClass]="{'d-none':!userActivitiesDataAvail}"></div>
+          <div class="text-center" *ngIf="!scrollCallback">
+            <img alt="Loader" src="assets/images/landing-page/loading-more.svg" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-filter user-activities-dash-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+
+  <app-dash-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+    (filterAction)="applyFilter($event)"></app-dash-filter>
+  <app-dash-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+    (filterAction)="applyFilter($event)"></app-dash-filter>
+
+</div>

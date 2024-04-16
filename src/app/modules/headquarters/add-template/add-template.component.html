@@ -1,0 +1,444 @@
+<div class="wrapper">
+    <div *ngIf="loading" class="loading-small-screen-scroll trst" style="left:50% !important">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+    <div *ngIf="!loading" id="content" class="container-fluid">
+        <div id="header">
+            <div class="prob-header row col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 container-head padding0 margin0">
+                <div class="header-row">
+                    <span class="new-text">New Template</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="prob-new d-flex mb-3">
+            <div class="row new-pro-cont col-lg-8 col-xl-8 offset-1" style="margin-right: 12px; margin-top: 30px;">
+                <div class="form-cont col-lg-12">
+                    <div [style.height.px]="innerHeight-10">
+                        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+                            <form [formGroup]="templateForm" class="form-horizontal">
+                                <div class="new-prob-head" >
+                                    <div class="new-col title">
+                                        New Template
+                                    </div>
+                                    <div class="new-col actions">
+                                        <div (click)="submitCancel()" class="btn cancel">Cancel <img
+                                                src="assets/images/parts/cancel-icon.png" />
+                                        </div>
+                                        <!-- 
+                                <div class="btn publish">
+                                    Save Draft <img src="assets/images/audit-insecption/draft.png" width="15"
+                                        height="15" class="" (click)="submit('draft')" />
+                                </div>
+
+                                <div class="btn publish disabled">
+                                    Publish <img src="assets/images/parts/publish.png" (click)="submit('published')" class="img-disabled" />
+                                </div> -->
+
+                                        <div *ngIf="isPublished == '1'" (click)="submit('draft')"
+                                            class="btn next draft">
+                                            Save Draft <img src="assets/images/audit-insecption/draft.png" width="15"
+                                                height="15" />
+                                        </div>
+
+                                        <div role="button"
+                                            [ngClass]="selectedSectionList.length != 0 && templateForm.valid ? 'publish' : 'publish-disabled'"
+                                            (click)="submit('published')" class="btn">
+                                            {{isPublished == '2' ? 'Update' : 'Publish'}} <img
+                                                src="assets/images/parts/publish.png" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-items">
+                                    <div class="prob-form-row d-flex">
+                                        <div class="form-col upload-col col-3 pr-2" style="position: relative; height: 172px;">
+                                            <span *ngIf="!imageData && !imageData?.show && !imageData?.logoUrl"
+                                                (click)="uploadLogo()" class="prob-upload prob-upload-new">
+                                                <a class="browse-button"></a>
+                                                <input style="display: none" type="file" accept='image/*' #selectFile />
+                                                <span class="upload-txt">Upload Banner Image</span>
+                                            </span>
+
+                                            <img (click)="uploadLogo()" class="cursor-pointer"
+                                                style="border-radius: 8px; width: 100%; height: 100%;object-fit: fill;"
+                                                *ngIf="imageData && imageData?.logoUrl" [src]="imageData?.logoUrl">
+                                            <img class="cursor-pointer" *ngIf="imageData && imageData?.show"
+                                                [src]="imageData?.show"
+                                                style="border-radius: 8px;width: 100%; height: 100%;object-fit: fill;">
+                                            <div *ngIf="(imageData && imageData?.show) || (imageData && imageData?.logoUrl)"
+                                                class="action-box position-absolute d-flex align-items-center">
+                                                <span (click)="uploadLogo()" class="edit action-upload"></span>
+                                                <span (click)="deleteLogo()" class="delete action-upload"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-col field-col col-9">
+                                            <div class="row mb-23">
+                                                <div class="col-md-12"
+                                                    [ngClass]="submitted && templateForm && !!templateForm?.controls && !!templateForm?.controls['typeId'] && !!templateForm?.controls['typeId'].errors && !!templateForm?.controls['typeId'].errors.required ? 'input-error' : ''">
+                                                    <div class="prob-form-control input-filed">
+                                                        <div class="field-label split">
+                                                            <span
+                                                                class="label-col part-label part-label wft-bg">Type</span>
+                                                            <span
+                                                                class="label-col required required-txt">Required</span>
+                                                        </div>
+                                                        <p-dropdown [options]="typesList" optionLabel="name"
+                                                            optionValue="id" formControlName="typeId"
+                                                            class="p-dropdown-workflowtype"
+                                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                            placeholder="Select Type">
+                                                        </p-dropdown>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-23">
+                                                <div class="col-md-12"
+                                                    [ngClass]="submitted && templateForm && !!templateForm?.controls && !!templateForm?.controls['title'] && !!templateForm?.controls['title'].errors && !!templateForm?.controls['title'].errors.required ? 'input-error' : ''">
+                                                    <div class="prob-form-control input-filed">
+                                                        <div class="field-label split">
+                                                            <span
+                                                                class="label-col part-label part-label title-bg">Template
+                                                                Title</span>
+                                                            <span
+                                                                class="label-col required required-txt">Required</span>
+                                                        </div>
+                                                        <input formControlName="title" type="text" pInputText
+                                                            class="input-bg map-input w-100"
+                                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                            placeholder="Template Name" />
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="prob-form-row">
+                                        <div class="form-col field-col">
+                                            <div class="row mb-28">
+                                                <div class="col-md-6">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span
+                                                                class="label-col part-label part-label section-bg text-truncate">How
+                                                                long should this <span
+                                                                    class="inspection">“{{selectedType}}”</span>
+                                                                take?</span>
+                                                        </div>
+                                                        <p-dropdown [options]="inspectionTimeOptions"
+                                                            formControlName="inspectionTime"
+                                                            class="p-dropdown-workflowtype"
+                                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                            placeholder="Select" optionLabel="name" optionValue="id">
+                                                        </p-dropdown>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="prob-form-control">
+                                                        <div class="field-label split">
+                                                            <span
+                                                                class="label-col part-label part-label tag-bg">Tag</span>
+                                                            <span class="label-col required"></span>
+
+                                                        </div>
+                                                        <p-dropdown
+                                                            [options]="[{id:tagSelectedId,name:tagSelectedName}]"
+                                                            formControlName="tags" (click)="manageList('18')"
+                                                            class="p-dropdown-workflowtype no-dropdown"
+                                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                            placeholder="Select Tag" optionLabel="name"
+                                                            optionValue="id">
+                                                        </p-dropdown>
+
+                                                        <div class="d-flex align-items-center franchies-box pt-2"
+                                                            *ngIf="tagSelectedName && tagSelectedName.length > 0">
+                                                            <div class="franchies-box-data"
+                                                                *ngFor="let dmsname of tagSelectedName; let t=index">
+                                                                <div class="d-flex align-items-center">
+                                                                    <span class="fs-12 mr-2">{{dmsname}}</span>
+                                                                    <img class="cursor" (click)="removeTag(t)"
+                                                                        src="assets/images/close-icon.png" alt=""
+                                                                        role="button" height="10" width="10"
+                                                                        title="Remove">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="prob-form-row">
+                                        <div class="form-col field-col">
+                                            <div class="row mb-28">
+                                                <div class="col-md-12"
+                                                    [ngClass]="submitted && templateForm && !!templateForm?.controls && !!templateForm?.controls['networkId'] && !!templateForm?.controls['networkId'].errors && !!templateForm?.controls['networkId'].errors.required ? 'input-error' : ''">
+                                                    <div class="prob-form-control input-filed">
+                                                        <div class="field-label split">
+                                                            <span
+                                                                class="label-col part-label part-label network-bg">Network</span>
+                                                            <span
+                                                                class="label-col required required-txt">Required</span>
+                                                        </div>
+                                                        <p-dropdown [options]="networkList" formControlName="networkId"
+                                                            [disabled]="selectedNetworkId"
+                                                            class="p-dropdown-workflowtype"
+                                                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb', 'border-radius': '6px'}"
+                                                            placeholder="Select" optionLabel="name" optionValue="id">
+                                                        </p-dropdown>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-md-3">
+                                                    <div class="field-label split" style="height: 35px;">
+                                                        <span></span>
+                                                    </div>
+                                                    <div class="btn selection d-flex align-items-center justify-content-center"
+                                                        [ngClass]="selectedNetworkId ? 'disabled' : ''"
+                                                        (click)="selectSections()">
+                                                        <img src="aassets/images/audit-insecption/selection.png"
+                                                            height="18" class="mr-2" />Sections
+                                                    </div>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="selectedSectionList.length == 0" [ngClass]="submitted && selectedSectionList.length == 0 ? 'input-error' : ''" class="prob-form-row ">
+                                        <div class="form-col field-col">
+                                            <div class="field-label split">
+                                                <span
+                                                    class="label-col part-label part-label section-bg">Sections </span>
+                                                <span class="label-col text-right required required-txt">Required</span>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12" (drop)="onDrop($event,'selectedSectionList')"
+                                                    (dragover)="allowDrop($event)">
+                                                    <div
+                                                        class="select-box d-flex align-items-center justify-content-center input-div">
+                                                        <div class="d-flex  justify-content-center">
+                                                            <div style="display: flex;flex-direction: column;align-items: center;color: #777777;">
+                                                                <div class="select-img"></div>
+                                                                <div class="mt-2" style="    font-size: 14px;
+                                                                font-style: italic;">Select and drop the sections here</div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </form>
+                            <div *ngIf="selectedSectionList.length != 0" class="prob-form-row input-div">
+                                <div class="form-col field-col">
+                                    <div class="d-flex mb-28" style="padding: 0 35px;">
+                                        <div class="col-md-12 pr-0" (drop)="onDrop($event,'selectedSectionList')"
+                                            (dragover)="allowDrop($event)">
+                                            <div class="section-box-bordered ps form-fields"
+                                                [perfectScrollbar]="sconfig">
+                                                <div (dragstart)="onDrag($event,section.procedureId,'selectedSectionList',i)" (drop)="onDrop($event,'selectedSectionList',i)" (dragover)="allowDragSection($event,i)" (dragleave)="dragLeaveSection($event,i)"
+                                                    *ngFor="let section of selectedSectionList; let i = index"
+                                                    class="row no-gutters" id="div{{i}}">
+                                                    <div class="col-sm-1 d-flex" style="gap: 6px;padding:10px">
+                                                        <img style="height:16px;margin-top: 15px;cursor: pointer;" src="assets/images/audit-insecption/drag1.png" alt="">
+                                                        <span
+                                                            class="section-training d-flex justify-content-center align-items-center">
+                                                            <span
+                                                                *ngIf="section && !section?.gtsImg || (section?.gtsImg && section?.gtsImg.includes('gts-placeholder'))"
+                                                                class="toolImg1 section-icon"></span>
+                                                            <img class="toolImg1"
+                                                                *ngIf="section && section?.gtsImg && !section?.gtsImg.includes('gts-placeholder')"
+                                                                [src]="section?.gtsImg">
+                                                        </span>
+
+                                                    </div>
+                                                    <div class="col-sm-11">
+                                                        <div draggable="true" class="sec-rgt ">
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-center">
+                                                                <p class="mb-0 training-heading">
+                                                                    {{section?.name}}, <span class="que" style="padding-right: 10px;">
+                                                                        {{section?.networkName}}</span></p>
+                                                                <div>
+                                                                    <span class="que pr-2">ID#
+                                                                        {{section?.procedureId}}</span>
+                                                                    <img (click)="removeSelectedSection(section)"
+                                                                        src="assets/images/audit-insecption/close.png"
+                                                                        alt="" role="button">
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="training-content row align-items-center">
+                                                                <p class="training-count mb-0 d-flex col-2">
+                                                                    {{section?.questionsCount ? section.questionsCount :
+                                                                    '-'}} <span class="que ml-1">Questions</span></p>
+                                                                <p class="link mb-0 col-1">View</p>
+                                                                <div class="d-flex col-9 align-items-center justify-content-start note"
+                                                                    style="gap: 3px;">
+                                                                    <img  *ngIf="section?.procedureId != editingSection && !section?.note" src="assets/images/audit-insecption/add-note.png"
+                                                                        alt="" width="16" height="19"
+                                                                        style="min-width: 16px; min-height: 19px;">
+                                                                    <img *ngIf="section?.procedureId != editingSection && section?.note" src="assets/images/audit-insecption/other-info.png"
+                                                                        alt="" width="16" height="19"
+                                                                        style="min-width: 16px; min-height: 19px;">
+                                                                    <p *ngIf="section?.procedureId != editingSection"
+                                                                        class="m-0 training-heading text-truncate">
+                                                                        {{section?.note}}</p>
+                                                                    <ng-container
+                                                                        *ngIf="editingSection && section?.procedureId == editingSection">
+                                                                        <input [(ngModel)]="noteStr" type="text"
+                                                                            pInputText class="input-bg map-input w-100"
+                                                                            [style]="{'width':'100%', 'border': ' none', 'border-bottom': '2px solid  #b8b8b8', 'border-radius': '0'}"
+                                                                            placeholder="Notes" />
+                                                                    </ng-container>
+                                                                    <img *ngIf="section?.procedureId != editingSection  && section?.note"
+                                                                        (click)="editNote(section?.procedureId,section?.note)"
+                                                                        src="assets/images/audit-insecption/edit.png"
+                                                                        role="button"
+                                                                        alt="" width="14" height="14"
+                                                                        style="min-width: 14px; min-height: 14px;">
+                                                                        <span>
+                                                                            <!-- <img src="assets/images/audit-insecption/other-info.png"
+                                                                        alt="" width="16" height="16"/> -->
+                                                                        <span (click)="editNote(section?.procedureId)" *ngIf="section?.procedureId != editingSection && !section?.note" class="m-0 add-note">Add Notes</span>
+                                                                        </span>
+                                                                    <img *ngIf="editingSection && section?.procedureId == editingSection"
+                                                                        (click)="saveNote(section?.procedureId)"
+                                                                        role="button"
+                                                                        src="assets/images/audit-insecption/right.png" alt=""
+                                                                        width="14" height="10"
+                                                                        style="min-width: 14px; min-height: 10px;">
+                                                                    <img *ngIf="editingSection &&  section?.procedureId == editingSection"
+                                                                        (click)="cancelNote()"
+                                                                        role="button"
+                                                                        src="assets/images/audit-insecption/green-close.png" alt=""
+                                                                        width="10" height="10"
+                                                                        style="min-width: 10px; min-height: 10px;">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div *ngIf="isSelectSections" class="row new-pro-cont col-lg-3 col-xl-3" style="margin-top: 30px;">
+                <div class="form-cont col-lg-12">
+                    <form class="form-horizontal">
+                        <div class="new-prob-head">
+                            <div class="new-col title">
+                                <p class="mb-1">Sections</p>
+                                <p class="mb-0 que" style="line-height: 10px;">Drag & drop the sections</p>
+                            </div>
+                            <div class="d-flex align-items-center mt-1" style="gap: 12px;">
+                                <div class="search-form position-relative">
+                                    <span class="search-icon">
+                                        <img src="assets/images/no-result-search-icon.png" alt="" width="15"
+                                            height="15">
+                                    </span>
+                                    <input [(ngModel)]="searchStr" (keyup)="searchSections()" type="text"
+                                        placeholder="Search" class="search-input form-control">
+                                </div>
+                                <div class="cancel-icon" (click)="removeSearch()" style="    height: 25px;
+                                width: 25px;">
+                                    <img src="assets/images/parts/cancel-icon.png">
+                                </div>
+                            </div>
+                        </div>
+                        <div [style.height.px]="innerHeight-10">
+                            <div *ngIf="filteredSections && filteredSections.length != 0" class="ps form-fields" [perfectScrollbar]="sconfig">
+
+
+                                <div class="col-md-12 pr-0">
+                                    <div class="section-box">
+                                        <div draggable="true"
+                                            (dragstart)="onDrag($event,section.procedureId,'sectionList')"
+                                            (dragover)="allowDrop($event)" (drop)="onDrop($event,'sectionList')"
+                                            *ngFor="let section of filteredSections; let i = index"
+                                            class="d-flex align-items-center">
+                                            <div style="width: 5%;">
+                                                <span>
+                                                    <img src="assets/images/audit-insecption/drag.png" alt="" width="17"
+                                                        height="17" style="min-width: 17px; min-height: 17px;" role="button">
+
+                                                </span>
+                                            </div>
+                                            <div style="width: 95%;">
+                                                <div class="sec-rgt ">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="d-flex align-items-center col-10">
+                                                            <div class="section-training">
+                                                                <!-- <img src="assets/images/audit-insecption/question.png" alt=""> -->
+                                                                <span
+                                                                    *ngIf="section && !section?.gtsImg || (section?.gtsImg && section?.gtsImg.includes('gts-placeholder'))"
+                                                                    class="toolImg1 section-icon"></span>
+                                                                <img class="toolImg1"
+                                                                    *ngIf="section && section?.gtsImg && !section?.gtsImg.includes('gts-placeholder')"
+                                                                    [src]="section?.gtsImg">
+                                                            </div>
+                                                            <div>
+                                                                <p class="mb-0 training-heading">{{section?.name ?
+                                                                    section?.name
+                                                                    : "-"}}, <span class="que" style="padding-right: 10px;">
+                                                                        {{section?.networkName}}</span></p>
+
+                                                                <div class="training-content d-flex" style="gap: 20px;">
+                                                                    <p class="training-count mb-0 d-flex">
+                                                                        {{section?.questionsCount ?
+                                                                        section?.questionsCount : "-"}} <span
+                                                                            class="que ml-1">Questions</span></p>
+                                                                    <p class="link mb-0">View</p>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <!-- <img src="assets/images/audit-insecption/close.png" alt=""> -->
+                                                        <span class="que" style="padding-right: 10px;">ID#
+                                                            {{section?.procedureId}}</span>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="filteredSections && filteredSections.length == 0">
+                                <div style="position: absolute;left: 40%;bottom: 40%;" class="d-flex  justify-content-center">
+                                    <div style="display: flex;flex-direction: column;align-items: center;color: #777777;">
+                                        <div class="select-img"></div>
+                                        <div class="text-center">
+                                            <div class="round-circle"></div>
+                                            <i><p class="nothing-to-show" style="font-size: 14px;">Nothing to show</p></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>

@@ -1,0 +1,87 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+    <div [style.height.px]="innerHeight">
+        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+            <div class="section-container">
+                <div class="title-row">
+                    <div class="lt">
+                        <img src="assets/images/user-settings/lt-msg-popup-icon-active.png">
+                        <span class="title-text">{{headText}}</span>
+                    </div> 
+                    <div class="rt" *ngIf="customerNotesFlag">
+                        <span class="add-action-btn edit" (click)="updateNotes('edit')">
+                            <img src="assets/images/customers/edit-white.png"/>
+                            <span class="white">Edit {{headText}}</span>
+                        </span>
+                    </div>                  
+                </div>
+                
+                <div class="domain-login-page-bg-container">
+
+                    <div *ngFor="let item of systemSettingsData; let s = index;">
+                        
+                        <div class="items display-block">
+                            <div class="type-col-2" *ngFor="let type of item.settings; let s1 = index;">
+                                <div class="type-col-2-lt">
+                                    <p class="p-title">{{type.placeHolder}}</p>
+                                </div>
+                                <div class="type-col-2-rt">
+                                    <!-- toggle -->
+                                    <div class="cursor toggle-box togglebox">
+                                        <span class="toggle-col field-label"></span>
+                                        <span class="toggle-col toggle-option">
+                                            <p-inputSwitch [(ngModel)]="type.toggleBox" (onChange)="onToggleBoxChange(item.settingsId,type.itemId,$event.checked)">
+                                            </p-inputSwitch>
+                                        </span>
+                                    </div>
+                                    <!-- toggle -->
+                                </div>                                    
+                            </div>                        
+                        </div>  
+                        <div *ngFor="let type of item.settings; let s1 = index;">
+                            <div *ngIf="customerNotesFlag" class="row col-12 pad0 mar0" >
+                                <div class="cnotes" [innerHTML]="contentDisplay"></div>
+                            </div>
+                            <div *ngIf="!customerNotesFlag" class="cnotes-empty text-center">
+                                <span class="empty-text">{{headText}} to be shown here</span>
+                                <span class="add-action-btn" (click)="updateNotes('new')">
+                                    <img src="assets/images/customers/add-icon.png"/>
+                                    <span>Add {{headText}}</span>
+                                </span>
+                            </div>
+                        </div>             
+                   
+                    </div>
+                    
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="notesModalFlag" [modal]="true" [draggable]="false" [resizable]="false"
+    class="notes-modal">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{headText}}</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SAVE"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': notesValid}" (click)="saveNotes()"></button>
+
+        </div>
+    </ng-template>
+        <div class="">
+            <div class="popup-head notes-gray-icon">{{headText}}</div>
+            <ckeditor [editor]="Editor" [config]="configCke" container="body"
+                (change)="changeNotes($event)" 
+                [(ngModel)]="customerEditor"></ckeditor>
+
+        </div>
+
+   
+    </p-dialog>
+
+    
+
+

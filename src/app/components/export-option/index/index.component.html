@@ -1,0 +1,107 @@
+<div id="header">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="prob-index">
+    <div class="probing-content" >
+       
+      <!--  <div id="user-dashboard-table-data" class="user-dashboard-p-table">
+            <div class="userdashboard-list-head">
+               
+<div  class="prob-head-col head-col-2 text-center">
+
+
+    <span  class="tab tab-7 action-col " (click)="exportallThreads()"><span class="export-btn"></span> EXPORT Thread</span>
+</div>
+</div>
+</div>-->
+<div class="export-option-div">
+    <div class="export_header">
+        <span><img class="header-img" src="assets/images/export-option/export_excel.png"></span>
+        <span class="header-text">Export Threads to Excel</span>
+    </div>
+    <div class="header-bottom-line"></div>
+    <div class="export-option-content">
+        <div class="thread-drop-group1" style="padding: 0px 10px 30px 10px;">
+        <div>
+        <mat-radio-group aria-label="Select an option">
+            <mat-radio-button name="temp1" class="radio-icon-export radio-icon-export_one" checked="true"  value="1"> <span class="radiooption-cell radiooption-cell-color-selected">All Threads</span></mat-radio-button>
+            <mat-radio-button disabled="true" name="temp2" class="radio-icon-export" value="2"> <span class="radiooption-cell">Select Threads</span></mat-radio-button>
+          </mat-radio-group>
+        </div>
+          <div class="cust-select" >
+            <mat-icon class="material-icon thread-type-export" matSuffix></mat-icon>
+            <p-dropdown   placeholder="All Threads" [disabled]="true"    class="input-with-icon-inside-select mat-typography" appendTo="body"  ></p-dropdown>
+          
+       </div>
+    </div>
+
+    <div class="thread-drop-group2" style="padding: 0px 10px 10px 10px;">
+        <div>
+        <mat-radio-group aria-label="Select an option">
+            <mat-radio-button name="temp3" class="radio-icon-export radio-icon-export_one" checked="true"  value="1"> <span class="radiooption-cell radiooption-cell-color-selected">All Dates</span></mat-radio-button>
+            <mat-radio-button disabled="true" name="temp4" class="radio-icon-export" value="2"> <span class="radiooption-cell">Select Date range</span></mat-radio-button>
+          </mat-radio-group>
+        </div>
+          
+        <div class="inner-row">
+            <div class="col-sm-5 col-lg-5 displayinline">
+  
+              <div class="cust-select-inner-row">
+              <mat-icon class="material-icon-inner calender-icon-dash" matSuffix></mat-icon>
+              <!--<input class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="First Name" />-->
+              <p-calendar placeholder="From" disabled="true"  inputId="basic" [(ngModel)]="date1"></p-calendar>
+     
+         </div>
+            </div>
+            <div class="col-sm-5 col-lg-5 displayinline">
+             
+              <div class="cust-select-inner-row">
+                  <mat-icon class="material-icon-inner calender-icon-dash" matSuffix></mat-icon>
+                  <!--<input value="" class="form-control input-with-icon-inside-row mat-typography" type="text" placeholder="Last Name" />-->
+                  <p-calendar placeholder="To" disabled="true"  inputId="basic" [(ngModel)]="date2"></p-calendar>
+             </div>
+            </div>
+            
+          </div>
+    </div>
+
+    <div class="thread-drop-group3" style="padding: 0px 10px 10px 10px;">
+        <div>
+        <mat-radio-group aria-label="Select an option">
+            <mat-radio-button name="temp5" class="radio-icon-export radio-icon-export_one" checked="true"  value="1"> <span class="radiooption-cell radiooption-cell-color-selected">All Workstreams</span></mat-radio-button>
+            <mat-radio-button disabled="true" name="temp6" class="radio-icon-export" value="2"> <span class="radiooption-cell">Select Workstreams</span></mat-radio-button>
+          </mat-radio-group>
+        </div>
+          <div class="cust-select" >
+            <mat-icon class="material-icon workstream-type-export" matSuffix></mat-icon>
+            <p-dropdown   placeholder="All Workstreams" [disabled]="true"    class="input-with-icon-inside-select mat-typography" appendTo="body"  ></p-dropdown>
+          
+       </div>
+    </div>
+    
+    <div  class="confirm-actions" style="    padding: 20px 0px 20px 0px;">
+        <button   class="btn action-btn submit" (click)="exportallThreads()" type="button" ><span class="submit-btn"></span> <span class="export-btn">Export</span></button>
+        <button class="btn action-btn cancel"  ><span class="cancel-btn"></span> <span>Cancel</span></button>
+        
+    </div>
+
+
+
+
+    </div>
+</div>
+</div>
+</div>
+
+
+<p-dialog [header]="downloadtextflag" [(visible)]="excelreportdiaLog" [closable]="false">
+    <br/>
+    <br/>
+    <p-progressBar [(value)]="progressbarCount"></p-progressBar>
+    <br/>
+    <div class="cancel-div text-right">
+
+      <button (click)="cancelUpload()" type="button" class="btn btn-info text-right">Cancel</button>
+        </div>
+</p-dialog>

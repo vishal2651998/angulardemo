@@ -1,0 +1,2173 @@
+<div class="chat-board">
+  <!--Chat Board Header Start-->
+  <div class="chat-board-row" id="header">
+    <app-product-header (search)="applySearch('emit', $event)" *ngIf="!headerFlag" [pageData]="headerData">
+    </app-product-header>
+    <app-product-header (search)="applySearch('emit', $event)" *ngIf="headerFlag" [pageData]="headerData">
+    </app-product-header>
+  </div>
+  <!--Chat Board Header End-->
+
+  <div class="chat-board-row">
+    <!--<div class="left-col">
+      <div class="first-left-width">
+        <nav id="nav-sidebar">
+          <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+        </nav>
+      </div>
+    </div>-->
+    <div class="right-col" [style.height]="'calc(100vh - '+chatInnerHeight+'px)'">
+      <section>
+        <section class="second-left-width">
+          <app-landing-left-side-menu #leftMenu (ReloadChatSection)="ReloadChatPage($event)"
+            [chatpopupcomponent]="chatpopup" [pageData]="sidebarActiveClass" [newChatData]="newChatData"
+            [chatScrollDirective]="chatscrollDirective">
+          </app-landing-left-side-menu>
+        </section>
+        <section class="center-middle-width main">
+          <div class="chat">
+            <!-- Chat: body -->
+            <div class="chat-body">
+              <!-- Chat: Header -->
+              <div class="chat-header">
+
+
+
+
+                <section class="chat-header-inner">
+                  <div *ngIf="chatType=='2'">
+                    <div class="media text-center text-xl-left">
+                      <div class="avatar avatar-sm mr-2">
+                        <img alt="" class="avatar-img" src="{{wsImage}}">
+                        <span class="activeuser"></span>
+                      </div>
+                      <div class="media-body align-self-center text-truncate">
+                        <span class="mb-n1 service-title"><b>{{wsName}}</b> </span>
+                      </div>
+                      <button mat-mini-fab *ngIf="isCallEnabled" color="warn" [ngStyle]="{
+                          backgroundColor: '#FA972D',
+                          transform: 'scale(0.8)'
+                        }" class="shadow-none" (click)="directCall()">
+                        <mat-icon>videocam</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="chatType=='1' || chatType=='3'">
+                    <div class="media text-center text-xl-left">
+                      <div class="avatar avatar-sm mr-2">
+                        <img *ngIf="chatType=='1'" alt="" class="avatar-img" src="assets/images/chat/service-icon.png">
+
+                        <img *ngIf="chatType=='3'" alt="" class="avatar-img" src="{{wsImage}}">
+                      </div>
+                      <div class="media-body align-self-center text-truncate">
+                        <span class="mb-n1 service-title">{{wsName}} </span>
+                        <button *ngIf="chatType=='3'" class="service-title-edit">
+                          <img (click)="OpenEditGroupName()" aria-label="Edit"
+                            src="assets/images/chat/edit-icon-bw.png" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="chatType=='1'|| chatType=='3'" class="user-details">
+                    <div class="total-user">
+                      <div *ngIf="totalUserCount!='0'" class="media text-center text-xl-left">
+                        <a (click)="UserModelClick('0')" data-target="#totalUserModal" data-toggle="modal">
+                          <div class="media-body align-self-center text-truncate">
+                            <span class="mb-n1 total-user-text">TOTAL USERS </span> <span
+                              class="badge badge-danger">{{totalUserCount}}</span>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <div>
+                      <div *ngIf="totalActiveUserCount!='0'" class="media text-center text-xl-left">
+                        <a (click)="UserModelClick('1')" class="" data-target="#totalUserModal" data-toggle="modal">
+                          <div class="media-body align-self-center text-truncate">
+                            <span class="mb-n1 total-user-text">Active Users </span> <span
+                              class="badge badge-danger badge-success">{{totalActiveUserCount}}</span>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    <button mat-mini-fab *ngIf="isCallEnabled" color="warn" [ngStyle]="{
+                        backgroundColor: '#FA972D',
+                        transform: 'scale(0.8)'
+                      }" class="shadow-none" (click)="listActiveUsers()">
+                      <mat-icon>videocam</mat-icon>
+                    </button>
+                  </div>
+
+                  <!-- Chat toolbar -->
+                  <div class="text-right">
+                    <div *ngIf="chatType=='2'" class="chat-type">
+                      <!--Direct Chat-->
+                      <div class="delete-chat-popup-cntr">
+                        <a (click)="DMDeleteClick($event)">
+                          <img class="moreTextimg" src="assets/images/chat/more-icon-v.png" />
+                        </a>
+                        <div *ngIf="deleteDMEnable" class="dropdown-menu show py-0">
+                          <p (click)="$event.stopPropagation()" class="dropdown-item d-flex align-items-center">
+                            <img (click)="RemoveDMChat()" class="reply-icon" src="assets/images/chat/remove-icon.png" />
+                            <span (click)="RemoveDMChat()" class="pl-2"> Leave</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="chatType=='3'" class="chat-type">
+
+                      <div class="delete-chat-popup-cntr">
+                        <button (click)="AddNewMemberToExistingGroup()" class="icons-btn" type="button">
+                          <img aria-label="Group Chat" src="assets/images/chat/group-chat.png" />
+                        </button>
+                        <a (click)="GroupmenuEnable($event)">
+                          <img class="moreTextimg" src="assets/images/chat/more-icon-v.png" />
+                        </a>
+                        <div *ngIf="IsLeveGroupenable" class="dropdown-menu show py-0">
+                          <p (click)="$event.stopPropagation()" class="dropdown-item d-flex align-items-center">
+                            <img (click)="LeaveGroup()" class="reply-icon" src="assets/images/chat/remove-icon.png" />
+                            <span (click)="LeaveGroup()" class="pl-2"> Leave Group</span>
+                          </p>
+                        </div>
+                      </div>
+
+
+                      <!-- <div class="dropdown-menu show py-0" *ngIf="IsLeveGroupenable">
+                        <p  class="dropdown-item d-flex align-items-center">
+                          <img (click)="LeaveGroup()" class="reply-icon" src="./../../../../../assets/images/chat/remove-icon.png" />
+                          <span (click)="LeaveGroup()" class="pl-2"> Leave Group</span>
+                        </p>
+                      </div> -->
+                    </div>
+                    <!-- <div class="chat-type" *ngIf="chatType=='3'">
+                      Group Chat
+                      <div class="delete-chat-popup-cntr">
+                        <a (click)="GroupmenuEnable()">
+                          <img class="moreTextimg" src="assets/images/chat/more-icon-v.png" />
+                        </a>
+                        <div class="dropdown-menu show py-0" *ngIf="IsLeveGroupenable">
+                          <p  class="dropdown-item d-flex align-items-center">
+                            <img (click)="LeaveGroup()" class="reply-icon" src="./../../../../../assets/images/chat/remove-icon.png" />
+                            <span (click)="LeaveGroup()" class="pl-2"> Leave Group</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div> -->
+                    <div *ngIf="chatType=='1' ||chatType=='3' ">
+                      <div *ngFor="let item of activeUsers" class="box text-center mr-0 ml-0">
+                        <div (click)="OpenUserProfile(item.userId)" class="avatar avatar-sm mr-2 ml-2">
+                          <div>
+                            <img alt="" class="user-img" src="{{item.profileImg}}">
+                            <span class="activeuser"></span>
+                          </div>
+                        </div>
+                        <p (click)="OpenUserProfile(item.userId)" class="mb-0 mt-0" title="{{item.userName}}">
+                          {{item.userName}}</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+
+
+
+              </div>
+              <!-- <div class="scrollBar" #chatScroll [scrollTop]="(pagenumber == 1)?chatScroll.scrollHeight:chatScroll.scrollTop"> -->
+
+              <div #infiniteScroll (scrolledUp)="scrolledUpCalled()" [infiniteScrollDisabled]="busyGettingData"
+                [infiniteScrollThrottle]="50" [infiniteScrollDistance]="1" [infiniteScrollUpDistance]="5" [scrollWindow]="false" appChatscroll
+                class="scrollBar" infiniteScroll>
+                <!-- <div class="blank-img" *ngIf="chatResponse && chatResponse.length == 0"> -->
+                <div *ngIf="isShowBlankPage" class="blank-img">
+                  <img src="assets/images/chat/blank-chat.png" />
+                </div>
+                <div *ngIf="isLoadOnInit" class="loading-small-screen">
+                  <div class="loader-icon">
+                    <img alt="Loader" src="assets/images/landing-page/loading-more.svg" />
+                  </div>
+                </div>
+
+                <div *ngIf="!isLoadOnInit && IsLoadingOnChatScroll" class="d-flex justify-content-center">
+                  <div class="loader-div" role="status">
+                    <!-- <span class="dot-1 bg-1"></span>
+                    <span class="dot-1 bg-2"></span>
+                    <span class="dot-1 bg-3"></span> -->
+                    <img alt="Loader" src="assets/images/landing-page/loading-more.svg" />
+                  </div>
+                </div>
+                <div #chatscrollsrow *ngIf="chatResponseSorted && chatResponseSorted.length > 0"
+                  class="chat-content px-lg-8">
+                  <section class="chat-content-wrapper">
+                    <div>
+                      <div *ngFor="let item of chatResponseSorted; let last = last">
+                        <div class="message-divider my-9 mx-lg-2 mb-3 mt-3">
+                          <div class="row justify-content-end">
+                            <div class="col">
+                              <hr />
+                            </div>
+                            <div class="col-auto">
+                              <small class="divider-text">{{
+                                item.displayDate + " UTC" | date: "EEE, LLL d"
+                                }}
+                              </small>
+                            </div>
+                            <div class="col">
+                              <hr />
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Divider -->
+                        <div *ngFor="let chat of item.chatmessage; let trd = index">
+                          <!-- Other User Message Start-->
+                          <div *ngIf="
+                              chat.userId != userId && chat.deleteFlag == '0'
+                            " class="message left">
+                            <div class="message-body">
+                              <div class="
+                                  d-flex
+                                  align-items-center
+                                  justify-content-start
+                                ">
+                                <!--Normal Message content start-->
+                                <div *ngIf="
+                                    chat &&
+                                    chat.messageType ==
+                                      messageTypenormalMessage &&
+                                    chat.flagId != mediaTypeInfoLink
+                                  " class="message-content row bg-light" id="{{ chat.id }}">
+                                  <section class="top-row-wrapper col-md-12">
+                                    <section class="chat-main-section">
+                                      <div class="chat-img-box">
+                                         
+                                          <div class="tooltipUseDiv" (mouseleave)="t.close();">  
+                                              <div class="tooltipUseDivInner" (mouseenter)="getUserProfileStatus(chat,last,trd);t.open();$event.stopPropagation();"></div> 
+                                              <a class="avatar avatar-sm chat-pic left"
+                                                data-chat-sidebar-toggle="#chat-1-user-profile">
+                                                <img tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT" class="chat-pic {{chat.badgeTopUser}}" src="{{ chat?.profileImg }}" />
+                                                <!--span *ngIf="chat.availability == 1" class="activeuser"></span>
+                                                <span *ngIf="chat.availability == 2" class="dactiveuser"></span>
+                                                <span *ngIf="chat.availability == 0" class="logoutuser"></span-->
+                                              </a>
+                                          </div>
+
+                                          <ng-template #profileTT  >
+                                            <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : chat.profileShow } ">
+                                              <div class="table-row2">
+                                                <div class="profile-tt-row">
+                                                  <div class="profile-tt-col-lt profile-status-tt">
+                                                    <img class="" src="assets/images/thread/profile-status-{{chat.availability}}.svg"/>
+                                                  </div>
+                                                  <div class="profile-tt-col-rt">                                                                        
+                                                    <p class="profile-text-tt">{{chat.availabilityStatusName}}</p>      
+                                                  </div> 
+                                                </div>
+                                                <div class="line"></div>
+                                                <div class="profile-tt-row cursor-pointer" (click)="OpenUserProfile(chat.userId);$event.stopPropagation();">
+                                                  <div class="profile-tt-col-lt">
+                                                    <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                  </div>
+                                                  <div class="profile-tt-col-rt">                                                                        
+                                                    <p class="profile-text-tt">View Profile</p>      
+                                                  </div> 
+                                                </div>
+                                              </div>  
+                                            </div>    
+                                          </ng-template>
+
+                                      </div>
+                                      <div class="chat-text-message">
+                                        <h6 class="chat-title">
+                                          {{ chat.userName }}
+                                          <span class="date-text pl-2">{{
+                                            chat.createdOnMobile + " UTC"
+                                            | date: "shortTime":"IST"
+                                            }}</span>
+                                        </h6>
+                                      </div>
+                                    </section>
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)"
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                       [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeOther"></app-chat-message-menu>
+                                  </section>
+                                  <div class="chat-message-wrapper col-md-12 p-0">
+                                    <div class="card-body p-0">
+                                      <div class="justify-content-center">
+                                        <section class="chat-text pr-0 pb-0 pl-0">
+                                          <app-chat-reply-message *ngIf="chat.originalMessage"
+                                            [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                          <div *ngIf="
+                                              chat.mentionUserListArr &&
+                                              chat.mentionUserListArr.length > 0
+                                            " [innerHTML]="
+                                              GetMentionedContent(chat)
+                                            "></div>
+                                          <div *ngIf="
+                                              chat.mentionUserListArr == null ||
+                                              chat.mentionUserListArr ==
+                                                undefined ||
+                                              (chat.mentionUserListArr &&
+                                                chat.mentionUserListArr
+                                                  .length == 0)
+                                            " [innerHTML]="
+                                              convertunicode(chat.content)
+                                            "></div>
+                                        </section>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!--Normal Message content end-->
+                                <!--Link Message content start-->
+                                <div *ngIf="
+                                    chat &&
+                                    chat.messageType ==
+                                      messageTypenormalMessage &&
+                                    chat.flagId == mediaTypeInfoLink
+                                  " class="message-content row bg-light" id="{{ chat.id }}">
+                                  <section class="top-row-wrapper col-md-12">
+                                    <section class="chat-main-section">
+                                      <div class="chat-img-box">
+                                        <a (click)="OpenUserProfile(chat.userId)" class="avatar avatar-sm"
+                                          data-chat-sidebar-toggle="#chat-1-user-profile">
+                                          <img tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT" class="chat-pic {{chat.badgeTopUser}}" alt="" src="{{ chat?.profileImg }}" />
+                                          <!--span *ngIf="chat.availability == 1" class="activeuser"></span>
+                                          <span *ngIf="chat.availability == 2" class="dactiveuser"></span>
+                                          <span *ngIf="chat.availability == 0" class="logoutuser"></span-->
+                                        </a>
+                                        <ng-template #profileTT  >
+                                          <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : chat.profileShow } ">
+                                            <div class="table-row2">
+                                              <div class="profile-tt-row">
+                                                <div class="profile-tt-col-lt profile-status-tt">
+                                                  <img class="" src="assets/images/thread/profile-status-{{chat.availability}}.svg"/>
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">{{chat.availabilityStatusName}}</p>      
+                                                </div> 
+                                              </div>
+                                              <div class="line"></div>
+                                              <div class="profile-tt-row cursor-pointer" (click)="OpenUserProfile(chat.userId);$event.stopPropagation();">
+                                                <div class="profile-tt-col-lt">
+                                                  <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">View Profile</p>      
+                                                </div> 
+                                              </div>
+                                            </div>  
+                                          </div>    
+                                        </ng-template>
+                                      </div>
+                                      <div>
+                                        <h6 class="chat-title">
+                                          <span>{{ chat.userName }}</span>
+                                          <span class="date-text pl-2">{{
+                                            chat.createdOnMobile + " UTC"
+                                            | date: "shortTime"
+                                            }}</span>
+                                        </h6>
+                                      </div>
+                                    </section>
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                      [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeOther"></app-chat-message-menu>
+                                  </section>
+                                  <div class="full-width">
+                                    <div class="card border-0">
+                                      <div class="
+                                          card-body
+                                          row
+                                          pr-0
+                                          block-chat-reply
+                                        ">
+                                        <app-chat-reply-message *ngIf="chat.originalMessage"
+                                          [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                        <section>
+                                          <div class="box-img">
+                                            <a href="{{
+                                                convertunicode(chat.content)
+                                              }}" target="_blank">
+                                              <img [attr.src]="
+                                                  chat.isDefaultLInk == '1'
+                                                    ? 'assets/images/chat/default-link.png'
+                                                    : chat.thumbFilePath
+                                                " [ngClass]="
+                                                  chat.isDefaultLInk == '1'
+                                                    ? 'link-img-default'
+                                                    : 'link-img'
+                                                " />
+                                            </a>
+                                          </div>
+                                          <div class="textBox justify-content-end">
+                                            <span class="text">
+                                              <a href="{{
+                                                  convertunicode(chat.content)
+                                                }}" target="_blank">{{ chat.content }}
+                                              </a></span>
+                                          </div>
+                                        </section>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!--Link Message content end-->
+                                <div *ngIf="
+                                    chat &&
+                                    chat.messageType == messageTypeattachment &&
+                                    chat.flagId == mediaTypeInfoAudio
+                                  " class="message-content row bg-light" id="{{ chat.id }}">
+                                  <section class="top-row-wrapper col-md-12">
+                                    <section class="chat-main-section">
+                                      <div class="chat-img-box">
+
+                                        <a (click)="OpenUserProfile(chat.userId)" class="avatar avatar-sm left chat-pic"
+                                          data-chat-sidebar-toggle="#chat-1-user-profile">
+                                          <img tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT" class="chat-pic {{chat.badgeTopUser}}" alt="" src="{{ chat?.profileImg }}" />
+                                          <!--span *ngIf="chat.availability == 1" class="activeuser"></span>
+                                          <span *ngIf="chat.availability == 2" class="dactiveuser"></span>
+                                          <span *ngIf="chat.availability == 0" class="logoutuser"></span-->
+                                        </a>
+
+                                        <ng-template #profileTT  >
+                                          <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : chat.profileShow } ">
+                                            <div class="table-row2">
+                                              <div class="profile-tt-row">
+                                                <div class="profile-tt-col-lt profile-status-tt">
+                                                  <img class="" src="assets/images/thread/profile-status-{{chat.availability}}.svg"/>
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">{{chat.availabilityStatusName}}</p>      
+                                                </div> 
+                                              </div>
+                                              <div class="line"></div>
+                                              <div class="profile-tt-row cursor-pointer" (click)="OpenUserProfile(chat.userId);$event.stopPropagation();">
+                                                <div class="profile-tt-col-lt">
+                                                  <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">View Profile</p>      
+                                                </div> 
+                                              </div>
+                                            </div>  
+                                          </div>    
+                                        </ng-template>
+
+                                      </div>
+                                      <div class="chat-text-message">
+                                        <h6 class="chat-title">
+                                          {{ chat.userName }}
+                                          <span class="date-text pl-2">{{
+                                            chat.createdOnMobile + " UTC"
+                                            | date: "shortTime":"IST"
+                                            }}</span>
+                                        </h6>
+                                      </div>
+                                    </section>
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)"
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                       [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeOther"></app-chat-message-menu>
+                                  </section>
+
+                                  <div class="full-width">
+                                    <div class="
+                                        card
+                                        full-cntr
+                                        pl-0
+                                        pr-0
+                                        mr-0
+                                        border-0
+                                      ">
+                                      <div class="card-body row">
+                                        <div class="
+                                            col-md-12
+                                            mr-0
+                                            pr-0
+                                            justify-content-center
+                                            pl-0
+                                          ">
+                                          <app-chat-reply-message *ngIf="chat.originalMessage"
+                                            [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                          <div class="recording-section">
+                                            <audio [src]="chat.filePath" controls style="width: 100%"></audio>
+                                            <span class="record-text-2">{{
+                                              chat.fileName
+                                              }}</span>
+                                            <span class="record-text-2 pr-0">{{
+                                              FileSize(chat.fileSize)
+                                              }}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- PDF/ZIP Message: content -->
+                                <div *ngIf="
+                                    chat &&
+                                    chat.messageType == messageTypeattachment &&
+                                    chat.flagId != mediaTypeInfoLink &&
+                                    chat.flagId != mediaTypeInfoAudio &&
+                                    chat.flagId != mediaTypeInfoImage &&
+                                    chat.flagId != mediaTypeInfoVideo
+                                  " class="message-content row bg-light" id="{{ chat.id }}">
+                                  <section class="top-row-wrapper col-md-12">
+                                    <section class="chat-main-section">
+                                      <div class="chat-img-box">
+                                        <div class="tooltipUseDiv" (mouseleave)="t.close();">  
+                                          <div class="tooltipUseDivInner" (mouseenter)="getUserProfileStatus(chat,last,trd);t.open();$event.stopPropagation();"></div> 
+                                          
+                                        <a (click)="OpenUserProfile(chat.userId)" class="avatar avatar-sm chat-pic left"
+                                          data-chat-sidebar-toggle="#chat-1-user-profile">
+                                          <img tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT" class="chat-pic {{chat.badgeTopUser}}" src="{{ chat?.profileImg }}" />
+                                          <!--span *ngIf="chat.availability == 1" class="activeuser"></span>
+                                          <span *ngIf="chat.availability == 2" class="dactiveuser"></span>
+                                          <span *ngIf="chat.availability == 0" class="logoutuser"></span-->
+                                        </a>
+                                        </div>
+                                        <ng-template #profileTT  >
+                                          <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : chat.profileShow } ">
+                                            <div class="table-row2">
+                                              <div class="profile-tt-row">
+                                                <div class="profile-tt-col-lt profile-status-tt">
+                                                  <img class="" src="assets/images/thread/profile-status-{{chat.availability}}.svg"/>
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">{{chat.availabilityStatusName}}</p>      
+                                                </div> 
+                                              </div>
+                                              <div class="line"></div>
+                                              <div class="profile-tt-row cursor-pointer" (click)="OpenUserProfile(chat.userId);$event.stopPropagation();">
+                                                <div class="profile-tt-col-lt">
+                                                  <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">View Profile</p>      
+                                                </div> 
+                                              </div>
+                                            </div>  
+                                          </div>    
+                                        </ng-template>
+
+                                      </div>
+                                      <div>
+                                        <div class="right">
+                                          <h6 class="mb-0 chat-title">
+                                            <span>{{ chat.userName }}</span>
+                                            <span class="date-text pl-2">{{
+                                              chat.createdOnMobile + " UTC"
+                                              | date: "shortTime"
+                                              }}</span>
+                                          </h6>
+                                        </div>
+                                      </div>
+                                    </section>
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                      [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeOther"></app-chat-message-menu>
+                                  </section>
+                                  <div class="full-width">
+                                    <div class="card full-cntr">
+                                      <div class="card-body row">
+                                        <div class="
+                                            col-md-12
+                                            justify-content-left
+                                            p-0
+                                          ">
+                                          <section>
+                                            <app-chat-reply-message *ngIf="chat.originalMessage"
+                                              [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                          </section>
+                                          <div class="zip-img-icon-cntr">
+                                            <p class="pr-0 mr-0 mb-0">
+                                              <a (click)="
+                                                  downloadFile(chat.filePath)
+                                                ">
+                                                <img class="zip-img" src="{{
+                                                    GetDocumentIconFromFileExtension(
+                                                      chat.fileExt
+                                                    )
+                                                  }}" />
+                                              </a>
+                                            </p>
+                                            <p class="col-md-9 ml-0 pr-0 mb-0">
+                                              <a (click)="
+                                                  downloadFile(chat.filePath)
+                                                ">
+                                                <span class="filename-text">{{
+                                                  chat.fileCaption
+                                                  }}</span>
+                                              </a>
+                                              <span class="fileSmall-text">{{ FileSize(chat.fileSize) }}
+                                              </span>
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <!-- <div class="col-md-1 pr-0 pl-0 justify-content-end text-right">
+                                      <a (click)="downloadFile(chat.filePath)"> <img class="download-icon"
+                                          src="assets/images/chat/download-icon.png"></a>
+                                    </div> -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!--PDF/ZIP Message: content end -->
+                                <!--Image content start  -->
+                                <div *ngIf="
+                                    chat &&
+                                    chat.messageType == messageTypeattachment &&
+                                    (chat.flagId == mediaTypeInfoImage ||
+                                      chat.flagId == mediaTypeInfoVideo)
+                                  " class="message-content row bg-light" id="{{ chat.id }}">
+                                  <section class="top-row-wrapper col-md-12">
+                                    <section class="chat-main-section">
+                                      <div class="chat-img-box">
+                                        <div class="tooltipUseDiv" (mouseleave)="t.close();">  
+                                          <div class="tooltipUseDivInner" (mouseenter)="getUserProfileStatus(chat,last,trd);t.open();$event.stopPropagation();"></div> 
+                                          
+                                        <a (click)="OpenUserProfile(chat.userId)" class="avatar avatar-sm chat-pic left"
+                                          data-chat-sidebar-toggle="#chat-1-user-profile">
+                                          <img tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT" class="chat-pic {{chat.badgeTopUser}}" src="{{ chat?.profileImg }}" />
+                                          <!--span *ngIf="chat.availability == 1" class="activeuser"></span>
+                                          <span *ngIf="chat.availability == 2" class="dactiveuser"></span>
+                                          <span *ngIf="chat.availability == 0" class="logoutuser"></span-->
+                                        </a>
+                                        </div>
+
+                                        <ng-template #profileTT  >
+                                          <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : chat.profileShow } ">
+                                            <div class="table-row2">
+                                              <div class="profile-tt-row">
+                                                <div class="profile-tt-col-lt profile-status-tt">
+                                                  <img class="" src="assets/images/thread/profile-status-{{chat.availability}}.svg"/>
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">{{chat.availabilityStatusName}}</p>      
+                                                </div> 
+                                              </div>
+                                              <div class="line"></div>
+                                              <div class="profile-tt-row cursor-pointer" (click)="OpenUserProfile(chat.userId);$event.stopPropagation();">
+                                                <div class="profile-tt-col-lt">
+                                                  <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">View Profile</p>      
+                                                </div> 
+                                              </div>
+                                            </div>  
+                                          </div>    
+                                        </ng-template>
+                                      </div>
+                                      <div>
+                                        <div class="right pt-0 pb-0 pr-0 right">
+                                          <h6 class="mb-0 chat-title">
+                                            <span>{{ chat.userName }}</span>
+                                            <span class="date-text pl-2">{{
+                                              chat.createdOnMobile + " UTC"
+                                              | date: "shortTime"
+                                              }}</span>
+                                          </h6>
+                                        </div>
+                                      </div>
+                                    </section>
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                      [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeOther"></app-chat-message-menu>
+                                  </section>
+                                  <div class="col-md-12 mr-0 pr-0">
+                                    <div class="card">
+                                      <div class="
+                                          card-body
+                                          row
+                                          pr-0
+                                          block-chat-reply
+                                        ">
+                                        <app-chat-reply-message *ngIf="chat.originalMessage"
+                                          [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                        <!-- <div class="box-img" (click)="ZoomAttachment(chat.id)">
+                                      <img src="{{chat.thumbFilePath}}" class="attach-img">
+                                    </div> -->
+                                        <section>
+                                          <div (click)="ZoomAttachment(chat.id)" class="box-img">
+                                            <a *ngIf="
+                                                chat.flagId ==
+                                                mediaTypeInfoImage
+                                              " href="javascript:void(0);">
+                                              <img class="attach-img" src="{{ chat.thumbFilePath }}" />
+                                            </a>
+                                            <a *ngIf="
+                                                chat.flagId ==
+                                                mediaTypeInfoVideo
+                                              " class="uploaded-img-cntr" href="javascript:void(0);">
+                                              <!-- <img src="{{chat.posterImage}}" class="attach-img-2"
+                                          onerror="this.src='assets/images/media/video-play.png';"> -->
+                                              <img class="video-thumb-icon" src="assets/images/chat/video-thumb.png" />
+                                              <img class="attach-img"
+                                                onerror="this.src='assets/images/media/video-play.png';"
+                                                src="{{ chat.posterImage }}" />
+                                            </a>
+                                          </div>
+
+                                          <div class="textBox justify-content-end">
+                                            <a href="javascript:void(0);">
+                                              <span class="text">{{
+                                                chat.fileCaption
+                                                }}</span>
+                                            </a>
+                                            <span class="fileSmall-text">{{
+                                              FileSize(chat.fileSize)
+                                              }}</span>
+                                          </div>
+                                        </section>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Message: Body -->
+                          </div>
+                          <!-- Other User Message End-->
+
+                          <!-- User own Message Start-->
+                          <div *ngIf="
+                              chat.userId == userId && chat.deleteFlag == '0'
+                            " class="message message-right">
+                            <div class="message-body">
+                              <!--Normal Message: content -->
+                              <div *ngIf="
+                                  chat &&
+                                  chat.messageType ==
+                                    messageTypenormalMessage &&
+                                  chat.flagId != mediaTypeInfoLink
+                                " class="
+                                  d-flex
+                                  align-items-center
+                                  justify-content-end
+                                ">
+                                <div *ngIf="
+                                    isDeleteLoading && deleteChatId == chat.id
+                                  " class="message-content loader-wrapper">
+                                  <img alt="loading" src="assets/images/loading.svg" />
+                                </div>
+                                <div class="
+                                    message-content
+                                    replay-message
+                                    right
+                                    row
+                                  " id="{{ chat.id }}">
+                                  <section class="top-date-time-icon-row">
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)" 
+                                      [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeSelf"></app-chat-message-menu>
+                                    <div class="text-right chat-date-text">
+                                      {{
+                                      chat.createdOnMobile + " UTC"
+                                      | date: "shortTime"
+                                      }}
+                                    </div>
+                                  </section>
+                                  <section class="chat-reply-message-wrapper">
+                                    <app-chat-reply-message *ngIf="chat.originalMessage"
+                                      [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                  </section>
+                                  <div *ngIf="
+                                      chat.mentionUserListArr == null ||
+                                      chat.mentionUserListArr == undefined ||
+                                      (chat.mentionUserListArr &&
+                                        chat.mentionUserListArr.length == 0)
+                                    " [innerHTML]="convertunicode(chat.content)"></div>
+                                  <div *ngIf="
+                                      chat.mentionUserListArr &&
+                                      chat.mentionUserListArr.length > 0
+                                    " [innerHTML]="GetMentionedContent(chat)"></div>
+                                </div>
+                              </div>
+                              <!-- Message: content -->
+                              <!-- Message: row -->
+                              <div *ngIf="
+                                  chat &&
+                                  chat.messageType == messageTypeattachment &&
+                                  chat.flagId == mediaTypeInfoAudio
+                                " class="
+                                  d-flex
+                                  align-items-center
+                                  justify-content-end
+                                ">
+                                <div *ngIf="
+                                    isDeleteLoading && deleteChatId == chat.id
+                                  " class="message-content loader-wrapper">
+                                  <img alt="loading" src="assets/images/loading.svg" />
+                                </div>
+
+                                <div class="
+                                    message-content
+                                    replay-message
+                                    right
+                                    row
+                                  " id="{{ chat.id }}">
+                                  <section class="top-date-time-icon-row">
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)"
+                                       (chatReplaceMessage)="chatReplaceMessage($event)"
+                                       [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeSelf"></app-chat-message-menu>
+                                    <div class="
+                                        chat-date-text
+                                        col-md-10
+                                        text-right
+                                      ">
+                                      {{
+                                      chat.createdOnMobile + " UTC"
+                                      | date: "shortTime"
+                                      }}
+                                    </div>
+                                  </section>
+                                  <div class="full-width">
+                                    <div class="card pl-0 pr-0 mr-0 border-0">
+                                      <div class="card-body row py-0">
+                                        <div class="
+                                            col-md-12
+                                            mr-0
+                                            pr-0
+                                            justify-content-center
+                                            pl-0
+                                          ">
+                                          <app-chat-reply-message *ngIf="chat.originalMessage"
+                                            [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                          <div class="recording-section">
+                                            <audio *ngIf="
+                                                IsNewMediaUpload(chat.id) ==
+                                                false
+                                              " [src]="chat.filePath" class="lg-video-object lg-html5" controls
+                                              style="width: 100%"></audio>
+                                            <img *ngIf="
+                                                IsNewMediaUpload(chat.id) &&
+                                                CheckImageStatus(chat.id) !=
+                                                  true
+                                              " class="attach-img-2" src="assets/images/loading-small.svg" />
+                                            <span class="record-text-2">{{
+                                              chat.fileName
+                                              }}</span>
+                                            <span class="record-text pl-2">{{
+                                              FileSize(chat.fileSize)
+                                              }}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- end Post Recording  -->
+                              <!--new girish -->
+                              <div *ngIf="
+                                  chat &&
+                                  chat.messageType ==
+                                    messageTypenormalMessage &&
+                                  chat.flagId == mediaTypeInfoLink
+                                " class="
+                                  d-flex
+                                  align-items-center
+                                  justify-content-end
+                                ">
+                                <!-- Message: content -->
+                                <div *ngIf="
+                                    isDeleteLoading && deleteChatId == chat.id
+                                  " class="message-content loader-wrapper">
+                                  <img alt="loading" src="assets/images/loading.svg" />
+                                </div>
+                                <div class="
+                                    message-content
+                                    replay-message
+                                    right
+                                    row
+                                  " id="{{ chat.id }}">
+                                  <section class="top-date-time-icon-row">
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                        " 
+                                       (replyMessage)="ReplyChatMessage($event)" 
+                                       (chatReplaceMessage)="chatReplaceMessage($event)"
+                                        [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeSelf"></app-chat-message-menu>
+                                    <div class="
+                                        chat-date-text
+                                        col-md-10
+                                        text-right
+                                      ">
+                                      {{
+                                      chat.createdOnMobile + " UTC"
+                                      | date: "shortTime"
+                                      }}
+                                    </div>
+                                  </section>
+                                  <div class="full-width">
+                                    <div class="
+                                        col-md-12
+                                        ml-0
+                                        border-b
+                                        mb-0
+                                        pb-0
+                                        mt-0
+                                      ">
+                                      <div class="card pl-0 pr-0 mr-0 border-0">
+                                        <app-chat-reply-message *ngIf="chat.originalMessage"
+                                          [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                        <div class="card-body row pl-0">
+                                          <div class="left-img-box py-0 pl-0 mr-0">
+                                            <a href="{{
+                                                convertunicode(chat.content)
+                                              }}" target="_blank">
+                                              <img [attr.src]="
+                                                  chat.isDefaultLInk == '1'
+                                                    ? 'assets/images/chat/default-link.png'
+                                                    : chat.thumbFilePath
+                                                " [ngClass]="
+                                                  chat.isDefaultLInk == '1'
+                                                    ? 'link-img-default'
+                                                    : 'link-img'
+                                                " />
+                                            </a>
+                                          </div>
+                                          <div class="
+                                              right-img-text
+                                              mr-0
+                                              pr-0
+                                              justify-content-end
+                                              pl-0
+                                            ">
+                                            <span class="text text-white"><a href="{{ chat.content }}"
+                                                target="_blank">{{
+                                                convertunicode(chat.content)
+                                                }}</a></span>
+                                            <!-- <span class="size-text">{{FileSize(chat.fileSize)}}</span> -->
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- Message: content -->
+                              </div>
+                              <!-- message row-->
+                              <!-- Reply Image Message  copy link-->
+                              <div *ngIf="
+                                  chat &&
+                                  chat.messageType == messageTypeattachment &&
+                                  (chat.flagId == mediaTypeInfoImage ||
+                                    chat.flagId == mediaTypeInfoVideo)
+                                " class="
+                                  d-flex
+                                  align-items-center
+                                  justify-content-end
+                                ">
+                                <!-- Message: content -->
+                                <div *ngIf="
+                                    isDeleteLoading && deleteChatId == chat.id
+                                  " class="message-content loader-wrapper">
+                                  <img alt="loading" src="assets/images/loading.svg" />
+                                </div>
+                                <div class="
+                                    message-content
+                                    replay-message
+                                    right
+                                    row
+                                  " id="{{ chat.id }}">
+                                  <section class="top-date-time-icon-row">
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                       [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeSelf"></app-chat-message-menu>
+                                    <div class="
+                                        chat-date-text
+                                        col-md-10
+                                        text-right
+                                      ">
+                                      {{
+                                      chat.createdOnMobile + " UTC"
+                                      | date: "shortTime"
+                                      }}
+                                    </div>
+                                  </section>
+                                  <div class="full-width">
+                                    <div class="card pl-0 pr-0 mr-0 border-0">
+                                      <app-chat-reply-message *ngIf="chat.originalMessage"
+                                        [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                      <div (click)="ZoomAttachment(chat.id)" class="card-body row pl-0">
+                                        <div class="left-img-box py-0 pl-0">
+                                          <a *ngIf="
+                                              chat.flagId == mediaTypeInfoImage
+                                            " href="javascript:void(0);">
+                                            <img class="attach-img-2" src="{{ chat.thumbFilePath }}" />
+                                          </a>
+                                          <a *ngIf="
+                                              chat.flagId == mediaTypeInfoVideo
+                                            " class="uploaded-img-cntr" href="javascript:void(0);">
+                                            <!-- <img src="{{chat.posterImage}}" class="attach-img-2"
+                                          onerror="this.src='assets/images/media/video-play.png';"> -->
+                                            <img *ngIf="
+                                                IsNewMediaUpload(chat.id) ==
+                                                false
+                                              " class="video-thumb-icon" src="assets/images/chat/video-thumb.png" />
+                                            <img *ngIf="
+                                                IsNewMediaUpload(chat.id) &&
+                                                CheckImageStatus(chat.id) !=
+                                                  true
+                                              " class="attach-img-2"
+                                              onerror="this.src='assets/images/media/video-play.png';"
+                                              src="assets/images/loading-small.svg" />
+
+                                            <img *ngIf="
+                                                IsNewMediaUpload(chat.id) ==
+                                                false
+                                              " class="attach-img-2"
+                                              onerror="this.src='assets/images/media/video-play.png';"
+                                              src="{{ chat.posterImage }}" />
+                                          </a>
+                                        </div>
+                                        <div class="
+                                            right-img-text
+                                            mr-0
+                                            pr-0
+                                            justify-content-end
+                                            pl-0
+                                          ">
+                                          <span class="text text-white">{{
+                                            chat.fileCaption
+                                            }}</span>
+                                          <span class="size-text">{{
+                                            FileSize(chat.fileSize)
+                                            }}</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- Reply attachment Message -->
+                              <div *ngIf="
+                                  chat &&
+                                  chat.messageType == messageTypeattachment &&
+                                  chat.flagId != mediaTypeInfoLink &&
+                                  chat.flagId != mediaTypeInfoAudio &&
+                                  chat.flagId != mediaTypeInfoImage &&
+                                  chat.flagId != mediaTypeInfoVideo
+                                " class="
+                                  d-flex
+                                  align-items-center
+                                  justify-content-end
+                                ">
+                                <!-- Message: content -->
+                                <div *ngIf="
+                                    isDeleteLoading && deleteChatId == chat.id
+                                  " class="message-content loader-wrapper">
+                                  <img alt="loading" src="assets/images/loading.svg" />
+                                </div>
+                                <div class="
+                                    message-content
+                                    replay-message
+                                    right
+                                    row
+                                  " id="{{ chat.id }}">
+                                  <section class="top-date-time-icon-row">
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                       [chatType]="chatType"
+                                      [chatType]="chatType" [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeSelf"></app-chat-message-menu>
+                                    <div class="
+                                        chat-date-text
+                                        text-right
+                                        col-md-10
+                                      ">
+                                      {{ CurrentDate | date: "shortTime" }}
+                                    </div>
+                                  </section>
+                                  <div class="card card-bg col-md-12 no-bg">
+                                    <!-- <h5 class="title pt-2">{{chat.fileCaption}}</h5> -->
+                                    <app-chat-reply-message *ngIf="chat.originalMessage"
+                                      [replyChat]="chat.originalMessage"></app-chat-reply-message>
+                                    <div class="card-body mb-0 row">
+                                      <div class="
+                                          col-md-12
+                                          row
+                                          justify-content-left
+                                        ">
+                                        <p class="pr-0 mr-0 mb-0">
+                                          <a (click)="
+                                              downloadFile(chat.filePath)
+                                            ">
+                                            <img class="zip-img" src="{{
+                                                GetDocumentIconFromFileExtension(
+                                                  chat.fileExt
+                                                )
+                                              }}" />
+                                          </a>
+                                        </p>
+                                        <p class="ml-0 mb-0">
+                                          <a (click)="
+                                              downloadFile(chat.filePath)
+                                            ">
+                                            <span class="filename-text">{{
+                                              chat.fileCaption
+                                              }}</span>
+                                          </a>
+                                          <span class="fileSmall-text">{{
+                                            FileSize(chat.fileSize)
+                                            }}</span>
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- User own Message End-->
+
+                          <!-- Deleted Massage Start-->
+
+                          <div class="message left" *ngIf="chat && chat.deleteFlag == '1' && chat.userId != userId">
+                            <div class="message-body">
+                              <div class="d-flex align-items-center justify-content-start">
+                                <div class="message-content row bg-light" id="{{ chat.id }}" style="width:35%">
+                                  <section class="top-row-wrapper col-md-12">
+                                    <section class="chat-main-section">
+                                      <div class="chat-img-box">
+                                        <div class="tooltipUseDiv" (mouseleave)="t.close();">  
+                                          <div class="tooltipUseDivInner" (mouseenter)="getUserProfileStatus(chat,last,trd);t.open();$event.stopPropagation();"></div> 
+                                          
+                                        <a (click)="OpenUserProfile(chat.userId)" class="avatar avatar-sm chat-pic left"
+                                          data-chat-sidebar-toggle="#chat-1-user-profile">
+                                          <img tooltipClass="profile-tooltip" triggers="manual" #t="ngbTooltip" [autoClose]="false" placement="bottom-left" [ngbTooltip]="profileTT" class="chat-pic {{chat.badgeTopUser}}" src="{{ chat?.profileImg }}" />
+                                          <!--span *ngIf="chat.availability == 1" class="activeuser"></span>
+                                          <span *ngIf="chat.availability == 2" class="dactiveuser"></span>
+                                          <span *ngIf="chat.availability == 0" class="logoutuser"></span-->
+                                        </a>
+
+                                        </div>
+                                        <ng-template #profileTT  >
+                                          <div class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : chat.profileShow } ">
+                                            <div class="table-row2">
+                                              <div class="profile-tt-row">
+                                                <div class="profile-tt-col-lt profile-status-tt">
+                                                  <img class="" src="assets/images/thread/profile-status-{{chat.availability}}.svg"/>
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">{{chat.availabilityStatusName}}</p>      
+                                                </div> 
+                                              </div>
+                                              <div class="line"></div>
+                                              <div class="profile-tt-row cursor-pointer" (click)="OpenUserProfile(chat.userId);$event.stopPropagation();">
+                                                <div class="profile-tt-col-lt">
+                                                  <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                </div>
+                                                <div class="profile-tt-col-rt">                                                                        
+                                                  <p class="profile-text-tt">View Profile</p>      
+                                                </div> 
+                                              </div>
+                                            </div>  
+                                          </div>    
+                                        </ng-template>
+                                      </div>
+                                      <div class="chat-text-message">
+                                        <h6 class="chat-title">
+                                          {{ chat.userName }}
+                                          <span class="date-text pl-2">{{
+                                            chat.createdOnMobile + " UTC"
+                                            | date: "shortTime":"IST"
+                                            }}</span>
+                                        </h6>
+                                      </div>
+                                    </section>
+                                    <app-chat-message-menu (ReloadChatSection)="
+                                        ReloadChatPage($event)
+                                      " (deleteMessage)="
+                                        DeleteChatMessage($event)
+                                      " (replyMessage)="ReplyChatMessage($event)" 
+                                      (chatReplaceMessage)="chatReplaceMessage($event)"
+                                       [chatType]="chatType"
+                                      [chatmessage]="chat" [leftmenucomponent]="leftMenu"
+                                      [messageUserType]="chatuserTypeOther"></app-chat-message-menu>
+                                  </section>
+                                  <div class="chat-message-wrapper col-md-12 p-0">
+                                    <div class="card-body p-0">
+                                      <div class="justify-content-center">
+                                        <section class="chat-text pr-0 pb-0 pl-0">
+                                          <div *ngIf="
+                                            chat.mentionUserListArr == null ||
+                                            chat.mentionUserListArr ==
+                                              undefined ||
+                                            (chat.mentionUserListArr &&
+                                              chat.mentionUserListArr
+                                                .length == 0)
+                                          ">
+                                            <div class="message-divider">
+                                              <div class="delete-box d-flex justify-content-start m-0">
+                                                <!-- <small class="divider-text">Tue, Sep 30, 2020 </small> -->
+                                                <div class="loader-wrapper">
+                                                  <!-- <img src="../../../../../assets/images/loading.svg" alt="loading" />                               -->
+                                                </div>
+                                                <div class="deleteMassage">
+                                                  <p class="mb-0">
+                                                    <span class="deleteImg"><img
+                                                        src="assets/images/chat/delete-message.png" /></span>
+                                                    {{ convertunicode(chat.content) }}
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </section>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+                          <div *ngIf="chat && chat.deleteFlag == '1' && chat.userId == userId"
+                            class="message-divider my-9 mx-lg-2">
+                            <div class="row justify-content-end">
+                              <div class="delete-box">
+                                <!-- <small class="divider-text">Tue, Sep 30, 2020 </small> -->
+                                <div class="loader-wrapper">
+                                  <!-- <img src="../../../../../assets/images/loading.svg" alt="loading" />                               -->
+                                </div>
+                                <div class="deleteMassage">
+                                  <p class="delete-date-text">
+                                    {{
+                                    chat.createdOnMobile + " UTC"
+                                    | date: "shortTime"
+                                    }}
+                                  </p>
+                                  <p class="mb-0">
+                                    <span class="deleteImg"><img src="assets/images/chat/delete-message.png" /></span>
+                                    {{ convertunicode(chat.content) }}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div *ngIf="
+                              chat && chat.messageType == messageTypeSystem
+                            ">
+                            <section class="new-user-added">
+                              <span>
+                                {{ chat.content }} at
+                                {{
+                                chat.createdOnMobile + " UTC"
+                                | date: "shortTime"
+                                }}
+                              </span>
+                            </section>
+                          </div>
+                          <!-- Deleted Massage End-->
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <!-- message-body -->
+
+                <div [ngClass]="{ 'd-none': chatscrollDirective?.isNearBottom }" class="new-chat-symbol">
+                  <a (click)="ScrollToBottom()">
+                    <div class="arrow-cntr">
+                      <div *ngIf="
+                          chatscrollDirective &&
+                          chatscrollDirective.instantPushCount
+                        " class="green-symbol">
+                        {{ chatscrollDirective.instantPushCount }}
+                      </div>
+                    </div>
+                  </a>
+                </div>
+              </div>
+
+              <div hidden>
+                <div id="viewGallery">
+                  <div *ngFor="let image of attachmentGallery" [attr.data-html]="GetId(image.id)"
+                    [attr.data-poster]="image?.posterImageUrl"
+                    [attr.data-src]="(image?.attachmentType == mediaTypeInfoVideo || image?.attachmentType == mediaTypeInfoAudio) ? '' : image.attachmentUrl"
+                    [attr.data-sub-html]="image?.attachmentName">
+                    <!-- <div *ngIf="image?.attachmentType == MediaTypeInfo.Image"> -->
+                    <div *ngIf="image?.attachmentType == mediaTypeInfoVideo" class="hide" id="img{{ image.id }}">
+                      <video class="lg-video-object lg-html5" controls preload="none">
+                        <source src="{{ image.attachmentUrl }}" type="{{ image.type }}" />
+                        Your browser does not support HTML5 video.
+                      </video>
+                    </div>
+                    <!-- <source src="{{image.attachmentUrl}}" type="audio/wav"> -->
+                    <!-- Hidden audio div -->
+                    <div *ngIf="image?.attachmentType == mediaTypeInfoAudio" class="hide" id="img{{ image.id }}">
+                      <audio [attr.id]="image.id" class="lg-video-object lg-html5" controls>
+                        <source src="https://s3-us-west-2.amazonaws.com/cbt-demo-file-output/audios/1618999102blob.mp3"
+                          type="audio/wav" />
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                    <div>
+                      <a href="image?.attachmentUrl">
+                        <img [attr.src]="image?.attachmentThumbnailUrl" id="img{{ image.id }}" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-footer">
+                <div *ngIf="invalidFile" class="error-div">
+                  <span class="error-msg">{{ invalidFileErr }}</span>
+                </div>
+                <section *ngIf="replyChat" class="reply-chat-cntr">
+                  <div class="reply-chat-cntr-top">
+                    <div>
+                      <img alt="Reply" src="assets/images/chat/reply-btn.png" />Reply to <span>{{ replyChat.userName
+                        }}</span>
+                    </div>
+                    <div>
+                      <a>
+                        <img (click)="closeReplyMessage()" alt="Close" src="assets/images/chat/close.png" /></a>
+                    </div>
+                  </div>
+                  <div class="reply-chat-cntr-inner">
+                    <div *ngIf="
+                        IsReplyMessageImageExist(replyChat) ||
+                        IsReplyMessageAudioExist(replyChat)
+                      ">
+                      <img *ngIf="IsReplyMessageImageExist(replyChat)" src="{{ GetReplyMessageImage(replyChat) }}" />
+                      <audio *ngIf="IsReplyMessageAudioExist(replyChat)" [src]="replyChat.filePath" controls
+                        style="width: 500px"></audio>
+                    </div>
+                    <div>
+                      <span *ngIf="IsReplyNormalMessage(replyChat)"
+                        [innerHTML]="GetReplyNormalMessage(replyChat)"></span>
+                      <!-- <span *ngIf ="IsReplyLinkMessage(replyChat)" class="text"> <a href="{{convertunicode(replyChat.content)}}" target="_blank">{{replyChat.content}} -->
+                      <span *ngIf="IsReplyLinkMessage(replyChat)" class="text">
+                        {{ replyChat.content }}</span>
+                      <span *ngIf="IsReplyFileInfoExist(replyChat)">{{
+                        GetReplyMessageChatFileName(replyChat)
+                        }}</span>
+                      <span *ngIf="IsReplyFileInfoExist(replyChat)" class="file-size-text">{{
+                        FileSize(replyChat.fileSize) }}</span>
+                    </div>
+                  </div>
+                  <div class="reply-chat-cntr-bottom"></div>
+                </section>
+                <section class="chat-footer-inner">
+                  <!-- out of ng for  -->
+                  <div *ngIf="!attachmentProgress" class="message-body attachmentBox">
+                    <div class="replay-chat">
+                      <!-- <h2>Move to ngfor div </h2> -->
+                      <!--  need to be move from ngfor -->
+                      <!-- Reply Image Upload edit  Workstream_Attachments Selection_Add Caption -->
+                      <div *ngIf="
+                          attachmentTouploadList &&
+                          attachmentTouploadList.length > 0 &&
+                          (recordService?.soundstream == null ||
+                            recordService?.soundstream == undefined)
+                        " class="d-flex align-items-center justify-content-end">
+                        <!-- Message: content -->
+                        <div class="
+                            message-content
+                            replay-message
+                            pr-0
+                            row
+                            right
+                            col-md-12 col-lg-12
+                          ">
+                          <section class="scroll-attachment">
+                            <div *ngFor="let item of attachmentTouploadList" class="scroll-attachment-inner">
+                              <div class="card pl-0 pr-0 mr-0 border-0">
+                                <div class="card-body row py-0 pl-0 pr-0">
+                                  <div *ngIf="
+                                      item.fileType.indexOf('image') !== -1
+                                    " class="py-0 pl-0 pr-2">
+                                    <img [src]="item.localurl" class="edit-box-img" />
+                                  </div>
+                                  <div *ngIf="
+                                      item.fileType.indexOf('video') !== -1
+                                    " class="py-0 pl-0 pr-2">
+                                    <video [src]="item.localurl" controls style="max-width: 140px"></video>
+                                  </div>
+                                  <div *ngIf="
+                                      item.fileType.indexOf('image') === -1 &&
+                                      item.fileType.indexOf('video') === -1
+                                    " class="py-0 pl-0 pr-2">
+                                    <img class="edit-box-img" src="{{ GetDocumentIcon(item.fileType) }}" />
+                                  </div>
+                                  <div *ngIf="item.attachmentEditStatus" class="
+                                      Edit-Section
+                                      col-md-8 col-sm-8 col-lg-7
+                                      mr-0
+                                      imgDelete
+                                      pr-0
+                                      justify-content-end
+                                      pl-0
+                                    ">
+                                    <span class="text"><input [(ngModel)]="item.fileCaption" class="editInput"
+                                        type="text" /></span>
+                                    <span (click)="RemoveAttachment(item)" class="delete">
+                                      <a><img (click)="RemoveAttachment(item)"
+                                          src="assets/images/chat/delete-upload.png" /></a></span>
+                                    <span class="fileSmall-text size-text">{{ FileSize(item.filesize) }}
+                                    </span>
+                                  </div>
+                                  <!--video -->
+                                  <div *ngIf="
+                                      !item.attachmentEditStatus &&
+                                      item.fileType.indexOf('video') !== -1
+                                    " class="video-delete justify-content-end">
+                                    <span class="editText">{{
+                                      item.fileCaption
+                                      }}</span>
+
+                                    <span><img (click)="AttachmentEditClick(item)" class="editimg"
+                                        src="assets/images/chat/edit-icon.png" /></span>
+
+                                    <span (click)="RemoveAttachment(item)" class="delete"><a><img
+                                          (click)="RemoveAttachment(item)"
+                                          src="assets/images/chat/delete-upload.png" /></a></span>
+                                    <span class="fileSmall-text size-text">{{ FileSize(item.filesize) }}
+                                    </span>
+                                  </div>
+
+                                  <div *ngIf="
+                                      !item.attachmentEditStatus &&
+                                      item.fileType.indexOf('video') === -1
+                                    " class="img-delete justify-content-end">
+                                    <span class="editText">{{
+                                      item.fileCaption
+                                      }}</span>
+
+                                    <span><img (click)="AttachmentEditClick(item)" class="editimg"
+                                        src="assets/images/chat/edit-icon.png" /></span>
+
+                                    <span (click)="RemoveAttachment(item)" class="delete"><a><img
+                                          (click)="RemoveAttachment(item)"
+                                          src="assets/images/chat/delete-upload.png" /></a></span>
+                                    <span class="fileSmall-text size-text">{{ FileSize(item.filesize) }}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </section>
+                        </div>
+                        <!-- Message: content -->
+                      </div>
+                      <!-- end row-->
+                    </div>
+                  </div>
+
+                  <!--  need to be move from ngfor -->
+                  <!-- Reply image section -->
+                  <!-- <div class="d-flex align-items-center mt-2 justify-content-end" *ngIf="attachmentProgress"> -->
+                  <div *ngIf="attachmentProgress" class="message-body record-attachmentBox">
+                    <div class="replay-chat">
+                      <!-- Message: content -->
+                      <div class="
+                          message-content
+                          replay-message
+                          row
+                          right
+                          col-md-12 col-lg-12
+                        ">
+                        <section class="scroll-attachment">
+                          <!-- <div class="text-right col-md-12">
+                        <div class="chat-date-text">{{CurrentDate| date:'shortTime'}}</div>
+                      </div> -->
+
+                          <div *ngFor="let item of attachmentTouploadList" class="border-b col-md-12">
+                            <div class="card border-0">
+                              <div class="card-body">
+                                <div class="full-width">
+                                  <section class="attachment-toupload-list">
+                                    <div>
+                                      <img *ngIf="
+                                          item.fileType.indexOf('image') !== -1
+                                        " [src]="item.localurl" class="edit-box-img" />
+
+                                      <img *ngIf="
+                                          item.fileType.indexOf('image') ===
+                                            -1 &&
+                                          item.fileType.indexOf('video') === -1
+                                        " class="edit-box-img" src="{{
+                                          GetDocumentIcon(item.fileType)
+                                        }}" />
+
+                                      <video *ngIf="
+                                          item.fileType.indexOf('video') !== -1
+                                        " [src]="item.localurl" class="edit-box-img" controls></video>
+                                    </div>
+                                    <div>
+                                      <span class="text text-white">{{
+                                        item.fileCaption
+                                        }}</span>
+                                      <span class="fileSmall-text size-text">{{ FileSize(item.filesize) }}
+                                      </span>
+                                      <!-- <p-progressBar [value]="item.progress"></p-progressBar> -->
+                                      <!-- <div class="progress"> -->
+                                      <p-progressBar [value]="item.progress"></p-progressBar>
+                                      <!-- <div class="progress-bar progress-bg" role="progressbar" style="width: 85%"
+                                  aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div> -->
+                                      <!-- </div> -->
+                                      <!-- <span class="progress-text">{{item.progress}}%</span> -->
+                                    </div>
+                                  </section>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </section>
+                      </div>
+                      <!-- Message: content -->
+                    </div>
+                  </div>
+                  <!-- Reply Attachment End row-->
+                  <!--  need to be move from ngfor -->
+                  <!-- Reply image uploading progress  Section-->
+                  <!-- <div *ngIf="invalidFile" class="error-div"><span class="error-msg">{{invalidFileErr}}</span></div> -->
+
+                  <!-- Post Recording  -->
+                  <div class="message-body record-attachmentBox">
+                    <div class="replay-chat">
+                      <div *ngIf="recordService.soundstream" class="d-flex align-items-center justify-content-end">
+                        <div class="
+                            message-content
+                            replay-message
+                            row
+                            right
+                            col-md-12 col-lg-12
+                          ">
+                          <!-- <div class="chat-date-text col-md-10 text-right">{{CurrentDate| date:'shortTime'}}</div> -->
+
+                          <div class="col-md-12 ml-0 mt-0 mb-0 py-0 border-b">
+                            <div class="card pl-0 pr-0 mr-0 border-0">
+                              <div class="card-body row py-0">
+                                <div class="
+                                    col-md-12
+                                    mr-0
+                                    pr-0
+                                    justify-content-center
+                                    pl-0
+                                  ">
+                                  <div class="recording-section">
+                                    <audio [src]="recordService?.blobUrl" controls style="width: 90%"></audio>
+                                    <span (click)="RemoveAudio()" class="delete">
+                                      <a><img (click)="RemoveAudio()"
+                                          src="assets/images/chat/delete-upload.png" /></a></span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- end Post Recording  -->
+                    </div>
+                  </div>
+
+                  <!-- send Replay message -->
+                  <div class="message-body record-attachmentBox">
+                    <div class="replay-chat">
+                      <div *ngIf="IsSendReply" class="d-flex align-items-center justify-content-end">
+                        <!-- Message: content -->
+                        <div class="
+                            message-content
+                            replay-message
+                            pt-0
+                            row
+                            right
+                            col-md-12 col-sm-12 col-lg-12
+                            pl-0
+                            pr-0
+                          ">
+                          <div class="bg-blue row">
+                            <div class="dropdown col-md-2 pl-0 pr-0">
+                              <a aria-expanded="false" aria-haspopup="true" class="text-muted opacity-60"
+                                data-toggle="dropdown"
+                                href="https://themes.2the.me/Messenger-1.1/demo-light/chat-1.html#">
+                                <img class="moreTextimg" src="assets/images/chat/more-icon-v.png" />
+                              </a>
+
+                              <div class="dropdown-menu py-0">
+                                <p class="
+                                    dropdown-item
+                                    d-flex
+                                    align-items-center
+                                  ">
+                                  <img class="reply-icon" src="assets/images/chat/remove-chat.png" />
+                                  <span class="pl-2"> Delete</span>
+                                </p>
+                              </div>
+                            </div>
+
+                            <div class="chat-date-text col-md-10 text-right">
+                              Sep 29, 2020 11:22 AM
+                            </div>
+                            <div class="card card-bg col-md-12 mt-2">
+                              <h5 class="title pt-2">Title</h5>
+                              <p class="filename-text">
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit. Phasellus Lorem ipsum dolor sit
+                                amet, consectetur adipiscing elit. Phasellus
+                                luctus felis quis pretiu.
+                              </p>
+                              <div class="card-body row">
+                                <div class="col-md-8 row justify-content-left">
+                                  <p class="pr-0 mr-0 ml-3 mb-0">
+                                    <img class="zip-img" src="assets/images/chat/pdf-icon.png" />
+                                  </p>
+                                  <p class="col-md-8 ml-0">
+                                    <span class="filename-text">32534643SAF3.zip</span><span
+                                      class="fileSmall-text">18mb</span>
+                                  </p>
+                                </div>
+                                <!-- <div class="col mr-2 pr-0 justify-content-end text-right">
+                        <a><img class="download-icon"src="assets/images/chat/download-icon.png"></a>
+                      </div> -->
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <p class="pl-3 pr-3 pt-3">
+                              Lorem ipsum dolor sit amet, consectetur adipiscing
+                              elit. Phasellus Lorem ipsum dolor sit amet,
+                              consectetur adipiscing elit. Phasellus luctus
+                              felis quis pretiu.
+                            </p>
+                          </div>
+                        </div>
+                        <!-- Message: content -->
+                      </div>
+                      <!-- send Replay message -->
+
+                      <!-- Chat: Footer -->
+                    </div>
+                  </div>
+                  <!-- Chat: Content -->
+
+                  <!-- @ popup-->
+
+                  <div [hidden]="totalActiveUsePopprCount == 0 || chatBox == false" class="chatBox">
+                    <div class="row">
+                      <div class="col-md-12 col-sm-12 col-lg-12">
+                        <p (click)="closePopup()" class="close-popup">
+                          <span aria-hidden="true">×</span>
+                        </p>
+                        <!-- <input type="search" class="SearchBox" placeholder="Search" />
+                  <i class="fa-search"><img src="assets/images/chat/chat-search.png"></i> -->
+                      </div>
+
+                      <ul #UserListScroll class="list-group list-group-flush">
+                        <li (click)="SelectUserForTag(user.userName, user.userId)" *ngFor="let user of allDomainUsers">
+                          <!-- <div class="chat-profile"><img class="user-pic" src="{{user.profileImg}}" alt=""></div> -->
+                          <div class="chat-profile">
+                            <img alt="" class="user-pic" src="{{ user.profileImg }}" />
+                            <span *ngIf="user.availability == 1" class="activeuser"></span>
+                                                            <span *ngIf="user.availability == 2"
+                              class="dactiveuser"></span>
+                            <span *ngIf="user.availability == 0" class="logoutuser"></span>
+                          </div>
+                          <div class="col-md-9 chatText">
+                            {{ user.userName }}
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="container-xxl">
+                    <form *ngIf="!recordService.recordingTimer" data-emoji-form="" id="chat-id-1-form">
+                      <div class="form-row align-items-center">
+                        <div class="col">
+                          <div class="input-group">
+                            <div class="append-group-cntr">
+                              <div class="input-group-append">
+                                <input #file (change)="upload($event.target.files)" hidden multiple type="file" />
+                                <a (click)="file.click()" class="
+                                    btn btn-ico btn-secondary btn-minimal
+                                    bg-transparent
+                                    pr-0
+                                  " data-emoji-btn="" type="button">
+                                  <img src="assets/images/chat/attachment-icon.png" />
+                                </a>
+                              </div>
+
+                              <div class="input-group-append">
+                                <a class="
+                                    btn btn-ico btn-secondary btn-minimal
+                                    bg-transparent
+                                    pl-0
+                                  " id="chat-upload-btn-1" type="button">
+                                  <i (click)="toggled = !toggled" (emojiPickerSelect)="
+                                      handleSelection($event)
+                                    " [(emojiPickerIf)]="toggled" [emojiPickerDirection]="
+                                      'bottom' || 'top' || 'left' || 'right'
+                                    ">
+                                    <img src="assets/images/chat/emoji-icon.png" />
+                                  </i>
+                                </a>
+                              </div>
+                            </div>
+
+                            <!-- Textarea -->
+
+                            <!-- <textarea id="chat-id-1-input" class=" bg-transparent border-list-0"  appDragDrop
+                        (onFileDropped)="upload($event)" placeholder="Type a message or drop files here"
+                          [(ngModel)]="content" name="content" rows="1" (keypress)="keyPress($event)"></textarea> -->
+                            <div #chatinput (blur)="getContent($event.target.innerHTML)" (focus)="removeplaceholder()"
+                              (focusout)="Addplaceholder()" (keypress)="InitiateTagSearchOrSendChatOnEnter($event)"
+                              (keyup)="SearchDomainUsers($event.target.innerText)" (onFileDropped)="upload($event)"
+                              (paste)="PasteContent($event)" [innerHTML]="convertunicode(content)" appDragDrop
+                              contenteditable data-placeholder="Type a message, drop a file or paste using Ctrl-V"
+                              id="input">
+                            </div>
+
+                            <!-- Emoji button -->
+                            <div class="append-group-cntr">
+                              <div class="input-group-append sendMessage">
+                                <div #sendchatbutton class="
+                                    btn btn-ico btn-secondary btn-minimal
+                                    bg-transparent
+                                    pr-0
+                                    send-btn-cntr
+                                  " id="chat-upload-btn-1" type="button">
+                                  <img (click)="SendChatClick()" *ngIf="
+                                      !isMessageSending &&
+                                      (isSendButtonEnabled ||
+                                        (content && content != '') ||
+                                        (attachmentTouploadList &&
+                                          attachmentTouploadList.length > 0) ||
+                                        recordService?.soundstream)
+                                    " src="assets/images/chat/send-icon.png" />
+                                  <img *ngIf="
+                                      !isMessageSending &&
+                                      !isSendButtonEnabled &&
+                                      (content == null ||
+                                        content == undefined ||
+                                        content == '') &&
+                                      (attachmentTouploadList == null ||
+                                        attachmentTouploadList == undefined ||
+                                        (attachmentTouploadList &&
+                                          attachmentTouploadList.length ==
+                                            0)) &&
+                                      (recordService?.soundstream == null ||
+                                        recordService?.soundstream == undefined)
+                                    " src="assets/images/chat/send-icon-disable.png" />
+                                  <!-- <img src="assets/images/chat/send-icon.png"> -->
+                                  <!-- <img src="assets/images/chat/send-icon-disable.png"> -->
+                                  <img *ngIf="isMessageSending" alt="Loader" class="loader-img"
+                                    src="assets/images/loading-small.svg" />
+                                </div>
+                                <span *ngIf="
+                                    attachmentTouploadList &&
+                                    attachmentTouploadList.length > 0 &&
+                                    (recordService?.soundstream == null ||
+                                      recordService?.soundstream == undefined)
+                                  " class="chat-notification">{{ attachmentTouploadList.length }}</span>
+                              </div>
+                              <div class="input-group-append recordSend">
+                                <div (click)="
+                                    attachmentTouploadList == null ||
+                                    attachmentTouploadList == undefined ||
+                                    (attachmentTouploadList &&
+                                      attachmentTouploadList.length == 0)
+                                      ? startVoiceRecord()
+                                      : false
+                                  " class="
+                                    btn btn-ico btn-secondary btn-minimal
+                                    bg-transparent
+                                    pl-0
+                                  " id="chat-upload-btn-1" type="button">
+                                  <img src="assets/images/chat/record-icon.png" />
+                                </div>
+                              </div>
+                              <div #publisherDiv [ngClass]="{ publishing: publishing }" class="publishingDiv"></div>
+                              <div>
+                                <ng-template #subscriberHost></ng-template>
+                              </div>
+                            </div>
+                            <!-- Upload button -->
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+
+                    <!-- voice record div-->
+
+                    <div *ngIf="recordService?.recordingTimer" id="chat-id-1-form">
+                      <div class="record-cntr">
+                        <div (click)="CancelRecording()" class="record-cntr-cancel">
+                          <img class="close-record-icon" src="assets/images/chat/cancel-record.png" />
+                          <span class="cancel-record">cancel</span>
+                        </div>
+                        <div>
+                          <div>
+                            <img (click)="startVoiceRecord()" class="voice-icon" id="chat-upload-btn-1"
+                              src="assets/images/chat/voice-icon.png" />
+                            <span class="recording-text">
+                              {{
+                              recordService.stopRecording
+                              ? "Saving..."
+                              : recordService?.recordingTimer
+                              }}
+                            </span>
+                          </div>
+                          <div>
+                            <div (click)="startVoiceRecord()" class="
+                                btn btn-ico btn-secondary btn-minimal
+                                bg-transparent
+                                pl-3
+                                pr-0
+                              " type="button">
+                              <img class="record-Icon" src="assets/images/chat/voice-record-icon.png" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- end voice record div-->
+                  </div>
+                </section>
+              </div>
+            </div>
+            <!-- Chat: body -->
+          </div>
+        </section>
+        <section class="right-landing-toggle-menu-bar">
+          <div class="domain-toggle active">
+            <app-domain-members></app-domain-members>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Popup Modal -->
+<div aria-hidden="true" aria-labelledby="RemoveChat" class="modal fade totalUserModal" id="RemoveChat" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+    <div class="modal-content text-center">
+      <div class="modal-header py-2 justify-content-center">
+        <h5 class="title-text">Confirmation</h5>
+      </div>
+      <div class="modal-body">
+        <p class="remove-text py-2">Are you sure want to delete chat?</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button class="btn btn-default" data-dismiss="modal" type="button">
+          CANCEL X
+        </button>
+        <button class="btn btn-danger" data-dismiss="modal" type="button">
+          YES
+          <span><img class="delete-chat-img" src="assets/images/chat/remove-chat-icon.png" /></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-totaluser-popup #totalUserPopup (ReloadChatSection)="ReloadChatPage($event)" [chatType]="chatType"
+  [chatgroupid]="chatGroupId" [chatpopupcomponent]="chatpopup" [hidden]="!isActiveUser" [isActiveUser]="isActiveUser"
+  [leftmenucomponent]="leftMenu" [totalActiveUserCount]="totalActiveUserCount" [totalUserCount]="totalUserCount"
+  [workstreamImage]="wsImage" [workstreamName]="wsName"></app-totaluser-popup>
+<!-- Active user modal -->
+
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade totalUserModal" id="activeUserModal"
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title pl-3" id="activeUserModal">
+          All Service - Active Users (115)
+        </h5>
+        <button aria-label="Close" class="close pl-0 pr-2 pt-2 pb-0" data-dismiss="modal" type="button">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group-append">
+            <input class="sarch-user" placeholder="Search" type="serach" />
+            <i class="fa-search"><img src="assets/images/chat/search-icon.png" /></i>
+          </div>
+        </form>
+        <ul class="list-group list-group-flush">
+          <li class="row active">
+            <div class="avtar ml-4 mr-3">
+              <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+            </div>
+            <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+              <span class="name-text">Zack C</span><br />
+              <span class="small-text">Owner</span>
+              <span aria-expanded="false" aria-haspopup="true" class="badge badge-white" data-toggle="dropdown">
+                <img src="assets/images/chat/more-icon.png" />
+              </span>
+
+              <div class="dropdown-menu py-0">
+                <p (click)="ReplyMessage()" class="dropdown-item d-flex align-items-center">
+                  <img class="reply-icon" src="assets/images/chat/reply-icon.png" />
+                  <span class="pl-2"> Reply</span>
+                </p>
+                <p class="dropdown-item d-flex align-items-center">
+                  <img class="reply-icon" src="assets/images/chat/start-chat-icon.png" />
+                  <span class="pl-2"> Start New Chat</span>
+                </p>
+                <p class="dropdown-item d-flex align-items-center">
+                  <img class="reply-icon" src="assets/images/chat/view-profile-icon.png" />
+                  <span class="pl-2"> View Profile</span>
+                </p>
+              </div>
+            </div>
+          </li>
+          <li class="row">
+            <div class="avtar ml-4 mr-3">
+              <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+            </div>
+            <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+              <span class="name-text">Zack C</span><br />
+              <span class="small-text">Owner</span>
+            </div>
+          </li>
+
+          <li class="row">
+            <div class="avtar ml-4 mr-3">
+              <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+            </div>
+            <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+              <span class="name-text">Zack C</span><br />
+              <span class="small-text">Owner</span>
+            </div>
+          </li>
+          <li class="row">
+            <div class="avtar ml-4 mr-3">
+              <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+            </div>
+            <div class="mr-0 ml-0 pl-0 col-md-10 pr-0 border-list">
+              <span class="name-text">Zack C</span><br />
+              <span class="small-text">Owner</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- user Modal-->
+<div aria-hidden="true" aria-labelledby="exampleModalLabel" class="modal fade totalUserModal" id="AllusersModal"
+  tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header row">
+        <div class="col-md-3">
+          <h5 class="modal-title" id="activeUserModal">Users</h5>
+        </div>
+        <div class="col-md-9 right ml-0 text-right">
+          <button class="btn btn-default mr-2">
+            Clear All
+            <span class="ml-2"><img src="assets/images/chat/clear-icon.png" /></span>
+          </button>
+          <button class="btn btn-danger ml-2 mr-5">
+            Start New Chat
+            <i aria-hidden="true" class="fa fa-commenting-o ml-2"></i>
+          </button>
+          <button aria-label="Close" class="close pl-0 pr-3 pt-3 pb-0" data-dismiss="modal" type="button">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="input-group-append">
+            <input class="sarch-user" placeholder="Search" type="serach" />
+            <i class="fa-search"><img src="assets/images/chat/search-icon.png" /></i>
+          </div>
+        </form>
+        <ul class="list-group list-group-flush">
+          <li class="row pr-2 mr-2 active">
+            <div class="user-box ml-4">
+              <div class="avatar avatar-sm">
+                <div class="live-icon">
+                  <i aria-hidden="true" class="fa fa-minus-circle"></i>
+                </div>
+                <img alt="" class="profile-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <p class="mb-0 mt-0">Stephen K</p>
+            </div>
+
+            <div class="user-box ml-3">
+              <div class="avatar avatar-sm">
+                <div class="live-icon">
+                  <i aria-hidden="true" class="fa fa-minus-circle"></i>
+                </div>
+                <img alt="" class="profile-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <p class="mb-0 mt-0">Stephen K</p>
+            </div>
+
+            <div class="user-box ml-3">
+              <div class="avatar avatar-sm">
+                <div class="live-icon">
+                  <i aria-hidden="true" class="fa fa-minus-circle"></i>
+                </div>
+                <img alt="" class="profile-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <p class="mb-0 mt-0">Stephen K</p>
+            </div>
+
+            <div class="user-box ml-3">
+              <div class="avatar avatar-sm">
+                <div class="live-icon">
+                  <i aria-hidden="true" class="fa fa-minus-circle"></i>
+                </div>
+                <img alt="" class="profile-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <p class="mb-0 mt-0">Stephen K</p>
+            </div>
+          </li>
+
+          <li class="row pr-2 mr-2">
+            <div class="form-check form-check-inline ml-4 mr-0">
+              <input class="form-check-input" name="inlineRadioOptions" type="radio" value="" />
+            </div>
+            <div class="border-list row col-md-11 ml-2 pl-0">
+              <div class="avtar ml-2 mr-3">
+                <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <div class="mr-2 ml-0 pl-0 col-md-9">
+                <span class="name-text">Zack C</span><br />
+                <span class="small-text">Owner</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="row pr-2 mr-2">
+            <div class="form-check form-check-inline ml-4 mr-0">
+              <input class="form-check-input" name="inlineRadioOptions" type="radio" value="" />
+            </div>
+            <div class="border-list row col-md-11 ml-2 pl-0">
+              <div class="avtar ml-2 mr-3">
+                <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <div class="mr-2 ml-0 pl-0 col-md-9">
+                <span class="name-text">Zack C</span><br />
+                <span class="small-text">Owner</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="row pr-2 mr-2">
+            <div class="form-check form-check-inline ml-4 mr-0">
+              <input class="form-check-input" name="inlineRadioOptions" type="radio" value="" />
+            </div>
+            <div class="border-list row col-md-11 ml-2 pl-0">
+              <div class="avtar ml-2 mr-3">
+                <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <div class="mr-2 ml-0 pl-0 col-md-9">
+                <span class="name-text">Zack C</span><br />
+                <span class="small-text">Owner</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="row pr-2 mr-2">
+            <div class="form-check form-check-inline ml-4 mr-0">
+              <input class="form-check-input" name="inlineRadioOptions" type="radio" value="" />
+            </div>
+            <div class="border-list row col-md-11 ml-2 pl-0">
+              <div class="avtar ml-2 mr-3">
+                <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <div class="mr-2 ml-0 pl-0 col-md-9">
+                <span class="name-text">Zack C</span><br />
+                <span class="small-text">Owner</span>
+              </div>
+            </div>
+          </li>
+
+          <li class="row pr-2 mr-2">
+            <div class="form-check form-check-inline ml-4 mr-0">
+              <input class="form-check-input" name="inlineRadioOptions" type="radio" value="" />
+            </div>
+            <div class="border-list row col-md-11 ml-2 pl-0">
+              <div class="avtar ml-2 mr-3">
+                <img alt="" class="avtar-img" src="assets/images/chat/user-icon.png" />
+              </div>
+              <div class="mr-2 ml-0 pl-0 col-md-9">
+                <span class="name-text">Zack C</span><br />
+                <span class="small-text">Owner</span>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="session">
+  <app-publisher [session]="session" style="position: absolute; top: 50%; left: 50%"></app-publisher>
+  <app-subscriber *ngFor="let stream of streams" [session]="session" [stream]="stream"></app-subscriber>
+</div>
+<app-popup #chatpopup (ReloadChatSection)="ReloadChatPage($event)" (ReloadDefaultChatM)="LoadDefaultMessage($event)"
+  (replyChatMessage)="ReplyChatMessage($event)" [leftmenucomponent]="leftMenu"></app-popup>
+<app-leave-group-popup #leaveGroupConfirmation (ReloadDefaultChat)="LoadDefaultMessage($event)"
+  [chatgroupid]="chatGroupId" [groupname]="wsName" [leftmenucomponent]="leftMenu" [userid]="userId">
+</app-leave-group-popup>

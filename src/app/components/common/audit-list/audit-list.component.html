@@ -1,0 +1,558 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div class="loading-small-screen-scroll trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div> 
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{accessFrom}}"></div>
+<div *ngIf="!loading && view > 1" class="audit-header row col-lg-12">
+    <div class="ah-col ah-col-1" [ngClass]="{'col-lg-5': view == 2, 'col-lg-12': view == 3}">
+        <div class="breadcrumb breadcrumb-items" [ngClass]="{'detail-view': view > 2}">
+            <div class="breadcrumb-back">
+                <span class="cursor" (click)="breadcrumb('back')"></span>
+            </div>
+            <div class="breadcrumb-home"></div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item cursor" [ngClass]="{'hide': !item.visible}" (click)="breadcrumb(item.action)" *ngFor="let item of breadcrumbs">{{item.name}}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <div *ngIf="view == 2" class="col-lg-7 ah-col ah-col-2">
+        <div class="ahr-col shop-status-data">
+            <div class="status-count">
+                <div class="count-item" *ngFor="let sitem of shopStatusCount">
+                    <span [style.background-color]="sitem.statusColor" class="icon {{sitem.statusClass}}"></span>
+                    <span class="sitem">{{sitem.statusName}}</span>
+                    <span class="count text-right">{{sitem.statusCount}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="ahr-col list-map text-right cursor">             
+            <span (click)="shopView('map')" [ngClass]="{'active' : !listView}" class="map"></span>
+            <span (click)="shopView('list')" [ngClass]="{ 'active' : listView}" class="list"></span>
+        </div>
+    </div>    
+</div>
+<div *ngIf="!loading && listView" [ngClass]="{'documents-grid-row documents-grid-row-new audit-shop-list-container': view == 2}" [style.height.px]="innerHeight">
+    <div *ngIf="view == 1" [perfectScrollbar]="sconfig">
+        <div class="row col-lg-12 location-data">
+            <div class="col-lg-5 col-md-6 col-sm-12 location-info">
+                <div class="location-row">
+                    <div class="location-col map-icon"></div>
+                    <div class="location-col location-cont">
+                        <div class="data-content">
+                            <span class="dc-item dc-row-1">Total Locations</span>
+                            <span class="dc-item dc-row-2">{{auditLocationData.totalLocations}}</span>
+                        </div>
+                        <div class="data-content dc-list">
+                            <div class="dc-item dc-item-1">
+                                <span class="dc-row-1">Primary</span>
+                                <span class="dc-row-2">{{auditLocationData.primary}}</span>
+                            </div>
+                            <div class="dc-item dc-item-2">
+                                <span class="dc-row-1">Secondary</span>
+                                <span class="dc-row-2">{{auditLocationData.secondary}}</span>
+                            </div>
+                            <div class="dc-item dc-item-3">
+                                <span class="dc-row-1">3rd Party Authorized</span>
+                                <span class="dc-row-2">{{auditLocationData.thirdPartyAuth}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="region-row row col-lg-12">
+                    <div class="col-lg-6 rgn-list-col">
+                        <div class="rgn-col region-icon"></div>
+                        <div class="rgn-col region-cont">
+                            <span class="rc-row-1">Regions</span>
+                            <span class="rc-row-2">{{auditLocationData.regions}}</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 rgn-list-col">
+                        <div class="rgn-col trt-icon"></div>
+                        <div class="rgn-col region-cont">
+                            <span class="rc-row-1">Territories</span>
+                            <span class="rc-row-2">{{auditLocationData.territories}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 col-md-6 col-sm-12 chart-info">
+                <div class="chart-head">Audits</div>
+                <div class="chart-row">
+                    <div id="auditDonutChart" class="chart-split chart-data"></div>
+                    <div class="chart-split nc-data">
+                        <div class="nc-cont">
+                            <div class="nc-row-1">Overall non-compliant locations</div>
+                            <div class="nc-row-2">{{auditLocationData.overallNonCompLocationCount}} <span>{{auditLocationData.overallNonCompLocationPercentage}}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fluid-container audit-list-container">
+            <div class="audit-items" *ngFor="let itemData of auditListData">
+                <div class="item-title {{itemData.statusClass}}">{{itemData.statusName}}</div>
+                <div class="item-table">
+                    <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': itemData.items.length == 0}">
+                        <table [ngClass]="{'audit-table-list': itemData.items.length > 0, 'audit-table-empty': itemData.items.length == 0}">
+                            <thead *ngIf="itemData.items.length > 0" class="audit-table-list-header">
+                                <tr class="header-row header-row-{{itemData.statusId}}">
+                                    <th class="head-col audit-name">Audit Name</th>
+                                    <th class="head-col audit-id">Audit#</th>
+                                    <th *ngIf="itemData.statusId > 1" class="head-col audit-comp">Completed</th>
+                                    <th *ngIf="itemData.statusId == 2" class="head-col audit-in">In-Process</th>
+                                    <th *ngIf="itemData.statusId == 2" class="head-col audit-ns">Not Started</th>
+                                    <th *ngIf="itemData.statusId == 3" class="head-col audit-nc" colspan="2">Non Compliance</th>
+                                    <th *ngIf="itemData.statusId == 1" class="head-col audit-date" colspan="3">Planned Started Date</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="itemData.items.length > 0" class="list-items">
+                                <tr *ngFor="let item of itemData.items">
+                                    <td (click)="item.auditShopCount > 0 ? viewInfo(item.auditId, itemData.statusId): false;"><span [ngClass]="{'cursor action-link': item.auditShopCount > 0}">{{item.auditName}}</span></td>
+                                    <td (click)="item.auditShopCount > 0 ? viewInfo(item.auditId, itemData.statusId): false;"><span [ngClass]="{'cursor action-link': item.auditShopCount > 0}">{{item.auditId}}</span></td>
+                                    <td *ngIf="itemData.statusId > 1">
+                                        <span *ngIf="item.completed > 0">{{item.completed}}</span>
+                                        <span *ngIf="item.completed == 0">-</span>
+                                    </td>
+                                    <td *ngIf="itemData.statusId == 2">
+                                        <span *ngIf="item.inprocess > 0">{{item.inprocess}}</span>
+                                        <span *ngIf="item.inprocess == 0">-</span>
+                                    </td>
+                                    <td *ngIf="itemData.statusId == 2">
+                                        <span *ngIf="item.notStarted > 0">{{item.notStarted}}</span>
+                                        <span *ngIf="item.notStarted == 0">-</span>
+                                    </td>
+                                    <td *ngIf="itemData.statusId == 3" colspan="2">
+                                        <span *ngIf="item.nonCompliance > 0">{{item.nonCompliance}}</span>
+                                        <span *ngIf="item.nonCompliance == 0">-</span>
+                                    </td>
+                                    <td *ngIf="itemData.statusId == 1" colspan="3">
+                                        <span *ngIf="item.plannedStartDate != ''">{{item.plannedStartDate}}</span>
+                                        <span *ngIf="item.plannedStartDate == ''">-</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody *ngIf="itemData.items.length == 0" class="list-items">
+                                <tr>
+                                    <td align="center"><i>Nothing to show</i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="view == 2 && listView" [perfectScrollbar]="sconfig">
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table #table [columns]="shopListColumns" id="file-datatable" class="file-datatable thread-list-table shop-list-table"
+                [scrollable]="true" [totalRecords]="auditShopListData.length" [ngClass]="{'opacity': opacityFlag, 'hide': displayNoRecords}" 
+                [value]="auditShopListData" [scrollHeight]="'calc(100vh - 200px)'">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th *ngFor="let col of columns" class="{{col.columnpclass}}" [ngClass]="{ 'stock-header' : col.field == 'auditChecks' || col.field == 'auditStatus'}">  
+                            <span *ngIf="col.field != 'auditChecks' && col.field != 'auditStatus'">{{col.header}}</span>  
+                            <span *ngIf="col.field == 'auditChecks'">                                
+                                <div><span>{{col.header}}</span></div>
+                                <div>
+                                    <span class="stock stock1">Compliant</span>
+                                    <span class="stock stock2">Non-compliance</span>
+                                    <span class="stock stock3">Remedied</span>
+                                    <span class="stock stock4">Audit Date</span>
+                                </div>                                
+                            </span> 
+                            <span *ngIf="col.field == 'auditStatus'">                                
+                                <div><span>{{col.header}}</span></div>
+                                <div>
+                                    <span class="stock stock1">Scheduled</span>
+                                    <span class="stock stock2">Pending</span>
+                                </div>                                
+                            </span>
+                        </th>                        
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-auditShopListData let-i="rowIndex">
+                    <tr class="cursor" id="{{auditShopListData.shopName}}" (click)="viewInfo(auditShopListData.shopId)">
+                        <td class="w1 thl-col-1 col-sticky">
+                            <div class="p-table-col"><span class="">{{auditShopListData.shopId}}</span></div>
+                        </td>
+                        <td class="w2 thl-col-2">
+                            <div class="p-table-col">
+                                <div class="p-table-col" title="auditShopListData.shopName"><span class="">{{auditShopListData.shopName}}</span></div>        
+                            </div>                            
+                        </td>
+                        <td class="w3 thl-col-3" >
+                            <div class="p-table-col"><span class="" title="{{auditShopListData.city}}">{{auditShopListData.city}}</span></div>
+                        </td>
+                        <td class="w4 thl-col-4" >
+                            <div class="p-table-col"><span class="" title="{{auditShopListData.state}}">{{auditShopListData.state}}</span></div>
+                        </td>
+                        <td class="w5 thl-col-5">
+                            <div class="p-table-col"><span class="" title="{{auditShopListData.zone}}">{{auditShopListData.zone}}</span></div>
+                        </td>
+                        <td class="w6 thl-col-6" >
+                            <div class="p-table-col"><span class="" title="{{auditShopListData.region}}">{{auditShopListData.region}}</span></div>
+                        </td>
+                        <td class="w7 thl-col-7" >
+                            <div class="p-table-col"><span class="status {{auditShopListData.statusClass}}" title="{{auditShopListData.statusName}}">{{auditShopListData.statusName}}</span></div>
+                        </td>
+                        <td class="w8 thl-col-8 tbody" >
+                            <span class="stock stock1">{{auditShopListData.complaint}}</span>
+                            <span class="stock stock2">{{auditShopListData.nonCompliance}}</span>
+                            <span class="stock stock3">{{auditShopListData.remedied}}</span>
+                            <span class="stock stock4">{{auditShopListData.auditDate}}</span>                          
+                        </td>
+                        <td class="w9 thl-col-9 tbody">
+                            <span class="stock stock1">{{auditShopListData.scheduledDate}}</span>
+                            <span class="sstock stock2">{{auditShopListData.pending}}</span>
+                        </td>               
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+    <div *ngIf="view == 3" [perfectScrollbar]="sconfig">
+        <div class="audit-check-data">
+            <div class="audit-check-detail row col-lg-12">
+                <div class="col-lg-3 company-info">
+                    <div class="company-cont">
+                        <div class="cc-row">
+                            <div class="cc-col cc-label"><span class="cc-bg comp"></span>Audit Company:</div>
+                            <div class="cc-col cc-cont">{{auditWorkFlowData.auditCheckName}}</div>
+                        </div>
+                        <div class="cc-row">
+                            <div class="cc-col cc-label"><span class="cc-bg audit"></span>Audit By:</div>
+                            <div class="cc-col cc-cont">{{auditWorkFlowData.auditBy}}</div>
+                        </div>
+                        <div class="cc-row">
+                            <div class="cc-col cc-label"><span class="cc-bg date"></span>Audit Date:</div>
+                            <div class="cc-col cc-cont">{{auditWorkFlowData.auditCheckDate}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 audit-metrics">
+                    <div class="metric-cont">
+                        <div class="metric-col mc-col-1">
+                            <div class="metric-items">
+                                <div class="metric-scol msc-col-1">
+                                    <div class="msc-row">
+                                        <div class="mc-label">Compliant items</div>
+                                        <div class="mc-cont text-right">{{auditWorkFlowData.complaints}}</div>
+                                    </div>
+                                </div>
+                                <div class="metric-scol msc-col-2">
+                                    <div class="msc-row">
+                                        <div class="mc-label">Non-conformities</div>
+                                        <div class="mc-cont text-right">{{auditWorkFlowData.nonCompliance}}</div>
+                                    </div>
+                                </div>
+                                <div class="metric-scol msc-col-3">
+                                    <div class="msc-row">
+                                        <div class="mc-label">Pending</div>
+                                        <div class="mc-cont text-right">{{auditWorkFlowData.pending}}</div>
+                                    </div>
+                                </div>
+                                <div class="metric-scol msc-col-4">
+                                    <div class="msc-row">
+                                        <div class="mc-label">Scheduled</div>
+                                        <div class="mc-cont text-right">4</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="metric-col mc-col-2">
+                            <div class="metric-items">
+                                <div class="metric-rcol mrc-col-1 text-center">
+                                    <div class="mrc-label">Remedied</div>
+                                    <div class="mrc-cont">{{auditWorkFlowData.remedied}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 audit-doc">
+                    <div class="doc-cont">
+                        <div class="doc-head">Audit Documentation</div>
+                        <div class="doc-items text-center"><i>Nothing to show</i></div>
+                    </div>
+                </div>                    
+            </div>
+            <div class="post-audit-data">
+                <div class="post-audit-head">Post-Audit Follow-up</div>
+                <div class="post-steps">
+                    <div class="set-width-steps" *ngFor="let workflow of auditWorkFlowList; let i = index;">
+                        <div class="step-border-width"></div>
+                        <div class="step ">
+                            <div class="step-bg" [style.background-color]="workflow.statusColor"><img src="assets/images/shop/detail-arrow.png" /></div>
+                            <div class="step-line"></div>
+                            <div class="step-circle">
+                                <span class="number-text">{{workflow.workflowStep}}</span>
+                            </div>
+                            <div class="step-text">{{workflow.workflowName}}</div>
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="audit-follow-action fluid-container audit-list-container">
+                <div class="aduit-follow-head">Follow-up action</div>
+                <div class="audit-items wf-items">
+                    <div class="item-table">
+                        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag}">
+                            <p-table #table [columns]="wfListColumns" dataKey="auditWorkflowId" id="file-datatable" class="file-datatable thread-list-table shop-list-table"
+                                [scrollable]="true" [totalRecords]="auditWorkFlowList?.length" [ngClass]="{'opacity': opacityFlag}" [perfectScrollbar]="sconfig"
+                                [value]="auditWorkFlowList">
+                                <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                        <th *ngFor="let col of columns" class="{{col.columnpclass}}">
+                                            <span>{{col.header}}</span> 
+                                        </th>                        
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-auditWorkFlowList let-i="rowIndex" let-expanded="auditWorkFlowList.expanded">
+                                    <tr class="cursor" id="{{auditWorkFlowList.auditWorkflowId}}">
+                                        <td class="w1 thl-col-1 wf-step col-sticky">
+                                            <div class="p-table-col">
+                                                <button [ngClass]="{'hidden': auditWorkFlowList.notes == '' && auditWorkFlowList.documents.length == 0}" type="button" pButton pRipple [pRowToggler]="auditWorkFlowList" class="p-button-text p-button-rounded p-button-plain" [icon]="auditWorkFlowList.expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                                <span class="wf-step-item">{{auditWorkFlowList.workflowStep}}</span>
+                                            </div>
+                                        </td>
+                                        <td class="w2 thl-col-2 wf-name">
+                                            <div class="p-table-col">
+                                                <div class="p-table-col" title="{{auditWorkFlowList.workflowName}}"><span class="">{{auditWorkFlowList.workflowName}}</span></div>        
+                                            </div>                            
+                                        </td>
+                                        <td class="w3 thl-col-3 wf-owner">
+                                            <div class="p-table-col col-line-2">
+                                                <div class="" title="{{auditWorkFlowList.ownerEmail}}">{{auditWorkFlowList.ownerName}}</div>
+                                                <div class="" title="{{auditWorkFlowList.ownerCompany}}">{{auditWorkFlowList.ownerCompany}}</div>
+                                            </div>
+                                        </td>
+                                        <td class="w5 thl-col-4 wf-assign">
+                                            <div class="p-table-col col-line-2">
+                                                <div class="" title="{{auditWorkFlowList.deliverEmail}}">{{auditWorkFlowList.deliverName}}</div>
+                                                <div class="" title="{{auditWorkFlowList.deliverCompany}}">{{auditWorkFlowList.deliverCompany}}</div>
+                                            </div>
+                                        </td>
+                                        <td class="w5 thl-col-5 wf-status">
+                                            <div class="p-table-col">
+                                                <span class="status {{auditWorkFlowList.statusClass}}" [style.background-color]="auditWorkFlowList.statusColor" title="{{auditWorkFlowList.statusName}}">{{auditWorkFlowList.statusName}}</span>
+                                            </div>
+                                        </td>
+                                        <td class="w6 thl-col-6 tbody wf-date">
+                                            <span *ngIf="auditWorkFlowList.workflowAuditDate != ''">{{auditWorkFlowList.workflowAuditDate}}</span>
+                                            <span *ngIf="auditWorkFlowList.workflowAuditDate == ''">-</span>
+                                        </td>
+                                        <!-- <td class="w9 thl-col-9 tbody wf-date">
+                                            <span *ngIf="auditWorkFlowList.workflowViewDate != ''">{{auditWorkFlowList.workflowViewDate}}</span>
+                                            <span *ngIf="auditWorkFlowList.workflowViewDate == ''">-</span>
+                                        </td> -->
+                                        <td class="w7 thl-col-7 tbody wf-date">
+                                            <span *ngIf="auditWorkFlowList.workflowSchedulesDate != ''">{{auditWorkFlowList.workflowSchedulesDate}}</span>
+                                            <span *ngIf="auditWorkFlowList.workflowSchedulesDate == ''">-</span>
+                                        </td>
+                                        <td class="w9 thl-col-8 tbody wf-action">
+                                            <span *ngIf="userId != auditWorkFlowList.owner || (auditWorkFlowList.workflowStep >= 1 && auditWorkFlowList.statusId < 2)">-</span>
+                                            <span class="action-button" *ngIf="userId == auditWorkFlowList.owner && (auditWorkFlowList.workflowStep == 1 || auditWorkFlowList.statusId > 1)" (click)="displayModel('workflowAction', auditWorkFlowList)">{{auditWorkFlowList.actionName}}</span>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                                <ng-template pTemplate="rowexpansion" let-auditWorkFlowList>
+                                    <tr>
+                                        <td colspan="1"></td>
+                                        <td colspan="7">
+                                            <div class="wf-info">
+                                                <div class="wf-cont wf-notes">
+                                                    <div class="pi pi-book"><span>Notes</span></div>
+                                                    <div class="item-cont" [innerHTML]="auditWorkFlowList.notes"></div>
+                                                </div>
+                                                <div class="wf-cont" *ngIf="auditWorkFlowList.documents.length > 0">
+                                                    <div class="pi pi-paperclip files"><span>Files</span></div>
+                                                    <div class="item-cont attachments">
+                                                         <!-- Attachment List-->
+                                                        <app-attachment-view *ngIf="!loading" [loading]="loading" [action]="attachmentAction" [attachments]="auditWorkFlowList.documents"></app-attachment-view>
+                                                        <!-- Attachment List-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="view == 4" [perfectScrollbar]="sconfig">
+        <div class="shop-data">
+            <div class="row col-lg-12">
+                <div class="col-lg-8 location-content">
+                    <div class="lc-cont location-info">
+                        <div class="lc-row lc-row-1">
+                            <div class="lc-col text-left">Location Type: {{auditShopDetailData.locationType}}</div>
+                            <div class="lc-col text-right">Location #{{auditShopDetailData.shopId}}</div>
+                        </div>
+                        <div class="lc-row lc-row-2 text-center">
+                            <div class="map-icon"></div>
+                            <div class="head">Location</div>
+                            <div class="adddress">
+                                <span *ngIf="auditShopDetailData.address1">{{auditShopDetailData.address1}}</span>
+                                <span *ngIf="auditShopDetailData.address2">, {{auditShopDetailData.address2}}</span>
+                                <span *ngIf="auditShopDetailData.city">, {{auditShopDetailData.city}}</span>
+                                <span *ngIf="auditShopDetailData.state">, {{auditShopDetailData.state}}</span>
+                                <span *ngIf="auditShopDetailData.zone">, {{auditShopDetailData.zone}}</span>
+                            </div>
+                            <div class="region-cont">
+                                <div class="rg-info info-1">
+                                    <div class="info-item">
+                                        <div class="info-col bg-icon region"></div>
+                                        <div class="info-col">
+                                            <div class="info-head">Region</div>
+                                            <div class="info-cont">{{auditShopDetailData.region}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rg-info info-2">
+                                    <div class="info-item">
+                                        <div class="info-col bg-icon zone"></div>
+                                        <div class="info-col">
+                                            <div class="info-head">Zone</div>
+                                            <div class="info-cont">Central</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lc-cont map-info">
+                        <!--div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': mapHeight}" ></div-->
+                    </div>
+                </div>
+                <div class="col-lg-4 audit-info">
+                    <div class="audit-cont">
+                        <div class="ac-col ac-col-1 text-center">
+                            <div class="bg-icon year"></div>
+                            <div class="head">Audit Year</div>
+                            <div class="info">{{auditShopDetailData.auditYear}}</div>
+                        </div>
+                        <div class="ac-col ac-col-2 text-center">
+                            <div class="bg-icon compliance"></div>
+                            <div class="head">Overall compliance level</div>
+                            <div class="info">{{auditShopDetailData.overallNonCompLevel}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="audit-check-data">
+            <div class="fluid-container audit-list-container">
+                <div class="audit-items" *ngFor="let itemData of auditShopDetailData?.auditCheckData">
+                    <div class="item-title {{itemData.statusClass}}">{{itemData.statusName}}</div>
+                    <div class="item-table">
+                        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': itemData.items.length == 0}">
+                            <table [ngClass]="{'audit-table-list': itemData.items.length > 0, 'audit-table-empty': itemData.items.length == 0}">
+                                <thead *ngIf="itemData.items.length > 0" class="audit-table-list-header">
+                                    <tr class="header-row header-row-1">
+                                        <th class="head-col ac-head-col audit-check-name">Audit Name</th>
+                                        <th class="head-col ac-head-col audit-check-id">Audit#</th>
+                                        <th colspan="4" class="head-col ac-head-col audit-check text-center">Audit Checks</th>
+                                        <th colspan="2" class="head-col ac-head-col audit-check-status text-center">Remedied Status</th>
+                                    </tr>
+                                    <tr class="sub-header-row">
+                                        <th colspan="2" class="head-col"></th>
+                                        <th colspan="4">
+                                            <span class="ac-split-col">Compliant</span>
+                                            <span class="ac-split-col">Non-compliance</span>
+                                            <span class="ac-split-col">Remedied</span>
+                                            <span class="ac-split-col">Audit Date</span>
+                                        </th>
+                                        <th colspan="2">
+                                            <span class="acs-split-col">Scheduled</span>
+                                            <span class="acs-split-col">Pending</span>
+                                        </th>
+                                      </tr>
+                                </thead>
+                                <tbody *ngIf="itemData.items.length > 0" class="list-items">
+                                    <tr *ngFor="let item of itemData.items">
+                                        <td (click)="viewInfo(item.auditCheckId);"><span class="cursor action-link">{{item.auditCheckName}}</span></td>
+                                        <td (click)="viewInfo(item.auditCheckId);"><span class="cursor action-link">{{item.auditCheckId}}</span></td>
+                                        <td colspan="4">
+                                            <span class="ac-split-col">{{item.complaints}}</span>
+                                            <span class="ac-split-col">{{item.nonCompliance}}</span>
+                                            <span class="ac-split-col">{{item.remedied}}</span>
+                                            <span class="ac-split-col" *ngIf="item.auditCheckDate != ''">{{item.auditCheckDate}}</span>
+                                            <span class="ac-split-col" *ngIf="item.auditCheckDate == ''">-</span>
+                                        </td>
+                                        <td colspan="2">
+                                            <span class="acs-split-col" *ngIf="item.auditsSheduledDate != ''">{{item.auditsSheduledDate}}</span>
+                                            <span class="acs-split-col" *ngIf="item.auditsSheduledDate == ''">-</span>
+                                            <span class="acs-split-col" *ngIf="item.pending > 0">{{item.pending}}</span>
+                                            <span class="acs-split-col" *ngIf="item.pending == 0">-</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody *ngIf="itemData.items.length == 0" class="list-items">
+                                    <tr>
+                                        <td align="center"><i>Nothing to show</i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="map-list-cont" [ngClass]="{ 'hide' : view != 2 || listView || itemEmpty || !showMap }" >
+    <div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': mapHeight}" ></div>
+</div>
+
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="audit-modal">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button pButton pRipple type="button" icon="pi pi-send" iconPos="right" label="{{actionButton}}"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': auditFormValid}" (click)="saveAction()"></button>
+        </div>
+    </ng-template>
+    <form [formGroup]="workflowActionForm">
+        <div class="field-row">
+            <div class="field-label">
+                <label>
+                    <span class="pi pi-book"></span>
+                    <span class="label">Notes</span>
+                    <span class="required-text text-right">Required</span>
+                </label>
+            </div>
+            <div class="field-item">
+                <ckeditor [editor]="Editor" [config]="configCke" formControlName="notes" [ngClass]="{ 'is-invalid': auditFormSubmit && wfa.notes.errors }"></ckeditor>
+            </div>
+            <div *ngIf="auditFormSubmit && wfa.notes.errors" class="invalid-feedback invalid-editor">
+                <div id="valid-error" class="field-err" *ngIf="wfa.notes.errors.required">Notes is required</div>
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="field-label">
+                <label>
+                    <span class="pi pi-paperclip"></span>
+                    <span class="label">File Attachments</span>
+                    <div class="square-box" (click)="attachmentPopup();$event.stopPropagation();">
+                        <img class="attachment-icon" src="assets/images/thread/attach-placeholder-icon.png" />
+                        <div *ngIf="wfa.attachmentLength.value > 0" class="circle-box attachment-count" title="">{{wfa.attachmentLength.value}}</div>
+                    </div>
+                    <div class="attachment-row" *ngIf="uploadView">
+                        <app-file-attachment *ngIf="auditFormSubmit" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)" (uploadComplete)="apiCallBack($event)"></app-file-attachment>
+                    </div> 
+                </label>
+            </div>
+        </div>
+    </form>
+</p-dialog>

@@ -1,0 +1,12 @@
+<div class="custom-modal modal-container success-container" id="wrapper">
+    <div class="modal-body">
+        <div *ngIf="msgType == ''" class="container">
+            <div class="tick-icon text-center"></div>
+            <div class="conf-txt text-center success-content">{{msg}}</div>
+        </div>
+        <div *ngIf="msgType == 'html'" class="container">
+            <div *ngIf="bgImg != ''" class="bg-img"><img src="{{bgImg}}" /></div>
+            <div class="conf-txt text-center success-content" [innerHTML]="msg"></div>
+        </div>
+    </div>
+</div>

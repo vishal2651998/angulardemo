@@ -1,0 +1,113 @@
+<div id="header">
+    <!--app-probing-header [pageData]="headerData"></app-probing-header-->
+    <app-product-header [pageData]="headerData"></app-product-header>
+</div>
+
+<div class="conatainer probing-view">
+    <div class="prob-new ws-new">
+        <div *ngIf="loading" class="cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        <div *ngIf="!loading" class="row col-lg-12 col-md-12 col-sm-12 new-pro-cont step2 probing-view-cont ws-view-cont">
+            <div class="col-lg-3 col-md-6 col-sm-12 step2-info ws-info">
+                <div class="prob-form-info base-info">
+                    <div class="ws-info-row">
+                        <div class="ws-info-col">
+                            <div class="col-top date">Created On</div>
+                            <div class="col-bottom">{{createdDate}}</div>
+                        </div>
+                    </div>
+                    <div class="ws-info-row">
+                        <div class="ws-info-col">
+                            <div class="col-top profile">Created By</div>
+                            <div class="col-bottom">{{createdBy}}</div>
+                        </div>
+                    </div>
+                    <div class="ws-info-row" *ngIf="updatedDate != null && updatedDate != 'Invalid date'">
+                        <div class="ws-info-col">
+                            <div class="col-top date">Last Modified On</div>
+                            <div class="col-bottom">{{updatedDate}}</div>
+                        </div>
+                    </div>
+                    <div class="ws-info-row" *ngIf="updatedBy != ''">
+                        <div class="ws-info-col">
+                            <div class="col-top profile">Last Modified By</div>
+                            <div class="col-bottom">{{updatedBy}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-cont col-lg-8 col-md-6 col-sm-12 probing-info ws-view-info">
+                <div class="form-horizontal">
+                    <div class="form-items ws-form-items">
+                        <div class="prob-form-row ws-row col-lg-6">
+                            <div class="col-lg-12">
+                                <div class="form-col ws-col upload-col ws-upload-col view-upload-col">
+                                    <span *ngIf="imgURL == null" class="prob-upload view-upload">
+                                        <a class="browse-button"></a>
+                                    </span>
+                                    <span *ngIf="imgURL != null" class="prob-upload upload-bg" [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}"></span>
+                                </div>
+                                <div class="form-col ws-col view-field-col">
+                                    <div class="prob-form-control cust-comp-control">
+                                        <div class="input-ws">{{workstreamVal}}</div>
+                                        <div class="input-desc">{{descriptionVal}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-col ws-col cont-col">
+                                    <div class="prob-form-control cust-comp-control">
+                                        <label>Assigned content-types</label>
+                                        <ul class="checkbox-items view-check-items">
+                                            <li *ngFor="let item of contentTypes; let c = index;" [ngClass]="{'hide': !item.isSelected}">
+                                                <span *ngIf="item.isSelected">
+                                                    <div class="cont-type" [ngClass]="{'default-cont' : item.isDisabled}">
+                                                        <div class="cont-icon" [ngStyle]="{'background': 'url(' + item.activeImg + ') no-repeat center'}"></div>
+                                                        <div class="cont-txt text-center">{{item.name}}</div>
+                                                    </div>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="prob-form-row ws-row col-lg-6">
+                            <div class="user-col user-view-col ws-users ws-view-users">
+                                <div class="ws-users-head">
+                                    <div class="head-col col-left">Workstream Users (<span>{{itemTotal}}</span>)</div>
+                                    <div class="head-col col-right"></div>
+                                </div>
+                                <div class="ws-user-list" [style.height.px]="innerHeight">
+                                    <div *ngIf="!workstreamUserEmpty" class="scrollbar scrollbar-primary thin" (scroll)="onScroll($event)">
+                                        <div class="ws-user-item" [ngClass]="{'show': selUser.displayFlag, 'hide': !selUser.displayFlag, 'default-user' : s == 0}" *ngFor="let selUser of selectedUsers; let s = index">
+                                            <ng-template #username>
+                                                <div class="profile-info"><span>{{selUser.userName}}</span></div>
+                                            </ng-template>
+                                            <div class="ws-user-col col-left">
+                                                <span class="profile-info profile-icon" [ngStyle]="{'background-image': 'url(' + selUser.profileImg + ')'}">
+                                                    <img class="hide" src="{{selUser.profileImg}}" alt="Profile" />
+                                                    <span class="user-status {{selUser.availStatus}}"></span>
+                                                </span>
+                                                <span class="profile-info user-name">
+                                                    <span class="cursor custom-pop uname" popoverClass="custom-tooltip ws-tooltip" [ngbPopover]="username" placement="bottom" triggers="hover">{{selUser.userName}}</span>
+                                                    <span class="role">{{selUser.role}}</span>
+                                                </span>
+                                            </div>
+                                            <div class="ws-user-col col-right">{{selUser.workstreamRole}}</div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="workstreamUserEmpty" class="text-center">No users found.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                <div *ngIf="editAccess" class="probing-action">
+                    <ul>
+                        <li class="edit cursor" (click)="navigatePage(editRedirect)">Edit</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

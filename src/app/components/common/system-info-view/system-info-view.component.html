@@ -1,0 +1,63 @@
+<div class="system-info" [ngClass]="customStyle || noPaddingStyle ? 'custom-padding' : ''">
+    <div *ngIf="headerFlag" class="head">System Information</div>
+    
+    <div class="update-info {{noPaddingStyle ? 'custom-padding' : ''}}" [ngClass]="customStyle ? 'custom-padding-user-info' : ''">
+        <div class="update-col">
+            <span class="user-col row-1 {{noPaddingStyle ? 'new-side-image' : ''}}">Created by</span>
+            <span class="row-2">{{userInfo.createdBy}}</span>
+        </div>
+        <div class="update-col">
+            <span class="date-col row-1 {{noPaddingStyle ? 'new-side-image-2' : ''}}">Created on</span>
+            <span class="row-2">{{userInfo.createdOn}}</span>
+        </div>
+        <div class="update-col">
+            <span class="user-col row-1 {{noPaddingStyle ? 'new-side-image' : ''}}">Modified by</span>
+            <span class="row-2" *ngIf="userInfo.updatedBy">{{userInfo.updatedBy}}</span>
+            <span class="row-2" *ngIf="!userInfo.updatedBy">-</span>
+        </div>
+        <div class="update-col">
+            <span class="date-col row-1 {{noPaddingStyle ? 'new-side-image-2' : ''}}">Modified on</span>
+            <span class="row-2" *ngIf="userInfo.updatedOn">{{userInfo.updatedOn}}</span>
+            <span class="row-2" *ngIf="!userInfo.updatedOn">-</span>
+        </div>
+    </div>
+    <div *ngIf="userInfo.approveFlag" class="update-info" [ngClass]="customStyle ? 'custom-padding-user-info' : ''">
+        <div class="update-col">
+            <span class="user-col row-1">Approved by</span>
+            <span class="row-2" *ngIf="userInfo.approvedBy">{{userInfo.approvedBy}}</span>
+            <span class="row-2" *ngIf="!userInfo.approvedBy">-</span>
+        </div>
+        <div class="update-col">
+            <span class="date-col row-1">Approved on</span>
+            <span class="row-2" *ngIf="userInfo.approvedOn">{{userInfo.approvedOn}}</span>
+            <span class="row-2" *ngIf="!userInfo.approvedOn">-</span>
+        </div>
+        <div class="update-col"></div>
+        <div class="update-col"></div>
+    </div>
+    <div class="tag-info ws-info" *ngIf="workstreams && workstreams.length">
+        <div class="tags ws">
+            <span class="list-txt ws-txt"></span>
+            <span class="tag-list ws-list" *ngFor="let item of workstreams">{{item.name}}</span>            
+        </div>
+    </div>
+    <div *ngIf="knowledgeData" class="update-info" style="border-top: solid 1px #e1e1e1;" [ngClass]="customStyle ? 'custom-padding-user-info' : ''">
+        <div class="data-col">
+            <div class="tag-info ws-info" style="border:none;" *ngIf="workstreamsList && workstreamsList.length">
+                <div class="tags ws">
+                    <span class="list-txt ws-txt"></span>
+                    <span class="tag-list ws-list" *ngFor="let item of workstreamsList">{{item.workstreamName}}</span>            
+                </div>
+            </div>
+        </div>
+        <div class="data-col">
+            <div class="tag-info ws-info" style="border:none;" *ngIf="categoryList && categoryList.length">
+                <div class="tags ws">
+                    <span class="list-txt ws-txt catg-icon"></span>
+                    <span class="tag-list ws-list active-list cursor-pointer" *ngFor="let item of categoryList" (click)="categoryItemList(item)">{{item.name}}</span>            
+                </div>
+            </div>
+        </div>        
+    </div>
+    
+</div>

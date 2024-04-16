@@ -1,0 +1,16 @@
+<div id="header" *ngIf="headerDataTrue">
+    <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)">
+    </app-thread-detail-header>
+</div>
+
+<div class="thread-post-hover" [style.height.px]="innerHeight">
+    <div class="ps thread-post" [perfectScrollbar]="sconfig">
+        <div class="thread-detail-section">
+            <div class="thread-detail-section-inner">
+                <app-repair-order-detail-view [roID]="roID" [newPage]="newPage" (closeEventEmit)="popupClose($event)"></app-repair-order-detail-view>
+            </div>                    
+        </div>                    
+    </div>
+</div>
+
+

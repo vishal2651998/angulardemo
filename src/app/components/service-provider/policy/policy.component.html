@@ -1,0 +1,204 @@
+<div *ngIf="!pageLoading" style="padding:25px 0px;background-color:#000" >
+  <div class="container-fluid" *ngIf="trainingData" style="width:80%">
+    <div class="row p-0 m-0 d-flex text-white" >
+      <div class="col-md-3 p-0 col-sm-12">
+        <img class="responsive-image-height"
+          [src]="trainingData?.bannerImageUrl ? trainingData?.bannerImageUrl : 'assets/images/service-provider/training-blank-1.png'"
+           style="width: 340px;display: block;height: 191px;border-radius: 20px" />
+      </div>
+      <div class="col-md-8 col-sm-12">
+        <div class=" no-padding no-margin">
+          <span class="inner-page-title">{{trainingData?.trainingName}}</span>
+        </div>
+        <div
+          class=" no-padding custom-margin-inner-detail flex-align-center"
+          style="margin-top: 13px;">
+          <img _ngcontent-cqh-c440="" src="assets/images/service-provider/sidebar/training-white.png" style="width: 18px!important;height:16px;margin-right:15px">
+          <span class="training-text-style">Training mode - {{trainingData?.trainingMode}}</span>
+        </div>
+        <div
+          class=" no-padding custom-margin-inner-detail-1 flex-align-center"
+          *ngIf="trainingData?.trainingMode != 'Recorded'">
+          <img style="margin-right: 15px;" class="margin-right-10px" width="15px" height="15px"
+            src="assets/images/service-provider/calender-white.png" *ngIf="atgTheme != 'atgThemeColor' ">
+            <img style="margin-right: 15px;" class="margin-right-10px" width="15px" height="15px"
+            src="assets/images/service-provider/calendar.png" *ngIf="atgTheme == 'atgThemeColor' ">
+          <span *ngIf="trainingData?.startDate != trainingData?.endDate" class="custom-time-style"
+            style="font-size: 16px;">{{getStartDateFormat(trainingData?.startDate)}} -
+            {{getDateFormat(trainingData?.endDate)}}</span>
+          <span *ngIf="trainingData?.startDate == trainingData?.endDate" class="custom-time-style"
+            style="font-size: 16px;">{{getDateFormat(trainingData?.endDate)}}</span>
+        </div>
+        <div
+          class=" no-padding custom-margin-inner-detail-1 flex-align-center"
+          *ngIf="trainingData?.trainingMode == 'Recorded'">
+          <img style="margin-right: 15px;" class="margin-right-10px" width="15px" height="15px"
+            src="assets/images/service-provider/calender-white.png"  *ngIf="atgTheme != 'atgThemeColor' ">
+            <img style="margin-right: 15px;" class="margin-right-10px" width="15px" height="15px"
+            src="assets/images/service-provider/calendar.png" *ngIf="atgTheme == 'atgThemeColor' ">
+          <span class="custom-time-style" style="font-size: 16px;">Posted Date:
+            {{getDateFormat(trainingData?.startDate)}}</span>
+        </div>
+        <div
+          class=" no-padding custom-margin-inner-detail-1 flex-align-center"
+          *ngIf="trainingData?.trainingMode == 'Webinar' || trainingData?.trainingMode == 'Recorded'">
+          <i class="pi pi-clock custom-style-logo" style="margin-right: 15px;"></i>
+          <span class="custom-time-style" style="font-size: 16px;"
+            *ngIf="trainingData?.trainingMode != 'Recorded'">{{getHourFormat(trainingData?.startTime)}} -
+            {{getHourFormat(trainingData?.endTime)}} {{trainingData?.timeZone}}</span>
+          <span class="custom-time-style" style="font-size: 16px;"
+            *ngIf="trainingData?.trainingMode == 'Recorded'">{{trainingData?.hours}} hours</span>
+        </div>
+        <div
+          class=" no-padding custom-margin-inner-detail-1 flex-align-center"
+          *ngIf="trainingData?.trainingMode == 'Seminar'">
+          <img style="margin-right: 15px;" width="13px" height="18px"
+            src="assets/images/service-provider/map-pin-white.png" alt="map" *ngIf="atgTheme != 'atgThemeColor' ">
+            <img style="margin-right: 15px;" width="13px" height="17px"
+            src="assets/images/service-provider/map-blue.png" alt="map" *ngIf="atgTheme == 'atgThemeColor' ">
+            <span class="custom-time-style" style="font-size: 16px;">{{trainingData?.city}},
+            {{trainingData?.state}}</span>
+        </div>
+        <div *ngIf="trainingData && trainingData?.isActive == '1'" class=" no-padding flex-align-center"
+          style="flex-wrap: wrap;">
+          <div
+            class=" no-padding custom-margin-inner-detail-2 flex-align-center">
+            <div
+              *ngIf="trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)"
+              class="custom-bird-price-design bird-price-lg">
+              <div class="percentage-design">-{{threadApi.isInt(trainingData?.birdPercentage, false, true)}}%</div>
+              <div class="bird-price-design">{{(trainingData?.birdPrice) | currency: 'USD':true:'1.0-0'}}</div>
+            </div>
+            <div class="margin-right-30px bird-price-lg"
+              *ngIf="trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)">
+              <div class="early-bird-price-discount-design">
+                Early bird discount price
+              </div>
+              <div class="early-bird-price-discount-design-valid-upto">
+                VALID UP TO {{getDateFormat(trainingData?.expiryDateBirdPrice)}}
+              </div>
+            </div>
+            <div
+              *ngIf="trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)"
+              class="custom-line-design"></div>
+            <span *ngIf="payablePrice && payablePrice != '0'" style="margin-right: 21px" class="regular-price-div-margin"><span
+                class="{{trainingData?.birdPrice && trainingData?.birdPrice != '0' && checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice) ? 'custom-price-text-small' : 'custom-price-text'}}">{{threadApi.isInt(payablePrice, true, true)}}</span><br><span
+                class="curr-price" *ngIf="checkBirdPriceAvailablity(trainingData?.expiryDateBirdPrice)">Regular
+                Price</span></span>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+      <!--  -->
+</div>
+</div>
+  <div *ngIf="manualData">
+    <div class="container-fluid" style="width:80%">
+      <div class="row p-0 m-0 d-flex text-white" >
+      <div class="col-md-4 p-0 col-sm-12" style="width:168px !important;flex:none" >
+        <img *ngIf="manualData?.bannerImageUrl" class="responsive-image-height" [src]="manualData?.bannerImageUrl" style="height:220px" />
+         <img *ngIf="!manualData?.bannerImageUrl" style="height:220px" src="assets/images/service-provider/manual-placeholder.png" />
+        </div>
+      <div class="col-md-8 col-sm-12" style="margin-bottom: 10px;">
+        <div class=" no-padding no-margin">
+          <span class="inner-page-title">{{manualData?.manualName}}</span>
+        </div>
+        <div
+          class=" d-flex align-items-center custom-margin-inner-detail flex-align-center"
+          style="margin-top: 5px;">
+            <img style="margin-right:10px" width="auto" height="16px" src="assets/images/service-provider/sku-white.png" alt="sku">
+          <span class="training-text-style">SKU: {{manualData?.sku}}</span>
+        </div>
+        <div
+          class=" no-padding custom-margin-inner-detail flex-align-center"
+          style="margin-top: 5px;">
+            <img style="margin-right:10px" width="auto" height="16px" src="assets/images/service-provider/companyInfoWhite.png" alt="sku">
+          <span class="training-text-style"><img  height="24px" src="{{manualData?.businessDomainData?.business_logo}}"></span>
+        </div>
+        <div class=" flex-align-center pt-3 pl-0" *ngIf="manualData?.forTrainingOnly == 1">
+          <img src="assets/images/service-provider/info-orange.png" alt="" style="width: 15px;height: 15px;">
+          <span class="ml-2" style="color:#ff9100; font-size: 15px;"><i>This manual is only available with a training. It's not available for sale independently.</i></span>
+        </div>
+        <div class=" no-padding flex-align-center"
+          style="flex-wrap: wrap;margin-top:5px" *ngIf="manualData?.forTrainingOnly != 1 && manualData?.isActive == 1">
+          <div *ngIf="openTraining && payablePrice && payablePrice != '0'"
+            class=" no-padding custom-margin-inner-detail-2 flex-align-center">
+            <div>
+              <span *ngIf="manualData?.discountPrice && manualData?.discountPrice != '0'" style="margin-right: 10px;"><span
+                class="custom-price-text">{{threadApi.isInt(manualData?.discountPrice, true, true)}}</span></span>
+              <span *ngIf="manualData?.discountPrice && manualData?.discountPrice != '0'" style="margin-right: 5px;"><span
+                class="custom-price-text cutted">{{threadApi.isInt(payablePrice, true, true)}}</span></span>
+              <span *ngIf="manualData?.discountPrice && manualData?.discountPrice != '0'" style="margin-right: 20px;"><span
+                class="custom-price-text percent">{{threadApi.isInt(manualData?.discountPercentage, false, true)}}% off</span></span>
+              <span *ngIf="!manualData?.discountPrice || manualData?.discountPrice == '0'" style="margin-right: 20px;"><span
+                class="custom-price-text">{{threadApi.isInt(payablePrice, true, true)}}</span></span>
+              <!-- <div class="percentage-design">-{{manualData?.discountPercentage | number}}%</div>
+              <div class="bird-price-design">${{manualData?.discountPrice | number}}</div> -->
+            </div>
+          </div>
+          <div *ngIf="openTraining && !payablePrice || payablePrice == '0'"
+            class=" no-padding row custom-margin-inner-detail-2 flex-align-center">
+            <div><span class="custom-price-text" style="margin-right: 50px;">Free</span></div>
+          </div>
+          <div
+            class=" no-padding row custom-margin-inner-detail-2 flex-align-center ask-question-parent {{openTraining ? 'text-align-left' : ''}}"
+            style="display: block; flex-wrap: wrap">
+
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="prob-new" style="display: flex; flex-wrap: wrap;">
+   <div class="container-fluid" style="width:80%">
+      <div class="row new-pro-cont step1 mt-0" style="padding-right:30px">
+         <div class="form-cont col-lg-12">
+            <div class="form-horizontal full-height" >
+               <div class="policy-name">
+                  <div>
+                     {{policyName | titlecase}}
+                  </div>
+               </div>
+               <hr style="margin:10px 0px">
+               <div>
+                  <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading"><img
+                     src="assets/images/loading.svg" alt="Loader" /></div>
+                  <ng-container *ngIf="!loading">
+                     <div class="form-fields">
+                        <div class="form-items" style="padding: 10px 0px !important;">
+                           <div class="full-height">
+                              <div class=" no-padding full-height">
+                                 <div class="prob-form-row  no-padding full-height">
+                                    <div class=" no-padding full-height outer-div">
+                                       <div class="policy-content-html px-0 ck-content" *ngIf="policyContent"
+                                       [innerHtml]="transformHtml(policyContent)">
+                                    </div>
+                                    <div class="policy-content-new-html full-height" style="display: table; width: 100%;"
+                                       *ngIf="!policyContent">
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="form-fields" style="height: fit-content; margin-bottom: 60px;" *ngIf="policyTagsList?.length > 0">
+                           <hr class="grey my-2">
+                           <span>
+                           <img style="width:18px; margin-right: 5px" src="assets/images/service-provider/tag-grey-light.png" alt=""> Tag
+                           </span>
+                           <div class="selected-items pl-4">
+                              <div *ngFor="let item of policyTagsList; let t=index" class="tag-text">
+                                 <span>{{item}}</span>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+               </div>
+               </ng-container>
+         </div>
+      </div>
+      </div>
+</div>
+</div>
+</div>

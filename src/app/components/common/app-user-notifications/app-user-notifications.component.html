@@ -1,0 +1,343 @@
+<!--<div class="modal-arrow"></div>-->
+<div class="loading-small-screen" *ngIf="loadingnotifications" ng-cloak>
+
+    <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="42px" height="42px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="1"/><circle cx="16" cy="64" r="14.344" fill="#ffffff" fill-opacity="1" transform="rotate(45 64 64)"/><circle cx="16" cy="64" r="12.531" fill="#ffffff" fill-opacity="1" transform="rotate(90 64 64)"/><circle cx="16" cy="64" r="10.75" fill="#ffffff" fill-opacity="1" transform="rotate(135 64 64)"/><circle cx="16" cy="64" r="10.063" fill="#ffffff" fill-opacity="1" transform="rotate(180 64 64)"/><circle cx="16" cy="64" r="8.063" fill="#ffffff" fill-opacity="1" transform="rotate(225 64 64)"/><circle cx="16" cy="64" r="6.438" fill="#ffffff" fill-opacity="1" transform="rotate(270 64 64)"/><circle cx="16" cy="64" r="5.375" fill="#ffffff" fill-opacity="1" transform="rotate(315 64 64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>
+
+</div>
+<div class="user-notifications-container" *ngIf="!loadingnotifications">
+    
+    <div class="notification-header"  *ngIf="newNotificationsFCM!='new'">
+        <span (click)="changeNotificationType(0)" class="{{emptyNotificationsFlag}} notification-class-icon {{totalunseenunreadcolor}}"  [matBadgeHidden] = "totalNotificationcount == 0" matBadge="{{totalNotificationcount}}"><span title="All notifications" class="notification-img head-all active"></span></span>
+        <span (click)="changeNotificationType(2)" class="{{emptyNotificationsFlag}} notification-class-icon {{totalAnnouncementColor}}" [matBadgeHidden] = "totalAnnounceNotificationcount == 0" matBadge="{{totalAnnounceNotificationcount}}"><span title="Announcement notifications" class="notification-img head-announcement "></span></span>
+        <span (click)="changeNotificationType(1)" class="{{emptyNotificationsFlag}} notification-class-icon {{totalThreadsColor}}" [matBadgeHidden] = "totalThreadsNotificationcount == 0" matBadge="{{totalThreadsNotificationcount}}"><span title="Thread notifications" class="notification-img  head-threads "></span></span>
+        <span (click)="changeNotificationType(3)" class="{{emptyNotificationsFlag}} notification-class-icon {{totalChatColor}}" [matBadgeHidden] = "totalChatNotificationcount == 0" matBadge="{{totalChatNotificationcount}}"><span  title="Chat notifications" class="notification-img  head-chat"></span></span>
+        <span (click)="changeNotificationType(6)" class="{{emptyNotificationsFlag}} notification-class-icon {{totalOthersColor}}" [matBadgeHidden] = "totalOthersNotificationcount == 0" matBadge="{{totalOthersNotificationcount}}"><span  title="Other notifications" class="notification-img  head-wrench"></span></span>
+    <span class="notification-right-header">
+
+        <span *ngIf="!noNotificationsFlag" (click)="dismissAllnotification($event)" title="Dismiss all notifications" class="dismiss-all-notification">
+            <img class="dismiss-notify-img" src="assets/images/notifications/clear-all-notifications.svg"/>
+            </span>
+        <span (click)="closenotification()" title="Close notifications" class="close-all-notification">
+            <img class="close-notify-img" src="assets/images/notifications/notification-close-icon.svg"/>
+            </span>
+        </span>
+    
+
+</div>  
+<div class="bottom-border" *ngIf="newNotificationsFCM!='new'"></div>  
+
+<div class="notification-content-container-scroll  scrollbar scrollbar-primary thin"  [style.max-height.px]="scrollNotificationHeight" (scroll)="onScroll($event)">
+   
+    <div class="loading-small-screen-scroll" *ngIf="loadingnotificationsScroll" >
+
+        <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="42px" height="42px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="1"/><circle cx="16" cy="64" r="14.344" fill="#ffffff" fill-opacity="1" transform="rotate(45 64 64)"/><circle cx="16" cy="64" r="12.531" fill="#ffffff" fill-opacity="1" transform="rotate(90 64 64)"/><circle cx="16" cy="64" r="10.75" fill="#ffffff" fill-opacity="1" transform="rotate(135 64 64)"/><circle cx="16" cy="64" r="10.063" fill="#ffffff" fill-opacity="1" transform="rotate(180 64 64)"/><circle cx="16" cy="64" r="8.063" fill="#ffffff" fill-opacity="1" transform="rotate(225 64 64)"/><circle cx="16" cy="64" r="6.438" fill="#ffffff" fill-opacity="1" transform="rotate(270 64 64)"/><circle cx="16" cy="64" r="5.375" fill="#ffffff" fill-opacity="1" transform="rotate(315 64 64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>
+    
+    </div>
+   
+    <div class="notification-content-container" *ngIf="!noNotificationsFlag" >
+
+    <div class="notification-content-bg {{newNotificationsFCM}} notification-content-remove-{{notificationArrdata.notificationId}} " *ngFor="let notificationArrdata of notificationArr; let dmx = index" [@anim]="notificationArrdata.state">
+
+    <div class="notification-title {{newNotificationsFCM}}">
+        <div class="title-head">
+
+       <span > 
+           
+        <img *ngIf="(notificationArrdata.displayType=='1' || notificationArrdata.displayType=='2') && notificationArrdata.newThreadTypeSelect!='share'"  src="assets/images/notifications/thread-notification.svg"/>
+        <img *ngIf="notificationArrdata.actionType=='sharingfix' && notificationArrdata.newThreadTypeSelect=='share'"  src="assets/images/notifications/shared-fix-notification.svg"/>
+        <img style="width: 20px;" *ngIf="notificationArrdata.notificationTitle=='New PPFR'"  src="assets/images/notifications/ppfr-icon-notification.png"/>
+        <img *ngIf="notificationArrdata.displayType=='1' && notificationArrdata.subType=='2'"  src="assets/images/notifications/reminder-notification.svg"/>
+        <img *ngIf="notificationArrdata.displayType=='1' && notificationArrdata.subType=='5'"  src="assets/images/notifications/dispatch-icon-notification.png"/>
+        
+
+        
+        <img *ngIf="notificationArrdata.displayType=='3'"  src="assets/images/notifications/announcement-notification.svg"/>
+        <img *ngIf="notificationArrdata.displayType=='4'"  src="assets/images/notifications/chat-notification.svg"/>
+        <img *ngIf="notificationArrdata.displayType=='7'"  src="assets/images/notifications/notification_document_icon.svg"/>
+        
+    </span> 
+       
+       
+       <span class="notification-header-title">{{notificationArrdata.notificationTitle}}</span>
+
+       <span class="date-title-str" *ngIf="notificationArrdata.displayType=='1' && notificationArrdata.subType=='8'">
+        {{notificationArrdata.displayDate}}
+        </span>
+    </div>
+    <div *ngIf="newNotificationsFCM!='new'" class="clear-icon" (click)='clearNotification($event,notificationArrdata)' title="Clear Notifications">
+        <img   src="assets/images/notifications/clear-icon-notification.svg"/>
+        </div>
+        <div *ngIf="newNotificationsFCM=='new'" (click)="closenotificationNew(dmx,notificationArrdata)" title="Close notifications" class="clear-icon {{dmx}}">
+            <img   src="assets/images/notifications/notification-close-icon.svg"/>
+            </div>    
+    </div>
+    <div (click)="tapOnTile(notificationArrdata)" *ngIf="notificationArrdata.displayType=='7' && notificationArrdata.actionType=='document-changestatus'" (mouseenter)="checkonHover()" (mouseleave)="checkonleave"  class="cursor notification-content-view-{{notificationArrdata.notificationId}} notification-content-bg-color{{notificationArrdata.countReset}}{{notificationArrdata.readStatus}} {{newNotificationsFCM}}">
+        <div class="notification-content-head">
+            <div *ngIf="notificationArrdata.changeStatusTItle">
+                <span ><img  *ngIf="notificationArrdata.readStatus=='0'"   src="assets/images/notifications/notification_dispatch_status_white.svg"/></span> 
+                <span ><img  *ngIf="notificationArrdata.readStatus=='1'"   src="assets/images/notifications/notification_dispatch_status_black.svg"/></span> 
+                <span class="dispatch-text-subtext">{{notificationArrdata.changeStatusTItle}}</span>
+            </div>
+            <div *ngIf="notificationArrdata.docPostedBy && notificationArrdata.contributerId!=userId" >
+               
+                <span><img  *ngIf="notificationArrdata.readStatus=='0'"   src="assets/images/notifications/notification_dispatch_Technician.svg"/></span> 
+                <span><img  *ngIf="notificationArrdata.readStatus=='1'"   src="assets/images/notifications/notification_dispatch_black_Technician.svg"/></span> 
+                
+                <span class="dispatch-text-subtext">{{notificationArrdata.docPostedBy}}</span>
+               
+                </div>
+
+                <div *ngIf="notificationArrdata.threadTitle" >
+               
+                    <span><img  *ngIf="notificationArrdata.readStatus=='0'"   src="assets/images/notifications/notification_document_title_white.svg"/></span> 
+                    <span><img  *ngIf="notificationArrdata.readStatus=='1'"   src="assets/images/notifications/notification_document_title_black.svg"/></span> 
+                    
+                    <span class="dispatch-text-subtext">{{notificationArrdata.threadTitle}}</span>
+                   
+                
+                    </div>
+            </div>
+            </div>
+    <div (click)="tapOnTile(notificationArrdata)" *ngIf="notificationArrdata.displayType=='1' && notificationArrdata.subType=='5'" (mouseenter)="checkonHover()" (mouseleave)="checkonleave"  class="cursor notification-content-view-{{notificationArrdata.notificationId}} notification-content-bg-color{{notificationArrdata.countReset}}{{notificationArrdata.readStatus}} {{newNotificationsFCM}}">
+        <div class="notification-content-head">
+
+           
+
+            <div *ngIf="notificationArrdata.actionType=='dispatch-tech-order'">
+                <span><img  *ngIf="notificationArrdata.readStatus=='0'"   src="assets/images/notifications/notification_dispatch_reorder_white.svg"/></span> 
+                <span><img  *ngIf="notificationArrdata.readStatus=='1'"   src="assets/images/notifications/notification_dispatch_reorder_black.svg"/></span> 
+                <span class="dispatch-text-subtext">{{notificationArrdata.scheduleData.changeStatusTItle}}</span>
+            </div>
+            <div *ngIf="notificationArrdata.actionType!='dispatch-tech-order'">
+            
+            
+            <div *ngIf="notificationArrdata.scheduleData.changeStatusTItle" >
+               
+            <span *ngIf="notificationArrdata.actionType=='dispatch-changestatus'"><img  *ngIf="notificationArrdata.readStatus=='0'"   src="assets/images/notifications/notification_dispatch_status_white.svg"/></span> 
+                    <span *ngIf="notificationArrdata.actionType=='dispatch-changestatus'"><img  *ngIf="notificationArrdata.readStatus=='1'"   src="assets/images/notifications/notification_dispatch_status_black.svg"/></span> 
+               
+                <span class="dispatch-text-subtext">{{notificationArrdata.scheduleData.changeStatusTItle}}</span>
+               
+                </div>
+            <div *ngIf="notificationArrdata.scheduleData.technicianName" >
+               
+                <span><img  *ngIf="notificationArrdata.readStatus=='0'"   src="assets/images/notifications/notification_dispatch_Technician.svg"/></span> 
+                <span><img  *ngIf="notificationArrdata.readStatus=='1'"   src="assets/images/notifications/notification_dispatch_black_Technician.svg"/></span> 
+                
+                <span class="dispatch-text-subtext">{{notificationArrdata.scheduleData.technicianName}}</span>
+               
+                </div>
+            <div *ngIf="notificationArrdata.scheduleData.customerName" >
+                <span *ngIf="notificationArrdata.readStatus=='0'"><img   src="assets/images/notifications/notification_dispatch_customer.svg"/></span> 
+                <span *ngIf="notificationArrdata.readStatus=='1'"><img   src="assets/images/notifications/notification_dispatch_black_customer.svg"/></span> 
+                
+                <span class="dispatch-text-subtext">{{notificationArrdata.scheduleData.customerName}}</span>
+               
+                </div>
+
+                <div *ngIf="!notificationArrdata.isGeneral && notificationArrdata.scheduleData.make">
+                    <span *ngIf="notificationArrdata.readStatus=='0'"><img   src="assets/images/notifications/notification_dispatch_MakeModel.svg"/></span> 
+                    <span *ngIf="notificationArrdata.readStatus=='1'"><img   src="assets/images/notifications/notification_dispatch_black_Make Model.svg"/></span> 
+                    
+                    <span class="dispatch-text-subtext" *ngIf="notificationArrdata.scheduleData.make">{{notificationArrdata.scheduleData.make}}</span>
+                    <span *ngIf="notificationArrdata.scheduleData.model">, {{notificationArrdata.scheduleData.model}}</span>
+                    <span *ngIf="notificationArrdata.scheduleData.year">, {{notificationArrdata.scheduleData.year}}</span>
+                    
+                    </div>
+
+                    <div *ngIf="notificationArrdata.scheduleData.serviceTypes && notificationArrdata.scheduleData.serviceTypes.length>0">
+                        <span *ngIf="notificationArrdata.readStatus=='0'"><img   src="assets/images/notifications/notification_dispatch_ServiceType.svg"/></span> 
+                        <span *ngIf="notificationArrdata.readStatus=='1'"><img   src="assets/images/notifications/notification_dispatch_black_Service Type.svg"/></span> 
+                        <span class="dispatch-text-subtext service-types">
+                        <span  *ngFor="let serviceTypes of notificationArrdata.scheduleData.serviceTypes;let r = index" >{{serviceTypes.name}} {{r === notificationArrdata.scheduleData.serviceTypes.length -1 ? '' : ',&nbsp;' }}</span>
+                    </span>    
+                    </div>
+                        <div  style="margin-top:10px;" *ngIf="notificationArrdata.scheduleData.serviceStatusName">
+                          
+                            
+                            <span   [ngStyle]="{'border-radius':'50px','padding':'3px 12px 5px 10px','background': notificationArrdata.scheduleData.serviceStatusColorValue}" >
+                                <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='New'"><img   src="assets/images/notifications/notification_dispatch_New.svg"/></span>
+                                <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Wait On Call'"><img   src="assets/images/notifications/notification_dispatch_WaitonCall.svg"/></span>
+                                <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Call EnRoute'"><img   src="assets/images/notifications/notification_dispatch_call_EnRoute.svg"/></span>
+                                <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Completed'"><img   src="assets/images/notifications/notification_dispatch_Completed.svg"/></span>
+                                <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Cancel'"><img   src="assets/images/notifications/notification_dispatch_Canceled.svg"/></span>
+                                <span class="dispatch-text-subtextcolor">{{notificationArrdata.scheduleData.serviceStatusName}}</span></span>
+                            </div>
+
+            </div>
+        </div>
+            </div>
+
+            <div (click)="tapOnTile(notificationArrdata)" *ngIf="notificationArrdata.displayType=='1' && notificationArrdata.subType=='8'" (mouseenter)="checkonHover()" (mouseleave)="checkonleave"  class="cursor notification-content-view-{{notificationArrdata.notificationId}} notification-content-bg-color{{notificationArrdata.countReset}}{{notificationArrdata.readStatus}} {{newNotificationsFCM}}">
+                <div class="notification-content-head">
+        
+                   
+        
+                    
+                    <div *ngIf="notificationArrdata.actionType!='dispatch-tech-order'">
+                    
+                    
+                    
+                    
+                    <div *ngIf="notificationArrdata.scheduleData.customerName" >
+                        <span *ngIf="notificationArrdata.readStatus=='0'"><img   src="assets/images/notifications/notification_dispatch_customer.svg"/></span> 
+                        <span *ngIf="notificationArrdata.readStatus=='1'"><img   src="assets/images/notifications/notification_dispatch_black_customer.svg"/></span> 
+                        
+                        <span class="dispatch-text-subtext">{{notificationArrdata.scheduleData.customerName}}</span>
+                        <span class="dispatch-text-subtext" *ngIf="notificationArrdata.scheduleData.city">, {{notificationArrdata.scheduleData.city}}</span>
+                        <span class="dispatch-text-subtext" *ngIf="notificationArrdata.scheduleData.state">, {{notificationArrdata.scheduleData.state}}</span>
+                       
+                        </div>
+        
+                        <div *ngIf="notificationArrdata.scheduleData.make">
+                            <span *ngIf="notificationArrdata.readStatus=='0'"><img   src="assets/images/notifications/notification_dispatch_MakeModel.svg"/></span> 
+                            <span *ngIf="notificationArrdata.readStatus=='1'"><img   src="assets/images/notifications/notification_dispatch_black_Make Model.svg"/></span> 
+                            
+                            <span class="dispatch-text-subtext" *ngIf="notificationArrdata.scheduleData.make">{{notificationArrdata.scheduleData.make}}</span>
+                            <span *ngIf="notificationArrdata.scheduleData.model">, {{notificationArrdata.scheduleData.model}}</span>
+                            <span *ngIf="notificationArrdata.scheduleData.year">, {{notificationArrdata.scheduleData.year}}</span>
+                            
+                            </div>
+        
+                            <div *ngIf="notificationArrdata.scheduleData.serviceTypes && notificationArrdata.scheduleData.serviceTypes.length>0">
+                                <span *ngIf="notificationArrdata.readStatus=='0'"><img   src="assets/images/notifications/notification_dispatch_ServiceType.svg"/></span> 
+                                <span *ngIf="notificationArrdata.readStatus=='1'"><img   src="assets/images/notifications/notification_dispatch_black_Service Type.svg"/></span> 
+                                <span class="dispatch-text-subtext service-types">
+                                <span  *ngFor="let serviceTypes of notificationArrdata.scheduleData.serviceTypes;let r = index" >{{serviceTypes.name}} {{r === notificationArrdata.scheduleData.serviceTypes.length -1 ? '' : ',&nbsp;' }}</span>
+                            </span>    
+                            </div>
+                                <div  style="margin-top:10px;" *ngIf="notificationArrdata.scheduleData.serviceStatusName">
+                                  
+                                    
+                                    <span   [ngStyle]="{'border-radius':'50px','padding':'3px 12px 5px 10px','background': notificationArrdata.scheduleData.serviceStatusColorValue}" >
+                                        <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='New'"><img   src="assets/images/notifications/notification_dispatch_New.svg"/></span>
+                                        <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Wait On Call'"><img   src="assets/images/notifications/notification_dispatch_WaitonCall.svg"/></span>
+                                        <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Call EnRoute'"><img   src="assets/images/notifications/notification_dispatch_call_EnRoute.svg"/></span>
+                                        <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Completed'"><img   src="assets/images/notifications/notification_dispatch_Completed.svg"/></span>
+                                        <span *ngIf="notificationArrdata.scheduleData.serviceStatusName=='Cancel'"><img   src="assets/images/notifications/notification_dispatch_Canceled.svg"/></span>
+                                        <span class="dispatch-text-subtextcolor">{{notificationArrdata.scheduleData.serviceStatusName}}</span></span>
+                                    </div>
+        
+                    </div>
+                </div>
+                    </div>
+            <div (click)="tapOnTile(notificationArrdata)" *ngIf="notificationArrdata.displayType=='5'" (mouseenter)="checkonHover()" (mouseleave)="checkonleave"  class="cursor notification-content-view-{{notificationArrdata.notificationId}} notification-content-bg-color{{notificationArrdata.countReset}}{{notificationArrdata.readStatus}} {{newNotificationsFCM}}">
+                <div class="notification-content-head">
+             
+            <div class="profile-container" *ngIf="notificationArrdata.displayType=='5'">
+
+                <div class="profile-imgclass">
+                <img class="profile-img"  src="{{notificationArrdata.userList.profile}}"/>
+                <span class="availability-status availability-status{{notificationArrdata.availability}}"></span>
+            </div> 
+            <div class="user-name-container">
+                <div>
+                    {{notificationArrdata.userList.username}}
+
+
+
+
+                    </div>
+                    <div class="badgestatus">
+                        {{notificationArrdata.badgeStatus}}
+                        </div>
+                </div>   
+            </div>
+        </div>
+    </div>
+
+    <div (click)="tapOnTile(notificationArrdata)" *ngIf="notificationArrdata.subType!='5' && notificationArrdata.subType!='8' && notificationArrdata.displayType!='5' && notificationArrdata.actionType!='document-changestatus'" (mouseenter)="checkonHover()" (mouseleave)="checkonleave"  class="cursor notification-content-view-{{notificationArrdata.notificationId}} notification-content-bg-color{{notificationArrdata.countReset}}{{notificationArrdata.readStatus}} {{newNotificationsFCM}}">
+       <div class="notification-content-head">
+        <div class="profile-container" *ngIf="notificationArrdata.displayType!='6'">
+
+            <div class="profile-imgclass">
+            <img class="profile-img"  src="{{notificationArrdata.profileImg}}"/>
+            <span class="availability-status availability-status{{notificationArrdata.availability}}"></span>
+        </div> 
+        <div class="user-name-container">
+            <div>
+                {{notificationArrdata.userName}}
+                </div>
+                <div class="badgestatus">
+                    {{notificationArrdata.badgeStatus}}
+                    </div>
+            </div>   
+        </div>
+        <div class="profile-container" *ngIf="notificationArrdata.displayType=='6'">
+
+            <div class="profile-imgclass">
+            <img class="profile-img"  src="{{notificationArrdata.userList.profile}}"/>
+            <span class="availability-status availability-status{{notificationArrdata.availability}}"></span>
+        </div> 
+        <div class="user-name-container">
+            <div>
+                {{notificationArrdata.userList.username}}
+                </div>
+                <div class="badgestatus">
+                    {{notificationArrdata.badgeStatus}}
+                    </div>
+            </div>   
+        </div>
+            <div class="date-container">
+            <div class="date-title">
+                {{notificationArrdata.displayDate}}
+                </div>
+                <div class="id-title" *ngIf="notificationArrdata.urgencyLevel!='2' && notificationArrdata.displayType!='6'">
+                   <span *ngIf="notificationArrdata.workOrderId !='' && collabticDomain">RO# {{notificationArrdata.workOrderId}},</span> ID# {{notificationArrdata.threadId}}
+                    </div>
+                    <div class="id-title" *ngIf="notificationArrdata.urgencyLevel=='2'">
+                       
+                        <img *ngIf="notificationArrdata.countReset=='0'"  src="assets/images/notifications/unseen-announcement.png"/>
+                        <img *ngIf="notificationArrdata.countReset!='0'"  src="assets/images/landing-page/announcement-urgent.png"/>
+                        </div>
+            </div>
+
+</div>
+<div class="bottom-border-head"></div>
+<div>
+    <div *ngIf="!notificationArrdata.groupName">
+    
+        <span class="workstream-header" *ngFor="let WorkstreamsListData of notificationArrdata.WorkstreamsList;" class="flex-box-content">{{WorkstreamsListData.workstreamName}}</span>
+    
+    </div>
+    <div  >
+        <span *ngIf="notificationArrdata.groupName" class="flex-box-content workstream-header">{{notificationArrdata.groupName}}</span>
+    </div>
+    <div class="makemodelcontent makemodelcontent{{notificationArrdata.countReset}}{{notificationArrdata.readStatus}}" *ngIf="!notificationArrdata.isGeneral && notificationArrdata.make && notificationArrdata.threadCategoryStr!='7'">
+        <span class="notification-make">{{notificationArrdata.make}}</span>
+        <i *ngIf="notificationArrdata.model" style="font-size: 10px;vertical-align:middle;;" class="pi pi-chevron-right"></i>  
+        <span *ngIf="notificationArrdata.model" class="notification-model">{{notificationArrdata.model}}</span>
+        <i *ngIf="notificationArrdata.year" style="font-size: 10px;vertical-align: middle;" class="pi pi-chevron-right"></i>  
+        <span *ngIf="notificationArrdata.year" class="notification-year">{{notificationArrdata.year}}</span>    
+        </div>
+        <div class="threadTitleClassRow">
+            <div class="threadTitleClassCol" [ngClass]="{ 'threadTitleClassCol1' : notificationArrdata.attachmentCounts!='' , 'threadTitleClassCol11' : notificationArrdata.attachmentCounts==''}" ><div class="threadTitleClass" [innerHTML]="convertunicode(notificationArrdata.threadTitle)"></div></div>
+            <div *ngIf="notificationArrdata.attachmentCounts!=''" class="threadTitleClassCol threadTitleClassCol2"><span class="attachment-img"></span><span class="attachment-count c-content">{{notificationArrdata.attachmentCounts}}</span></div>
+        </div>
+    
+    </div>
+    </div>
+   
+    </div>
+</div>
+
+<div class="loading-small-screen no-notification-loading" *ngIf="loadingnotificationscontent" >
+
+    <svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="42px" height="42px" viewBox="0 0 128 128" xml:space="preserve"><g><circle cx="16" cy="64" r="16" fill="#ffffff" fill-opacity="1"/><circle cx="16" cy="64" r="14.344" fill="#ffffff" fill-opacity="1" transform="rotate(45 64 64)"/><circle cx="16" cy="64" r="12.531" fill="#ffffff" fill-opacity="1" transform="rotate(90 64 64)"/><circle cx="16" cy="64" r="10.75" fill="#ffffff" fill-opacity="1" transform="rotate(135 64 64)"/><circle cx="16" cy="64" r="10.063" fill="#ffffff" fill-opacity="1" transform="rotate(180 64 64)"/><circle cx="16" cy="64" r="8.063" fill="#ffffff" fill-opacity="1" transform="rotate(225 64 64)"/><circle cx="16" cy="64" r="6.438" fill="#ffffff" fill-opacity="1" transform="rotate(270 64 64)"/><circle cx="16" cy="64" r="5.375" fill="#ffffff" fill-opacity="1" transform="rotate(315 64 64)"/><animateTransform attributeName="transform" type="rotate" values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64" calcMode="discrete" dur="720ms" repeatCount="indefinite"></animateTransform></g></svg>
+
+</div>
+<div class="no-notifications-container" *ngIf="noNotificationsFlag">
+    <div class="center">
+    <div class="text-center">
+        <img  src="assets/images/notifications/no-notifications.svg"/>
+        
+        </div>
+        <div>
+    Nothing to show
+</div>
+</div>
+</div>
+</div>
+
+
+</div>

@@ -1,0 +1,28 @@
+<div *ngIf="utLoading" class="usertypes">
+    <mat-form-field>
+        <mat-select #selectopt (openedChange)="openedChange($event)" placeholder="" [formControl]="utFormControl" [(ngModel)]="dbSelectedUt" multiple disableOptionCentering>
+            <div class="select-container" *ngIf="utLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" placeholder="Search User Type" aria-label="Search User Type" matInput [formControl]="utSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(utFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="selectopt.close()"><img src="assets/images/dashboard/close.png" alt="close" /></div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of utFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="utLoadingSelect">
+    <div *ngIf="utFormControl.value != ''" class="selected-items">
+        <span *ngFor="let item of userTypeItems" class="tag-text">{{item}}</span>
+    </div>
+</div>

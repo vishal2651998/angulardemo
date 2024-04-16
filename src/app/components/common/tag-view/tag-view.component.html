@@ -1,0 +1,9 @@
+<div class="tag-info" [ngStyle]="{'padding-left': isKnowledgeArticle ? '0px' : '20px' }">
+    <div class="tags">
+        <span class="list-txt tag-txt">Tag<span *ngIf="tagItems.length > 1">s</span></span>
+        <span *ngIf="!tagFlag" class="no-tag" [innerHtml]="emptyCont"></span>
+        <div *ngIf="tagFlag">
+            <span class="tag-list" *ngFor="let item of tagItems">{{item}}</span>
+        </div>
+    </div>
+</div>

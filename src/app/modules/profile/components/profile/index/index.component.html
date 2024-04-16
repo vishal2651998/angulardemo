@@ -1,0 +1,173 @@
+<div id="header">
+    <app-product-header [pageData]="headerData"></app-product-header>    
+</div>
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div id="profile" *ngIf="!loading && !profileDeleted">
+   <div class="outer-container">
+        <div class="inner-container">
+            <div class="error-div" *ngIf="profileError"><div class="error-msg">{{profileErrorMsg}}</div></div> 
+            <div *ngIf="!profileError" class="profile-section">
+                
+                <div class="profile-left-section"> 
+                    <div class="left-info-section-scroll-to scrollbar scrollbar-primary thin" [style.height.px]="innerHeight">
+                        <div class="left-panel-profile">
+                            <div class="header-section">
+                                <span *ngIf="teamSystem" class="cursor team-back-icon" (click)="closeWindow()"></span>
+                                <div class="profile-responsive-uimg text-center" >
+                                    <!--span *ngIf="editIconFlag" (click)="changeProfile()"  class="rounded-circle user-img cursor-pointer" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></span--->
+                                    <!--span *ngIf="!editIconFlag"  class="rounded-circle user-img-new" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></span-->
+                                    <span *ngIf="editIconFlag"  (click)="changeProfile()" class="user-img-new cursor-pointer">
+                                        <img [src]="imgURL" alt="" />
+                                    </span>  
+                                    <span *ngIf="!editIconFlag"  class="user-img-new cursor-pointer">
+                                        <img [src]="imgURL" alt="" />
+                                    </span>                                 
+                                    <span *ngIf="editIconFlag" (click)="changeProfile()"  class="default-img-edit cursor-pointer"><img src="assets/images/profile/camera.png" /></span>
+                                    <span *ngIf="!editIconFlag" class="user-status" [ngClass]="{'user-offline': userStatus == 0, 'user-online': userStatus == 1, 'user-inactive': userStatus == 2}"></span>                        
+                                    <div *ngIf="invalidFile || invalidFileSize" class="login-invalid-feedback login-invalid-feedback2">
+                                        <img src="assets/images/login/error-img.png" /> <span>{{invalidFileErr}}</span>
+                                    </div>   
+                                </div>     
+                                
+
+                                <div class="profile-name">
+                                    <div class="p1 sname-view" *ngIf="!stageNameEditFlag">
+                                        <span *ngIf="badgeTopUser" class="span-profile-topbadge-user-profile"> <img class="profile-topbadge-user-profile" src="assets/images/thread/crownicon.svg"/></span>
+                                        <span class="sname">{{userName}}</span>                              
+                                        <span *ngIf="editIconFlag" (click)="stageNameEdit()" class="snameedit"><img src="assets/images/profile/sname-edit-icon.png" /></span>
+                                    </div>
+                                    <div class="p1 sname-edit" *ngIf="stageNameEditFlag" [ngClass]="{'setOpacity3': loading1 }">
+                                        <form [formGroup]="form" (ngSubmit)="stageNameSave()">
+                                            <input type="text" class="inputtext"  matInput placeholder="" [(ngModel)]="userName" formControlName="userName" maxlength="40" />                                                                                                                                                                                        
+                                            <span (click)="stageNameSave()" class="snamesave"><img src="assets/images/profile/sname-save-icon.png" /></span>
+                                            <span (click)="stageNameCancel()" class="snamecancel"><img src="assets/images/profile/sname-cancel-icon.png" /></span>
+                                            <div *ngIf="submitted && f.userName.errors" class="profile-invalid-feedback sname-error">                                                
+                                                <div *ngIf="f.userName.errors">User name field is required</div>
+                                            </div>
+                                            <div *ngIf="snameError" class="profile-invalid-feedback sname-error">{{snameErrorMsg}}</div>
+                                        </form>
+                                    </div>
+                                    <div class="p2"><span>{{firstLastName}}</span></div>
+                                    <div class="p3">
+                                        <span class="sname">{{badgeStatus}}</span>
+                                        <span class="snameedit"><img src="{{badgeImage}}"/></span>
+                                    </div>
+                                    <div class="p4" *ngIf="!editIconFlag">
+                                        <a (click)="followORUnfollow('follow')" [ngClass]="{'setOpacity3': loading2 }" *ngIf="follow == 0" class="button1"><label class="p4-button">FOLLOW</label></a>
+                                        <a (click)="followORUnfollow('unfollow')" [ngClass]="{'setOpacity3': loading2 }" *ngIf="follow != 0" class="button1 button2"><label class="p4-button">UNFOLLOW</label></a>
+                                        <span *ngIf="fError" class="profile-invalid-feedback sname-error">{{fErrorMsg}}</span>
+                                    </div>
+                                    <div class="p5">
+                                        <a *ngIf="followers!=0" class="button1" (click)="userList('follower')"><span>{{followers}} {{followersText}}</span></a>
+                                        <a *ngIf="followers==0" class="button1 cursor-default"><span>- {{followersText}}&nbsp;</span></a>
+                                        <a *ngIf="following!=0" class="button1 button2 " (click)="userList('following')"><span>{{following}} Following</span></a>
+                                        <a *ngIf="following==0" class="button1 button2 cursor-default"><span>- Following</span></a>
+                                    </div>
+                                </div>                 
+                            </div>
+                            
+                            <div class="info-section">
+                            
+                                <div class="section" *ngIf="managerName!=''">
+                                    <span class="sec-left"><img src="assets/images/profile/uname.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Manager</span>
+                                        <span class="bold-text">{{managerName}}</span>
+                                    </span>
+                                </div>
+                                <div class="section" *ngIf="accountType!=''">
+                                    <span class="sec-left"><img src="assets/images/profile/acc-type.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Account Type</span>
+                                        <span class="bold-text">{{accountType}}</span>
+                                    </span>
+                                </div>
+                                <div class="section">
+                                    <span class="sec-left"><img src="assets/images/profile/role.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Role</span>
+                                        <span class="bold-text">{{role}}</span>
+                                    </span>
+                                </div>
+                                <div class="section" *ngIf="loginDate">
+                                    <span class="sec-left"><img src="assets/images/profile/date.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Last Login Date and Time</span>
+                                        <span class="bold-text">{{loginDate}}</span>
+                                    </span>
+                                </div>
+                                <div class="section">
+                                    <span class="sec-left"><img src="assets/images/profile/date.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Join Date</span>
+                                        <span class="bold-text">{{joinDate}}</span>
+                                    </span>
+                                </div>
+                                <div class="section" *ngIf="devicesUsed!=''">
+                                    <span class="sec-left"><img src="assets/images/profile/device.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Devices used</span>
+                                        <span class="bold-text">{{devicesUsed}}</span>
+                                    </span>
+                                </div>
+                                <div class="section" *ngIf="memberOfWorkstreams!=''">
+                                    <span class="sec-left"><img src="assets/images/profile/member.png" /></span>
+                                    <span class="sec-right">
+                                        <span class="normal-text">Member of Workstreams</span>
+                                        <span *ngFor="let item of memberOfWorkstreams;">
+                                            <span class="tag-div">{{item['workstreamName']}}</span>
+                                        </span>
+                                    </span>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div> 
+                </div>    
+               
+                <div class="profile-right-section">
+                    <div class="container-fluid">
+                        <div class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0">
+                            <div class="center-middle-width-container col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0">
+                                <div class="center-middle-width">
+                                    <div class="center-scroll-to scrollbar scrollbar-primary thin"  [style.height.px]="innerHeight">                                                                        
+                                        <div class="center-container">                                      
+                                            <div *ngIf="!profileError" class="row col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0">
+                                                <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0 paddingRight15">
+                                                    <app-profile-business [businessPageData]="businessData"></app-profile-business>
+                                                </div>
+                                                <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 landing-padding0 landing-margin0 paddingLeft15">
+                                                    <app-profile-personal [personalPageData]="personalData"></app-profile-personal>
+                                                </div>
+                                            </div>                                       
+                                            <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 landing-padding0 landing-margin0">
+                                                <app-profile-metrics [metricsPageData]="paramsData"></app-profile-metrics>
+                                            </div>
+                                            <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 landing-padding0 landing-margin0">
+                                                <app-recent-searches-widgets></app-recent-searches-widgets>
+                                            </div>   
+                                            <div class="col-lg-12 col-md-12 col-xl-12 col-sm-12 landing-padding0 landing-margin0">
+                                                <app-profile-certificate [certPageData]="paramsData"></app-profile-certificate>
+                                            </div>                                    
+                                            
+                                        </div>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="profileDeleted" class="profile-delete-container" [style.height.px]="innerHeight">
+    <div class="profile-delete-vertical-center">
+  
+    <div class="text-center"><img src="assets/images/profile/deleted_default_user_icon.png"></div>
+    <div class="profile_deleted_message"> 
+    {{isDeletedMessage}}
+</div>
+</div>
+    </div>

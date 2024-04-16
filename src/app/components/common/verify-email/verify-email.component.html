@@ -1,0 +1,73 @@
+<div class="custom-modal modal-container login-modal" id="wrapper">
+    <div class="modal-body ">
+        <div class="verify-user">
+            <div [style.height.px]="height">
+                <div #bottom id="bottom" class="scroll-area scrollbar scrollbar-primary thin" style="height:100%" >
+                    <div *ngIf="loading" class="loading-image"><img src="assets/images/loading.svg" alt="Loader" width="60"/></div>     
+                    <div class="whitebg-div"  [ngClass]="{ 'load-bg-div': loading }">               
+                        <div class="whitebg-div-inner">
+                            <img src="assets/images/login/modal-email-img.png" />
+                            <p class="verify-email-text">Verify your email...</p>
+                            <table align="center">
+                                <tbody>
+                                    <tr *ngIf="!newAccountSetup" class="img-text paddingBottom0">
+                                        <td class="left-img"><img src="assets/images/login/modal-user-img.png" /></td>
+                                        <td class="right-text">{{firstLastname}}</td>
+                                    </tr>
+                                    <tr *ngIf="newAccountSetup" class="img-text paddingBottom0">
+                                        <td class="left-img"><img src="assets/images/login/verify-business.png" /></td>
+                                        <td class="right-text">{{businessName}}</td>
+                                    </tr>
+                                    <tr *ngIf="newAccountSetup" class="img-text paddingBottom0">
+                                        <td class="left-img"><img src="assets/images/login/verify-domain.png" /></td>
+                                        <td class="right-text">{{newDomainName}}</td>
+                                    </tr>
+                                    <tr class="img-text">
+                                        <td class="left-img"><img src="assets/images/login/modal-small-email.png" /></td>
+                                        <td class="right-text">{{email}}</td>
+                                    </tr>
+                                    <tr class="img-text setPadd0">
+                                        <td class="small-head-text">Stage Name</td>
+                                    </tr>
+                                    <tr class="img-text">
+                                        <td class="left-img"><img src="assets/images/login/modal-small-email.png" /></td>
+                                        <td class="right-text">{{stageName}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>                    
+                        </div>
+                    </div>
+                    <div class="greenbg-div"  [ngClass]="{ 'load-bg-div': loading }">
+                        <div [ngClass]="{ 'hide' : showEmailProcess }">
+                            <p class="para1" [ngClass]="{ 'para1-padd0' : newAccountSetup, 'para1-padd11' : !newAccountSetup }">Verify your email address to continue.</p>
+                            <p class="para1" [ngClass]="{ 'para1-padd1' : newAccountSetup, 'para1-padd6' : !newAccountSetup }">Check your inbox or spam folder for verification mail.</p>
+                            <div *ngIf="!verifyFlag" class="action-button" (click)="verifiedEmail()"><span class="con-btn">Continue</span></div>
+                            <div *ngIf="verifyFlag" class="action-button"><span class="con-btn setOpacity3">Continue</span><span class="con-btn-load"><span class="loading-cont"><img src="assets/images/filter/filter-loading.svg" width="60" /></span></span></div> 
+                            <span class="recent-msg-new  recent-msg-color">{{continueServerMsg}}</span>                                         
+                            <span [ngClass]="{ 'para1-padd0' : newAccountSetup }" style="cursor: pointer;" class="para1" (click)="redirecttoLogin()"> Return to Login <img src="assets/images/login/redirect-login-arrow.png" /></span>
+                            <div *ngIf="!tvsSSOFlag && !newAccountSetup">
+                                <span *ngIf="!recentFlag" class="para1"><a (click)="resentverificationEmail()"> Resend Verification Email</a></span>
+                                <span *ngIf="recentFlag" class="para1"><a class="setOpacity3"> Resend Verification Email</a><span class="loading-cont"><img src="assets/images/filter/filter-loading.svg" width="60" /></span></span>
+                                <span class="recent-msg  recent-msg-color" [ngClass]="{ 'active': serverSuccess, 'error': serverError }">{{serverMsg}}</span>                        
+                            </div>
+                        </div>
+                        <div *ngIf="tvsSSOFlag || newAccountSetup" class="tvs-action-button">
+                            <span class="para1" [ngClass]="{ 'hide' : showEmailProcess, 'para1-padd1' : newAccountSetup}"><a (click)="notGetVerificationEmail()"> Did not get the Verification Email?</a></span>                            
+                            <span *ngIf="showEmailProcess">                                                                
+                                <div class="para1-view">
+                                    <span class="view-close-span" ><a  class="view-close" (click)="hideViewEmailBox()" ><img src="assets/images/list-close.png" alt="Close"></a></span>
+                                    <p class="para1 para1-show para1-new ">We sent the email to <br/>{{email}}</p>                               
+                                    <div *ngIf="!verifyFlag" class="action-button" (click)="confirmEmail()"><span class="con-btn">Confirm Email</span></div>
+                                    <div *ngIf="verifyFlag" class="action-button"><span class="con-btn setOpacity3">Confirm Email</span><span class="con-btn-load"><span class="loading-cont"><img src="assets/images/filter/filter-loading.svg" width="60" /></span></span></div>
+                                    <div *ngIf="!editEmailFlag" class="action-button action-button-edit marginb0" (click)="editEmailPOPUP()"><span class="con-btn">Edit Email</span></div>                                    
+                                    <div *ngIf="editEmailFlag" class="action-button marginb0"><span class="con-btn setOpacity3">Edit Email</span></div>                                    
+                                </div>                                                                                      
+                            </span> 
+                            <span  class="recent-msg" [ngClass]="{ 'active': serverSuccess, 'error': serverError }">{{serverMsg}}</span>   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

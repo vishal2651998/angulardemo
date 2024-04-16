@@ -1,0 +1,42 @@
+<div *ngIf="wsLoading" class="cust-select workstreams">
+    <mat-icon class="material-icon workstream-icon" *ngIf="split"></mat-icon>
+    <mat-form-field class="custom-mat-sel" [ngClass]="{'full-mat-sel': !split}">
+        <mat-select #selectopt (openedChange)="openedChange($event)" placeholder="Select Workstream" [formControl]="wsFormControl" [(ngModel)]="dbSelectedWs" multiple disableOptionCentering>
+            <div class="select-container select-container-gts-ws" *ngIf="wsLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" placeholder="Search Workstreams" aria-label="Search Workstream" matInput [formControl]="wsSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                    <div *ngIf="selectClose" class="ngdialog-close ws-close" (click)="selectopt.close()">Close</div>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(wsFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of wsFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+    <div class="recent-selections recent-top" *ngIf="!workstreamItems.length && showRecentSelection">
+        <div class="recent-col recent-label">Recent Selections:</div>
+        <div class="recent-col recent-list">
+            <div class="cursor items" *ngFor="let recent of workstreams; let r=index;" (click)="onRecentSelect(recent,r)">
+                <span >{{recent.workstreamName}}</span>
+              
+            </div>
+        </div>
+    </div>
+   
+</div>
+<div *ngIf="wsLoadingSelect">
+    <div *ngIf="wsFormControl.value != ''" class="selected-items">
+        <div *ngFor="let item of workstreamItems; let t=index" class="tag-text ws-tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

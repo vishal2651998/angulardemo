@@ -1,0 +1,430 @@
+
+<div class="container p-0" *ngIf="!loading">
+    <form  [formGroup]="addUserForm">
+    <!-- <div class="row user-filed">
+        <div class="col-sm-12">
+            <div class="location-cont">
+                <p-checkbox style="margin-left: 28px;"
+                    formControlName = "primaryContact" 
+                    [binary]="true" label="Primary Contact "></p-checkbox>
+            </div>
+                          
+        </div>
+    </div> -->
+    <div class="row align-items-center modal-heading no-gutters">
+        <div class="col-sm-8 pl-3">
+                <h5 class="user-heading mb-0 pl-3 truncate">{{actionTitle}}</h5>
+            </div>
+            <div class="col-sm-4 pr-3">
+                <div class="action-buttons action-buttons-hq d-flex align-items-center justify-content-end">
+                    <button *ngIf="!formProcessing && !loadingShops" pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                    class="p-button-rounded button-save button-save-hq cursor" (click)="formAction('submit')"></button>
+                    <button *ngIf="formProcessing || loadingShops" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="left" label=""
+                    class="p-button-rounded button-save button-save-hq button-spin"></button>
+                    <span class="btn-close cursor" *ngIf="!formProcessing" (click)="formAction('cancel')">
+                        <img src="assets/images/hq/hq-popup-close-icon.png" alt="HQ" />
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="user-wrapper pb-5">
+
+            <div *ngIf="existErrorFlag">
+                <div id="valid-error" class="field-err" *ngIf="existErrorFlag">{{existErrorMsg}}</div>
+            </div>
+
+            <!-- <div class="row user-filed" *ngIf="contactFlagShow">
+                <div class="col-sm-12">
+                    <div class="location-cont">
+                        <p-checkbox 
+                            formControlName = "isPrimaryHq" 
+                            [binary]="true" label="Primary HQ Contact "></p-checkbox>
+                    </div>
+                                  
+                </div>
+            </div> -->
+
+            
+
+            <div class="row user-filed" *ngIf="!moreUserInfo">
+                <div class="col-sm-12"  [ngClass]="submitted && !!this.addUserForm.controls && !!this.addUserForm.controls['firstName'] && !!this.addUserForm.controls['firstName'].errors && !!this.addUserForm.controls['firstName'].errors.required ? 'input-error' : ''">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/hq/single-user.png" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" />
+                            <label class="mb-0">First Name</label>
+                        </div>
+                        <div class="required">
+                            <span class="required-txt">Required</span>
+                        </div>
+                    </div>
+                    <div class="input-filed">
+                        <input type="text" formControlName="firstName" pInputText class="input-bg map-input w-100" placeholder="First Name" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="!moreUserInfo">
+                <div class="col-sm-12"  [ngClass]="submitted && !!this.addUserForm.controls && !!this.addUserForm.controls['lastName'] && !!this.addUserForm.controls['lastName'].errors && !!this.addUserForm.controls['lastName'].errors.required ? 'input-error' : ''">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/hq/single-user.png" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" />
+                            <label class="mb-0">Last Name</label>
+                        </div>
+                        <div class="required">
+                            <span class="required-txt">Required</span>
+                        </div>
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="lastName" type="text" pInputText class="input-bg map-input w-100" placeholder="Last Name" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="!moreUserInfo">
+
+                                     
+                <div class="col-sm-12" [ngClass]="submitted && !!this.addUserForm.controls && !!this.addUserForm.controls['email'] && !!this.addUserForm.controls['email'].errors && !!this.addUserForm.controls['email'].errors.required ? 'input-error' : ''">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/dispatch/svg/email-icon.png" alt="Email"
+                                class="mr-2" width="18" height="13" />
+                            <label class="mb-0">Email</label>
+                        </div>
+                        <div class="required">
+                            <span class="required-txt">Required</span>
+                        </div>
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="email" type="text" (change)="checkEmailValition()" pInputText class="input-bg map-input w-100" placeholder="Email" />
+                    </div>
+                    <div *ngIf="emailValidationError">
+                        <div id="valid-error" class="field-err" *ngIf="emailValidationError">{{emailValidationErrorMsg}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="actionType == 'new' && !moreUserInfo">
+                <div class="col-sm-12" [ngClass]="submitted && !!this.addUserForm.controls && !!this.addUserForm.controls['password'] && !!this.addUserForm.controls['password'].errors && !!this.addUserForm.controls['password'].errors.required ? 'input-error' : ''">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/dispatch/svg/passw-icon.png" alt="password"
+                                class="mr-2" width="17" height="21" />
+                            <label class="mb-0">Password</label>
+                        </div>
+                        <div class="required">
+                            <span class="required-txt">Required</span>
+                        </div>
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="password" type="{{!passHidden  ? 'text' : 'password'}}"  pInputText class="input-bg map-input w-100" placeholder="Password"
+                        (keyup)="checkpasswordtext($event)" 
+                        (change)="checkPwdStrongValidation()"
+                        />
+
+                        <span class="success-ok-tick-span" style="cursor: pointer;" (click)="hidePass()"><span style="right:15px" class="success-ok-tick success-ok-tick-de"><i *ngIf="passHidden" style="padding-top: 7px;" class="pi pi-eye"></i>
+                            <i  *ngIf="!passHidden" style="padding-top: 7px;" class="pi pi-eye-slash"></i></span></span>
+                        <div *ngIf="passwordchecker" class="new-user-default-div">
+                            <span *ngIf="!passwordValidationError && !disableDefaultPasswordText" class="new-user-default-text">Min. 8 chars, one uppercase, one lowercase & one special character</span>
+                            <span *ngIf="passwordValidationError" class="new-user-error-text">{{passwordValidationErrorMsg}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!moreUserInfo && (!userData?.hideLocation && (!user.data || !user.data.shopId))" class="row user-filed">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <!--img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                class=" mr-2 new-request-icon"  width="20" height="18"/-->
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <label class="mb-0">Shop Name (User belonged to)</label>
+                        </div>
+                        <div class="required">
+                            <span class="required-txt">Required</span>
+                        </div>
+                    </div>
+                    <div  *ngIf="!loadingShops" class="input-filed">
+                        <div class="input-filed">
+                            <p-dropdown formControlName="shopId" class="p-dropdown-servicetype" 
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select" 
+                                [options]="shopList" optionLabel="name"  optionValue="id" 
+                                [filter]="true"  resetFilterOnHide="true" filterBy="name"></p-dropdown>
+                        </div>
+                        <!--input formControlName="businessRole" type="text" pInputText class="input-bg map-input w-100" placeholder="Business Role" /-->
+                    </div>
+                    <div *ngIf="loadingShops" class="col-sm-12 text-center" >
+                        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+                    </div>
+                </div>
+                
+
+            </div>
+
+
+            <div class="row user-filed" *ngIf="!moreUserInfo">
+                <div class="col-sm-12">
+                    <div class="input-shop d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone"
+                                class="mr-2"  width="18" height="18"/>
+                            <label class="mb-0">Phone</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="phone" type="text" class="hide form-control inputtext" 
+                            placeholder="012-345-6789" minlength="10">
+                        <div class="input-group">
+                            <div class="input-group-prepend phone-img normal"></div>
+                            <app-country-phonenumber class="w-100" [phoneNumberData]="phoneNumberData"
+                            (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                        </div>
+                        <div *ngIf="submitted && invalidNumber">
+                            <!--div id="valid-error" class="field-err" *ngIf="shf.phone.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                            <div id="valid-error" class="field-err" *ngIf="(scf.phone.value.length > 0 && scf.phone.value.length < 10) || (scf.phone.value.length == 0)">Invalid phone number</div>                        
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+           
+           
+
+            <div class="row user-filed" *ngIf="moreUserInfo">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/hq/hq-user-title.png" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="16" />
+                            <label class="mb-0">Title</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="title" type="text" pInputText class="input-bg map-input w-100" placeholder="Title" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="moreUserInfo">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/hq/bussiness-role.png" alt="service"
+                                class=" mr-2 new-request-icon"  width="20" height="18"/>
+                            <label class="mb-0">Business Role</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <div class="input-filed">
+                            <p-dropdown formControlName="businessRole" class="p-dropdown-servicetype" 
+                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                placeholder="Select" 
+                                [options]="businessRoleData" optionLabel="name"  optionValue="id" 
+                                [filter]="true"  resetFilterOnHide="true" filterBy="name"></p-dropdown>
+                        </div>
+                        <!--input formControlName="businessRole" type="text" pInputText class="input-bg map-input w-100" placeholder="Business Role" /-->
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="moreUserInfo">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/hq/Dept.png" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" />
+                            <label class="mb-0">Dept</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="deptName" type="text" pInputText class="input-bg map-input w-100" placeholder="Dept" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="moreUserInfo">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/shop/dealer-code.png" alt="service" width="17"
+                                    height="17" class="mr-2 new-request-icon" />
+                            <label class="mb-0">Emp ID#</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="empId" type="text" pInputText class="input-bg map-input w-100" placeholder="ID#" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="moreUserInfo">
+                <div class="col-sm-12">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img height="16" width="16" src="assets/images/shop/stacked-rectangle.png"
+                                    alt="shop-type" class=" mr-2 new-request-icon mail" />
+                            <label class="mb-0">Account Type</label>
+                        </div>
+
+                        
+                    </div>
+
+                    <div class="input-filed">
+                        <p-dropdown formControlName="roleId" class="p-dropdown-servicetype" 
+                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                            placeholder="Select" 
+                            [options]="roleData" optionLabel="name"  optionValue="id" 
+                            [filter]="true"  resetFilterOnHide="true" filterBy="name"></p-dropdown>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="moreUserInfo">
+                <div class="col-sm-12">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <img src="assets/images/hq/user.png" alt="service" width="12"
+                                    height="16" class="mr-2 new-request-icon" />
+                            <label class="mb-0">Manager Name</label>
+                        </div>
+                       
+                    </div>
+                    <div class="input-filed">                        
+                        <p-dropdown formControlName="managerId" class="p-dropdown-servicetype" 
+                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                            placeholder="Select" 
+                            [options]="managerData" optionLabel="name"  optionValue="id" 
+                            [filter]="true"  resetFilterOnHide="true" filterBy="name"></p-dropdown>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="row user-filed" *ngIf="!moreUserInfo">
+                <div class="col-sm-12" >
+                    <div class="cursor toggle-box-user togglebox">                        
+                        <span class="toggle-col toggle-option">
+                            <p-inputSwitch formControlName="levelAddressFlag" [(ngModel)]="levelAddressFlag" (onChange)="onToggleBoxChange($event.checked)">
+                            </p-inputSwitch>
+                        </span>
+                        <span class="toggle-col field-label field-label-pu">Want to add address?</span>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="levelAddressFlag" class="row user-filed">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <!--img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" /-->
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <label class="mb-0">Address1</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="address1" type="text" pInputText class="input-bg map-input w-100" placeholder="Address1" />
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!moreUserInfo && levelAddressFlag" class="row user-filed">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <!--img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" /-->
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <label class="mb-0">Address2</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="address2" type="text" pInputText class="input-bg map-input w-100" placeholder="Address2" />
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!moreUserInfo && levelAddressFlag" class="row user-filed">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <!--img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" /-->
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <label class="mb-0">City</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="city" type="text" pInputText class="input-bg map-input w-100" placeholder="City" />
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!moreUserInfo && levelAddressFlag" class="row user-filed">
+                <div class="col-sm-12">
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <!--img height="16" width="16" src="assets/images/dispatch/svg/service-form/map-gray.svg"
+                                    alt="shop-type" class=" mr-2 new-request-icon mail" /-->
+                                    <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <label class="mb-0">State</label>
+                        </div>
+
+                        
+                    </div>
+
+                    <div class="input-filed">
+                        <p-dropdown class="p-dropdown-state" [filter]="true" name="stateValue" formControlName="state" [options]="companyStateDropdownData" placeholder="Select State" optionLabel="name" optionValue="id" [group]="true" (onChange)="stageChanged($event)">
+                            <ng-template let-group pTemplate="group">
+                            <div class="p-d-flex p-ai-center">
+                                <span>{{group.name}}</span>
+                            </div>
+                            </ng-template>
+                        </p-dropdown>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!moreUserInfo && levelAddressFlag" class="row user-filed">
+                <div class="col-sm-12" >
+                    <div class="input-user d-flex align-items-center justify-content-between">
+                        <div class="label-txt">
+                            <!--img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                                class=" mr-2 new-request-icon" width="18" height="18" /-->
+                                <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <label class="mb-0">Zip Code</label>
+                        </div>
+                        
+                    </div>
+                    <div class="input-filed">
+                        <input formControlName="zip" type="text" pInputText class="input-bg map-input w-100" placeholder="Zip Code" />
+                    </div>
+                </div>
+            </div>
+
+           
+
+        </div>
+    </form>
+
+
+    </div>

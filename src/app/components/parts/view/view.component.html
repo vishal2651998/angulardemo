@@ -1,0 +1,186 @@
+<div id="header">
+    <!--app-probing-header *ngIf="!loading" [pageData]="headerData"></app-probing-header-->
+    <div id="header" class="detail-page-header">
+        <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+    </div>
+</div>
+<div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading" class="container-fluid part-view">    
+    <div class="row col-lg-12 col-md-12 col-sm-12 part-view-cont" [style.height.px]="innerHeight">
+        <div class="col-lg-9 col-md-7 col-sm-12 part-info ps" [perfectScrollbar]="sconfig">
+            <div class="row col-lg-12 part-det">
+                <div class="col-lg-5 det-col">
+                    <div class="part-image {{bgClass}}" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}">
+                        <span>ID #{{partId}}</span>
+                    </div>
+                </div>
+                <div class="col-lg-7 det-col">
+                    <div class="base-info">
+                        <div class="title">Part #{{partNumber}}</div>
+                        <div class="name" [innerHtml]="partName"></div>
+                        <div class="status" [ngClass]="{'active': partStatus == 1, 'discontinue': partStatus == 2}">{{partStatusText}}</div>
+                    </div>
+                    <div class="add-info">
+                        <div class="alt-info">
+                            <div class="alt">Alternative Part Number: 
+                                <span [innerHtml]="partAlt"></span>
+                            </div>
+                            <div class="desc">
+                                <div class="label">Parts Description</div>
+                                <div class="desc-cont" [innerHtml]="partDesc"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="more-info">
+                <div class="more-col catg">
+                    <div class="catg-col catg-col-1"><span class="type">Type: </span><span [innerHtml]="partType"></span></div>
+                    <div class="catg-col"><span class="system">Part System: </span><span [innerHtml]="partSystem"></span></div>
+                    <div class="catg-col"><span class="assembly">Part Assembly: </span><span [innerHtml]="partAssembly"></span></div>
+                </div>
+                <div *ngIf="threadId > 0" class="more-col contribute text-right">
+                    <div class="row-1 cursor" (click)="navUrl('redirect', profileUrl)">Contributed by: {{contributedBy}} <img src="{{assetPartPath}}circle-arrrow.png" /></div>
+                    <div class="row-2 cursor" (click)="navUrl('redirect', threadUrl)">Source: Thread ID# {{threadId}} <img src="{{assetPartPath}}circle-arrrow.png" /></div>
+                </div>
+            </div>
+
+            <div *ngIf="platformId == 2 && domainId == 52" class="more-info tvs-info">
+                <div class="more-col catg ref-catg" [ngClass]="{'reg-thread-catg': threadId > 0}">
+                    <!--div class="catg-col catg-col-1"><span class="type">Type </span><span [innerHtml]="partType"></span></div-->
+                    <div class="catg-col catg-col-1"><span class="fig-no">Fig# </span><span [innerHtml]="figNo"></span></div>
+                    <div class="catg-col"><span class="ref-no">Ref# </span><span [innerHtml]="refNo"></span></div>
+                    <div class="catg-col hidden"><span>Type </span><span></span></div>
+                </div>                
+            </div>
+
+            <!-- Tag Lists-->
+            <app-tag-view [tagItems]="tags"></app-tag-view>
+
+            <!-- Application Info -->
+            <app-application [accordionList]="accordionList" [partsList]="partsList" [isTvs]="tvsFlag" [applicationList]="appList"></app-application>
+
+            <div class="reference-info">
+                <mat-accordion [multi]="true" #accordion="matAccordion">
+                    <mat-expansion-panel class="{{panel.class}}"
+                    [disabled]="panel.isDisabled"
+                    [expanded]="panel.isExpanded"
+                    [hideToggle]="false"
+                    (opened)="beforeParentPanelOpened(panel, emptyList)"
+                    (closed)="beforeParentPanelClosed(panel, emptyList)"
+                    (afterCollapse)="afterPanelClosed()"
+                    (afterExpand)="afterPanelOpened()"
+                    *ngFor="let panel of referenceAccordion"
+                    #mapanel="matExpansionPanel">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                            <b>{{panel.title}}</b>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        
+                        <!-- Reference Information -->
+                        <div *ngIf="panel.id == 'refer'" class="app-accord">
+                            <!-- Error Code List-->
+                            <app-error-code-view [errorCodes]="errCode"></app-error-code-view>
+
+                            <!-- Attachment List-->
+                            <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                            
+                            <div class="related-info">
+                                <div class="label">Related Threads</div>
+                                <div class="related-items">
+                                    <div class="related-list cursor" *ngFor="let thread of relatedThreads" (click)="tapOnThread(thread.threadId)">
+                                        <div class="rel-col rel-col-1"></div>
+                                        <div class="rel-col rel-col-2 " >
+                                            <div class="rel-row row-1">{{thread.make}} <img src="{{chevronImg}}" /> {{thread.model}}</div>
+                                            <div class="rel-row row-2">{{thread.title}}</div>
+                                            <div class="rel-row row-3">ID #{{thread.threadId}}</div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="relatedThreads?.length == 0" class="empty-list" [innerHtml]="emptyCont"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Other Part Information -->
+                        <div *ngIf="panel.id == 'other'" class="app-accord other-info">
+                            <div class="other-items">
+                                <div class="other-col other-col-1">
+                                    <div class="label company">Company</div>
+                                    <div class="cont" [innerHtml]="company"></div>
+                                </div>
+                                <div class="other-col other-col-2">
+                                    <div class="label website">Website</div>
+                                    <div class="cursor cont link" [innerHtml]="website"></div>
+                                </div>
+                                <div class="other-col other-col-3">
+                                    <div class="label phone">Phone</div>
+                                    <div class="cont" [innerHtml]="phone"></div>
+                                </div>
+                                <div class="other-col other-col-4">
+                                    <div class="label currency">Estimated Price</div>
+                                    <div class="cont" [innerHtml]="estPrice"></div>
+                                </div>
+                                <div class="other-col other-col-5">
+                                    <div class="label sold">Sold As</div>
+                                    <div class="cont" [innerHtml]="soldUs"></div>
+                                </div>
+                            </div>
+                            <div class="src-info">
+                                <div class="src-cont">
+                                    <span class="label">Source info: </span>
+                                    <span class="text" [innerHtml]="srcInfo"></span>
+                                </div>
+                            </div>
+                            <div class="regulatory-warn">
+                                <div class="label">Regulatory Warnings</div>
+                                <div class="cont" [innerHtml]="warning"></div>
+                            </div>
+                        </div>
+
+                        <!-- System Information -->
+                        <div *ngIf="panel.id == 'system'" class="app-accord">
+                            <app-system-info-view [systemInfo]="systemInfo"></app-system-info-view>
+                        </div>
+
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+            
+            <div class="share">
+                <div class="share-social" *ngIf="likeCount > 0 || pinCount > 0 || viewCount > 0">
+                    <div class="social-col" *ngIf="likeCount > 0">{{likeCount}} <span>Like</span> <span *ngIf="likeCount > 1">s</span></div>
+                    <div class="social-col" *ngIf="pinCount > 0">{{pinCount}} <span>Pin</span> <span *ngIf="pinCount > 1">s</span></div>
+                    <div class="social-col" *ngIf="viewCount > 0">{{viewCount}} <span>View</span> <span *ngIf="viewCount > 1">s</span></div>
+                </div>
+                <div class="share-social-icons">
+                    <div class="icon-col like" [ngClass]="{'cursor': !disableLikeFlag}" align="left">
+                        <img [ngClass]="{'disable': disableLikeFlag}" src="{{assetPartPath}}{{likeImg}}" alt="Like" (click)="socialAction('like', likeStatus)" />
+                    </div>
+                    <div class="icon-col pin cursor" align="center"><img src="{{assetPartPath}}{{pinImg}}" alt="Pin" (click)="socialAction('pin', pinStatus)" /></div>
+                    <div class="icon-col share hide" align="right"><img src="{{assetPartPath}}share-normal.png" alt="Share" /></div>
+                </div>
+            </div>            
+        </div>
+        <div class="col-lg-3 col-md-5 col-sm-12 similar-part">
+            <div class="similar-col">
+                <div class="similar-head">Recently Viewed Parts</div>
+                <div *ngIf="recentPartEmpty" class="no-data text-center"><i class="gray">No recent views</i></div>
+                <div class="similar-body" *ngIf="!recentPartEmpty">
+                    <div class="similar-info" *ngFor="let rv of recentLists">
+                        <div class="info-col">
+                            <div class="info-row gts-image default" [ngClass]="{'default-bg': rv.isDefaultImg == 1, 'parts-bg': rv.isDefaultImg == 0}" [ngStyle]="{'background-image': 'url(' + rv.partBannerImg + ')'}">
+                                <span>ID #{{rv.id}}</span>
+                            </div>
+                            <div class="info-row prob-det">
+                                <span class="prob-complaint-no">{{rv.partNo}}</span>
+                                <span class="prob-complaint">{{rv.partName}}</span>
+                                <span class="model">{{rv.make}} <img src="{{chevronImg}}" /> {{rv.model}}<span *ngIf="rv.year != ''"> <img src="{{chevronImg}}" /> {{rv.year}}</span></span>
+                            </div>
+                        </div>    
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>

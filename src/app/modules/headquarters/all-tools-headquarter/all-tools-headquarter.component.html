@@ -1,0 +1,76 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="d-flex">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar [pageData]="sidebarActiveClass" [accessModule]="accessModule"
+                    (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+            </nav>
+        </div>
+    </div>
+    <div class="right-section">
+        <div class="prob-index system-setting">
+            <div class="container-fluid">
+                <div class="center-middle-width-container">
+                    <div class="center-middle-width padding-common padding-common-hq">
+                        <div class="d-flex align-items-center justify-content-between w-100" *ngIf="!locationToolsFlag">
+                            <div class=" hq-head">
+                                <!-- <div class="hq-head-row-0" *ngIf="accessPage == 'all-tools'">
+                                    <span class="hq-head-breadcrumb-text cursor mr-2"
+                                        (click)="back('Headquarters')">Headquarters</span>
+                                    <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                    <span class="hq-head-breadcrumb-text curso ml-2">Tools & Equipment</span>                                   
+                                </div> -->
+                                <div class="hq-head-row-0">
+                                    <!-- <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+                                    <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> -->
+                                    <!-- <span class="hq-head-breadcrumb-text cursor ml-2">Headquarters</span>
+                                    <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />  -->
+                                        <ng-container *ngIf="canShowBreadcrumb">
+                                            <span class="hq-head-breadcrumb-text cursor mr-2" (click)="back('Headquarters')">Headquarters</span>
+                                            <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                        </ng-container>
+                                    <span *ngIf="!toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text cursor"  (click)="toolsListPageRef?.toolsLocationListPageRef?.back('tools')">Tools & Equipment</span>
+                                    <span *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text cursor"  (click)="toolsListPageRef?.backToTools()">Tools & Equipment</span>
+                                    <img *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+                                    <span *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text">{{toolsListPageRef?.selectedProduct?.vendorInfo?.name}}</span>
+                                </div>
+                                <div *ngIf="!toolsListPageRef?.productDetailsFlag" class="hq-head-row-1">
+                                    <img class="hq-head-img" src="../../../../assets/images/hq/tool-head-default.png"
+                                        alt="" />
+                                    <!--span class="hq-head-text">Tools & Equipment</span-->
+                                    <span class="hq-head-text">Tools & Equipment</span>
+                                </div>
+                            </div>
+                            <div *ngIf="!toolsListPageRef?.productDetailsFlag && !toolsListPageRef?.locationToolsFlag">
+                                <div *ngIf="domainId == 1"  (click)="addTools()" class="m-0 add-action-btn">
+                                    <img src="assets/images/hq/add-icon.png">
+                                    <span>New Tool/Equipment to Network</span>
+                                </div>
+                                <!-- <div class="m-0 border-0 add-action-btn">
+                                    <img src="assets/images/export-green-icon.png">
+                                    <span>Template</span>
+                                </div> -->
+                                <!-- <div class="m-0 pl-0 border-0 add-action-btn">
+                                    <img src="assets/images/common/cdownload-icon.png">
+                                    <span>Download Tools & equipment</span>
+                                </div>
+                                <div class="m-0 pl-0 border-0 add-action-btn">
+                                    <img src="assets/images/hq/hq-media-green-upload-icon.png">
+                                    <span>Upload Tools & equipment</span>
+                                </div> -->
+                            </div>
+
+                        </div>
+
+                        <div style="width: 100%; display: block;">
+                            <app-tools-list *ngIf="toolsListFlag" [toolsPageData]="toolsPageData"  (toolsIndexListComponentRef)="toolsListPageRef = $event" (toolsCallback)="toolsIndexListPageCallback($event)"></app-tools-list>                        
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

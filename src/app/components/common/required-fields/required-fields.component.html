@@ -1,0 +1,21 @@
+<p-dialog [(visible)]="displayPopup" [modal]="true" [draggable]="false" [resizable]="true"
+    class="required-field-modal" (click)="closeDialog()">
+    <ng-template pTemplate="header">
+        <div class="required-header">
+            <span style="font-size: 18px;font-weight: 500;">{{header}}</span>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="body">
+        <div class="inner-cont">
+            <div class="cont-head">{{innerCont}}</div>
+            <div class="cont-items">
+                <ol *ngIf="CBADomain">
+                    <li *ngFor="let item of fields">{{item}}</li>
+                </ol>
+                <ol *ngIf="!CBADomain">
+                    <li *ngFor="let item of fields">{{item | titlecase}}</li>
+                </ol>
+            </div>
+        </div>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,72 @@
+<div class="cursor media-collapse-arrow" (click)="toggleInfoDirectory(infoFlag, 'info')" [ngClass]="{ 'media-collapse-arrow-bg' : !profileLoading }">
+    <img src="assets/images/landing-page/side-panel-arrow.png" alt="collapse" />
+</div>
+<div  class="media-detail info-page media-detail-directory" [style.height]="'calc(100vh - '+innerInfoHeight1+'px)'">
+    <div *ngIf="infoLoading" class="edit-media-loader text-center"><img src="assets/images/loading.svg" alt="Loader" /></div>
+
+    <div *ngIf="!infoLoading">
+        <div *ngIf="profileData!=''">          
+            <div>
+                <div class="info-head-row">
+                    <span class="profile-img"><span class="pimg" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></span></span>
+                    <span class="uname-text" title="{{firstLastName}}">{{firstLastName}}</span>
+                    <span class="utitle-text" title="{{businessTitle}}">{{businessTitle}}</span>
+                </div>
+                <div class="info-cont" [style.height]="'calc(100vh - '+innerInfoHeight2+'px)'">
+                    <div id="step" class="info-cont-inner ps" [perfectScrollbar]="sconfig">
+                        <div class="row-cont" *ngIf="profileData.businessName!=''">
+                            <div class="col-left bg-img bg-img-bname" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessName}}">{{profileData.businessName}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessTitle!=''"> 
+                            <div class="col-left bg-img bg-img-btitle" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessTitle}}">{{profileData.businessTitle}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessEmail!=''">
+                            <div class="col-left bg-img bg-img-email" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessEmail}}">
+                                <a href="mailto:{{profileData.businessEmail}}">{{profileData.businessEmail}}</a>
+                            </div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessAddress1!=''">
+                            <div class="col-left bg-img bg-img-address" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessAddress1}}">{{profileData.businessAddress1}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessAddress2!=''">
+                            <div class="col-left bg-img bg-img-address" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessAddress2}}">{{profileData.businessAddress2}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessCity!=''">
+                            <div class="col-left bg-img bg-img-address" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessCity}}">{{profileData.businessCity}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessState!=''">
+                            <div class="col-left bg-img bg-img-address" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessState}}">{{profileData.businessState}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessZipcode!=''">
+                            <div class="col-left bg-img bg-img-zip" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessZipcode}}">{{profileData.businessZipcode}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessPhone!=''">
+                            <div class="col-left bg-img bg-img-phone" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessPhone}}">{{profileData.businessPhone}}</div>                                    
+                        </div> 
+                        <div class="row-cont" *ngIf="profileData.businessStoreNo!=''">
+                            <div class="col-left bg-img bg-img-address" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessStoreNo}}">{{profileData.businessStoreNo}}</div>                                    
+                        </div>
+                        <div class="row-cont" *ngIf="profileData.businessofficeCode!='' && profileData.businessofficeCode!=undefined">
+                            <div class="col-left bg-img bg-img-bname" ></div>                            
+                            <div class="col-right right-text" title="{{profileData.businessofficeCode}}">{{profileData.businessofficeCode}}</div>                                    
+                        </div>               
+                    </div>
+                </div>
+                <div *ngIf="viemMoreFlag" class="view-detail text-center cursor-pointer" (click)="viewMore()" >View More Details</div>
+            </div>
+        </div>
+        <div *ngIf="profileData ==''">
+            <span class="error-text">{{resultMsg}}</span>
+        </div>
+    </div>
+</div>

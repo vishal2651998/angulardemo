@@ -1,0 +1,174 @@
+<div *ngIf="loading" class="loading-small-screen-scroll trst" style="left:50% !important">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+
+<div  *ngIf="!loading" class="wrapper">
+    <div id="content" class="container-fluid">
+        <div id="header">
+            <div class="prob-header">
+                <div class="header-row">
+                   <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head pl-4 pr-4 m-0">                        
+                        <div class="col-lg-6 col-xl-6 col-md-6 col-sm-6 container-head p-0 m-0 text-left">
+                            <span class="new-text">{{selectNetworkName}} Locations</span>
+                        </div> 
+                        <div class="col-lg-6 col-xl-6 col-md-6 col-sm-6 container-head p-0 m-0 text-right">
+                            <div (click)="submit('cancel')" class="btn cancel">Cancel&nbsp;&nbsp;<img src="assets/images/parts/cancel-icon.png" />
+                            </div>                                   
+    
+                            <div class="btn add" (click)="submit('publish')">
+                                <img class="img-icn" src="assets/images/new-menu.png" />&nbsp;
+                                Add Selected Location 
+                            </div>
+                        </div>             
+                   </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-head pl-2 pr-2 m-0">
+            
+                <div class="prob-new">
+                    <div class="new-pro-cont audit-mtop" style="margin: 10px auto 0;">
+                        <div class="form-cont col-lg-12">
+                            <div class="form-horizontal">                                   
+                                <div class="row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                    <div class="col-lg-6 col-xl-6 col-md-6 col-sm-6 container-head pl-4 pr-4 pt-2 pb-2 m-0 text-left border-rt">
+                                        <div class="prob-cont-1 row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                            <div class="col-lg-2 col-xl-2 col-md-2 col-sm-12 container-head p-0 m-0">
+                                                <!-- toggle -->
+                                                <div class="cursor toggle-box togglebox">                                                   
+                                                    <span class="toggle-col toggle-option">
+                                                        <p-inputSwitch [(ngModel)]="leftToggleBox" (ngModelChange)="onToggleBoxChange($event)">
+                                                        </p-inputSwitch>
+                                                        <span class="toggle-col field-label">All</span>
+                                                    </span>                                                    
+                                                </div>
+                                                <!-- toggle -->
+                                            </div>
+                                            <div class="col-lg-3 col-xl-3 col-md-6 col-sm-12 container-head pl-0 m-0">
+                                                <label class="label-text">Level 1:</label>
+                                                <p-dropdown [(ngModel)]="level1l" [options] = level1lDropdownData optionLabel="name" optionValue="id" (onChange)="onLevel1lChange()" class="p-dropdown-aud cursor" placeholder="Select"></p-dropdown>
+                                            </div>
+                                            <div class="col-lg-3 col-xl-3 col-md-6 col-sm-12 container-head pl-0 m-0">
+                                                <label class="label-text">Level 2:</label>
+                                                <p-dropdown [(ngModel)]="level2l" [options] = level2lDropdownData optionLabel="name" optionValue="id" (onChange)="onLevel2lChange()" class="p-dropdown-aud cursor" placeholder="Select"></p-dropdown>
+                                            </div>
+                                            <div class="col-lg-3 col-xl-3 col-md-6 col-sm-12 container-head pl-0 m-0">
+                                                <label class="label-text">Level 3:</label>
+                                                <p-dropdown [(ngModel)]="level3l" [options] = level3lDropdownData optionLabel="name" optionValue="id" class="p-dropdown-aud cursor" placeholder="Select"></p-dropdown>
+                                            </div>
+                                            <div class="col-lg-1 col-xl-1 col-md-1 col-sm-12 container-head p-0 m-0"></div>
+                                        </div>
+                                        <div class="prob-cont-2 row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                            <div class="actions">
+                                                <form class="search-form">
+                                                    <a ><img alt="Search" src="assets/images/search-icon.png"></a>
+                                                    <input id="search" type="text" [(ngModel)]="leftSearchBox" (ngModelChange)="onToggleBoxChange($event)" autocomplete="off" class="form-control search-control" id="searchKey" maxlength="30" placeholder="Search" >
+                                                    <!--input *ngIf="actionFlag" type="text" autocomplete="off" class="form-control search-control" [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" disabled="true">
+                                                    <a *ngIf="searchClose && !actionFlag" class="search-actions search-close" [ngClass]="{'hide': actionFlag}" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                                                    <a *ngIf="searchTick && !actionFlag && !filterCall" class="search-actions search-tick" (click)="onSubmit()"><img alt="Search" src="assets/images/search-icon.png"></a>-->
+                                                </form>
+                                                <!--<span class="cursor close" (click)="close()">
+                                                    <img style="left:48%" src="assets/images/list-close.png" alt="Close" />
+                                                </span>-->
+                                            </div>
+                                        </div>
+                                        <div class="prob-cont-3 row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                            <div [style.height.px]="innerHeight" class="w-100">
+                                                <div class="ps form-fields w-100" [perfectScrollbar]="sconfig">
+                                                   
+                                                    <div class="no-item-list w-100" *ngIf="filteredListl.length==0">
+                                                        <div class="item-empty-container ">
+                                                            <div class="">
+                                                                <img src="assets/images/hq/no-map-location.png">
+                                                                <div class="text-spa">No List</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="item-list w-100" *ngIf="filteredListl && filteredListl.length>0">
+                                                        <ul class="m-0 p-0">
+                                                            <li class="clear-icon" *ngFor="let ll of filteredListl;  let i = index;" (click)="updateList('add',ll.id,i)" [ngClass]="{ 'active' : ll.linkActive,  'normal' : !ll.linkActive }" ><span  class="label-text">{{ll.name}}</span></li>                                                            
+                                                        </ul>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    <div class="col-lg-6 col-xl-6 col-md-6 col-sm-6 container-head pl-4 pr-4 pt-2 pb-2 m-0 text-left border-rt">
+                                        <div class="prob-cont-1 row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                            <div class="col-lg-2 col-xl-2 col-md-2 col-sm-12 container-head p-0 m-0">
+                                                <!-- toggle -->
+                                                <div class="cursor toggle-box togglebox">                                                   
+                                                    <span class="toggle-col toggle-option">
+                                                        <p-inputSwitch [(ngModel)]="rightToggleBox">
+                                                        </p-inputSwitch>
+                                                        <span class="toggle-col field-label">All</span>
+                                                    </span>                                                    
+                                                </div>
+                                                <!-- toggle -->
+                                            </div>
+                                            <div class="col-lg-3 col-xl-3 col-md-6 col-sm-12 container-head pl-0 m-0">
+                                                <label class="label-text">Level 1:</label>
+                                                <p-dropdown (onChange)="onLevel1rChange()" [(ngModel)]="level1r" optionLabel="name" optionValue="id" [options] = level1rDropdownData class="p-dropdown-aud cursor" placeholder="Select"></p-dropdown>
+                                            </div>
+                                            <div class="col-lg-3 col-xl-3 col-md-6 col-sm-12 container-head pl-0 m-0">
+                                                <label class="label-text">Level 2:</label>
+                                                <p-dropdown (onChange)="onLevel2rChange()" [(ngModel)]="level2r" optionLabel="name" optionValue="id" [options] = level2rDropdownData class="p-dropdown-aud cursor" placeholder="Select"></p-dropdown>
+                                            </div>
+                                            <div class="col-lg-3 col-xl-3 col-md-6 col-sm-12 container-head pl-0 m-0">
+                                                <label class="label-text">Level 3:</label>
+                                                <p-dropdown [(ngModel)]="level3r" optionLabel="name" optionValue="id" [options] = level3rDropdownData class="p-dropdown-aud cursor" placeholder="Select"></p-dropdown>
+                                            </div>
+                                            <div class="col-lg-1 col-xl-1 col-md-1 col-sm-12 container-head p-0 m-0"></div>
+                                        </div>
+                                        <div class="prob-cont-2 row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                            <div class="actions">
+                                                <form class="search-form">
+                                                    <a ><img alt="Search" src="assets/images/search-icon.png"></a>
+                                                    <input id="search" type="text" [(ngModel)]="rightSearchBox" (ngModelChange)="onToggleBoxChangeRight($event)" autocomplete="off" class="form-control search-control" id="searchKey"  maxlength="30" placeholder="Search" >
+                                                    <!--input *ngIf="actionFlag" type="text" autocomplete="off" class="form-control search-control" [(ngModel)]="searchVal" id="searchKey" formControlName="searchKey" maxlength="30" placeholder="Search" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" disabled="true">
+                                                    <a *ngIf="searchClose && !actionFlag" class="search-actions search-close" [ngClass]="{'hide': actionFlag}" (click)="clearSearch()"><img alt="Search Close" src="assets/images/select-close.png"></a>
+                                                    <a *ngIf="searchTick && !actionFlag && !filterCall" class="search-actions search-tick" (click)="onSubmit()"><img alt="Search" src="assets/images/search-icon.png"></a>-->
+                                                </form>
+                                                <!--<span class="cursor close" (click)="close()">
+                                                    <img style="left:48%" src="assets/images/list-close.png" alt="Close" />
+                                                </span>-->
+                                            </div>
+                                        </div>
+                                        <div class="prob-cont-3 row col-lg-12 col-xl-12 col-md-12 col-sm-12 container-head p-0 m-0">
+                                            <div [style.height.px]="innerHeight" class="w-100">
+                                                <div class="ps form-fields w-100" [perfectScrollbar]="sconfig">
+                                                   
+                                                    <div class="no-item-list w-100" *ngIf="filteredListr.length==0">
+                                                        <div class="item-empty-container ">
+                                                            <div class="">
+                                                                <img src="assets/images/hq/no-map-location.png">
+                                                                <div class="text-spa">Selected locations shown here</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="item-list w-100" *ngIf="filteredListr && filteredListr.length>0">
+                                                        <ul class="m-0 p-0">
+                                                            <li class="clear-icon clear" *ngFor="let sll of filteredListr; let j = index;" (click)="updateList('remove',sll.id,j)" ><span class="label-text">{{sll.name}}</span></li>                                                            
+                                                        </ul>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                </div>                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>               
+            
+            
+        </div>
+    </div>
+</div>
+
+                    

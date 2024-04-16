@@ -1,0 +1,63 @@
+<div class="dropdown dropdown-icon" *ngIf="messageUserType==chatuserTypeOther">
+    <a class="text-muted opacity-60 ml-1 right"
+      href="https://themes.2the.me/Messenger-1.1/demo-light/chat-1.html#"
+      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <img class="moreTextimg" src="assets/images/chat/more-icon-v.png">
+    </a>
+    <div class="dropdown-menu py-0">
+      <p *ngIf="isReplyMessageExist(chatmessage) == false" (click)="ReplyChatMessage(chatmessage)" class="dropdown-item d-flex align-items-center" >
+        <img class="reply-icon" src="assets/images/chat/reply-icon.png"> <span
+          class="pl-2">
+          Reply </span>
+      </p>
+      <p *ngIf="chatType && chatType!=chatTypeDMChat" (click)="startNewChat(chatmessage)"  class="dropdown-item d-flex align-items-center">
+        <img class="reply-icon"  src="assets/images/chat/start-chat-icon.png"> <span
+          class="pl-2"> Start
+          New Chat</span>
+      </p>
+      <p class="dropdown-item d-flex align-items-center"
+        (click)="OpenUserProfile(chatmessage.userId)">
+        <img class="reply-icon" src="assets/images/chat/view-profile-icon.png"> <span
+          class="pl-2"> View Profile</span>
+      </p>
+      <p class="dropdown-item d-flex align-items-center"
+        (click)="changeTranslateLanguage(chatmessage.transText)">
+        <img class="reply-icon" src="assets/images/thread-detail/post-lang-translate.png"> 
+        <span *ngIf="chatmessage.transText != undefined " class="pl-2">{{chatmessage.transText}}</span>
+        <span *ngIf="chatmessage.transText == undefined " class="pl-2">Translate</span>
+      </p>
+      <p class="dropdown-item d-flex align-items-center"
+      (click)="changeTranslateLanguage('settings')">
+      <img class="reply-icon" src="assets/images/thread-detail/post-lang-settings.png"> <span
+        class="pl-2">Language Settings</span>
+    </p>
+    </div>
+  </div>
+
+  <div class="dropdown col-md-2 pl-0 pr-0" *ngIf="messageUserType==chatuserTypeSelf">
+    <a class="text-muted opacity-60"
+      href="https://themes.2the.me/Messenger-1.1/demo-light/chat-1.html#"
+      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <img class="moreTextimg" src="assets/images/chat/more-icon-v.png">
+    </a>
+
+    <div class="dropdown-menu py-0">
+      <p class="dropdown-item d-flex align-items-center"
+        (click)="DeleteChatMessage(chatmessage.id)">
+        <img class="reply-icon" src="assets/images/chat/remove-chat.png"> <span
+          class="pl-2">
+          Delete</span>
+      </p>
+      <p class="dropdown-item d-flex align-items-center"
+        (click)="changeTranslateLanguage(chatmessage.transText)">
+        <img class="reply-icon" src="assets/images/thread-detail/post-lang-translate.png"> 
+        <span *ngIf="chatmessage.transText != undefined " class="pl-2">{{chatmessage.transText}}</span>
+        <span *ngIf="chatmessage.transText == undefined " class="pl-2">Translate</span>
+      </p>
+      <p class="dropdown-item d-flex align-items-center"
+      (click)="changeTranslateLanguage('settings')">
+      <img class="reply-icon" src="assets/images/thread-detail/post-lang-settings.png"> <span
+        class="pl-2">Language Settings</span>
+    </p>
+    </div>
+  </div>

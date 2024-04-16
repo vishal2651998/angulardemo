@@ -1,0 +1,150 @@
+<div *ngIf="loading || (accessFrom == 'search' && searchLoading)" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading && ((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading ))" class="cust-loader esc-loader lazy-loader cust-lazy-loader {{accessFrom}}" [ngClass]="{'part-thumb-lazy-loader': thumbView, 'part-list-lazy-loader': !thumbView}"></div>
+<div *ngIf="thumbView" class="parts-thumb-view" [style.height]="'calc(100vh - '+rmHeight+'px)'">
+    <div #top *ngIf="!loading" [ngClass]="{'empty': displayNoRecords, 'opacity': opacityFlag}" id="partList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+        <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row container-fluid thread-page-container masonry-item-container {{accessFrom}}" [ngClass]="{'parts-empty': displayNoRecords}" [updateLayout]="updateMasonryLayout" [ordered]="true">
+            <div *ngIf="thumbView && !displayNoRecords">
+                <div ngxMasonryItem id="{{optList.optId}}" class="masonry-item" data-masonry='{ "columnWidth": 200, "itemSelector": ".grid-item" }' *ngFor="let optList of optItems; let i = index">
+                    <div class="thread-bg cursor" (click)="optClick(optList, $event)">
+                        <div class="thread-status" [style.background-color]="optList.threadStatusBgColor">
+                            <div [style.color]="optList.threadStatusColorValue" align="center">{{optList.threadStatus}}<span *ngIf="optList.summitFix == '1' && optList.closeStatus">&nbsp;-&nbsp;{{optList.scorePoint}}</span></div>
+                            <div class="new-tap-icon" title="Open new tab" (click)="optClick(optList, $event, 'new');$event.stopPropagation();"></div>
+                        </div>
+                        <div class="container-fluid row profile-container no-gutters">
+                            <div class="col col-lg-8 col-md-8 col-xl-8  col-sm-8 profileimg-container">
+                                <span class="bg-image-new-thread {{optList.newNotificationState}} bg-image-new-thread{{optList.optId}} new-announcement-tag"></span>
+                                <div class="profile-left-container" >
+                                    <img class="profileImg {{optList.badgeTopUser}}" [src]="optList.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                    <span class="availability-status availability-status{{optList.availability}}"></span>
+                                </div>
+                                <div class="profile-right-container">
+                                    <div class="user-name" title="{{optList.userName}}">
+                                       <span *ngIf="optList.badgeTopUser"> <img class="profile-topbadge-user" src="assets/images/thread/crownicon.svg"/></span>
+                                       <span>{{optList.userName}}</span>
+                                    </div>
+                                    <div class="buss-title" title="{{optList.badgeStatus}}">{{optList.badgeStatus}}</div>
+                                    <div class="buss-title posted-from" [ngClass]="{'no-title': optList.badgeStatus == ''}" title="{{optList.postedFrom}}">
+                                        {{optList.postedFrom}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col col-lg-4 col-md-4 col-xl-4 col-sm-4 date-container">
+                                <div class="date-title">{{optList.date}}</div>
+                                <div class="date-title">{{optList.time}}</div>
+                                <div class="id-title">ID #{{optList.optId}}</div>
+                            </div>
+                        </div>
+                        <div class="makemodelcontent">
+                            <span class="esc-make" title="{{optList.make}}">{{optList.make}}</span> <i style="font-size: 11px;vertical-align: text-top;margin-top: 0px;" class="pi pi-chevron-right"></i>  <span class="esc-model" title="{{optList.model}}">{{optList.model}}</span>
+                            <!--span *ngIf="industryType.id == 2"><i style="font-size: 11px;vertical-align: text-top;margin-top: 0px;" class="pi pi-chevron-right"></i>  <span class="esc-model">{{optList.year}}</span></span-->
+                            <span class="esc-model" style="float: right;padding-right:5px;margin:1px;border-radius: 8px;" [style.background-color]="optList.escColorCodes" [style.color]="optList.escColorCodesValue" *ngIf="domainId==52 && optList.escalateStatus!=''"><img style="padding-right: 2px;margin-top: -2px;" src="assets/images/thread/escalation-icon1-list.png"/><span>{{optList.escalateStatus}}</span></span>  
+                        </div>
+                        <div *ngIf="optList.threadTitle" title="{{optList.threadTitle}}" class="esc-thread-title">{{optList.threadTitle}}</div>
+                        <div class="thread-attachments" align="center" *ngIf="optList.uploadContents && optList.uploadContents.length>0">
+                            <div class="attachment-container" *ngFor=" let uploadContents of optList.uploadContents; let i=index ">
+                                <div *ngIf="i==0" align="center">
+                                    <div *ngIf="uploadContents.flagId == MediaTypeInfo.Image">
+                                        <img class="image-width"  src="{{uploadContents.thumbFilePath}}" />
+                                        <div class="img-caption">
+                                            <span>{{uploadContents.fileCaption}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="uploadContents.flagId == MediaTypeInfo.Video">
+                                        <video class="lg-video-object video-width lg-html5" controls poster="{{uploadContents.posterImage}}" preload="none">
+                                            <source src="{{uploadContents.filePath}}" type="{{uploadContents.fileType}}">
+                                            Your browser does not support HTML5 video.
+                                        </video>
+                                        <div class="img-caption">
+                                            <span>{{uploadContents.fileCaption}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="uploadContents.flagId == MediaTypeInfo.Audio">
+                                        <audio class="lg-video-object lg-html5 audio-vidth" controls>
+                                            <source src="{{uploadContents.filePath}}" type="{{uploadContents.fileType}}">
+                                            Your browser does not support the audio element.
+                                        </audio>
+                                        <div class="img-caption">
+                                            <span>{{uploadContents.fileCaption}}</span>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="uploadContents.flagId == MediaTypeInfo.Pdf">
+                                        <div class="pdf-attachments">
+                                            <div class="pdf-width">
+                                                <img src="assets/images/workstreams-page/pdf-icon.svg">
+                                            </div>
+                                            <div class="pdf-caption">
+                                                <span>{{uploadContents.fileCaption}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="uploadContents.flagId == MediaTypeInfo.Documents">
+                                        <div class="pdf-attachments">
+                                            <div class="pdf-width">
+                                                <img *ngIf="DocfileExtensionTypes.docx==uploadContents.fileExtension || DocfileExtensionTypes.doc==uploadContents.fileExtension" src="assets/images/workstreams-page/doc-icon.svg">
+                                                <img *ngIf="DocfileExtensionTypes.pptx==uploadContents.fileExtension || DocfileExtensionTypes.ppt==uploadContents.fileExtension" src="assets/images/workstreams-page/ppt-icon.svg">
+                                                <img *ngIf="DocfileExtensionTypes.xls==uploadContents.fileExtension || DocfileExtensionTypes.xlsx==uploadContents.fileExtension" src="assets/images/workstreams-page/xls-icon.svg">
+                                                <img *ngIf="DocfileExtensionTypes.html==uploadContents.fileExtension" src="assets/images/workstreams-page/html-icon.svg">
+                                            </div>
+                                            <div class="pdf-caption">
+                                                <span>{{uploadContents.fileCaption}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="uploadContents.flagId == MediaTypeInfo.Link">
+                                        <div *ngIf="uploadContents.videoId" >
+                                            <youtube-player   class="youtube-class" [videoId]="uploadContents.videoId"></youtube-player>
+                                            <div class="clear"></div>
+                                            <div class="img-caption-youtube">
+                                                <span>{{uploadContents.fileCaption}}</span>
+                                            </div> 
+                                        </div>
+                                        <div *ngIf="!uploadContents.videoId" class="link-attachments">
+                                            <div *ngIf="uploadContents.thumbFilePath" class="thirdparty">
+                                                <img class="link-width-thumb" src="{{uploadContents.thumbFilePath}}">
+                                            </div>
+                                            <div *ngIf="!uploadContents.thumbFilePath" class="default">
+                                                <img src="assets/images/workstreams-page/link-icon.svg">
+                                            </div>    
+                                            <div class="img-caption-link">
+                                                <span *ngIf="uploadContents.fileCaption">{{uploadContents.fileCaption}}</span>
+                                                <span *ngIf="!uploadContents.fileCaption">{{uploadContents.filePath}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="optList.moreAttachments && pageDataInfo=='4'" style="padding-right: 20px;height: 15px;" align="right"><img src="assets/images/thread/three-dots-more-thread.png"></div>
+                        <div class="bottom-border"></div>
+                        <div class="footer-selection">
+                            <div class="thread-footer-container">
+                                <div class="tf-col thread-footer-left">
+                                    <ul>
+                                        <li class="tf-icon like" *ngIf="optList.likeCount">{{optList.likeCount}}</li>
+                                        <li class="tf-icon pin" *ngIf="optList.pinCount">{{optList.pinCount}}</li>
+                                        <li class="tf-icon view" *ngIf="optList.viewCount">{{optList.viewCount}}</li>
+                                        <li class="tf-icon reply" *ngIf="optList.replyCount">{{optList.replyCount}}</li>
+                                    </ul>
+                                </div>
+                                <div class="tf-col thread-footer-right">
+                                    <ul>
+                                        <li class="blub-icon-col close-fix" [title]="threadCloseTxtTxt" *ngIf="optList.closeStatus"></li>
+                                        <li class="blub-icon-col share-fix" [title]="shareFixTxt" *ngIf="optList.shareFix && optList.summitFix=='0'"></li>
+                                        <li class="blub-icon-col summit-fix" [title]="shareSummitFixTxt" *ngIf="optList.shareFix && optList.summitFix=='1'"></li>
+                                        <li class="blub-icon-col proposed-fix" [title]="proposedFixTxt" *ngIf="!optList.shareFix && optList.fixStatus=='yes' && optList.fixPostStatus=='0'"></li>
+                                        <li class="blub-icon-col thread-fix" [title]="threadwithFixTxt" *ngIf="!optList.shareFix && optList.fixStatus=='yes' && optList.fixPostStatus=='1'"></li>
+                                        <li class="blub-icon-col help-fix" [title]="threadwithHelpfulFixTxt" *ngIf="!optList.shareFix && optList.fixStatus=='yes' && optList.fixPostStatus=='2'"></li>
+                                        <li class="blub-icon-col not-fix" [title]="threadwithNotFixTxt" *ngIf="!optList.shareFix && optList.fixStatus=='yes' && optList.fixPostStatus=='3'"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="thumb" *ngIf="((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading )) && displayNoRecords" [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newOptInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="createOptUrl"></app-empty-container>
+            </div>
+        </ngx-masonry>    
+    </div>
+</div>

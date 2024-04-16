@@ -1,0 +1,51 @@
+<div class="custom-modal modal-container p-0" tabindex="0" id="wrapper">
+    <p-toast></p-toast>
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title d-flex align-items-center">
+            <h5 class="view-modal-title-text mb-0 pl-3 mr-2">Franchise</h5>
+            <!-- <div class="action-buttons action-buttons-hq "> -->
+            <button pButton pRipple type="button" icon="pi pi-plus" iconPos="left" label="New"
+                class="p-button-rounded button-save button-save-hq cursor border-0" style="background-color: #fa972d;"></button>
+            <!-- </div> -->
+        </div>
+        <div class="action-buttons action-buttons-hq d-flex  position-relative">
+            <input type="text" class="form-control search-control rounded-pill mr-2" id="searchKey"
+                style="background-color: #d9d9d9;" formControlName="searchKey" placeholder="Search" maxlength="50" />
+            <!-- <button pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor"></button> -->
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form class="action-form">
+            <div class="container">
+                <div class="mt-2 mb-30">
+                    <div class="col-sm-12 p-0">
+                        <div class="d-flex align-items-center justify-content-between p-2"
+                            style="background-color: #e8ebf1;">
+                            <p class="ml-5 p-0 m-0">Franchise List</p>
+                            <button pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Save"
+                                style="background-color: #a6a5af;"
+                                class="p-button-rounded button-save button-save-hq cursor border-0"></button>
+                            <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required">Dealer code is a required field.</span> -->
+                        </div>
+                        <div class="p-2 ml-4">
+                            <input type="radio" class="mr-2" id="bmw" name="fav_language" value="BMW">
+                            <label for="bmw" class="text-black">BMW</label><br>
+                        </div>
+                        <div class="ml-5 border-secondary border-bottom"></div>
+                        <div class="p-2 ml-4">
+                            <input type="radio" class="mr-2" id="honda" name="fav_language" value="Honda">
+                            <label for="honda" class="text-black">Honda</label><br>
+                        </div>
+                        <div class="ml-5 border-secondary border-bottom"></div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

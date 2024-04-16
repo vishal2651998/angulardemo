@@ -1,0 +1,527 @@
+<div id="header" *ngIf="!msTeamAccess">
+  <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)" (showQuizPopup)="setQuizPopup($event)"></app-product-header>
+  <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)" (showQuizPopup)="setQuizPopup($event)"></app-product-header>
+</div>
+<div class="left-section hide">
+  <div class="first-left-width">
+    <nav id="nav-sidebar">
+      <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+    </nav>
+  </div>
+</div>
+<div class="prob-index split-sec1">
+  <div class="container-fluid">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="margin-bottom: 8px; margin-left: 10px;">
+        <div class="page-title-design display-align-center">
+          <img class="margin-right-8px" src="assets/images/service-provider/market-place.png" />
+          <span>{{headTitle}}</span>
+        </div>
+      </div>
+      <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+          <div *ngIf="!msTeamAccess" class="threads-page-filter col col-lg-2  col-md-2 col-xl-2 col-sm-2 padding-right-class">
+              <div class="cbt-filter thread-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                  <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+                  <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+              </div>
+          </div>
+          <div [ngClass]="{'col col-lg-12 col-md-12 col-xl-12 col-sm-12': msTeamAccess, 'col col-lg-8 col-md-8 col-xl-8 col-sm-8': !msTeamAccess }" class="center-middle-width-container">
+              <div class="center-middle-width padding-common">
+                  <div class="clear"></div>
+                  <div class="probing-content cbt-content part-content part-content-threads-new">
+                    <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 landing-page thread-page-container card-parent-design-new" style="margin-top: 0 !important; margin-left: 10px !important;">
+                      <div class="flex-align-center margin-bottom-15px">
+                        <img class="margin-left-15px margin-right-11px" width="26px" height="26px" src="assets/images/service-provider/rounded-rectangle.png" />
+                        <span style="cursor: pointer;" class="marketplace-text-design margin-right-11px" (click)="mainPage()">Marketplace</span>
+                        <i class="pi pi-angle-right custom-text-desgin margin-right-8px"></i>
+                        <span style="cursor: pointer;" class="marketplace-text-design margin-right-11px" (click)="quizTopicsPage()">Quiz Topics</span>
+                        <i class="pi pi-angle-right custom-text-desgin margin-right-8px"></i>
+                        <span class="marketplace-text-design">{{topicLabel}}</span>
+                      </div>
+                      <div class="loading-small-screen-scroll trst" align="center" *ngIf="loading"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                      <div style="padding: 0px 20px!important;" class="col-12 col-lg-12 col-md-12 col-xl-12 col-sm-12">
+                        <div class="custom-header" style="border-radius: 10px 10px 0 0;">
+                            <div style="width: 15%;" class="custom-table-heading">Question ID#</div>
+                            <div style="width: 35%;" class="custom-table-heading">Quiz Question</div>
+                            <div style="width: 20%;" class="custom-table-heading">Author</div>
+                            <div style="width: 20%;" class="custom-table-heading">Last Modified</div>
+                            <div style="width: 10%;" class="custom-table-heading"></div>
+                        </div>
+                        <div style="height: 64vh; margin-bottom:64px; background-color: #ffff;">
+                            <div class="ps" style="height: 100%" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                                <div (click)="viewCurrentQuestion(question)" class="hover-effect" style="display: flex; padding: 10px 20px; border-bottom: 1px solid#eaedee; cursor: pointer;" *ngFor="let question of questions; let i = index">
+                                    <div style="width: 15%;" class="custom-table-values">{{question.id}}</div>
+                                    <div style="width: 35%; text-align: left;" class="custom-table-values">{{question.question}}</div>
+                                    <div style="width: 20%; text-align: left;" class="custom-table-values">{{question.createdByName}}</div>
+                                    <div style="width: 20%; text-align: left;" class="custom-table-values">{{getDateFormat(question.updated_on)}}</div>
+                                    <div style="display: flex; width: 10%; justify-content: end;" id="more" class="more-icon" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                        <img width="25px" height="25px" src="assets/images/service-provider/menu-icon.png" alt="Action" />
+                                    </div>
+                                    <mat-menu #more="matMenu" backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul class="more-actions">
+                                                <li (click)="viewCurrentQuestion(question)" style="cursor: pointer;display: flex; align-items: center;padding: 0px 20px 5px;">
+                                                    <img style="margin-right: 10px;" width="17px" height="9px" src="assets/images/service-provider/eye.png" />
+                                                    <a style="cursor: pointer;">View</a>
+                                                </li>
+                                                <li (click)="this.copyQuiz = true; openEditPopup(question.id);" style="cursor: pointer;display: flex; align-items: center;padding: 5px 20px 5px;">
+                                                    <img style="margin-right: 10px;" width="15px" height="15px" src="assets/images/service-provider/duplicate.png" />
+                                                    <a style="cursor: pointer;">Duplicate</a>
+                                                </li>
+                                                <li (click)="this.copyQuiz = false; openEditPopup(question.id);" style="cursor: pointer;display: flex; align-items: center;padding: 5px 20px 5px;">
+                                                    <img style="margin-right: 10px;" width="15px" height="15px" src="assets/images/service-provider/edit.png" />
+                                                    <a style="cursor: pointer;">Edit</a>
+                                                </li>
+                                                <li (click)="openDelete(question)" style="cursor: pointer;display: flex; align-items: center;padding: 5px 20px 0px;">
+                                                    <img style="margin-right: 10px;" width="13px" height="15px" src="assets/images/service-provider/trash.png" />
+                                                    <a style="cursor: pointer;">Delete</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div *ngIf="!msTeamAccess" class="right-middle-width-container landing-padding0  col col-lg-2  col-md-2 col-xl-2 col-sm-2 padding-right-class">
+                <div class="right-width-column padding-common">
+                    <app-domain-members (toggle)="expandDomainAction($event)"></app-domain-members>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal card-spacing">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button pButton pRipple type="button" (click)="saveQuiz()" icon="pi pi-check" iconPos="right" label="{{buttonTitle}}"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': quizFormValid}"></button>
+        </div>
+    </ng-template>
+    <form [formGroup]="quizForm" style="height: 100vh">
+        <div class="loading-small-screen-scroll trst" align="center" *ngIf="loadingSubmitForm"><img src="assets/images/loading.svg" alt="Loader" /></div>
+        <div *ngIf="!loadingSubmitForm">
+
+            <div class="row my-3">
+                <div class="col-12">
+                    <div>
+                        <label>
+                            <img src="assets/images/service-provider/quiz.png" alt="quiz" class="icons-size-new mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Topic Name</span>
+                        </label>
+                        <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                    </div>
+                    <div>
+                        <p-multiSelect class="split-col catg-col" appendTo="body" [options]="topicsOptions" [filter]="true" showClear="false" formControlName="topicName" [(ngModel)]="topicFormValue" defaultLabel="Select Topics" optionLabel="name" [ngClass]="{ 'is-invalid': quizSubmit && quizControls.topicName.errors }" optionValue="id" selectedItemsLabel="{0} topic selected">
+                            <ng-template let-topic pTemplate="item">
+                                <div class="option-item">{{topic.name}}
+                                    <span *ngIf="topic.id > 0" class="edit">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span>
+                                </div>
+                            </ng-template>
+                        </p-multiSelect>
+                        <div class="split-col act-col cursor">
+                            <button (click)="openTopicPopup()" pButton pRipple type="button" class="ap-button-outlined p-button-rounded vin-btn">
+                                <img src="assets/images/dispatch/add-plus-icon.png" />
+                            </button>
+                        </div>
+                        <div *ngIf="selectedTopicName.length > 0" class="selected-items ws-selected-items">
+                            <div *ngFor="let item of selectedTopicName; let t=index" class="tag-text dispatch-tag-text">
+                                <span>{{item}}</span>
+                                <i class="material-icons tag-close">close</i>
+                            </div>
+                        </div>
+                        <div *ngIf="quizSubmit && quizControls.topicName.errors" style="color: #dc3545;">
+                            <div id="valid-error" class="field-err" *ngIf="quizControls.topicName.errors.required">Topic Name is required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-4">
+                    <div>
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/make_i.svg" alt="make"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Make</span>
+                        </label>
+                    </div>
+                    <div>
+                        <p-dropdown [options]="makeList" formControlName="make" placeholder="Select" [ngClass]="{'mvisible': quizForm.value.make != ''}" [virtualScroll]="false" [filter]="true" optionLabel="makeName" optionValue="makeName" (onChange)="getMakeModelsList($event.value)"></p-dropdown>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div>
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/model_i.svg" alt="model"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Model</span>
+                        </label>
+                    </div>
+                    <div>
+                        <div *ngIf="modelLoading && modalState == 'new'" class="cust-loader svcm-loader"><img
+                            src="assets/images/loading.svg" alt="Loader" /></div>
+                        <p-dropdown [options]="Models" formControlName="model" optionLabel="modelName" [ngClass]="{'mvisible': quizForm.value.model != '' || modalState == 'edit'}" optionValue="modelName" placeholder="{{modelPlaceHoder}}" [disabled]="modelDisable" [virtualScroll]="false" [filter]="true"></p-dropdown>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div>
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/year_i.svg" alt="year"
+                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Year</span>
+                        </label>
+                    </div>
+                    <div>
+                        <p-dropdown [options]="Years" formControlName="year" placeholder="Select" [virtualScroll]="false" [itemSize]="2" [filter]="true" optionValue="name" optionLabel="name" [virtualScroll]="true" [itemSize]="31"></p-dropdown>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12">
+                    <div class="display-flex align-item-baseline">
+                        <div style="display: flex; align-items: center; width: 100%;">
+                            <div class="col-1-custom-design flex-align-center">
+                                <img *ngIf="selectedOptions == 'Multiple Choice - Single Answer' || selectedOptions == 'Multiple Choice - Multiple Answers'" style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/tick-error.png" alt="tick-error" />
+                                <img *ngIf="selectedOptions == 'Yes/No'" style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/yes-no-black.png" alt="yes-no" />
+                                <img *ngIf="selectedOptions == 'Freeform Text'" style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/free-form-text-black.png" alt="free-form-text" />
+                            </div>
+                            <div style="cursor: pointer;" class="col-3-custom-design flex-align-center" (click)="$event.stopPropagation();showOptions = !showOptions">
+                                <span class="question-type-select">{{selectedOptions}}</span> <i class="pi pi-sort-down icon-styled"></i>
+                            </div>
+                        </div>
+                        <div *ngIf="showOptions" class="question-type-select-box-design" (click)="$event.stopPropagation()">
+                            <div style="cursor: pointer; margin-bottom: 5px;" (click)="selectedOptions = 'Multiple Choice - Single Answer'; showOptions = false; setValidationForForm();">
+                                <img style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/tick-error-white.png" alt="tick-error-white" />
+                                <span class="inner-text-design">Multiple Choice - Single Answer</span>
+                            </div>
+                            <div style="cursor: pointer; margin-bottom: 5px;" (click)="selectedOptions = 'Multiple Choice - Multiple Answers'; showOptions = false; setValidationForForm();">
+                                <img style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/tick-error-white.png" alt="tick-error-white" />
+                                <span class="inner-text-design">Multiple Choice - Multiple Answers</span>
+                            </div>
+                            <div style="cursor: pointer; margin-bottom: 5px;" (click)="selectedOptions = 'Yes/No'; showOptions = false; setValidationForForm();">
+                                <img style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/yes-no.png" alt="yes-no" />
+                                <span class="inner-text-design">Yes/No</span>
+                            </div>
+                            <div style="cursor: pointer; margin-bottom: 5px;" (click)="selectedOptions = 'Freeform Text'; showOptions = false; setValidationForForm();">
+                                <img style="margin-right: 10px;" width="16px" height="16px" src="assets/images/service-provider/free-form-text.png" alt="free-form-text" />
+                                <span class="inner-text-design">Freeform Text</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12">
+                    <div class="flex-justify-spacebetween">
+                        <label>
+                            <img src="assets/images/service-provider/question-title.png" alt="question-title" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Question</span>
+                        </label>
+                        <div>
+                            <p-inputSwitch styleClass="toggle-required-design quiz-toggle-required-design" formControlName="questionRequired"></p-inputSwitch> <span style="color: #b2b2b2;font-style: italic;float: right; margin-left: 10px;">Required</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 pr-1 d-flex">
+                            <div class="p-inputgroup mr-2">
+                                <input type="text" pInputText formControlName="question" class="custom-question-input" placeholder="Enter your question here" [ngClass]="{'is-invalid': quizSubmit && quizControls.question.errors}">
+                            </div>
+                        </div>
+                        <div class="col-12 pr-1 d-flex" *ngIf="quizSubmit && quizControls.question.errors" style="color: #dc3545;">
+                            <div id="valid-error" class="field-err" *ngIf="quizControls.question.errors.required">Question is required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-12">
+                    <app-file-attachment class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                    <app-attachment-view [action]="EditAttachmentAction" [access]="pageAccess"  [attachments]="attachmentItems" (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                </div>
+            </div>
+            <div *ngIf="selectedOptions == 'Multiple Choice - Single Answer'" class="row my-3">
+                <div class="col-12">
+                    <div>
+                        <label>
+                            <img src="assets/images/service-provider/answer.png" alt="answer" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Answer</span>
+                        </label>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option1" pInputText class="custom-question-input-1" placeholder="Option 1" />
+                            <div *ngIf="quizSubmit && quizControls.option1.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option1.errors.required">Option 1 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-radioButton [disabled]="!quizControls.option1.value" formControlName="options" value="option1" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option2" pInputText class="custom-question-input-1" placeholder="Option 2" />
+                            <div *ngIf="quizSubmit && quizControls.option2.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option2.errors.required">Option 2 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-radioButton [disabled]="!quizControls.option2.value" formControlName="options" value="option2" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option3" pInputText class="custom-question-input-1" placeholder="Option 3" />
+                            <div *ngIf="quizSubmit && quizControls.option3.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option3.errors.required">Option 3 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-radioButton [disabled]="!quizControls.option3.value" formControlName="options" value="option3" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option4" pInputText class="custom-question-input-1" placeholder="Option 4" />
+                            <div *ngIf="quizSubmit && quizControls.option4.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option4.errors.required">Option 4 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-radioButton [disabled]="!quizControls.option4.value" formControlName="options" value="option4" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option5" pInputText class="custom-question-input-1" placeholder="Option 5" />
+                            <div *ngIf="quizSubmit && quizControls.option5.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option5.errors.required">Option 5 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-radioButton [disabled]="!quizControls.option5.value" formControlName="options" value="option5" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div *ngIf="quizSubmit && quizControls.options.errors" style="color: #dc3545; display: flex; justify-content: end;">
+                        <div id="valid-error" class="field-err" *ngIf="quizControls.options.errors.required">Correct answer is required</div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="selectedOptions == 'Multiple Choice - Multiple Answers'" class="row my-3">
+                <div class="col-12">
+                    <div>
+                        <label>
+                            <img src="assets/images/service-provider/answer.png" alt="answer" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Answer</span>
+                        </label>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option1" pInputText class="custom-question-input-1" placeholder="Option 1" />
+                            <div *ngIf="quizSubmit && quizControls.option1.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option1.errors.required">Option 1 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-checkbox [disabled]="!quizControls.option1.value" [(ngModel)]="multiSelectOptionsValue" formControlName="multiSelectOptions" value="option1" styleClass="answer-checkbox-design"></p-checkbox> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option2" pInputText class="custom-question-input-1" placeholder="Option 2" />
+                            <div *ngIf="quizSubmit && quizControls.option2.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option2.errors.required">Option 2 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-checkbox [disabled]="!quizControls.option2.value" [(ngModel)]="multiSelectOptionsValue" formControlName="multiSelectOptions" value="option2" styleClass="answer-checkbox-design"></p-checkbox> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option3" pInputText class="custom-question-input-1" placeholder="Option 3" />
+                            <div *ngIf="quizSubmit && quizControls.option3.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option3.errors.required">Option 3 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-checkbox [disabled]="!quizControls.option3.value" [(ngModel)]="multiSelectOptionsValue" formControlName="multiSelectOptions" value="option3" styleClass="answer-checkbox-design"></p-checkbox> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" formControlName="option4" pInputText class="custom-question-input-1" placeholder="Option 4" />
+                            <div *ngIf="quizSubmit && quizControls.option4.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option4.errors.required">Option 4 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-checkbox [disabled]="!quizControls.option4.value" [(ngModel)]="multiSelectOptionsValue" formControlName="multiSelectOptions" value="option4" styleClass="answer-checkbox-design"></p-checkbox> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div class="col-12 no-padding display-flex margin-bottom-15px">
+                        <div class="col-10 no-padding">
+                            <input type="text" (keyup)="checkValidationPartThing()" pInputText formControlName="option5" class="custom-question-input-1" placeholder="Option 5" />
+                            <div *ngIf="quizSubmit && quizControls.option5.errors" style="color: #dc3545;">
+                                <div id="valid-error" class="field-err" *ngIf="quizControls.option5.errors.required">Option 5 is required</div>
+                            </div>
+                        </div>
+                        <div class="col-2 no-padding flex-align-center-end">
+                            <p-checkbox [disabled]="!quizControls.option5.value" [(ngModel)]="multiSelectOptionsValue" formControlName="multiSelectOptions" value="option5" styleClass="answer-checkbox-design"></p-checkbox> <label class="correct-answer-design">Correct Answer</label>
+                        </div>
+                    </div>
+                    <div *ngIf="quizSubmit && quizControls.multiSelectOptions.errors" style="color: #dc3545; display: flex; justify-content: end;">
+                        <div id="valid-error" class="field-err" *ngIf="quizControls.multiSelectOptions.errors.required">Correct answer is required</div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="selectedOptions == 'Yes/No'" class="row my-3">
+                <div class="col-12">
+                    <div>
+                        <label>
+                            <img src="assets/images/service-provider/answer.png" alt="answer" class="icons-size mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Answer</span>
+                        </label>
+                    </div>
+                    <div class="col-12 no-padding flex-align-center-start margin-bottom-15px">
+                        <label class="correct-answer-design-1">Yes</label> <p-radioButton formControlName="yesNoOptions" value="Yes" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                    </div>
+                    <div class="col-12 no-padding flex-align-center-start margin-bottom-15px">
+                        <label class="correct-answer-design-1 margin-right-35px">No</label> <p-radioButton formControlName="yesNoOptions" value="No" styleClass="answer-radio-design"></p-radioButton> <label class="correct-answer-design">Correct Answer</label>
+                    </div>
+                    <div *ngIf="quizSubmit && quizControls.yesNoOptions.errors" style="color: #dc3545;">
+                        <div id="valid-error" class="field-err" *ngIf="quizControls.yesNoOptions.errors.required">Correct answer is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-4">
+                    <div class="flex-align-center">
+                        <label class="points-label-design">Points</label>
+                        <div class="p-inputgroup mr-2" style="width: 130px;">
+                            <input type="text" pInputText formControlName="points" class="custom-question-input-1" placeholder="Enter Points" [ngClass]="{'is-invalid': quizSubmit && quizControls.points.errors}">
+                        </div>
+                    </div>
+                    <div *ngIf="quizSubmit && quizControls.points.errors" style="color: #dc3545;">
+                        <div id="valid-error" class="field-err" *ngIf="quizControls.points.errors.required">Points is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+<p-sidebar class="sidebar-cont" [(visible)]="actionFlag" [baseZIndex]="100" position="right" [dismissible]="false">
+    <h1 style="font-weight: normal">
+        <span class="truncate">New Topic</span>
+    </h1>
+    <div class="action-form">
+        <div class="col-12 no-padding">
+            <div class="flex-justify-spacebetween">
+                <label>
+                    <img src="assets/images/service-provider/quiz.png" alt="quiz" width="19px" height="22px" style="margin-right: 6px;" />
+                    <span class="topic-title">Topic Name</span>
+                </label>
+                <span class="required-font-style">Required</span>
+            </div>
+            <div class="p-inputgroup mr-2">
+                <input type="text" pInputText class="custom-topic-input-1" (keyup)="checkTopicValue()" placeholder="Enter topic name" [(ngModel)]="topicValue">
+            </div>
+            <div class="error-msg-new" *ngIf="showTopicError && topicSubmitted">Topic is required</div>
+        </div>
+        <div class="service-form-row">
+            <div class="action-buttons">
+                <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                class="p-button-rounded button-save cursor left-0px" (click)="submitTopic()"></button>
+                <button pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                class="p-button-rounded button-cancel cursor" (click)="actionFlag = false"></button>
+            </div>
+        </div>
+    </div>
+</p-sidebar>
+<p-dialog [(visible)]="displayViewModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal card-spacing">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Question Details</span>
+            <button pButton pRipple type="button" (click)="this.displayViewModal = false; openEditPopup(questionCurrentData.id)" icon="pi pi-pencil" iconPos="right" label="Edit" class="p-button-rounded p-button-danger float-right"></button>
+        </div>
+    </ng-template>
+    <div *ngIf="questionCurrentData" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; justify-content: space-between; margin-top: 10px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                    <img width="18px" height="18px" src="assets/images/service-provider/question-title.png" />&nbsp;&nbsp;<span class="question-view-label-design">Question Type</span>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                    <span style="margin-left: 26px;" class="question-view-value-design">{{questionCurrentData?.question_type}}</span>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                    <img width="18px" height="18px" src="assets/images/service-provider/validation-type.png" />&nbsp;&nbsp;<span class="question-view-label-design">Field Validation Type</span>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                    <span style="margin-left: 26px;" class="question-view-value-design">{{questionCurrentData.question_required && questionCurrentData.question_required != '0' ? 'Required' : 'Not Required'}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="margin-top: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                <img width="18px" height="18px" src="assets/images/service-provider/question-title.png" />&nbsp;&nbsp;<span class="question-view-label-design">Question</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                <span style="margin-left: 26px;" class="question-view-value-design">{{questionCurrentData?.question}}</span>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="margin-top: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                <img width="18px" height="18px" src="assets/images/service-provider/answer.png" />&nbsp;&nbsp;<span class="question-view-label-design">Answers</span>
+            </div>
+            <div style="margin-left: 26px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                <div *ngIf="currentQuestionOptions" [ngClass]="questionCurrentData?.question_type == 'Yes/No' ? 'display-flex' : ''">
+                    <div [ngClass]="questionCurrentData?.question_type == 'Yes/No' ? 'col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 no-padding' : 'col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding'" *ngFor="let option of currentQuestionOptions; let i = index">
+                        <div *ngIf="option.optionValue" class="display-flex align-item-baseline">
+                            <p-radioButton class="margin-right-11px" *ngIf="questionCurrentData.question_type == 'Yes/No' || questionCurrentData.question_type == 'Multiple Choice - Single Answer'" [disabled]="true" value="{{option.optionValue}}" [(ngModel)]="optionValue" styleClass="answer-radio-design"></p-radioButton>
+                            <p-checkbox [disabled]="true" class="margin-right-11px" *ngIf="questionCurrentData.question_type == 'Multiple Choice - Multiple Answers'" [(ngModel)]="option.isCorrect" [binary]="true" styleClass="answer-checkbox-design"></p-checkbox>
+                            <label class="question-label-design">{{option.optionValue}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="margin-top: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                <img width="17px" height="20px" src="assets/images/service-provider/score.png" />&nbsp;&nbsp;<span class="question-view-label-design">Score</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                <span style="margin-left: 26px;" class="question-view-value-design">{{questionCurrentData?.points}}</span>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding: 10px 0px 0px 0px; border-top: 1px solid #e3e5e8; margin-top: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                <img width="18px" height="18px" src="assets/images/service-provider/question-title.png" />&nbsp;&nbsp;<span class="question-view-label-design">Topic Name</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                <span style="margin-left: 26px;" class="question-view-value-design">{{topicDataOfQuestion}}</span>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="margin-top: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="display: flex; align-items: center;">
+                <img width="20px" height="20px" src="assets/images/service-provider/model-setting.png" />&nbsp;&nbsp;<span class="question-view-label-design">Vehicle</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" style="margin-bottom: 20px; display: flex; align-items: center;">
+                <span style="margin-left: 26px;" class="question-view-value-design">{{questionCurrentData?.make}} <i *ngIf="questionCurrentData.make" style="margin-left: 8px;" class="pi pi-angle-right custom-text-desgin margin-right-8px"></i> {{questionCurrentData?.model}} <i style="margin-left: 8px;" *ngIf="questionCurrentData.model" class="pi pi-angle-right custom-text-desgin margin-right-8px"></i> {{questionCurrentData?.year}}</span>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding: 20px 0px 0px 0px; border-top: 1px solid #e3e5e8;">
+            <app-system-info-view style="width: 100%;" [systemInfo]="systemInfo" [noPaddingStyle]="true"></app-system-info-view>
+        </div>
+    </div>
+</p-dialog>

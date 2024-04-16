@@ -1,0 +1,968 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div class="loading-small-screen-scroll trst" align="center">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div> 
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{accessFrom}} {{access}}-list-lazy-loader"></div>
+<div *ngIf="!loading && listView" class="prob-list-cont">
+    <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new {{access}}" [style.height.px]="innerHeight">
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table #table [columns]="repairOrderListColumns" [scrollable]="true" [totalRecords]="repairOrderList.length" id="file-datatable" 
+                class="file-datatable thread-list-table shop-list-table ro-list" [value]="repairOrderList" 
+                [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords, 'customer-list': access == 'customers'}" 
+                [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'" (scroll)="scroll($event)">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th *ngFor="let col of columns" class="{{col.columnpclass}}" [ngClass]="{ 'stock-header' : col.field == 'existStock' }">  
+                            <span>{{col.header}}</span>  
+                        </th>                            
+                    </tr>
+                </ng-template>
+                <ng-template *ngIf="access == 'work-order'" pTemplate="body" let-repairOrderList let-i="rowIndex">
+                    <tr class="cursor" id="{{repairOrderList.shopName}}" (click)="openDetailView(repairOrderList.id)">
+                        <td class="w1 thl-col-1">
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.id}}">{{repairOrderList.id}}</span></div>
+                        </td>                            
+                        <td class="w2 thl-col-2" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.businessName}}">{{repairOrderList.businessName}}</span></div>
+                        </td>
+                        <td class="w5 thl-col-5" >
+                            <div class="p-table-col">
+                                <span title="{{repairOrderList.city}}">{{repairOrderList.city}}</span>
+                                <span *ngIf="repairOrderList.state" title="{{repairOrderList.state}}">, {{repairOrderList.state}}</span>
+                            </div>
+                        </td>
+                        <td class="w5 thl-col-5" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.vehicle}}">{{repairOrderList.vehicle}}</span></div>
+                        </td>
+                        <td class="w4 cth-col thl-col-4" >
+                            <div class="p-table-col">
+                                <span title="{{repairOrderList.order_number}}">{{repairOrderList.order_number}}</span>
+                            </div>
+                        </td>
+                        <td class="w4 thl-col-4" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.dn_invoice}}">{{repairOrderList.dn_invoice}}</span></div>
+                        </td>
+                        <!--
+                        <td class="w4 cth-col thl-col-4" >
+                            <div class="p-table-col" [ngClass]="{'cursor action-link': repairOrderList.thread_id > 0}">
+                                <span *ngIf="repairOrderList.thread_id > 0" title="{{repairOrderList.thread_id}}" (click)="navPage('threads', repairOrderList.thread_id);$event.stopPropagation();">{{repairOrderList.thread_id}}</span>
+                                <span *ngIf="repairOrderList.thread_id == 0">-</span>                                
+                            </div>
+                        </td>-->                         
+                        <td class="w6 thl-col-6" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.requestedDate}}">{{repairOrderList.requestedDate}}</span></div>
+                        </td>  
+                        <td class="w7 thl-col-7">
+                            <div class="status-text-col" [style.background-color]="repairOrderList.techSupportStatusBgColorStr">
+                                <div class="status-text-col-text" [style.color]="repairOrderList.techSupportStatusColorStr">{{repairOrderList.techSupportStatusStr}}</div>
+                            </div> 
+                        </td>
+                        <td class="w8 thl-col-8" *ngIf="!deletedListFlag">
+                            <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                                <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                            </div>
+                            <mat-toolbar color="primary">
+                                <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="cursor active" (click)="menuTrigger.closeMenu();openDetailView(repairOrderList.id);$event.stopPropagation();"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                            <li *ngIf="repairOrderList.editROAccess" class="cursor active" (click)="menuTrigger.closeMenu();editRepairOrderModal(repairOrderList.id);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            <li *ngIf="repairOrderList.deleteROAccess" class="cursor active" (click)="menuTrigger.closeMenu();deleteConfirmRepairOrderModal(repairOrderList.id);$event.stopPropagation();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                            <li *ngIf="repairOrderList.thread_id > 0" class="cursor active" (click)="menuTrigger.closeMenu();navPage('threads', repairOrderList.thread_id);$event.stopPropagation();"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View Thread</li>                                            
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>                                 
+                        </td>               
+                    </tr>
+                </ng-template>
+                <ng-template *ngIf="access == 'customers'" pTemplate="body" let-repairOrderList let-i="rowIndex">
+                    <tr *ngIf="access == 'customers'" class="cursor" id="{{repairOrderList.shopName}}" (click)="openDetailView(repairOrderList.id)">
+                        <td class="w1 cth-col thl-col-1">
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.id}}">{{repairOrderList.id}}</span></div>
+                        </td>  
+                        <td class="w2 cth-col thl-col-2" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.vehicle}}">{{repairOrderList.vehicle}}</span></div>
+                        </td>   
+                        <td class="w6 cth-col thl-col-6" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.order_number}}">{{repairOrderList.order_number}}</span></div>
+                        </td>   
+                        <td class="w6 cth-col thl-col-6" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.dn_invoice}}">{{repairOrderList.dn_invoice}}</span></div>
+                        </td> 
+                        <!--  
+                        <td class="w5 cth-col thl-col-5" >
+                            <div class="p-table-col" [ngClass]="{'cursor action-link': repairOrderList.thread_id > 0}">
+                                <span *ngIf="repairOrderList.thread_id > 0" title="{{repairOrderList.thread_id}}" (click)="navPage('threads', repairOrderList.thread_id);$event.stopPropagation();">{{repairOrderList.thread_id}}</span>
+                                <span *ngIf="repairOrderList.thread_id == 0">-</span>                                
+                            </div>
+                        </td>-->   
+                        <td class="w6 cth-col thl-col-6" >
+                            <div class="p-table-col"><span class="" title="{{repairOrderList.requestedDate}}">{{repairOrderList.requestedDate}}</span></div>
+                        </td> 
+                        <td class="w7 cth-col thl-col-7" >
+                            <div class="status-text-col" [style.background-color]="repairOrderList.techSupportStatusBgColorStr">
+                                <div class="status-text-col-text" [style.color]="repairOrderList.techSupportStatusColorStr">{{repairOrderList.techSupportStatusStr}}</div>
+                            </div> 
+                        </td>
+                        <td class="w8 cth-col thl-col-8">
+                            <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">                                    
+                                <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                            </div>
+                            <mat-toolbar color="primary">
+                                <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="cursor active" (click)="menuTrigger.closeMenu();openDetailView(repairOrderList.id);$event.stopPropagation();"><img src="assets/images/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                            <li *ngIf="repairOrderList.approved == 1" class="cursor active" (click)="menuTrigger.closeMenu();editRepairOrderModal(repairOrderList.id);$event.stopPropagation();"><img src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                            
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                            </mat-toolbar>                                 
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>    
+</div>
+<div class="prob-list-cont" [ngClass]="{ 'hide' : listView || itemEmpty || !showMap  }" >
+    <div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': mapHeight}" ></div>
+</div>
+<div class="list" *ngIf="!loading && itemEmpty">
+    <div class="documents-grid-row documents-grid-row-new {{access}}-empty" [style.height.px]="innerHeight">        
+        <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="shopUrl"></app-empty-container>
+    </div>
+</div>
+<p-dialog [(visible)]="repairOrderModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal dispatch-modal-width card-spacing  form-type-fields">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" [label]="createRO"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': serviceFormValid}" (click)="saveService()"></button>
+            <!-- [disabled]="serviceForm.invalid" -->
+        </div>
+    </ng-template>
+    <form [formGroup]="serviceForm">  
+        
+        <div class="row my-head-row">
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/site/workstream-creation/workstream.png" alt="" />
+                        <span style="color: #9b9a9a;">&nbsp;Workstream</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <p-multiSelect [showToggleAll]="false" class="" appendTo="body" formControlName="workstream" [options]="workstreamItems" [filter]="true" showClear="false"
+                        ([ngModel])="workstreamId" [defaultLabel]="defaultWSLabel"                        
+                        [ngClass]="{'is-invalid width-100': serviceSubmit && sf.workstream.errors}"
+                        [selectedItemsLabel]="defaultWSLabel"                        
+                        (onChange)="selectedItems($event,'workstream')"
+                        optionLabel="name">
+                    </p-multiSelect>
+                </div>
+                <div class="ws-display">
+                    <div *ngIf="workstreamSelection?.length > 0" class="selected-items" style="margin-top:10px;">
+                        <div *ngFor="let item of workstreamSelection; let t=index" class="tag-text">
+                            <span>{{item.name}}</span>
+                            <i class="material-icons tag-close"
+                                (click)="disableWSSelection(item.id)">close</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label class="new-ro-icon">
+                        <img src="assets/images/repair-order/view-servicetype.png" alt="#"
+                            class="mr-2 " />
+                        <span style="color: #9b9a9a;">Service Type</span>
+                    </label>
+                </div>
+                <div>
+                    <p-dropdown class="p-dropdown-servicetype" placeholder="Service Type" formControlName="servicetype" [(ngModel)]="servicetype" [options]="servicetypeOptions" >                                                            
+                    </p-dropdown>                       
+                </div>
+            </div>
+            <div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/repair_i.svg" alt="repair order#"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Repair Order#</span>
+                    </label>
+                </div>
+                <div>
+                    <input type="text" pInputText formControlName="repairOrder" class="input-bg" maxlength="15"
+                        placeholder="Repair Order#" readonly="true" [ngClass]="{ 'is-invalid': (serviceSubmit && sf.repairOrder.errors) }">                    
+                </div>
+            </div>
+        </div>
+        <div class="row my-head-row">
+            <div class="col-12">
+                <div class="label-head-row-1 flex-align-center">
+                    <img src="assets/images/repair-order/order-title-img-png.png" alt="" />
+                    <span>Order Details</span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-6">
+                <div>
+                    <label>
+                        <img src="assets/images/repair-order/order-number-img.svg" alt="make"
+                            onload="SVGInject(this)" class="mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Order Number</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div class="input-text-row form-group firstname" >
+                    <input class="inputbox"  matInput placeholder="Order Number" formControlName="ordernumber"
+                    [ngClass]="{ 'is-invalid': serviceSubmit && sf.ordernumber.errors, 'setOpacity5' : ordernumberReadOnlyFlag }"  
+                    [readonly]="ordernumberReadOnlyFlag"                                     
+                    maxlength="" />                                                        
+                </div>  
+            </div>
+            
+            <div class="col-6">
+                <div>
+                    <label>
+                        <img src="assets/images/repair-order/dn-invoice-img.png" alt="make"
+                           class="mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">DN Invoice#</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div class="input-text-row form-group firstname">
+                    <input class="inputbox"  matInput placeholder="DN Invoice#" formControlName="dninvoice"
+                    [ngClass]="{ 'is-invalid': serviceSubmit && sf.dninvoice.errors, 'setOpacity5' : dninvoiceReadOnlyFlag }"  
+                    [readonly]="dninvoiceReadOnlyFlag"                                        
+                    maxlength="" />                                                        
+                </div>
+            </div>
+            <!--div class="col-4">
+                <div>
+                    <label>
+                        <img src="assets/images/repair-order/products-img.svg" alt="make"
+                            onload="SVGInject(this)" class="mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Products (Services)</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div class="input-text-row form-group firstname">
+                    <input class="inputbox"  matInput placeholder="Products (Services)" formControlName="productservices"
+                    [ngClass]="{ 'is-invalid': serviceSubmit && sf.productservices.errors, 'setOpacity5' : productservicesReadOnlyFlag }"      
+                    [readonly]="productservicesReadOnlyFlag"                                      
+                    maxlength="" />                                                        
+                </div>   
+            </div-->
+        </div>
+        <div class="row my-head-row">
+            <div class="col-12">
+                <div class="label-head-row-1 flex-align-center">
+                    <img src="assets/images/repair-order/buss-info.svg" onload="SVGInject(this)" alt="Business" />
+                    <span>Business Info & Contact</span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-6">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/make_i.svg" alt="make"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Customer Details</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <p-dropdown class="" [options]="Shops" optionLabel="name" [filter]="true"  resetFilterOnHide="true" filterBy="name" [showClear]="showClear"
+                    placeholder="Select Customer" (onChange)="shopChanged('change', $event)" optionValue="id"
+                    formControlName="shopId" [ngClass]="{ 'is-invalid  width-100': serviceSubmit && sf.shopId.errors }">
+                    <ng-template pTemplate="selectedItem">
+                        <div class="shop-item shop-item-value" *ngIf="selectedShop">
+                            <div>{{selectedShop.name}}</div>
+                        </div>
+                    </ng-template>
+                    <ng-template let-shop pTemplate="item">
+                        <div class="shop-item" *ngIf="shop.id == 0" (click)="$event.stopPropagation();serviceAction('new','shop');">
+                            <div><span style="color: red;">{{shop.label}}</span></div>
+                        </div>
+                        <hr *ngIf="shop.value == 0">
+                        <div class="option-item" *ngIf="!shop.value">{{shop.name}} <span *ngIf="shop.id > 0">ID#{{shop.id}}</span>
+                            <!--span *ngIf="shop.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit', 'shop', shop);">
+                                <img src="assets/images/edit-tag-img.png" alt="Edit">
+                            </span-->
+                        </div>  
+                    </ng-template>
+                    </p-dropdown>
+                    <div *ngIf="serviceSubmit && sf.shopId.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="sf.shopId.errors.required">Customer is required</div>
+                    </div> 
+                </div>
+                
+            </div>
+            <div class="col-6">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/contact.svg" alt="shop"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Contact Details</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <div>
+                        <p-multiSelect class="split-col catg-col act-col-80 act-col-cont-80" appendTo="body" [options]="contacts" [filter]="true" resetFilterOnHide="true" showClear="false" 
+                            [disabled]="contactDisable" formControlName="serviceContact" defaultLabel="Select Contacts" (onChange)="contactChanged($event)" optionLabel="name"
+                            [ngClass]="{ 'is-invalid': serviceSubmit && sf.serviceContact.errors }" optionValue="id">
+                            <ng-template let-contact pTemplate="item">
+                                <!--div class="option-item" *ngIf="contact.id == 0" (click)="$event.stopPropagation();serviceAction('new','contact');">
+                                    <div><span style="color: red;">{{contact.label}}</span></div>
+                                </div>
+                                <hr *ngIf="contact.value == 0">-->
+                                <div class="option-item">{{contact.name}}
+                                    <!--span *ngIf="contact.id > 0" class="edit" (click)="$event.stopPropagation();serviceAction('edit','contact', contact);">
+                                        <img src="assets/images/edit-tag-img.png" alt="Edit">
+                                    </span-->
+                                </div>
+                            </ng-template>
+                        </p-multiSelect>
+                        <div class="split-col act-col act-col-20 act-col-btn-20 cursor">
+                            <button pButton pRipple type="button" icon="pi pi-plus" label="Add Contact" class="ap-button-outlined p-button-rounded vin-btn" [ngClass]="{'setOpacity5': contactDisable}" (click)="serviceAction('new', 'contact');">
+                            </button>
+                        </div>
+                        <div *ngIf="selectedContact.length > 0" class="selected-items ws-selected-items">
+                            <div *ngFor="let item of selectedContact; let t=index" class="tag-text dispatch-tag-text">
+                                <span>{{item}}</span>
+                                <i class="material-icons tag-close" (click)="removeSelection('serviceForm', 'serviceContact', t);">close</i>
+                            </div>
+                        </div>
+                        <div *ngIf="serviceSubmit && sf.serviceContact.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="sf.serviceContact.errors.required">Contact detail is required</div>
+                        </div>
+                </div>
+            </div>
+            </div>        
+       
+        </div>
+
+        <div class="row my-3" *ngIf="diagnationDomain">
+           
+                <div class="col-6">
+                    <div>
+                        <label>
+                            <img src="assets/images/repair-order/buss-cont-info-img.svg" alt="make"
+                                onload="SVGInject(this)" class="mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Billing First Name</span>
+                        </label>
+                        
+                    </div>
+                    <div class="input-text-row form-group firstname border-set" >
+                        <input class="inputbox"  matInput placeholder="Billing First Name" formControlName="billingfirstname"
+                        [(ngModel)]="billingfirstname"                                     
+                        maxlength="" />                                                        
+                    </div>  
+                </div>
+                <div class="col-6">
+                    <div>
+                        <label>
+                            <img src="assets/images/repair-order/buss-cont-info-img.svg" alt="make"
+                                onload="SVGInject(this)" class="mr-2 new-request-icon" />
+                            <span style="color: #9b9a9a;">Billing Last Name</span>
+                        </label>
+                        
+                    </div>
+                    <div class="input-text-row form-group firstname border-set">
+                        <input class="inputbox"  matInput placeholder="Billing Last Name" formControlName="billinglastname"
+                        [(ngModel)]="billinglastname"                                           
+                        maxlength="" />                                                        
+                    </div>   
+                </div>                
+            
+        </div>
+        
+        <div class="row my-head-row">
+            <div class="col-12">
+                <div class="label-head-row-1 flex-align-center">
+                    <img src="assets/images/repair-order/vehicle-info.svg" onload="SVGInject(this)" alt="Business" />
+                    <span>Vehicle</span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/vin_title_i.svg" alt="vin"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">VIN</span>
+                    </label>
+                </div>
+                <div class="row">
+                    <div class="col-12 pr-1 d-flex">
+                        <div class="p-inputgroup split-col catg-col act-col-80 act-col-cont-80">
+                            <input type="text" pInputText formControlName="vin" class="input-bg vin-input text-uppercase" maxlength="17" (input)="vinChanged('change', $event.target.value)"
+                                placeholder="Enter VIN" [ngClass]="{'is-invalid': vinIsValid && !vinValid}">
+                            <button type="button" pButton pRipple icon="pi pi-check" (click)="vinChanged('api')"
+                                [disabled]="!vinIsValid" class="p-button-secondary" [ngClass]="{'p-button-danger vin-danger': vinIsValid, 'vin-check-btn': !vinIsValid}"></button>
+                            <!-- [ngClass]="{'p-button-success' : serviceForm.get('vin').valid}" -->
+                        </div>
+                        <div class="split-col act-col  act-col-20 act-col-btn-20">
+                            <button pButton pRipple type="button" class="p-button-outlined p-button-rounded vin-btn recent-vin" label="Recent VINs" (click)="getRecentVin()">
+                                <!-- this.miSpecialForm.get('miName').valid -->
+                                <img src="assets/images/dispatch/svg/service-form/vin_i.svg" />                                
+                            </button>
+                        </div>
+                    </div>
+                    <div *ngIf="vinIsValid && !vinValid" class="invalid-feedback invalid-field">
+                        <div id="valid-error" class="field-err">invalid VIN</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-3">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/make_i.svg" alt="make"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Make</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <p-dropdown [options]="makeList" formControlName="make" placeholder="Select" [ngClass]="{'mvisible': serviceForm.value.make != '', 'is-invalid': serviceSubmit && sf.make.errors}"
+                        [virtualScroll]="false" [filter]="true" optionLabel="makeName"  resetFilterOnHide="true" class="split-col"
+                        optionValue="makeName" [disabled]="vinDisable" (onChange)="getMakeModelsList($event.value)"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-3">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/model_i.svg" alt="model"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Model</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>                    
+                    <div *ngIf="modelLoading && modalState == 'new'" class="cust-loader svcm-loader"><img
+                        src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+                    <p-dropdown [options]="Models" formControlName="model" optionLabel="modelName" [ngClass]="{'mvisible': serviceForm.value.model != '' || modalState == 'edit', 'is-invalid': serviceSubmit && sf.model.errors}"
+                    class="split-col"  optionValue="modelName" placeholder="{{modelPlaceHoder}}" [disabled]="modelDisable" [virtualScroll]="false" [filter]="true"  resetFilterOnHide="true"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-3">
+                <div>
+                    <label>
+                        <img src="assets/images/dispatch/svg/service-form/year_i.svg" alt="year"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Year</span>
+                    </label>
+                    <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+                    <p-dropdown  [options]="Years" formControlName="year" placeholder="Select" [virtualScroll]="false" class="split-col"
+                        [itemSize]="2" [filter]="true" resetFilterOnHide="true" optionValue="name" optionLabel="name" [virtualScroll]="true"
+                        [itemSize]="31"></p-dropdown>
+                </div>
+            </div>
+            <div class="col-3">
+                <div>
+                    <label>
+                        <img src="assets/images/repair-order/odo-img.svg" alt="make"
+                            onload="SVGInject(this)" class=" mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">ODO</span>
+                    </label>
+                    <!--span style="color: #b2b2b2;font-style: italic;float: right;">Required</span-->
+                </div>
+                <div class="input-text-row form-group" style="margin-top: 0 !important;">
+                    <input class="inputbox inputbox-odo" matInput placeholder="ODO" formControlName="odo"
+                    (input)="onChange('odo')" (keypress)="restrictNumeric($event)"   [(ngModel)]="odo"                                         
+                    maxlength="" [ngClass]="{ 'is-invalid': serviceSubmit && sf.odo.errors }" />  
+                    <p-dropdown class="p-dropdown-meter" [(ngModel)]="unit" [options]="unitOptions" >                                                            
+                    </p-dropdown>                                                        
+                </div>  
+            </div>
+        </div>
+
+        <div class="row my-head-row" *ngIf="diagnationDomain">
+            <div class="col-12">
+                <div class="label-head-row-1 flex-align-center">
+                    <img src="assets/images/repair-order/prob-desc.svg" 
+                    onload="SVGInject(this)" class="mr-2 new-request-icon" alt="" />
+                    <span>Customer Complaint</span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3" style="margin-top: -8px !important;" *ngIf="diagnationDomain">
+            <div class="col-12">                
+                <div>  
+                    <ckeditor [editor]="Editor" [config]="configCkeComplaint" container="body"
+                        formControlName="initcomplaint" (change)="onChange('initcomplaint')"                            
+                        [(ngModel)]="initcomplaint"></ckeditor>                     
+                </div>
+            </div>
+        </div>
+       
+        <div class="row my-head-row">
+            <div class="col-12">
+                <div class="label-head-row-1 flex-align-center">
+                    <img src="assets/images/repair-order/tech-title-img-png.png" alt="" />
+                    <span>Technician (Person who will service the vehicle)</span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div class="split-col act-col act-col-80 act-col-cont-80 ">
+                    <label>
+                        <img src="assets/images/repair-order/technician-img-png.png" alt="make"
+                           class="mr-2 new-request-icon" />
+                        <span style="color: #9b9a9a;">Technician</span>
+                    </label>
+                    <span *ngIf="!editRO" style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+                </div>
+                <div>
+
+                    <p-dropdown class="split-col act-col act-col-80 act-col-cont-80 " [options]="Technician" [filter]="true"  resetFilterOnHide="true" filterBy="name" placeholder="Select Technician" 
+                    (onChange)="techChanged($event)" optionLabel="name" optionValue="id"
+                        formControlName="serviceTech"  container="body" [disabled]="contactDisable"
+                        [ngClass]="{ 'is-invalid': serviceSubmit && sf.serviceTech.errors }" >                                                            
+                    </p-dropdown> 
+
+                    <div class="split-col act-col act-col-20 act-col-btn-20 cursor">
+                        <button pButton pRipple type="button" icon="pi pi-plus" label="Add Technician" class="ap-button-outlined p-button-rounded vin-btn" [ngClass]="{'setOpacity5': contactDisable}" (click)="serviceAction('new', 'tech');">
+                        </button>
+                    </div>                    
+                    <div *ngIf="serviceSubmit && sf.serviceTech.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="sf.serviceTech.errors.required">Technician detail is required</div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        <div class="row my-head-row">
+            <div class="col-12">
+                <div class="label-head-row-1 flex-align-center">
+                    <img src="assets/images/repair-order/prob-desc.svg" 
+                    onload="SVGInject(this)" class="mr-2 new-request-icon" alt="" />
+                    <span>Additional Problem Detail</span>
+                </div>
+            </div>
+        </div>
+        <div class="row my-3" style="margin-top: -8px !important;">
+            <div class="col-12">                
+                <div>  
+                    <span *ngIf="!editRO" class="desc-required-text" style="margin-bottom:-20px;color: #b2b2b2;font-style: italic;float: right;">Required</span>                 
+                    <ckeditor (change)="onChange('desc')" [ngClass]="{ 'editor-desc-red' : problemDescFlag }" [editor]="Editor" [config]="configCke" [(ngModel)]="description" formControlName="description"></ckeditor>
+                    <!--div class="service-form-error-row" *ngIf="problemDescFlag">Enter Additional Problem Detail</div-->
+                </div>
+            </div>
+        </div>
+        <div class="row my-3">
+            <div class="col-12">
+                <div>
+                    <label class="new-ro-icon">
+                        <img src="assets/images/repair-order/attachment-icon-png.png" alt="notes"
+                            class=" mr-2 new-request-icon " />
+                        <span style="color: #9b9a9a;">Attachments</span>
+                    </label>
+                    <div class="attach-row-rt cursor-pointer" (click)="attachmentPopup(0,'new');">
+                        <span class="attach-text"><img class="attach-img" src="assets/images/repair-order/attachments-img.svg" onload="SVGInject(this)" alt="Attachments" />
+                            <span class="attach-count" *ngIf="commentUploadedItemsFlag">{{commentUploadedItemsLength}}</span>
+                        </span> 
+                    </div> 
+                    <div class="attachment-row " *ngIf="postUploadActionTrue" [ngClass]="{'reference-info-hide': postUploadActionTrue }" >
+                        <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                    <!-- Attachment List-->
+                    <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachmentsData"></app-attachment-view>
+                    <!-- Attachment List-->
+                   
+                    </div> 
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="row my-3">
+            <div class="col-12">
+                <div class="estimation-head-div">
+                    <img src="assets/images/repair-order/product-services-pl-icon.png" />
+                    <span class="estimation-text">Products and Services</span>
+                </div>
+            </div>
+        </div>
+                    
+        <div class="row my-3">
+            <div class="col-12">
+                <app-ro-estimation *ngIf="roEstimationFlag" [roData]="roPageData" (roestimationActionEmit)="roestimationAction($event)" class="estimation-div estimation-list-div" ></app-ro-estimation>
+                <app-ro-estimation *ngIf="!roEstimationFlag" [roData]="roPageData" (roestimationActionEmit)="roestimationAction($event)" class="estimation-div estimation-list-div" ></app-ro-estimation>
+            </div>
+        </div>
+
+               
+        
+    </form>
+</p-dialog>
+<p-sidebar class="sidebar-cont form-type-fields" [(visible)]="actionFlag" [baseZIndex]="100" position="right"
+    [dismissible]="false">
+    <h1 style="font-weight: normal">
+        <span class="truncate">{{actionTitle}}</span>
+    </h1>
+    <div class="action-form"> 
+        <form *ngIf="actionForm == 'shop'" [formGroup]="serviceShopForm">
+            <div class="service-form-fields">
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Customer Name</span>
+                            <span class="split-col req-col">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="shopName"
+                        [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.shopName.errors) || shopExist }"
+                        placeholder="Enter Customer Name" maxlength="50" />
+                        <div *ngIf="serviceShopSubmit && shf.shopName.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.shopName.errors.required">Customer Name is required</div>
+                        </div>
+                        <div *ngIf="shopExist" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shopExist">{{existError}}</div>
+                        </div>
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Address1</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="addressLine1" placeholder="Enter Address1" maxlength="100" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="addressLine1" placeholder="Enter Address1" maxlength="100" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.addressLine1.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.addressLine1.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.addressLine1.errors.required">Address1 is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Address2</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="addressLine2" placeholder="Enter Address2" maxlength="100" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.shopName.errors)}" />
+                    </div>                
+                </div>
+                
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">State</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <p-dropdown class="p-dropdown-servicetype" [filter]="true" name="stateValue" formControlName="state" [options]="companyStateDropdownData" placeholder="Select State" optionLabel="name" optionValue="id" [group]="true" (onChange)="stageChanged($event)">
+                            <ng-template let-group pTemplate="group">
+                              <div class="p-d-flex p-ai-center">
+                                <span>{{group.name}}</span>
+                              </div>
+                            </ng-template>
+                          </p-dropdown>
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="state" placeholder="Enter State" maxlength="50" /-->
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="state" placeholder="Enter State" maxlength="50" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.state.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.state.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.state.errors.required">State is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">City</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="city" placeholder="Enter City" maxlength="50" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="city" placeholder="Enter City" maxlength="50" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.city.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.city.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.city.errors.required">City is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/service-form/map-gray.svg" alt="service"
+                            onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Zip</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.zip.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.zip.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.zip.errors.required">Zip is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/common/tag-ref-icon.png" alt="service" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Customer ID</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="customerId" placeholder="Enter Customer ID" maxlength="10" />
+                        <!--input type="text" pInputText class="input-bg map-input" formControlName="zip" placeholder="Enter Zip" maxlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.zip.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.zip.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="shf.zip.errors.required">Zip is required</div>
+                        </div-->
+                    </div>                
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Phone</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                            formControlName="phone" minlength="10" [ngClass]="{ 'is-invalid': (serviceShopSubmit && (shf.phone.value.length == 0 || phoneNumberValid))}">
+                        <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                            <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                            <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                        </div>
+                        <div *ngIf="serviceShopSubmit" class="invalid-feedback">
+                            <!--div id="valid-error" class="field-err" *ngIf="shf.phone.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                            <div id="valid-error" class="field-err" *ngIf="shf.phone.value.length > 0 && phoneNumberValid">Invalid phone number</div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="service-form-row">
+                    <div class="label">
+                        <label>
+                            <img src="assets/images/dispatch/svg/email-icon.png" alt="service" class="icons-size mr-2 new-request-icon" />
+                            <span class="split-col text-col">Email</span>
+                            <span class="split-col req-col hide">Required</span>
+                        </label>
+                    </div>
+                    <div class="field">
+                        <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                            maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceShopSubmit && shf.email.errors)}" />
+                        <div *ngIf="serviceShopSubmit && shf.email.errors" class="invalid-feedback">
+                            <div id="valid-error" class="field-err" *ngIf="scf.email.errors">Email is invalid</div>
+                        </div>
+                    </div>                
+                </div>
+            </div>
+            <div class="service-form-actions">
+                <div class="service-form-row">
+                    <div class="action-buttons">
+                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                        class="p-button-rounded button-save cursor" (click)="formAction('submit')"></button>
+                        <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                        class="p-button-rounded button-save button-spin"></button>
+                        <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                        class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>
+                    </div>
+                </div>
+            </div>
+        </form>      
+        <form *ngIf="actionForm == 'contact'" [formGroup]="serviceContactForm">
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">First Name</span>
+                        <span class="split-col req-col">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="firstName"
+                        [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.firstName.errors) }"
+                        placeholder="Enter First Name" maxlength="50" />
+                    <div *ngIf="serviceContactSubmit && scf.firstName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="scf.firstName.errors.required">First name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Last Name</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="lastName" 
+                        placeholder="Enter Last Name" maxlength="50" [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.lastName.errors)}" />
+                    <div *ngIf="serviceContactSubmit && scf.lastName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="scf.lastName.errors.required">Last name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/email-icon.png" alt="Email" class="icons-size mr-2 new-request-icon mail" />
+                        <span class="split-col text-col">Email</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                        maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceContactSubmit && scf.email.errors)}" />
+                    <div *ngIf="serviceContactSubmit && scf.email.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="scf.email.errors">Email is invalid</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Phone</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                        formControlName="phoneNumber" minlength="10" [ngClass]="{ 'is-invalid': (serviceContactSubmit && (scf.phoneNumber.value.length == 0 || phoneNumberValid))}">
+                    <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                        <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                        <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                    </div>
+                    <div *ngIf="serviceContactSubmit" class="invalid-feedback">
+                        <!--div id="valid-error" class="field-err" *ngIf="scf.phoneNumber.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                        <div id="valid-error" class="field-err" *ngIf="scf.phoneNumber.value.length > 0 && phoneNumberValid">Invalid phone number</div>                        
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="action-buttons">
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                    class="p-button-rounded button-save cursor" (click)="formAction('submit')"></button>
+                    <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                    class="p-button-rounded button-save button-spin"></button>
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                    class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>                    
+                </div>
+            </div>
+        </form>
+        <form *ngIf="actionForm == 'tech'" [formGroup]="serviceTechForm">
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">First Name</span>
+                        <span class="split-col req-col">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="firstName"
+                        [ngClass]="{ 'is-invalid': (serviceTechSubmit && stf.firstName.errors) }"
+                        placeholder="Enter First Name" maxlength="50" />
+                    <div *ngIf="serviceTechSubmit && stf.firstName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="stf.firstName.errors.required">First name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/cthumb_profile.png" alt="Profile" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Last Name</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="lastName" 
+                        placeholder="Enter Last Name" maxlength="50" [ngClass]="{ 'is-invalid': (serviceTechSubmit && stf.lastName.errors)}" />
+                    <div *ngIf="serviceTechSubmit && stf.lastName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="stf.lastName.errors.required">Last name is required</div>
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/email-icon.png" alt="Email" class="icons-size mr-2 new-request-icon mail" />
+                        <span class="split-col text-col">Email</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" pInputText class="input-bg map-input" formControlName="email" placeholder="Enter Email" 
+                        maxlength="40" (change)="checkEmailValition()" [ngClass]="{ 'is-invalid': (serviceTechSubmit && stf.email.errors)}" />
+                    <div *ngIf="serviceTechSubmit && stf.email.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="stf.email.errors">Email is invalid</div>
+                    </div>
+                    <div *ngIf="serviceError" class="signuperror-row">{{serviceErrorMsg}}</div>
+                </div>                
+            </div>
+            <div class="service-form-row">
+                <div class="label">
+                    <label>
+                        <img src="assets/images/dispatch/svg/ephone-icon.png" alt="Phone" class="icons-size mr-2 new-request-icon" />
+                        <span class="split-col text-col">Phone</span>
+                        <span class="split-col req-col hide">Required</span>
+                    </label>
+                </div>
+                <div class="field">
+                    <input type="text" class="hide form-control inputtext" matInput placeholder="012-345-6789" 
+                        formControlName="phoneNumber" minlength="10" [ngClass]="{ 'is-invalid': (serviceTechSubmit && (stf.phoneNumber.value.length == 0 || phoneNumberValid))}">
+                    <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                        <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                        <app-country-phonenumber *ngIf="actionFlag" [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                    </div>
+                    <div *ngIf="serviceTechSubmit" class="invalid-feedback">
+                        <!--div id="valid-error" class="field-err" *ngIf="stf.phoneNumber.value.length == 0 && (!phoneNumberValid || iphoneNumber.length == 0)">Phone number is required</div-->
+                        <div id="valid-error" class="field-err" *ngIf="stf.phoneNumber.value.length > 0 && phoneNumberValid">Invalid phone number</div>                        
+                    </div>
+                </div>                
+            </div>
+            <div class="service-form-row">                
+                <div class="action-buttons">                    
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                    class="p-button-rounded button-save cursor" (click)="formAction('submit')"></button>
+                    <button *ngIf="formProcessing" pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                    class="p-button-rounded button-save button-spin"></button>
+                    <button *ngIf="!formProcessing" pButton pRipple type="button" icon="pi pi-times" iconPos="right" label="Cancel"
+                    class="p-button-rounded button-cancel cursor" (click)="formAction('cancel')"></button>                    
+                </div>
+            </div>
+        </form>
+    </div>
+</p-sidebar>  
+    
+    
+    
+    
+    

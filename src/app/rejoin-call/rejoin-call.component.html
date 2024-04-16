@@ -1,0 +1,66 @@
+<!-- Meeting ended template -->
+<div class="main" *ngIf="call.meetingEnded">
+  <img
+    src="assets/images/video-call/component-372.png"
+    srcset="
+      assets/images/video-call/component-372@2x.png 2x,
+      assets/images/video-call/component-372@3x.png 3x
+    "
+    class="Component-372"
+  />
+
+  <h4 class="text-white mb-5 mt-3" *ngIf="!showLeftMessage">Ended the meeting for everyone</h4>
+  <h4 class="text-white mb-5 mt-3" *ngIf="showLeftMessage">You’ve left the meeting</h4>
+  <div class="action">
+    <button
+      mat-stroked-button
+      (click)="endCall()"
+      class="text-uppercase text-white border-white"
+    >
+      <mat-icon>home</mat-icon> Return to home page
+    </button>
+  </div>
+</div>
+
+<!-- Call rejoin template -->
+<div class="main" *ngIf="call.rejoin">
+  <img
+    src="assets/images/video-call/component-372.png"
+    srcset="
+      assets/images/video-call/component-372@2x.png 2x,
+      assets/images/video-call/component-372@3x.png 3x
+    "
+    class="Component-372"
+  />
+
+  <h4 class="text-white mb-5 mt-3">You've left the meeting</h4>
+  <div class="action">
+    <button
+      mat-raised-button
+      (click)="rejoin()"
+      class="text-uppercase btn-success mr-2"
+    >
+      <mat-icon>videocam</mat-icon> Rejoin
+    </button>
+    <button
+      mat-stroked-button
+      (click)="endCall()"
+      class="text-uppercase text-white border-white"
+    >
+      <mat-icon>home</mat-icon> Return to home page
+    </button>
+  </div>
+</div>
+
+<div class="main" *ngIf="call.joining">
+  <img
+    src="assets/images/video-call/joining.png"
+    srcset="
+      assets/images/video-call/joining@2x.png 2x,
+      assets/images/video-call/joining@3x.png 3x
+    "
+    class="Component-372"
+  />
+
+  <h4 class="text-white mb-5 mt-3">Joining...</h4>
+</div>

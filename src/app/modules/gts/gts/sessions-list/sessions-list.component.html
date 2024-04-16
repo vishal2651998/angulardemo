@@ -1,0 +1,89 @@
+<div id="header" class="gts-header" *ngIf="!msTeamAccess">
+  <img (click)="previousPage()" style="cursor: pointer;" width="28px" height="auto" src="assets/images/service-provider/back-arrow-new-black.png">
+  <span class="header-details">
+    <span>GTS</span>
+    <span><i class="pi pi-chevron-right"></i></span>
+    <span class="cursor-pointer" (click)="breadCrumbNavigation()">GTS (ID# {{gtsSessionId}})</span>
+    <span><i class="pi pi-chevron-right"></i></span>
+    <span>GTS Sessions</span>
+  </span>
+</div>
+  <div class="prob-index split-sec1 right-section w-100" style="padding: 0 20px;">
+    <div class="container-fluid">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 px-0" style="margin-left: 15px;">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 no-padding page-title-design display-align-center d-flex align-items-center px-0"
+          style="margin-right: 0; display: inline-block;padding: 10px 0;">
+          <img width="25px" height="auto" src="assets/images/gts/round-clock.png"
+            class="margin-right-8px">
+          <span style="margin-left: 13px;font-weight: bold;font-size: 24PX;">{{headTitle}}</span>
+        </div>
+      </div>
+    </div>
+  
+    <div class="col col-lg-12 col-md-12 col-xl-12 col-sm-12 py-0 landing-page thread-page-container card-parent-design-new"
+      style="margin-top: 0!important;background: #eff1f3;">
+      <div class="col-12 col-lg-12 col-md-12 col-xl-12 col-sm-12 p-0">
+        <div class="flex-align-center">
+        </div>
+        <div *ngIf="loadingmarketplacemore" class="cust-loader" style="position: fixed;"><img
+            src="assets/images/loading.svg" alt="Loader"></div>
+        <div class="card marketplace-reports" style="border-radius: 15px 15px 0 0;">
+          <p-table #marketReports styleClass="p-datatable-sm gts-session-list" class="gts-session-list" [resizableColumns]="true" columnResizeMode="fit"
+            [columns]="scrollableCols" [value]="sessions" [scrollable]="true"
+            [scrollHeight]="'calc(100vh - '+ reportsHeight +'px)'"  [lazy]="true"
+            (onLazyLoad)="lazyLoad($event)" (scroll)="scroll($event)">
+            <ng-template pTemplate="colgroup" let-columns>
+              <colgroup>
+                <col *ngFor="let col of columns" [style]="{width: col.width}">
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr class="custom-header">
+                <th class="custom-table-heading normalptabletow" [class.padding-left]="i == 0" *ngFor="let col of columns,index as i"
+                   [style]="{width: col.width}">
+                  <span>{{col.header}}</span>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-customer let-columns="columns">
+              <tr  class="hover-effect cursor-pointer" [class.color-red-row]="customer === highlighted" 
+                style="border-bottom: 1px solid #eaedee;">
+                <td [class.padding-left]="i == 0" *ngFor="let col of columns,index as i" class="text-capitalize text-truncate"  data-toggle="toggle"
+                  data-placement="top" title={{customer[col.field]}} (click)="rowColor(customer)">
+                  <div [ngClass]="{'d-flex justify-content-between' : i == columns.length - 1}">
+                    <span *ngIf="col.field != 'exitStatus'">
+                        <img style="margin-bottom: 3px;" *ngIf="col.field == 'userName'" src="assets/images/service-provider/images/user-img.png">
+                        {{customer[col.field]}}
+                    </span>
+                    <span *ngIf="col.field == 'exitStatus'" class="exit-status">
+                        <span class="exit-status-inner" [style.color]="customer.exitStatusColorCode" [style.background-color]="customer.exitStatusBgColorCode" >
+                            {{customer.exitStatusName}}
+                        </span>
+                    </span>
+                    <span *ngIf="i == columns.length - 1" id="more" [matMenuTriggerFor]="more" (click)="$event.stopPropagation()" class="more-icon active">
+                      <img src="assets/images/more-icon.png" alt="GTS Action" />
+                  </span>
+                  <mat-toolbar color="primary">
+                    <mat-menu #more="matMenu" backdropClass="ptabletmenu">
+                        <div class="part-menu">
+                            <ul class="more-actions" >
+                                <li class="cursor active" ><img src="assets/images/gts/web-white.png" width="16px" alt="View">&nbsp;&nbsp;Web View</li>
+                                <!--li *ngIf="gtsList.access || accessLevel?.editAccess == 1" class="cursor active" (click)="editGTS(gtsList.procedureId)"><img src="assets/images/gts/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li-->
+                                <li  class="cursor active " ><img src="assets/images/gts/download-white.png" width="17px" alt="Edit">&nbsp;&nbsp;Download PDF</li>
+                                <li  class="cursor active " ><img src="assets/images/gts/copy-white.png" width="14px" alt="Edit Workflow">&nbsp;&nbsp;Copy Link</li>
+                                <li  class="cursor active" ><img class="del-gts" src="assets/images/gts/delete-white.png" width="13px" alt="Delete">&nbsp;&nbsp;Delete</li>                                    
+                            </ul>
+                        </div>
+                    </mat-menu>
+                </mat-toolbar>
+                  </div>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  

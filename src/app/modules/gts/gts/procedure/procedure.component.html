@@ -1,0 +1,131 @@
+<p-panel class="p-0 h-100 procedures" styleClass="h-100 {{this.gtsApi.procedure.process[0].processSteps.length === 1 ? 'no-padding' : ''}}" *ngIf="!isLoading">
+  <div [ngStyle]="{display:'grid', placeItems:'center'}" class="h-100" *ngIf="isLoadingOnScroll">
+    <img src="assets/images/loading.svg" alt="Loader" width="60px" />
+  </div>
+  <ng-template pTemplate="content" class="p-3">
+    <div *ngIf="!isLoadingOnScroll">
+      <div class="section d-flex align-items-center pt-3 px-3">
+        <div class="divider">
+          <button pButton pRipple type="button" [label]="this.gtsApi.procedure.process[0].name"
+            class="p-button-rounded p-button-secondary px-4 py-1 chip" [ngStyle]="{fontSize:'14px', cursor: 'default'}">
+          </button>
+        </div>
+        <strong class="ml-2">{{this.gtsApi.procedure.process[0].displayOrder}}</strong>
+      </div>
+      <div class="section my-4 position-relative"
+        *ngFor="let steps of this.gtsApi.procedure.process[0].processSteps; let i = index;">
+        <div class="overlay"
+          *ngIf="(steps.instructionType == 2 && processIsOkNotOk && !updateInputValueCheck)">
+        </div>
+        <div class="p-3">
+          <div class="d-flex align-items-center">
+            <a class="divider" [ngClass]="{'custom-color':steps.name.toLowerCase() == 'caution'}">
+              <img src="assets/images/gts/option.png" class="mr-2" alt="" *ngIf="steps.name.toLowerCase() == 'option'">
+              <img src="assets/images/gts/hand.png" class="mr-2" alt="" *ngIf="steps.name.toLowerCase() == 'action'">
+              <img src="assets/images/gts/info.png" class="mr-2" alt="" *ngIf="steps.name.toLowerCase() == 'info'">
+              <img src="assets/images/gts/caution.png" class="mr-2" alt="" *ngIf="steps.name.toLowerCase() == 'caution'">
+              <img src="assets/images/gts/eye.png" class="mr-2" alt="" *ngIf="steps.name.toLowerCase() == 'check'">
+              <ng-container>
+                {{steps.name}}
+              </ng-container>
+              <!-- <ng-container *ngIf="steps.instructionType === 3">
+                <label class="container" *ngIf="steps.instructionType == 3 && steps.conditionValue == 20">
+                  <span class="label-text" *ngIf="steps.instructionType == 3">{{steps.name}}</span>
+                  <input type="checkbox" *ngIf="(steps.conditionValue == 18 || steps.conditionValue == 20) "
+                    (change)="checkValue($event, steps)" [checked]="steps.actionStatusName == 'Confirm'">
+                  <span class="checkmark"></span>
+                </label>
+              </ng-container> -->
+            </a>
+            <strong class="ml-2">{{steps.autoId}}</strong>
+          </div>
+          <div>
+            <div class="d-flex align-items-center justify-content-between mt-3"
+              *ngIf="(gtsApi.procedure.shapeType == 13 || gtsApi.procedure.shapeType == 20)">
+              <button type="button" pButton [label]="labelSelectOption ? labelSelectOption : 'Select Option'"
+                class="p-button-sm p-button-warning text-white" style="background: #fa972d; border: 1px solid #fa972d;"
+                (click)="openOptionsPopup(steps)">
+              </button>
+            </div>
+            <p-card styleClass="shadow-none description my-3" [style]="{borderRadius:'10px'}">
+              <span [innerHTML]="steps.description"></span>
+            </p-card>
+            <app-attachment-view action="view" [dynamicGid]="i" *ngIf="steps.attachments.length"
+              [attachments]="steps.attachments">
+            </app-attachment-view>
+
+            <app-user-input (userInput)="updateInputValue($event)" (fieldRequired)="updateRequiredParameters($event)"
+              *ngIf="steps.userInputs.length > 0" [processSteps]="steps" [actionButionSyncer]="actionButionSyncer"
+              [required]="required" (updateProcessStepEnable)="setProcessStepEnable($event, steps)"></app-user-input>
+            <p-card styleClass="shadow-none description units-section my-3 w-40" [style]="{borderRadius:'10px'}"
+              *ngIf="steps.unit">
+              <div class="row">
+                <div class="col-sm-12">
+                  <h4>Enter Reading</h4>
+                </div>
+                <div class="col-sm-12">
+                  <div class="p-inputgroup">
+                    <div class="inputNumber">
+                      <!--<div class="prebutton" *ngIf="steps.unit != '' && steps.unit == 'Volts'">
+                        <img src="assets/images/gts/bolt.png" alt="">
+                      </div>-->
+                      <input placeholder="Enter {{steps.unit}}"
+                        class="p-inputnumber-input p-inputtext p-component p-filled"
+                        *ngIf="steps.unitMinValue || steps.unitMaxValue"  (ngModelChange)="voltsChecked = false;" [(ngModel)]="steps.actionStatus" inputId="minmaxfraction"
+                        type="tel" style="width: 100%;" />
+                      <div class="afterButton" *ngIf="steps.unit != ''">
+                        {{steps.unit}}
+                      </div>
+                    </div>
+                    <button pButton class="p-button-danger ml-2 custom-style-gts-ok" label="OK" icon="pi pi-check" iconPos="right"
+                      (click)="validateOkInputValue({value: steps.actionStatus, contentId:steps.contentId, nextProcess: true, userInputId: gtsApi.apiData.userInputId}, steps)">
+                    </button>
+                  </div>
+                  <span *ngIf="steps?.isValidate === false">
+                    <p class="text-danger">
+                      Please enter a valid value between {{steps.unitMinValue}} and {{steps.unitMaxValue}}
+                    </p>
+                  </span>
+                </div>
+              </div>
+            </p-card>
+
+            <app-action-button  [stepName]="steps.name.toLowerCase()" [actionButionSyncer]="actionButionSyncer" [required]="steps.processStepIsEnabled" [processSteps]="steps" [class.actionInfoZindex]="" (nextProcessId)="setProcessId($event)" *ngIf="steps.actionOptions.length <= 2 && steps.actionOptions.length != 0 && this.gtsApi.procedure.shapeType!='20' && (steps.isActionNeeded == 1 || steps.isActionNeeded == 2)">
+            </app-action-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <div *ngIf="!isLoadingOnScroll">
+      <div class="d-flex"
+        [ngClass]="{'justify-content-between':gtsApi.procedure.prevProcessId,'justify-content-end':!gtsApi.procedure.prevProcessId}">
+        <div class="d-flex align-items-center flex-grow-1">
+          <ng-container *ngIf="gtsApi.procedure.prevProcessId">
+            <button pButton pRipple type="button" label="Prev" icon="pi pi-angle-left" iconPos="left"
+              class="p-button-rounded p-button-danger"
+              (click)="goToPreviousProcess(gtsApi.procedure.prevProcessId)"></button>
+          </ng-container>
+          <a class="ml-3" *ngIf="gtsApi.optionButtonData.isButtonEnabled == true && gtsApi.procedure.shapeType != 20"
+            (click)="goToPreviousOption(gtsApi.optionButtonData.processId)">
+            <img src="assets/images/gts/option.png" class="mr-2" alt="options">
+            <span class="ml-2 font-bold text-warning">Return to options</span>
+          </a>
+        </div>
+        <button pButton pRipple (click)="goToNextProcess()" type="button" *ngIf="gtsApi.procedure.isLastProcess == 0"
+          [disabled]="!gtsApi.procedure.isNextProcessEnabled || !voltsChecked"
+          label="Next" icon="pi pi-angle-right" iconPos="right" class="p-button-rounded p-button-danger">
+        </button>
+        <button pButton class="p-button-rounded finish" (click)="openPopup()" *ngIf="gtsApi.procedure.isLastProcess != 0"
+          [disabled]="!gtsApi.procedure.isNextProcessEnabled || !voltsChecked">
+          <img alt="logo" src="assets/images/gts/flag.png" />
+          <span class="ml-2 font-bold">Finish</span>
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</p-panel>
+<div [ngStyle]="{display:'grid', placeItems:'center'}" class="h-100" *ngIf="isLoading">
+  <img src="assets/images/loading.svg" alt="Loader" width="60px" />
+</div>

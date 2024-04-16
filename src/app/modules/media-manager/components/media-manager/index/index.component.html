@@ -1,0 +1,144 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)"></app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass1}}"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index media-index split-sec1">
+    <div class="part-list-head media-list-head"  [ngClass]="{'media-list-head-setWidth': mediaInfoFlag, 'info-collapse': !mediaInfoFlag}">
+        <div class="prob-head-col media-col head-col-1" [ngClass]="{'media-col-1': mediaInfoFlag, 'multiple': (headerCheck == 'checked' || headerCheck == 'all')}">
+            <span *ngIf="!msTeamAccess" class="head-txt part-head-txt media-head-txt">
+                <!-- <img src="{{mediaManagerPath}}/media.png"
+                     srcset="{{mediaManagerPath}}/media@2x.png 2x, {{mediaManagerPath}}/media@3x.png 3x"> -->
+                     <span class="media-mgr-head-ic">
+                        <img src="{{mediaManagerPath}}/media.svg" onload="SVGInject(this)">
+                     </span>
+                {{title}}
+            </span>
+            <span *ngIf="msTeamAccess" class="head-txt part-head-txt media-head-txt" tooltipClass="help-content-tooltip sidebarTeam sidebarTeam2" container="body" triggers="manual" [autoClose]="false" placement="right-top" [ngbTooltip]="mediaTT" #ttmedia="ngbTooltip">
+                <img src="{{mediaManagerPath}}/media.png"
+                     srcset="{{mediaManagerPath}}/media@2x.png 2x, {{mediaManagerPath}}/media@3x.png 3x">
+                {{title}}
+            </span>
+            <ng-template #mediaTT>
+                <div class="tt-helpcontent-container">
+                    <div class="tt-bg-image {{thelpContentIconName}}"></div>
+                    <div class="tt-title">
+                        <div class="lt-img {{thelpContentIconName}}"></div>
+                        <div class="rt-text">{{thelpContentTitle}}</div>
+                    </div>
+                    <div class="tt-desp">{{thelpContentContent}}</div>
+                    <div class="tt-next-text" (click)="helpContent(thelpContentId)">DONE</div>
+                </div>
+            </ng-template>	
+            <span class="tab tab-1 recent cursor" [ngClass]="{'active': section == 1, 'hide': ((headerCheck == 'checked' && section == 2))}" (click)="sectionChange(1)">
+                <img src="{{mediaManagerPath}}/clock.svg" onload="SVGInject(this)">
+                Recent Views
+            </span>
+            <span class="tab tab-2 all cursor" [ngClass]="{'active': section == 2, 'hide': ((headerCheck == 'checked' && section == 1))}" (click)="sectionChange(2)">
+                <img src="{{mediaManagerPath}}/folder.svg" onload="SVGInject(this)">
+                All Files
+                <span *ngIf="allMediaCount > 0" class="count">({{allMediaCount}})</span>
+            </span>
+            <span class="file-count" [ngClass]="{'hide': mediaSelectionList.length == 0}">{{fileSelectedTxt}}</span>
+        </div>
+        <div class="prob-head-col media-col head-col-2 text-right" [ngClass]="{'multiple': (headerCheck == 'checked' || headerCheck == 'all'), 'media-col-2': mediaInfoFlag}">
+            <div align="center" class="upload-area">
+                <div class="upload-col attachment-file media-attachment-file files cursor">
+                    <p-fileUpload class="media-upload" #uploader name="upload[]" customUpload="true" 
+                        [chooseLabel]="chooseLable" [chooseIcon]="chooseIcon" 
+                        [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                        accept="image/*, video/*, audio/*"
+                        (onSelect)="onUpload($event)" 
+                        multiple="multiple">
+                        <ng-template pTemplate="content">
+                            <p class="content-message placeholder text-center">Drop Files</p>
+                        </ng-template>
+                    </p-fileUpload>
+                    <div role="alert" class="p-messages p-component">
+                        <div class="ng-trigger ng-trigger-messageAnimation p-message p-message-error" *ngFor="let err of customError; let i=index">
+                            <div class="p-message-wrapper">
+                                <span class="p-message-icon pi pi-times-circle"></span>
+                                <span class="p-message-summary">{{err.fileName}}: <span class="warning">{{invalidFileText}}</span></span><span *ngIf="err.maxSize != '-1'" class="p-message-detail">, {{maxUploadText}} {{err.maxSize}}.</span>
+                                <button type="button" class="p-message-close" (click)="removeMessage(i)"><i class="p-message-close-icon pi pi-times"></i></button>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+                <div class="upload-col link cursor" (click)="addLink()">
+                    <img src="{{mediaManagerPath}}/link-icon.png"
+                         srcset="{{mediaManagerPath}}/link-icon@2x.png 2x, {{mediaManagerPath}}/link-icon@3x.png 3x">
+                    Add Link</div>
+            </div>            
+        </div>
+        <div class="prob-head-col media-col head-col-3 text-right" [ngClass]="{'multiple': (headerCheck == 'checked' || headerCheck == 'all'), 'media-col-3': mediaInfoFlag}">
+            <!--app-common-notifications *ngIf="msTeamAccess"></app-common-notifications--> 
+            <span class="action-col pin-col cursor" class="{{pinClass}}" [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || section == 1)}" (click)="pinnedMediaList(!pinFlag)"></span>
+            <span class="action-col thumb-col cursor" [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView, 'hide': (headerCheck == 'checked' || headerCheck == 'all')}" title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType(thumbView)"></span>
+            <span class="clear cursor" [ngClass]="{'show': (headerCheck == 'checked' || headerCheck == 'all')}" (click)="clearAll()">Clear All</span>
+            <span class="delete cursor" [ngClass]="{'show': (headerCheck == 'checked' || headerCheck == 'all')}" (click)="deleteMedia()">Delete</span>
+        </div>
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}" [style.height.px]="innerHeight">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+    </div>
+    <div class="custom-scrolll media-scroll" [ngClass]="{'filter-expand': expandFlag, 'collapse': !expandFlag, 'info-expand': mediaInfoFlag, 'info-collapse': !mediaInfoFlag}">
+        <div class="probing-content cbt-content1 media-content" [ngClass]="{'setBgWhite': !thumbView}">
+            <div class="inner-container">
+                <div class="media-items">
+                    <div class="media-list recent-lists {{mediaData['view']}}" [style.height.px]="innerHeight">
+                        <div *ngIf="loading && !lazyIn" class="media-loader text-center"><img src="{{assetPath}}/loading.svg" alt="Loader" /></div>
+                        <div id="gallery" class="ps gallery-list" *ngIf="!loading || mediaListExpandFlag || lazyIn" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                            <app-gallery-list (toggleAction)="toggleAction($event)" (mediaSelection)="mediaSelection($event)"></app-gallery-list>
+                        </div>
+                    </div>                    
+                </div>                
+            </div>
+            <div *ngIf="lazyIn">
+                <div class="cust-loader esc-loader lazy-loader cust-lazy-loader media-lazy-loader"></div>
+            </div>
+        </div>
+    </div>
+    <div class="media-info" *ngIf="mediaLists.length > 0" [ngClass]="{'info-expand': mediaInfoFlag, 'info-collapse': !mediaInfoFlag}" [style.height.px]="innerHeight+88">
+        <span *ngIf="!mediaInfoFlag" class="expand-icon cursor" [ngClass]="{'multiple': (headerCheck == 'checked' || headerCheck == 'all'), 'hide': displayNoRecords}" (click)="expandMediaInfo(headerCheck)"></span>
+        <app-media-info *ngIf="mediaInfoFlag && mediaInfoLoading" class="info-scroll" [mediaInfo]="mediaInfo" (toggleAction)="toggleAction($event)"></app-media-info>
+    </div>
+</div>
+<div *ngIf="attachmentProgress" class="media-progress refer-info upload-info attachment-info">
+    <p-accordion class="custom-accordion progress-accordion" [multiple]="true">
+        <p-accordionTab class="media-header" [selected]="true" [transitionOptions]="'100ms'">
+            <p-header class="header" *ngIf="mediaCompressFlag">
+               Compressing File...
+            </p-header>
+            <p-header class="header" *ngIf="!mediaCompressFlag">
+                {{attachments.length}} File<span *ngIf="attachments.length > 1">s</span>
+             </p-header>
+            <div class="content attachment-cont">
+                <div *ngIf="mediaCompressFlag" class="media-loader text-center"><img src="{{assetPath}}/loading.svg" alt="Loader" /></div>
+                <div class="upload-items attachment-row media-row {{file.type}}" *ngFor="let file of attachments; let i = index;">
+                    <div *ngIf="file.flagId < 6" class="{{file.type}}">
+                        <div class="attachment-col bg-col new-bg-col" [ngClass]="{'doc-bg' : (file.flagId > 1 && file.flagId < 6)}" [ngStyle]="{'background-image': 'url(' + file.thumbFilePath + ')'}"></div>
+                        <div class="attachment-col cont-col">
+                            <div class="caption media-caption" [ngClass]="{'active': (file.progress == 100 && (file.flagId != 2 || (file.flagId == 2 && !file.processFlag)))}">
+                                <span class="file-name-text">{{file.originalFileName}}</span>
+                                <span *ngIf="file.processFlag" class="media-process">{{processingTxt}}</span>
+                                <span *ngIf="file.progress == 0" class="cursor cancel media-cancel" (click)="cancelUpload(i)"></span>
+                            </div>
+                            <p-progressBar *ngIf="file.progress < 100" class="media-bar" mode="determinate" [showValue]="false" [value]="file.progress"></p-progressBar>
+                            <div class="progress" *ngIf="file.progress < 100">
+                                <span class="progress-col media-porgress-col info">{{file.progress}}%</span>
+                                <span class="progress-col media-size-col size text-right">{{file.fileSize}}</span>
+                            </div>                        
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+        </p-accordionTab>
+    </p-accordion>
+</div>

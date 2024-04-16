@@ -1,0 +1,192 @@
+<div align="center" class="container-fluid thread-page-container" >
+    <div *ngIf="breadCrumbEnable && (catName !='' || catId !='' )">
+        <div class="kabreadcrumb">
+            <div class="bhome cursor-pointer" (click)="loadCatKAList()"><img src="assets/images/site/workstream-creation/back.png"></div>
+            <div><img src="assets/images/documents/breadcrumb-home.png"></div>
+            <div class="btext cursor-pointer ptop" (click)="loadCatKAList()">Category</div>
+            <div class="ptop"><img src="assets/images/documents/breadcrumb-arrow.png"></div>                
+            <div class="btext ptop">{{catName}}</div>
+        </div>
+    </div>
+    
+    <div [style.height.px]="midHeight">
+        <div class="loading-small-screen-scroll trst" align="center" *ngIf="(loadingKnowledgeArticle && !centerloading) || (accessFrom == 'search' && searchLoading)" [ngClass]="{'hide': ( accessFrom == 'landing' || accessFrom == 'search') && collabticDomain}">
+            <img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div align="center" id="thread-data-container" [ngClass]="{'opacity': opacityFlag}" class="row row-data thread-scroll-container "  [perfectScrollbar]="sconfig" 
+        (scroll)="onScroll($event)">
+
+        <div *ngIf="(((accessFrom != 'search') || (accessFrom == 'search' && !searchLoading )) && (displayNoRecords || displayNoRecordsDefault) ) && knowledgeArticleListArray.length == 0" class="no-item-list no-res-list text-center">
+            <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newThreadInfo"
+                [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue"
+                [contentTypeDefaultNewText]="contentTypeDefaultNewText"
+                [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="createThreadUrl">
+            </app-empty-container>
+
+        </div>
+
+        <!--<div class="thread-add-new" *ngIf="displayNoRecordsDefault" >
+                            
+            <span><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span >New Thread</span>
+            </div>
+        -->
+       
+
+
+        <!--<div class="loading-small-screen-scroll" style="width:110px" align="center" *ngIf="centerloading" ><img src="assets/images/landing-page/loadingKnowledgeArticle.svg" alt="Loader" /></div>-->
+
+
+        <div>
+            
+            <div style="visibility: visible;overflow-y:hidden;" *ngIf="!displayNoRecords">
+
+                
+
+                <ngx-masonry [options]="{ gutter: 10,isFitWidth: true }" class="masonry-item-container"
+                    [updateLayout]="updateMasonryLayout" [ordered]="true" >
+                    <div ngxMasonryItem class="masonry-item"
+                        data-masonry='{ "columnWidth": 200, "itemSelector": ".grid-item" }'
+                        *ngFor="let threadList of knowledgeArticleListArray; let trd = index">
+
+                        <div class="thread-bg cursor" (click)="threadClick(threadList)">
+
+                            <div class="container-fluid row profile-container no-gutters"
+                                [ngClass]="{'bgImg': threadList.isDefaultImg == '1'}">
+                                <img src="assets/images/knowlede-article-2@2x.png"
+                                    class="knowledge_article_icon_img" *ngIf="threadList.isDefaultImg == '1'">
+                                <div class="">
+                                    <div class="top-img">
+                                        <span class="knowledge-id"> <span [ngStyle]="{'top': callFromWS  ? '0px' : '-2px' }"> ID# {{threadList.threadId}}</span></span>
+                                        <img [src]="threadList.threadBannerImage" class="KA_bannerImg" *ngIf="threadList.isDefaultImg!='1'"
+                                            [ngClass]="{'cover': threadList.bannerOption == 1, 'contain': threadList.bannerOption == 0}" >
+                                        <div class="ka_background" ></div>
+                                        <!-- <div class="ka_username"  ><span >balasubrimanina swamy august,</span> <span
+                                                class="ka_userRole" > technician technician technician</span></div>
+                                                <div title="{{threadList.userName}} {{threadList.threadUserRole}}" class="show_popover"></div> -->
+                                                <div class="KA-userInfo">
+                                                    <div class="userInfo-userName" title="{{threadList.userName}}">{{threadList.userName}}, </div>
+                                                    <div class="userInfo-userRole" title="{{threadList.threadUserRole}}"> {{threadList.threadUserRole}}</div>
+                                                </div>
+                                        <div>
+                                            <img [src]="threadList.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" class="knowledge-profile-img">
+                                        </div>
+                                    </div>
+
+                                    <!-- <span class="bg-image-new-thread {{threadList.newNotificationState}} bg-image-new-thread{{threadList.threadId}}  new-announcement-tag"></span>
+                                <div class="profile-left-container" >
+                                    <img class="profileImg" [src]="threadList.profileImage"/>
+                                    <span class="availability-status availability-status{{threadList.availability}}"></span>
+                                       </div>
+                                       <div class="profile-right-container">
+                                        <div class="user-name" title="{{threadList.userName}}">  
+                                            {{threadList.userName}}
+                                            </div>
+                                            <div class="buss-title" title="{{threadList.title}}">
+                                                {{threadList.badgeStatus}}
+                                                
+                                                </div>
+                                           </div> -->
+
+
+
+                                </div>
+                                <!-- <div class="col col-lg-7   col-md-7  col-xl-7  col-sm-7 date-container">
+                        <div class="date-title">
+                            {{threadList.createdOn}}
+                            </div>
+                            <div class="id-title">
+                                ID #{{threadList.threadId}}
+                                </div>
+                            
+        
+                        </div> -->
+
+
+                            </div>
+
+
+
+                            <div class="knowledge-desc-date">
+                                <div class="date-title" title="{{threadList.createdOn}}">
+                                    {{threadList.createdOn}}
+                                </div>
+                            </div>
+
+                            <div class="knowledge-description" [innerHTML]="threadList.threadTitle">
+
+                            </div>
+                            <div class="bottom-border">
+                            </div>
+                            <div class="footer-selection">
+                                <div class="thread-footer-container">
+                                    <div class="tf-col thread-footer-left">
+                                        <ul>
+                                            <li class="tf-icon like" *ngIf="threadList.likeCount">{{threadList.likeCount}}</li>
+                                            <li class="tf-icon pin" *ngIf="threadList.pinCount">{{threadList.pinCount}}</li>
+                                            <li class="tf-icon view" *ngIf="threadList.viewCount">{{threadList.viewCount}}</li>
+                                            <li class="tf-icon reply" *ngIf="threadList.replyCount">{{threadList.replyCount}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--div class="footer-selection">
+                                <div class="thread-footer-container">
+                                    <div class="ft-col lft like-small" *ngIf="threadList.likeCount">
+                                        <span class="lft footer-icon">
+                                            <img src="assets/images/workstreams-page/like-icon.svg" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer p-t-1">{{threadList.likeCount}}</span>
+                                    </div>
+                                    <div class="ft-col lft pin-small" *ngIf="threadList.pinCount">
+                                        <span class="lft footer-icon">
+                                            <img src="assets/images/workstreams-page/pin-icon.svg" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer p-t-1">{{threadList.pinCount}}</span>
+                                    </div>
+                                    <div class="ft-col lft view-small" *ngIf="threadList.viewCount">
+                                        <span class="lft footer-icon">
+                                            <img src="assets/images/workstreams-page/view-icon.svg" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer p-t-1">{{threadList.viewCount}}</span>
+                                    </div>
+                                    <div class="ft-col lft view-reply" *ngIf="threadList.replyCount">
+                                        <span class="lft footer-icon">
+                                            <img src="assets/images/workstreams-page/comment-icon.svg" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer p-t-1">{{threadList.replyCount}}</span>
+                                    </div>
+
+                                   <div class="rht close-small" [title]="threadCloseTxtTxt"
+                                        *ngIf="threadList.closeStatus">
+                                        <span class="lft footer-icon">
+                                            <img class="footer-bulb-icon"
+                                                src="assets/images/workstreams-page/close_icon.svg" alt="Loader" />
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                            </div-->
+
+
+                        </div>
+                    </div>
+                </ngx-masonry>
+
+
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+    <!-- <div align="center" class="thread-loading-text " *ngIf="loadingKnowledgeArticlemore">loading..</div>-->
+
+</div>
+</div>
+<div align="center" class="thread-loading-text bottom-loading {{accessLazyLoad}}" [ngClass]="{'opacity': opacityFlag}" *ngIf="loadingKnowledgeArticlemore || centerloading"><img
+        src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+
+<!--div align="center" class="thread-loading-text bottom-loading" *ngIf="nothingtoshow"
+    style="color:#797777;font-size: 14px;top:0px;font-style: italic;"> No more records </div-->

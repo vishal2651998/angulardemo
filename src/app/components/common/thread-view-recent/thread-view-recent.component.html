@@ -1,0 +1,62 @@
+<div *ngIf="fixesView && loading" [style.height.px]="innerHeight">
+  <div class="loading-small-screen-scroll trst" align="center">
+      <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+  </div>
+</div>
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader" ></div>
+<div class="nothingtoshow" *ngIf="!this.threadListArray">
+    <div class="no-data-contaier">
+        <div>
+          <img class="no-data-img-chart" src="assets/images/no-result-media.png" alt="no-result-media" width="84" height="77">
+        </div>
+        <div class="no-data-text">Nothing to show</div>
+    </div>
+</div>
+<div *ngIf="this.threadListArray">
+  <div [style.height.px]="innerHeight">
+    <div #activeId class="ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+      <div class="{{view}}" *ngFor="let threadData of this.threadListArray">
+        <div id="active-{{threadData.threadId}}" class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0 content-thread active-class-{{threadData.threadId}}"  [ngClass]="{active: isActive(threadData.threadId)}" (click)="tapOnThreadTile(threadData)">
+          <div class="esc-banner col landing-padding0" [ngClass]="{'col-lg-auto col-md-auto ol-xl-auto l-sm-auto': !fixesView, 'col-lg-1 col-md-1 col-xl-1 col-sm-1': fixesView}">
+            <div class="esc-banner-div">
+              <img class="esc-banner-img" [ngClass]="{'active-banner': threadData.isDefaultBanner!=1}"
+                src="{{threadData.vehicleCarImage}}">
+            </div>
+          </div>
+          <div class="text-overflow col landing-padding0 right-content-thread" 
+            [ngClass]="{'general': collabticDomain && threadData.threadCategoryStr == 7, 'col-lg-9 col-md-9 col-xl-9 col-sm-9': !fixesView, 'col-lg-11 col-md-11 col-xl-11 col-sm-11': fixesView}">
+            <div *ngIf="threadData.threadTitle" class="esc-thread-title {{view}}" [ngClass]="{'inline title': fixesView}">
+                {{threadData.threadTitle}}<span popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="commentnew" popoverTitle="New" placement="bottom" triggers="hover" class="red-dot">&nbsp;</span>
+              <ng-template #commentnew></ng-template>
+            </div>
+            <div *ngIf="fixesView" class="makemodelcontent thread-date text-right inline">{{threadData.listCreatedOn | date:'mediumDate'}}</div>
+            <div class="makemodelcontent" [ngClass]="{'hide': fixesView || (collabticDomain && threadData.threadCategoryStr == 7)}">
+              <span class="esc-make">{{threadData.make}}</span>
+              <span *ngIf="threadData.model !=''" class="esc-model">, {{threadData.model}}</span>
+              <span *ngIf="threadData.year !=''" class="esc-model-year">, {{threadData.year}}</span>
+            </div>
+            <div class="esc-date-id">
+              <div *ngIf="!fixesView" title="{{threadData.listCreatedOn}}" class="col-70-row esc-date">{{threadData.listCreatedOn}}</div>
+              <div *ngIf="fixesView" class="make-info">
+                <div class="makemodelcontent bg bg-make inline">
+                  <span class="esc-make">{{threadData.make}}</span>
+                  <span *ngIf="threadData.model !=''" class="esc-model">, {{threadData.model}}</span>
+                  <span *ngIf="threadData.year !=''" class="esc-model-year">, {{threadData.year}}</span>
+                </div>
+                <div class="makemodelcontent odm bg bg-odm inline">
+                  <span class="esc-odm">{{threadData.odometerMiles}}</span>              
+                </div>
+              </div>
+              <div class="col-30-row landing-padding0 esc-threadID text-right">ID# {{threadData.threadId}}</div>
+            </div>
+            <div class="esc-desc">
+              <div class="desc truncate truncate-mulitple" [innerHTML]="threadData.description"></div>
+            </div>
+          </div>
+        </div>
+      </div> 
+    </div>   
+  </div>
+</div>
+
+ 

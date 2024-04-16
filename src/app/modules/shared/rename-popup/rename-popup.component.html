@@ -1,0 +1,42 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+    <p-toast></p-toast>
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">Edit</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor" (click)="save()"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close" (click)="dismiss()">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form class="action-form">
+            <div class="container">
+                <div class="row input-row pad-box">
+                    <div class="col-sm-12" [ngClass]="isSaved && nameValue==='' ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt d-flex align-items-center">
+                                <img src="assets\images\hq\network-light.png" alt="service" width="22" height="15"
+                                    class="mr-2" />
+                                <label class="mb-0">Rename {{title}}</label>
+                            </div>
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input type="text" [(ngModel)]="nameValue" pInputText class="input-bg map-input w-100"
+                                placeholder="Enter {{title}}" />
+                        </div>
+                        <!-- <span class="text-danger small" *ngIf="submitClicked && !!this.addShopForm.controls && !!this.addShopForm.controls['dealerCode'] && !!this.addShopForm.controls['dealerCode'].errors && !!this.addShopForm.controls['dealerCode'].errors.required">Dealer code is a required field.</span> -->
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

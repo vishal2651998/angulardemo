@@ -1,0 +1,46 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" ></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" ></app-product-header>
+</div>
+<div class="left-section hide">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index split-sec1">
+    <div *ngIf="!itemEmpty" class="part-list-head sib-list-head" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt no-bg" *ngIf="!msTeamAccess">{{title}}</span>
+            <span class="head-txt part-head-txt" *ngIf="msTeamAccess" tooltipClass="help-content-tooltip sidebarTeam sidebarTeam2" container="body" triggers="manual" [autoClose]="false" placement="right-top" [ngbTooltip]="partsTT" #ttparts="ngbTooltip">{{title}}</span>
+            <ng-template #partsTT>
+                <div class="tt-helpcontent-container">
+                    <div class="tt-bg-image {{thelpContentIconName}}"></div>
+                    <div class="tt-title">
+                        <div class="lt-img {{thelpContentIconName}}"></div>
+                        <div class="rt-text">{{thelpContentTitle}}</div>
+                    </div>
+                    <div class="tt-desp">{{thelpContentContent}}</div>
+                    <div class="tt-next-text" (click)="helpContent(thelpContentId)">DONE</div>
+                </div>
+            </ng-template>	
+            <span *ngIf="createAccess" class="new-prob" [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all')}" (click)="navPage('new', 0)">{{pageCreateNew}}</span>
+        </div>
+        <div class="prob-head-col head-col-2 text-right">
+            <!--app-common-notifications *ngIf="msTeamAccess"></app-common-notifications--> 
+            <span *ngIf="!loading" class="action-col pin-col cursor" class="{{pinClass}}" [ngClass]="{'hide': itemEmpty}" (click)="pinnedSibList(!pinFlag)"></span>
+            <span *ngIf="!loading" class="action-col thumb-col cursor" [ngClass]="{'thumb-view': !thumbView, 'list-view': thumbView, 'hide': displayNoRecords || itemEmpty}" title="{{thumbView ? 'List View' : 'Thumb View'}}" (click)="viewType(thumbView)"></span>
+        </div>
+    </div>
+    <div class="cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+        <app-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+        <app-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+      </div>
+    <div class="probing-content cbt-content part-content part-content-new part-right-side-none" [ngClass]="{'filter-expand': expandFlag, 'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-sib-list></app-sib-list>
+    </div>
+    <!--div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div-->
+</div>

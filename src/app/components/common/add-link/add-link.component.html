@@ -1,0 +1,160 @@
+<div class="custom-modal modal-container" id="wrapper">
+    <div class="modal-header" *ngIf="!reminderFlag && !techSummitFlag && !escalateFlag && !kaizenNotesFlag">
+        <h6 class="modal-title text-center">{{title}}</h6>
+    </div>
+    <div class="modal-header" *ngIf="reminderFlag">
+        <h6 class="modal-title text-center" style="margin:0 auto"><img src="assets/images/thread-detail/reminder-title.png" >&nbsp;&nbsp;{{reminderTitle}}</h6>
+    </div>
+    <div class="modal-header" *ngIf="kaizenNotesFlag">
+        <h6 *ngIf="specialText != 'Message'" class="modal-title" title="{{titleTest}}"><img src="assets/images/thread-detail/kaizen-notes-title.png" >&nbsp;&nbsp;Head Office Notes&nbsp;-&nbsp;{{titleTest}}</h6>
+        <h6 *ngIf="specialText == 'Message'" class="modal-title" title="{{titleTest}}"><img src="assets/images/thread-detail/kaizen-notes-title.png" >&nbsp;&nbsp;{{titleTest}}</h6>
+    </div>
+    <div class="modal-header" *ngIf="escalateFlag">
+        <h6 class="modal-title"><img src="assets/images/thread-detail/escalate-title.png" >&nbsp;&nbsp;{{nextEscalationText}}</h6>
+    </div>
+    <div class="modal-header" *ngIf="techSummitFlag">
+        <h6 class="modal-title text-center" style="margin:0 auto">Tech Summit Score</h6>
+    </div>
+    <div *ngIf="!reminderFlag && !techSummitFlag && !escalateFlag && !kaizenNotesFlag">
+        <form [formGroup]="linkForm">
+            <div class="modal-body add-link-body">
+                <div class="link-form-row input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text pi pi-link"></span>
+                    </div>
+                    <input type="text" class="form-control input-fd"  matInput placeholder="Enter Link" [(ngModel)]="link" formControlName="link" maxlength="100" [ngClass]="{ 'is-invalid': ( linkSubmitted && f.link.errors ) || ( linkSubmitted && linkError ) }">
+                </div>
+                <div class="link-form-row rowBottom">
+                    <textarea class="form-control" placeholder="Enter Caption" [(ngModel)]="caption" formControlName="caption" maxlength="100" [ngClass]="{ 'is-invalid': ( linkSubmitted && f.link.errors ) }"></textarea>
+                    <span class="text-count text-right">{{linkForm.value.caption.length}}/{{maxLen}}</span>
+                </div>
+                <!--div *ngIf="linkError" class="link-text-error">{{linkErrorMsg}}</div-->                          
+                <!--<div class="link-form-row rowBottom">
+                    <textarea class="form-control" placeholder="Enter Description" [(ngModel)]="description" formControlName="description" maxlength="100" [ngClass]="{ 'is-invalid': linkSubmitted && f.description.errors }"></textarea>
+                    <span class="text-count text-right">{{linkForm.value.description.length}}/{{maxLen}}</span>
+                </div>-->
+            </div>
+            <div class="modal-footer">
+                <div class="confirm-actions">
+                    <button class="btn action-btn cancel" (click)="activeModal.dismiss('Cross click')">Cancel<span class="cancel-btn"></span></button>
+
+                    <button class="btn action-btn submit add-link-save" *ngIf="editLinkFlag && !addLinkFlag" (click)="editLink()">Save&nbsp;<img src="assets/images/parts/save-draft.png" /></button>
+                    <div class="btn action-btn submit deactive" *ngIf="addLinkFlag && editLinkFlag" disabled >Save <img src="assets/images/parts/save-draft.png" /></div>
+
+                    <button class="btn action-btn submit" *ngIf="!addLinkFlag && !editLinkFlag" (click)="addLink()">Add<span class="submit-btn"></span></button>
+                    <div class="btn action-btn submit deactive" *ngIf="addLinkFlag && !editLinkFlag" disabled >Save <img src="assets/images/parts/save-draft.png" /></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div *ngIf="kaizenNotesFlag">
+        <form [formGroup]="reminderForm">
+            <div class="modal-body add-link-body add-reminder-body">            
+                <div class="reminderLableDiv">
+                    <div class="reminderLableLt" style="white-space: nowrap;">
+                        <img src="assets/images/thread-detail//escalate-icon.png" />
+                        &nbsp;&nbsp;{{labelText}}
+                    </div>
+                    <div *ngIf="specialText == 'Message'" class="reminderLableRt">
+                        <span class="text-count text-right">{{kdescription.length}}/500</span>
+                    </div>
+                </div>
+
+                <div *ngIf="specialText != 'Message'" class="link-form-row link-form-editor-row rowBottom reminderLableDiv">
+                    <ckeditor  formControlName="description" maxlength="100"
+                    [editor]="Editor" [config]="configCke" container="body"
+                    (change)="onkzdescChange()" (drop)="dropEvent($event,'newComment')"
+                    [(ngModel)]="kdescription"></ckeditor>                                    
+                </div>
+
+                <div  *ngIf="specialText == 'Message'" class="link-form-row rowBottom reminderLableDiv">
+                    <textarea  maxlength="500" class="form-control" (input)="onkzdescChange($event.target.value)" placeholder="{{placeHolderText}}" [(ngModel)]="kdescription" formControlName="description"></textarea>                
+                </div>
+
+            </div>
+            <div class="modal-footer add-reminder-footer">
+                <div class="confirm-actions reminderLableDiv">
+                    <button class="btn action-btn cancel" (click)="activeModal.dismiss('Cross click')">Cancel<span class="cancel-btn"></span></button>
+                    <button class="btn action-btn submit" *ngIf="!addReminderFlag" (click)="addReminder()">Save&nbsp;<img src="assets/images/probing/new/tick-icon.png" /></button>
+                    <div class="btn action-btn submit deactive" *ngIf="addReminderFlag" disabled >Save&nbsp;<img src="assets/images/probing/new/tick-icon.png" /></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div *ngIf="escalateFlag">
+        <form [formGroup]="reminderForm">
+            <div class="modal-body add-link-body add-reminder-body">            
+                <div class="reminderLableDiv">
+                    <div class="reminderLableLt" style="white-space: nowrap;">
+                        <img src="assets/images/thread-detail//escalate-icon.png" />
+                        &nbsp;&nbsp;{{labelText}}
+                    </div>
+                    <div class="reminderLableRt">
+                        <span class="text-count text-right">{{reminderForm.value.description.length}}/{{maxLen}}</span>
+                    </div>
+                </div>
+                <div class="link-form-row rowBottom reminderLableDiv">
+                    <textarea class="form-control" (input)="ondescChange($event.target.value)" placeholder="{{placeHolderText}}" [(ngModel)]="description" formControlName="description" maxlength="100"></textarea>                
+                </div>
+            </div>
+            <div class="modal-footer add-reminder-footer">
+                <div class="confirm-actions reminderLableDiv">
+                    <button class="btn action-btn cancel" (click)="activeModal.dismiss('Cross click')">Cancel<span class="cancel-btn"></span></button>
+                    <button class="btn action-btn submit" *ngIf="!addReminderFlag" (click)="addReminder()">Submit&nbsp;<img src="assets/images/probing/new/tick-icon.png" /></button>
+                    <div class="btn action-btn submit deactive" *ngIf="addReminderFlag" disabled >Submit&nbsp;<img src="assets/images/probing/new/tick-icon.png" /></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div *ngIf="reminderFlag">
+        <form [formGroup]="reminderForm">
+            <div class="modal-body add-link-body add-reminder-body">            
+                <div class="reminderLableDiv">
+                    <div class="reminderLableLt">
+                        {{reminderLabel}}
+                    </div>
+                    <div class="reminderLableRt">
+                        <span class="text-count text-right">{{reminderForm.value.description.length}}/50</span>
+                    </div>
+                </div>
+                <div class="link-form-row rowBottom reminderLableDiv">
+                    <textarea class="form-control" placeholder="{{reminderPlaceholder}}" [(ngModel)]="description" formControlName="description" maxlength="50"></textarea>                
+                </div>
+            </div>
+            <div class="modal-footer add-reminder-footer">
+                <div class="confirm-actions reminderLableDiv">
+                    <button class="btn action-btn cancel" (click)="activeModal.dismiss('Cross click')">Cancel<span class="cancel-btn"></span></button>
+                    <button class="btn action-btn submit" *ngIf="!addReminderFlag" (click)="addReminder()">Send&nbsp;<img src="assets/images/thread-detail/new-post.png" /></button>
+                    <div class="btn action-btn submit deactive" *ngIf="addReminderFlag" disabled >Send&nbsp;<img src="assets/images/thread-detail/new-post.png" /></div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div *ngIf="techSummitFlag">
+        <form [formGroup]="reminderForm">
+            <div class="modal-body add-link-body add-reminder-body">            
+                <div class="reminderLableDiv">
+                    <div class="reminderLableLt">
+                        <img src="assets/images/thread-detail/summit-fix-popup-icon.png" >&nbsp;&nbsp;Enter Summit Solution Score
+                    </div>                    
+                </div>
+                <div class="link-form-row rowBottom reminderLableDiv">                 
+                    <input class="form-control score-input" matInput type="text" placeholder="Enter score or Enter '0' if not approved" [(ngModel)]="score" formControlName="score" maxlength="3" (keypress)="keyPressNumbers($event)" [ngClass]="{ 'is-invalid': (submitted1 && s.score.errors) || (submitted1 && scoreInvalidValue) }">                
+                    <span class="score-help-text"> Once score is entered, the Sumit Solution will be closed and moved to All India Service If score is '0', then summit solution will be moved to Engineering workstream</span>               
+                </div>                
+            </div>
+            <div class="modal-footer add-reminder-footer">
+                <div class="confirm-actions reminderLableDiv">
+                    <button class="btn action-btn cancel" (click)="activeModal.dismiss('Cross click')">Cancel<span class="cancel-btn"></span></button>
+                    <button class="btn action-btn submit add-link-save" *ngIf="!addScoreFlag" (click)="addScore()">Save&nbsp;<img src="assets/images/thread-detail/score-popup-save.png" /></button>
+                    <div class="btn action-btn submit deactive add-link-save" *ngIf="addScoreFlag" disabled >Save&nbsp;<img src="assets/images/thread-detail/score-popup-save.png" /></div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+</div>

@@ -1,0 +1,297 @@
+<div *ngIf="!loading" id="header">
+    <!-- <app-probing-header [pageData]="headerData"></app-probing-header> -->
+    <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)">
+    </app-thread-detail-header>
+</div>
+<div class="conatainer probing-view" style="overflow:hidden">
+    <div *ngIf="loading" class="img-loader"><img src="assets/images/loading.svg" alt="Loader" width="60px" /></div>
+    <div *ngIf="!loading" class="row col-lg-12 col-md-12 col-sm-12 probing-view-cont" [style.height.px]="innerHeight">
+        <div class="ps col-lg-8 col-md-8 col-sm-12 probing-info gts-info" [perfectScrollbar]="sconfig">
+            <div class="row col-lg-12 prob-accord gts-accord">
+                <div class="col-lg-5">
+                    <div class="gts-image {{bgClass}}" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="workstream-info">
+                        <span class="title">{{name}}</span>
+                        <!--span class="ws-label"></span>
+                        <span class="ws-items" *ngFor="let ws of workstreams">{{ws.name}}</span-->
+                    </div>
+                    <div class="problem-row setPadding" *ngIf="filteredErrorCodes!='' && !tvsFlag">
+                        <div class="setPadding1" *ngFor="let dtcInfo of filteredErrorCodes; let i=index">
+                            <div class="problem-col-lt"
+                                [ngClass]="{ 'thread-dtc-code' : industryType['id'] != '1' , 'thread-error-code' : industryType['id'] == '1' }">
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="problem-col-cont-error">
+                                    <span class="red-text"><span *ngIf="DICVDomain">{{dtcInfo.emission_type}} -
+                                        </span>{{dtcInfo.code}}</span>{{dtcInfo.description}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="filteredErrorCodes=='' && !tvsFlag">
+                        <div class="problem-row setPadding">
+                            <div class="problem-col-lt"
+                                [ngClass]="{ 'thread-no-dtc' : industryType['id'] != '1' , 'thread-no-error' : industryType['id'] == '1' }">
+                            </div>
+                            <div class="problem-col-rt">
+                                <p class="no-error-text">No Error Code</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="additional-info">
+                        <div *ngIf="DICVDomain" class="label">Description</div>
+                        <div *ngIf="!DICVDomain" class="label">Additional Info</div>
+                        <div class="value">{{addInfo}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="gts-editor-sec">
+                <div class="gts-editor">GTS Details</div>
+                <div *ngIf="legacyGts" class="no-gts legacy-cont text-center">
+                    <span>Legacy GTS</span>
+                </div>
+                <div *ngIf="!legacyGts">
+                    <div *ngIf="!gtsChartFlag" class="no-gts text-center"><span>GTS not created</span></div>
+                    <div *ngIf="gtsChartFlag" class="gts-det">
+                        <div class="prob-accord gts-cont">
+                            <div class="gts-version">Current Version <span>{{version}}</span></div>
+                            <div class="update-info">
+                                <div class="update-col gts-col">
+                                    <span class="user-col row-1">Created By</span>
+                                    <span class="row-2">{{flowChartcreatedBy}}</span>
+                                </div>
+                                <div class="update-col gts-col">
+                                    <span class="date-col date-col-red row-1">Created On </span>
+                                    <span class="row-2 fs-14">{{flowChartcreatedOn}}</span>
+                                </div>
+                                <div class="update-col gts-col">
+                                    <span class="user-col row-1">Last Modified By</span>
+                                    <span class="row-2">{{flowChartupdatedBy}}</span>
+                                </div>
+                                <div class="update-col gts-col">
+                                    <span class="date-col date-col-red row-1">Last Modified On</span>
+                                    <span class="row-2 fs-14">{{flowChartupdatedOn}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <mat-accordion *ngIf="tvsFlag || vehicleFlag" [multi]="true" #accordion="matAccordion">
+                <mat-expansion-panel class="app-info {{panel.class}}" [disabled]="panel.isDisabled"
+                    [expanded]="panel.isExpanded" [hideToggle]="false"
+                    (opened)="beforeParentPanelOpened(panel, vehicleList)"
+                    (closed)="beforeParentPanelClosed(panel, vehicleList)" (afterCollapse)="afterPanelClosed()"
+                    (afterExpand)="afterPanelOpened()" *ngFor="let panel of accordionList" #mapanel="matExpansionPanel">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <b>{{panel.title}}</b>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div *ngIf="panel.id=='vehicle-info' || panel.id=='equipment-info'"
+                        class="vehicle-accord app-accord ">
+                        <div *ngIf="vehicleFlag">
+                            <mat-accordion [multi]="true" #accordion="matAccordion">
+                                <mat-expansion-panel class="{{vh.class}}" [disabled]="vh.isDisabled"
+                                    [expanded]="vh.isExpanded" [hideToggle]="false" (opened)="beforePanelOpened(vh)"
+                                    (closed)="beforePanelClosed(vh)" (afterCollapse)="afterPanelClosed()"
+                                    (afterExpand)="afterPanelOpened()" *ngFor="let vh of vehicleList"
+                                    #mapanel="matExpansionPanel">
+                                    <mat-expansion-panel-header
+                                        *ngIf="vh.vehicleData.model!='' || vh.vehicleData.year!=''"
+                                        class="mat-expansion-panel-header {{vh.title | removeWhiteSpace | lowercase}}">
+                                        <mat-panel-title>
+                                            <div class="vh-info">
+                                                <span class="title">{{vh.title}}</span>
+                                            </div>
+                                        </mat-panel-title>
+                                    </mat-expansion-panel-header>
+                                    <div class="vh-info" *ngIf="vh.vehicleData.model=='' && vh.vehicleData.year==''">
+                                        <span class="empty-info make-only">{{vh.title}}</span>
+                                    </div>
+                                    <div class="vehicle-list app-list">
+                                        <span class="emission-items" *ngIf="vh.vehicleData.emissionName!=''">Emission
+                                            <ul>
+                                                <li *ngFor="let e of vh.vehicleData.emissionName">{{e}}</li>
+                                            </ul>
+                                        </span>
+                                        <span class="model-items" *ngIf="vh.vehicleData.model!=''">Model
+                                            <ul>
+                                                <li *ngFor="let m of vh.vehicleData.model">{{m}}</li>
+                                            </ul>
+                                        </span>
+                                        <span *ngIf="vh.vehicleData.year!=''" class="year-items">Year
+                                            <ul>
+                                                <li *ngFor="let y of vh.vehicleData.year">
+                                                    <label style="margin-bottom: 0;" *ngIf="y==0">All</label>
+                                                    <label style="margin-bottom: 0;" *ngIf="y!=0">{{y}}</label>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </div>
+                                </mat-expansion-panel>
+                            </mat-accordion>
+                        </div>
+                        <div *ngIf="!vehicleFlag" class="empty-info">All Models</div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+
+            <div class="prob-info">
+                <div class="problem-details">Problem Details</div>
+                <div *ngIf="!dtcFlag">
+                    <div class="update-info">
+                        <div class="update-col">
+                            <span class="prob-catg-col row-1">Problem Category</span>
+                            <span class="row-2">{{probCatgName}}</span>
+                        </div>
+                        <div class="update-col">
+                            <span class="system-col row-1">System</span>
+                            <span class="row-2">{{system}}</span>
+                        </div>
+                    </div>
+                    <div class="gts-tags">
+                        <div class="workstream-info tag-info">
+                            <span class="ws-label tag-label">Tag<span *ngIf="tags.length > 1">s</span></span>
+                            <div *ngIf="!tagFlag"><span class="tag-label-no">-</span></div>
+                            <div *ngIf="tagFlag">
+                                <span class="ws-items" *ngFor="let tag of tags">{{tag}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="dtcFlag">
+                    <div class="update-info">
+                        <div class="update-col update-row1-col">
+                            <span class="prob-catg-col row-1">Problem Catg</span>
+                            <span class="row-2">{{probCatgName}}</span>
+                        </div>
+                        <div class="update-col update-row1-col">
+                            <span class="mod-col row-1">Module Type</span>
+                            <span class="row-2">{{productModuleType}}</span>
+                        </div>
+                        <div class="update-col update-row1-col">
+                            <span class="mfg-col row-1">Module Mfg</span>
+                            <span class="row-2">{{productModuleMfg}}</span>
+                        </div>
+                    </div>
+                    <div class="update-info">
+                        <div class="update-col dtc-col">
+                            <span class="system-col row-1">System</span>
+                            <span class="row-2">{{system}}</span>
+                        </div>
+                        <div class="update-col">
+                            <span class="dtc-col row-1">DTC</span>
+                            <span class="row-2">{{dtcCode}}-{{dtcDesc}}</span>
+                        </div>
+                    </div>
+                    <div class="gts-tags">
+                        <div class="workstream-info tag-info">
+                            <span class="ws-label tag-label">Tag<span *ngIf="tags.length > 1">s</span>
+                                <div *ngIf="!tagFlag">None</div>
+                            </span>
+                            <div *ngIf="tagFlag">
+                                <span class="ws-items" *ngFor="let tag of tags">{{tag}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- System Information -->
+            <div class="app-accord fs-14 border0">
+                <app-system-info-view [systemInfo]="systemInfo"></app-system-info-view>
+            </div>
+            <div class="gts_view__icons">
+                <div class="footer-selection">
+                    <div class="flex-row">
+                        <div class="lft like-small pl-1r" >
+                            <span class="lft footer-icon" >
+                                <img [ngClass]="{'disable': disableLikeFlag}" (click)="socialAction('like', likeStatus)" src="{{assetPartPath}}{{likeImg}}" alt="Loader" />
+                            </span>
+                            <span class="lft text-color-footer" *ngIf="likeCount">{{likeCount}}</span>
+                            <span class="lft text-color-footer" *ngIf="!likeCount">-</span>
+
+                        </div>
+                        <div class="lft pin-small pl-1r" >
+                            <span class="lft footer-icon" >
+                                <img src="{{assetPartPath}}{{pinImg}}" (click)="socialAction('pin', pinStatus)" alt="Loader" />
+                            </span>
+                            <span class="lft text-color-footer" *ngIf="pinCount">{{pinCount}}</span>
+                            <span class="lft text-color-footer" *ngIf="!pinCount"> -</span>
+                        </div>
+                        <div class="lft view-small pl-1r" *ngIf="viewCount">
+                            <span class="lft footer-icon">
+                                <img src="assets/images/workstreams-page/view-icon.svg" alt="Loader" />
+                            </span>
+                            <span class="lft text-color-footer" *ngIf="viewCount">{{viewCount}}</span>
+                            <span class="lft text-color-footer" *ngIf="!viewCount">-</span>
+
+                        </div>
+                        
+
+
+                      
+
+                    </div>
+                </div>
+            </div>
+            <!--div *ngIf="actionFlag" class="probing-action gts-action">
+                <ul>
+                    <li class="edit cursor" (click)="navigatePage(editRedirect)">Edit</li>
+                    <li class="delete cursor" (click)="deleteRequest()">Delete</li>
+                    <li class="duplicate cursor">Duplicate</li>
+                </ul>
+                <ul class="user-info">
+                    <li>
+                        <div class="added-by">Created By</div>
+                        <div class="profile"><span class="profile-icon" [ngStyle]="{'background-image': 'url(' + createdByImg + ')'}"></span>{{createdBy}}</div>
+                        <div class="date">{{createdOn}}</div>
+                    </li>
+                    <li>
+                        <div class="added-by">Last Edited By</div>
+                        <div class="profile"><span class="profile-icon" [ngStyle]="{'background-image': 'url(' + updatedByImg + ')'}"></span>{{updatedBy}}</div>
+                        <div class="date">{{updatedOn}}</div>
+                    </li>
+                </ul>
+            </div-->
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-12 similar-probing similar-gts">
+            <!-- <div *ngIf="actionFlag" class="user-actions">
+                <ul>
+                    <li class="edit cursor" (click)="navigatePage(editRedirect)">Edit</li>
+                    <li class="delete cursor" (click)="deleteRequest()">Delete</li>
+                    <li class="duplicate cursor" (click)="navigatePage(duplicateRedirect)">Duplicate</li>
+                </ul>
+            </div> -->
+            <div class="similar-col">
+                <div class="similar-head">Similar GTS Procedure</div>
+
+                <div style="text-align: center;padding: 50px;font-style: italic;color: #999;">Nothing to show </div>
+                <!-- <div class="similar-info">
+                    <div class="info-col">
+                        <div class="info-row gts-image {{bgClass}}" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></div>
+                        <div class="info-row prob-det">
+                            <span class="prob-complaint">Clutch Related Complaint</span>
+                            <span class="model">Apache RR 310-BS4 > 2014</span>
+                            <span class="date">Aug 10, 2020 10:20 AM</span>
+                        </div>
+                    </div>
+                </div>
+				<div class="similar-info">
+                    <div class="info-col">
+                        <div class="info-row gts-image {{bgClass}}" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></div>
+                        <div class="info-row prob-det">
+                            <span class="prob-complaint">Clutch Related Complaint</span>
+                            <span class="model">Apache RR 310-BS4 > 2014</span>
+                            <span class="date">Aug 10, 2020 10:20 AM</span>
+                        </div>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</div>

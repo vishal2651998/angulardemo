@@ -1,0 +1,80 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+    <div [style.height.px]="innerHeight">
+        <div class="ps form-fields" [perfectScrollbar]="sconfig">
+            <div class="section-container">
+                <div class="title-row">
+                    <div class="lt">
+                        <img src="assets/images/user-settings/allowed-domains-icon.png">
+                        <span class="title-text">Allowed Domains</span>
+                        <img src="assets/images/black-info-icon.png">
+                        <span class="info-text">Users from the following domains will not require approval while signing up for their Collabtic account</span>
+                    </div>
+                    <div class="rt">
+
+                         <!-- toggle -->
+                         <div class="cursor toggle-box togglebox toggle-width">
+                            <span class="toggle-col field-label info-text">Any domain</span>
+                            <span class="toggle-col toggle-option">
+                                <p-inputSwitch [(ngModel)]="anyDomainAllowedFlag" (onChange)="onToggleBoxChange($event.checked)">
+                                </p-inputSwitch>
+                            </span>
+                        </div>
+                        <!-- toggle -->
+
+                        <div style="background-color:#469073;border-radius: 16px;;"  (click)="openDomainpopup('new','','')" class="cursor thread-add-new ">
+                            <span ><i  class="pi pi-plus" style="font-size: 13px; margin-right: 4px;"></i></span>
+                            <span >ADD Domain</span>
+                        </div>
+
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="domain-container">
+                    <div class="dynmic-selected-items ">
+                        <div  *ngIf="configData.length>0" class="selected-items ws-selected-items">
+                            <div  class="tag-text ws-tag-text cursor-pointer " *ngFor="let item of configData; let s = index;">
+                                <span (click)="openDomainpopup('update',item.id,item.name);$event.stopPropagation();" >{{item.name}}</span>
+                                <i  class="material-icons tag-close " (click)="removeDomain(item.id);$event.stopPropagation();">close</i>
+                            </div>                            
+                        </div>
+                        <div *ngIf="configData.length==0" style="text-align: center;color: #949090;font-style: italic;"> No results found </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="false" [resizable]="true"
+class="domain-add-popup">
+<ng-template pTemplate="header">
+    <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+        <span style="font-size: 18px;font-weight: 500;">{{domainTitleText}}</span>
+        <button *ngIf="buttonEnableFlag" (click)="updateDomain()" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+            class="p-button-rounded p-button-danger float-right"></button>
+        <!-- [disabled]="serviceForm.invalid" -->
+    </div>
+</ng-template>
+<div>
+
+    <div class="label-text"><img src="assets/images/user-settings/allowed-domain-plcaholder-icon.png">&nbsp;&nbsp;Domain</div>
+
+    <input type="text" pInputText class="" 
+    [(ngModel)]="domainName" 
+    (input)="domainNameChange($event.target.value)"
+    placeholder="Enter domain" />
+
+    <div class="example-text"><span style="color:#298368">Example</span>: collabtic.com</div>
+
+    <div class="error-text" *ngIf="errorMsgFlag">{{errorMsgText}}</div>
+
+</div>
+</p-dialog>
+
+    

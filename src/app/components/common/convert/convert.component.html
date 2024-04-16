@@ -1,0 +1,46 @@
+<div class="custom-modal modal-container" id="wrapper">
+    <div *ngIf="access == 'convert'" class="">
+        <div class="modal-header">
+            <h6 class="modal-title modal-title-width text-center">{{title}}</h6>
+        </div>
+        <div class="modal-body convert-body">
+            <div class="container">
+                <div class="container">
+                    <div class="conf-txt" [innerHTML]="bodyTxt"></div>    
+                    <div class="">
+                        <div class="prob-form-control cust-comp-control">
+                            <div class="cursor def-select select-tags" (click)="manageList('category')">
+                                <div class="tag-col cat-bg"></div>
+                                <div class="tag-col tag-text"> Select Category <img src="assets/images/dropdown_downarrow.png"></div>
+                            </div>
+                            <div *ngIf="filteredCats?.length > 0" class="selected-items">
+                                <div *ngFor="let item of filteredCats; let t=index" class="tag-text">
+                                    <span>{{item}}</span>
+                                    <i class="material-icons tag-close"
+                                        (click)="disableCatgSelection(t)">close</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>        
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">        
+            <div class="confirm-actions confirm-actions-btn">
+                <button class="btn action-btn cancel" (click)="confAction(false)">No<span class="cancel-btn"></span></button>
+                <button *ngIf="!yesbtnEnable" class="btn action-btn setOpacity5 submit">Yes<span class="submit-btn yes-btn-tick"></span></button>
+                <button *ngIf="yesbtnEnable" class="btn action-btn submit" (click)="confAction(true)">Yes<span class="submit-btn yes-btn-tick"></span></button>
+            </div>        
+        </div>
+    </div>
+    <div *ngIf="access == 'convert-loader'" class="">
+        <div class="modal-body convert-loader-body">
+            <div class="new-signup-setup-cont"> 
+                <div class="cont-top-img"><img src="assets/images/landing-page/doctoka.png" ></div>
+                <div class="cont-middle-text"><div class="conf-txt" [innerHTML]="bodyTxt"></div></div>            
+                <div class="cont-bottom-img"><img src="assets/images/site/workstream-creation/submit-loader.svg" ></div>
+            </div>
+        </div>        
+    </div>    
+</div>
+'

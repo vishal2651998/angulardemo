@@ -1,0 +1,96 @@
+<div class="right-section">
+    <div class="prob-index system-setting">
+        <div class="container-fluid">
+            <div class="center-middle-width-container">
+                <div class="center-middle-width padding-common padding-common-hq">
+                    <div class="hq-head d-flex justify-content-between align-items-center">
+                        <!-- {{toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag}} productflag
+                                {{toolsListPageRef?.toolsLocationListPageRef?.locationToolsFlag}} location flag -->
+                        <div class="" [ngClass]="{ 'visible' : opacityFlag }">
+                            <div class="hq-head-row-0">
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">Headquarters</span>
+                                <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('Headquarters')">{{headQuarterService.levelName}}</span> 
+                                <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span class="hq-head-breadcrumb-text cursor" (click)="back('step1')">{{headQuarterService.sublevelName}}</span> 
+                                <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                <span *ngIf="!toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text cursor"  (click)="toolsListPageRef?.toolsLocationListPageRef?.back('tools')">Tools & Equipment</span>
+                                <span *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text cursor"  (click)="toolsListPageRef?.backToTools()">Tools & Equipment</span>
+                                
+                
+                                <img *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+                                <span *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag" class="hq-head-breadcrumb-text cursor" (click)="toolsListPageRef?.toolsLocationListPageRef?.back('historyback')">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData?.vendorInfo?.name}} - {{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.loc}} Locations</span>
+                                
+                                <img *ngIf="toolsListPageRef?.locationToolsFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+                                <span *ngIf="toolsListPageRef?.locationToolsFlag" class="hq-head-breadcrumb-text">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData?.vendorInfo?.name}}</span>
+
+                                <img *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+                                <span *ngIf="toolsListPageRef?.productDetailsFlag" class="hq-head-breadcrumb-text">{{toolsListPageRef?.selectedProduct?.vendorInfo?.name}}</span>
+                            </div>
+                            <div class="hq-head-row-1">
+                                <img class="hq-head-img" src="assets/images/hq/hq-region-head-icon.png" alt="" />
+                                <span class="hq-head-text">{{headQuarterService.levelName}} - {{headQuarterService.sublevelName}}</span>
+                                
+                            </div>
+                            <!-- <div class="hq-head-row-0">
+                                <span class="hq-head-breadcrumb-text cursor ml-2"  (click)="toolsListPageRef?.toolsLocationListPageRef?.back('tools')">Tools & Equipment</span>
+                                
+                                <img *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag" class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+                                <span *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag" class="hq-head-breadcrumb-text cursor" (click)="toolsListPageRef?.toolsLocationListPageRef?.back('historyback')">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.productName}} - {{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.loc}} Locations</span>
+                    
+                                <img class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" /> 
+                                <span class="hq-head-breadcrumb-text">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.productName}}</span> 
+                               
+                            </div> -->
+                            <!-- <div class="hq-head-row-1" *ngIf="!toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag">
+                                <img  class="hq-head-img" src="assets/images/hq/hq-region-head-icon.png" alt="" />
+                                <span class="hq-head-text">Locations - {{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.loc}}, Qty - {{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.qty}}</span>
+                            </div>  -->
+                            <!-- <div class="hq-head-row-1" *ngIf="toolsListPageRef?.toolsLocationListPageRef?.productHistoryFlag">
+                                <img  class="hq-head-img" src="assets/images/hq/shop-black.png" alt="" />
+                                <span class="hq-head-text">{{toolsListPageRef?.toolsLocationListPageRef?.toolsLocationPageData.productName}}</span>
+                            </div> 
+                             -->
+
+                        </div>
+
+                        <div *ngIf="!toolsListPageRef?.productDetailsFlag && !toolsListPageRef?.locationToolsFlag">
+                            <!-- <div (click)="addTools()" class="m-0 add-action-btn">
+                                <img src="assets/images/hq/add-icon.png">
+                                <span>New Tool/Equipment to Network</span>
+                            </div> -->
+                            <!-- <div (click)="addProduct()" class="m-0 add-action-btn">
+                                <img src="assets/images/hq/add-icon.png">
+                                <span>Add Tool & Equipment to Shop</span>
+                            </div> -->
+                            <!-- <div class="m-0 border-0 add-action-btn">
+                                <img src="assets/images/export-green-icon.png">
+                                <span>Template</span>
+                            </div> -->
+                            <!-- <div class="m-0 pl-0 border-0 add-action-btn">
+                                <img src="assets/images/common/cdownload-icon.png">
+                                <span>Download Tools & equipment</span>
+                            </div>
+                            <div class="m-0 pl-0 border-0 add-action-btn">
+                                <img src="assets/images/hq/hq-media-green-upload-icon.png">
+                                <span>Upload Tools & equipment</span>
+                            </div> -->
+                        </div>
+
+                        <span *ngIf="(toolsListPageRef?.locationToolsFlag || toolsListPageRef?.productDetailsFlag) && !toolsListPageRef?.toolsLocationListPageRef?.addProductFinal" (click)="selectProduct()" class="add-action-btn cursor">
+                            <img src="assets/images/customers/add-icon.png">
+                            <span >Add Tools & Equipment to Shop</span>
+                        </span>
+                    </div>
+                    <div class="d-flex">
+                        <app-headquarter-sidebar [selectedTab]="'TOOLS'"></app-headquarter-sidebar>
+                        <div class="ts-list-rt transition filter-expand">
+                            <app-tools-list *ngIf="toolsListFlag" [toolsPageData]="toolsPageData"  (toolsIndexListComponentRef)="toolsListPageRef = $event" (toolsCallback)="toolsIndexListPageCallback($event)"></app-tools-list>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

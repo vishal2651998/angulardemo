@@ -1,0 +1,64 @@
+<div class="dashboard-header prob-header" [ngClass]="{'dashboard-menu-header': !titleFlag}">
+  <div class="dashboard-header-table">
+    <div class="dash-header-col dash-head-left {{menuCol}}" [ngClass]="{'dash-head-search-left': searchFlag, 'export': exportFlag}">
+      <div *ngIf="titleFlag" class="dashboard-title">{{title}}</div>
+      <div *ngIf="!titleFlag && !techsupoortmetricsFlag && !manufacturemetricsFlag" class="dashboard-sub-menus">
+        <ul *ngIf="menuFlag">
+          <li *ngFor="let menu of menuItems">
+            <a [ngClass]="{'active': menu.menuActive}" (click)="navigatePage(menu.menuLink)">{{menu.menuItem}}</a>
+            <!--a [routerLink]="menu.menuLink" [ngClass]="{'active': menu.menuActive}">{{menu.menuItem}}</a-->
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="!titleFlag && !techsupoortmetricsFlag && !manufacturemetricsFlag" class="dashboard-sub-menus">
+        <ul *ngIf="menuFlag">
+          <li *ngFor="let menu of menuItems">
+            <a [ngClass]="{'active': menu.menuActive}" (click)="navigatePage(menu.menuLink)">{{menu.menuItem}}</a>
+            <!--a [routerLink]="menu.menuLink" [ngClass]="{'active': menu.menuActive}">{{menu.menuItem}}</a-->
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="!titleFlag && techsupoortmetricsFlag && !manufacturemetricsFlag" class="dashboard-sub-menus">
+        <ul *ngIf="menuFlag">
+          <li *ngFor="let menu of menuItems; let i = index">
+            <a [ngClass]="{'active': menu.menuActive}" (click)="navigateTap(menu,i)">{{menu.menuItem}}</a>
+            <!--a [routerLink]="menu.menuLink" [ngClass]="{'active': menu.menuActive}">{{menu.menuItem}}</a-->
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="!titleFlag && !techsupoortmetricsFlag && manufacturemetricsFlag" class="dashboard-sub-menus">
+        <ul *ngIf="menuFlag">
+          <li *ngFor="let menu of menuItems; let i = index">
+            <a [ngClass]="{'active': menu.menuActive}" (click)="navigateManufactureTap(menu,i)">{{menu.menuItem}}</a>
+            <!--a [routerLink]="menu.menuLink" [ngClass]="{'active': menu.menuActive}">{{menu.menuItem}}</a-->
+          </li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="dash-header-col dash-head-right {{searchCol}}" [ngClass]="{'dash-head-search-right': searchFlag, 'export': exportFlag}">
+      <div *ngIf="searchFlag" class="search-col">
+        <span class="search-div" [ngClass]="{'search-filter search-btn' : searchClose || searchTick}">
+            <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+                <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search" src="assets/images/dashboard/search-icon.png"></a>
+                <input type="text" class="form-control search-control" value="{{searchVal}}" id="searchKey" formControlName="searchKey" maxlength="50" autocomplete="off" placeholder="{{searchPlaceHolder}}" (input)="onSearchChange($event.target.value)" [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }">
+                <!--div *ngIf="submitted && f.searchKey.errors" class="invalid-feedback page-error-text">
+                    <div *ngIf="f.searchKey.errors.required">Please enter search keyword</div>
+                </div-->
+                <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/dashboard/close.png"></a>
+                <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/dashboard/search-icon.png"></a>
+            </form>
+        </span>
+        <div *ngIf="userResultFlag" class="search-result">
+          <div *ngIf="searchResultLoading" class="loader search-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+          <div *ngIf="!searchResultLoading && searchNoDataFlag" class="empty-record text-center">No Records Found</div>
+          <ul *ngIf="!searchResultLoading && !searchNoDataFlag" class="scrollbar scrollbar-primary thin">
+            <li *ngFor="let user of userList" (click)="selectUser(user.name)">{{user.id}} - {{user.name}}</li>
+          </ul>
+        </div>
+      </div>
+      <div *ngIf="exportFlagthread" class="dashboard-export-cont dashboard-export-thread" [ngClass]="{'export-loading': exportLoadingAll}" title="Export all data" (click)="exportall()">Export All</div>
+      <div *ngIf="pageData.exportFlag" class="dashboard-export-cont dashboard-export" [ngClass]="{'export-loading': exportLoading}" title="Export filtered data only" (click)="export()">Export</div>
+    </div>
+  </div>
+</div>

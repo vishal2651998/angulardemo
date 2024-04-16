@@ -1,0 +1,355 @@
+<div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+<div *ngIf="loading" class="loading-small-screen-scroll" style="left:56%;" align="center">
+    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<div *ngIf="!loading" class="system-setting-container">
+<div [style.height.px]="innerHeight">
+    <div class="ps form-fields" [perfectScrollbar]="sconfig">
+    <div *ngIf="!tvsDomain">   
+        <div class="inner-container">
+            <div class="section-container" *ngFor="let item of systemSettingsData; let s = index;">
+                <div class="title-row title-row-old">{{item.name}}</div>
+                <div class="content-row">
+
+                    <div class="items display-block">
+
+                        <div class="type-col-1 vtop inline-block">
+                            <span class="settings-icon-green"></span>
+                        </div>
+                        
+                        <div class="type-col-2 inline-block" *ngFor="let type of item.settings; let s1 = index;">
+                            <div class="placeholder-items type-row display-block">
+                                <div class="type-col-2-lt toggle inline-block">
+                                    <p class="p-title">{{type.title}}</p>
+                                    <p class="p-desc">{{type.placeHolder}}</p>
+                                </div>
+                                <div class="type-col-2-rt toggle inline-block top5">
+                                    <!-- toggle -->
+                                    <div class="cursor toggle-box togglebox">
+                                        <span class="toggle-col field-label"></span>
+                                        <span class="toggle-col toggle-option">
+                                            <p-inputSwitch [(ngModel)]="type.toggleBox" (onChange)="onToggleBoxChange('0','toggle',item.settingsId,type.itemId,'',$event.checked)">
+                                            </p-inputSwitch>
+                                        </span>
+                                    </div>
+                                    <!-- toggle -->
+                                </div>                                    
+                            </div>  
+                            <div *ngFor="let type1 of type.items; let s2 = index;">                             
+                                <div class="inner-items type1-row display-block" *ngIf="type1.innerItems==''">
+                                    <div class="type1-col-1 inline-block vtop">
+                                        <span class="settings-icon-gray"></span>
+                                    </div>
+                                    <div class="type1-col-2 inline-block">
+                                        <p class="p-label">{{type1.title}}&nbsp;&nbsp;<span style="position: relative;top: -3px;" class="cursor" *ngIf="type1.description != '' " (click)="updateNotes('Edit',type1.description,type1.type,'',item.settingsId,type.itemId,'','0')"><img src="assets/images/system-settings/edit-icon.png" /></span></p>
+                                        <div class="inner-items-empty type3-row display-block" >
+                                            <p *ngIf="type1.description != '' " class="p-label-desc" [innerHTML]="type1.descriptionContent"></p>
+                                            <p *ngIf="type1.description == '' " class="cursor p-label-desc green-btn" (click)="updateNotes('Add','',type1.type,'',item.settingsId,type.itemId,'','0')"><img style="position: relative;top: -1px;" src="assets/images/system-settings/add-icon.png" />&nbsp;&nbsp;Add Special Message</p>
+                                        </div> 
+                                    </div>                                    
+                                </div>
+                                <div class="border-row"></div>
+                                <div class="inner-items type2-row display-block" *ngIf="type1.innerItems!=''">
+                                    <div class="type1-col-1 inline-block vtop">
+                                        <span class="calendar-icon-gray"></span>
+                                    </div>
+                                    <div class="type1-col-2 inline-block">
+                                        <p class="p-label">{{type1.title}}</p> 
+                                        <div class="inner-items-nempty type2-row type2-row2 display-block" *ngFor="let type2 of type1.innerItems; let s3 = index;">
+                                            <div class="type2-col-1 inline-block vtop">
+                                                <span class="{{type2.imageClass}}" [ngClass]="{ 'top8' : type2.description == ''}"></span>                                                   
+                                            </div>
+                                            <div class="type2-col-2 inline-block">
+                                                <div class="placeholder-items type-row type-row-bottom display-block">
+                                                    <div class="type2-col-2-lt inline-block {{type2.inputType}}">
+                                                        <p class="p-title" [ngClass]="{ 'p-title-see-sample' : type2.datId == '1' }" >{{type2.title}}</p>
+                                                        <div *ngIf="type2.datId == '1'" class="see-sample-div hide">
+                                                            <img src="assets/images/system-settings/see-sample.png" />
+                                                            <span>See Sample</span>
+                                                        </div>  
+                                                        <p *ngIf="type2.description != ''" class="p-desc" [ngClass]="{ 'p-desc-min-height' : type2.description == undefined && type2.inputType == 'datePicker'}">{{type2.description}}</p>
+                                                    </div>
+                                                    <div class="type2-col-2-rt toggle inline-block" *ngIf="type2.inputType == 'toggle'">
+                                                        <!-- toggle -->
+                                                        <div class="cursor toggle-box togglebox">
+                                                            <span class="toggle-col field-label"></span>
+                                                            <span class="toggle-col toggle-option">
+                                                                <p-inputSwitch [disabled]="type.autoSettingsDisableFlag" [(ngModel)]="type2.toggleBox" (onChange)="onToggleBoxChange(type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked)">
+                                                                </p-inputSwitch>
+                                                            </span>
+                                                        </div>
+                                                        <!-- toggle -->
+                                                    </div> 
+                                                    <div class="type2-col-2-rt datePicker inline-block" *ngIf="type2.inputType == 'datePicker'">                                                             
+                                                        <!-- date -->
+                                                        <span class="inline-block date-text">Start</span>
+                                                        <p-calendar class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" [disabled]="type.autoSettingsDisableFlag" placeholder="Start Date" dateFormat="M dd, yy" styleClass="inline-block date-box" [maxDate]="maximumDate" [(ngModel)]="type2.startDate" (onSelect)="onChangeDate($event,'start',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked)" ></p-calendar>
+                                                        <span class="inline-block date-text">End</span>
+                                                        <p-calendar class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" [disabled]="type.autoSettingsDisableFlag" placeholder="End Date" dateFormat="M dd, yy" styleClass="inline-block date-box" [minDate]="miniumDate" [(ngModel)]="type2.endDate" (onSelect)="onChangeDate($event,'end',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked)" ></p-calendar>
+                                                        <!-- date -->
+                                                    </div>                                   
+                                                </div> 
+                                                <div *ngIf="type2.inputType != 'datePicker'" class="border-row set-margin-padding"></div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>                                   
+                                </div>     
+                            </div>                           
+                        </div>                            
+
+                    </div>                        
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="tvsDomain">
+        <div class="inner-container mess-row">
+            <div class="{{item.columnClass}}" *ngFor="let item of systemSettingsData; let s = index;">
+                <div class="section-container">
+                    <div class="title-row">
+                        <span class="sys-sett-mess-bg {{item.imageClass}} col-lt">{{item.name}}</span>
+                        <span class="col-rt">Priority: {{item.priority}}</span>                        
+                    </div>
+                    <div class="content-row">
+
+                        <div class="items display-block">
+
+                            <div class="type-col-1 vtop inline-block">
+                                <span class="settings-icon-green"></span>
+                            </div>
+                            
+                            <div class="type-col-2 inline-block" *ngFor="let type of item.settings; let s1 = index;">
+                                <div class="placeholder-items type-row display-block">
+                                    <div class="type-col-2-lt toggle inline-block">
+                                        <p class="p-title p-title-bold">{{type.title}}</p>
+                                        <p class="p-desc">{{type.placeHolder}}</p>
+                                    </div>
+                                    <div class="type-col-2-rt toggle inline-block top5">
+                                        <!-- toggle -->
+                                        <div class="cursor toggle-box togglebox">
+                                            <span class="toggle-col field-label"></span>
+                                            <span class="toggle-col toggle-option">
+                                                <p-inputSwitch [(ngModel)]="type.toggleBox" (onChange)="onToggleBoxChange('0','toggle',item.settingsId,type.itemId,'',$event.checked)">
+                                                </p-inputSwitch>
+                                            </span>
+                                        </div>
+                                        <!-- toggle -->
+                                    </div>                                    
+                                </div>  
+                                <div *ngFor="let type1 of type.items; let s2 = index;">                             
+                                    <div class="inner-items type1-row display-block" *ngIf="type1.innerItems==''">
+                                        <div class="type1-col-1 inline-block vtop">
+                                            <span class="settings-icon-gray"></span>
+                                        </div>
+                                        <div class="type1-col-2 inline-block">
+                                            <p class="p-label">{{type1.title}}&nbsp;&nbsp;<span style="position: relative;top: -3px;" class="cursor" *ngIf="type1.description != '' " (click)="updateNotes('Edit',type1.description,type1.type,'',item.settingsId,type.itemId,'','0')"><img src="assets/images/system-settings/edit-icon.png" /></span></p>
+                                            <div class="inner-items-empty type3-row display-block" >
+                                                <p *ngIf="type1.description != '' && type1.type != '3'" class="p-label-desc" [innerHTML]="type1.descriptionContent"></p>
+                                                <p *ngIf="type1.description == '' && type1.type != '3'" class="cursor p-label-desc green-btn" (click)="updateNotes('Add','',type1.type,'',item.settingsId,type.itemId,'','0')"><img style="position: relative;top: -1px;" src="assets/images/system-settings/add-icon.png" />&nbsp;&nbsp;Add Special Message</p>
+                                                <p *ngIf="type1.type == '3' && type1.description == 'holidays'" class="cursor p-label-desc green-btn" (click)="updateHoliday('Add',item.settingsId,type.itemId,type1.type,'0')"><img style="position: relative;top: -1px;" src="assets/images/system-settings/add-icon.png" />&nbsp;&nbsp;Add Holiday</p>
+                                            </div> 
+                                        </div>                                    
+                                    </div>
+                                    <div class="border-row"></div>
+
+                                    <div class="inner-items type2-row display-block text-here-div" *ngIf="type1.type == '3' && type1.description == 'holidays' && type1.innerItems==''">
+                                        <span class="inline-block date-icon"><img src="assets/images/system-settings/date-icon.png" /></span>
+                                        <span class="inline-block text-here">&nbsp;&nbsp;Added holidays to be shown here.</span>
+                                    </div>
+
+                                    <div class="inner-items type2-row display-block" *ngIf="type1.innerItems!=''">
+                                        <div class="type1-col-1 inline-block vtop">
+                                            <span *ngIf="type1.type == '3'" class="calendar-icon-gray"></span>
+                                            <span *ngIf="type1.type == '2'" class="where-shown-icon"></span>                                            
+                                        </div>
+                                        <div class="type1-col-2 inline-block">
+                                            <p class="p-label" [ngClass]="{ 'p-label-time-zone': type1.description == 'timezone' }">{{type1.title}}</p> 
+                                            <div class="inner-items-empty type3-row display-block"  [ngClass]="{ 'time-zone-div': type1.description == 'timezone' }" >
+                                                <p *ngIf="type1.description != '' && type1.type != '3'" class="p-label-desc" [innerHTML]="type1.descriptionContent"></p>
+                                                <p *ngIf="type1.type == '3' && type1.description == 'holidays'" class="cursor p-label-desc green-btn" (click)="updateHoliday('Add',item.settingsId,type.itemId,type1.type,'0')"><img style="position: relative;top: -1px;" src="assets/images/system-settings/add-icon.png" />&nbsp;&nbsp;Add Holiday</p>
+                                                <span *ngIf="type1.type == '3' && type1.description == 'timezone'">
+                                                    <span class="time-zone-label">Select Time Zone</span>
+                                                    <p-dropdown class="time-zone" [options]="timeZoneList" optionLabel="name" resetFilterOnHide="true"
+                                                    [(ngModel)]="type1.timeZone"
+                                                    (onChange)="onToggleBoxChange(type1.type,'timeZone',item.settingsId,type.itemId,'',$event.value)"
+                                                        optionValue="name" placeholder="Time Zone" [virtualScroll]="false" [itemSize]="5" [filter]="true">
+                                                    </p-dropdown>
+                                                </span>
+                                            </div>
+                                            <div class="inner-items-nempty type2-row type2-row2 display-block" *ngFor="let type2 of type1.innerItems; let s3 = index;">
+                                                <div class="inline-block vtop type2-col-1" [ngClass]="{ 'type2-col-1-date': type2.inputType == 'datePicker-toggle' || type2.inputType == 'time-toggle' }">
+                                                    <span class="{{type2.imageClass}}" [ngClass]="{ 'top8' : type2.description == ''}"></span>                                                   
+                                                </div>
+                                                <div class="inline-block type2-col-2" [ngClass]="{ 'type2-col-2-date': type2.inputType == 'datePicker-toggle' || type2.inputType == 'time-toggle' }">
+                                                    <div class="placeholder-items type-row type-row-bottom display-block" [ngClass]="{ 'placeholder-items-hover' : type1.type == '3' && type1.description == 'holidays' }">
+                                                        <div class="type2-col-2-lt inline-block {{type2.inputType}}">
+                                                            <div style="width: 100%;">
+                                                                <p class="p-title" [ngClass]="{ 'p-title-see-sample' : type2.datId == '1' }" >
+                                                                    <span>{{type2.title}}</span>
+                                                                    <span *ngIf="type1.type == '3' && type1.description == 'holidays'" class="action-icon-col">
+                                                                        <span *ngIf="type1.type == '3' && type1.description == 'holidays'" style="position: relative;top:-3px;" (click)="updateHoliday('Edit',item.settingsId,type.itemId,type1.type,type2.datId)">&nbsp;&nbsp;<img src="assets/images/system-settings/edit-icon.png" /></span>
+                                                                        <span *ngIf="type1.type == '3' && type1.description == 'holidays'" style="position: relative;top:-3px;" (click)="deleteHoliday(item.settingsId,type.itemId,type1.type,type2.datId)">&nbsp;&nbsp;<img src="assets/images/system-settings/delete-icon.png" /></span>
+                                                                    </span>
+                                                                </p>                                                                
+                                                                <div *ngIf="type2.datId == '1'" class="see-sample-div hide">
+                                                                    <img src="assets/images/system-settings/see-sample.png" />
+                                                                    <span>See Sample</span>
+                                                                </div>  
+                                                                <p *ngIf="type2.description != undefined && type2.description != ''" class="p-desc">{{type2.description}}</p>  
+                                                            </div>
+                                                        </div>
+                                                       
+                                                        <div class="type2-col-2-rt inline-block {{type2.inputType}}" *ngIf="type2.inputType == 'datePicker' || type2.inputType == 'datePicker-toggle'" [ngClass]="{ 'type2-col-2-rt-date': type2.inputType == 'datePicker-toggle' || type2.inputType == 'time-toggle' }">                                                             
+                                                            <!-- date -->                                                            
+                                                            <span class="date-icon-col-1">
+                                                                <span class="inline-block date-text">From</span>
+                                                                <p-calendar [ngClass]="{ 'valid': !type2.validsdate, 'invalid': type2.validsdate }" class="{{type2.inputType}}" [disabled]="!type2.toggleBox" [showIcon]="true"  appendTo="body" [showIcon]="true"  placeholder="Start Date" dateFormat="M dd, yy" styleClass="inline-block date-box" [maxDate]="type2.endDate" [(ngModel)]="type2.startDate" (onSelect)="onChangeDate($event,'start',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked)" ></p-calendar>
+                                                            </span>
+                                                            <span class="date-icon-col-2">
+                                                                <span class="inline-block date-text">To</span>
+                                                                <p-calendar [ngClass]="{ 'valid': !type2.validedate, 'invalid': type2.validedate }" class="{{type2.inputType}}" [disabled]="!type2.toggleBox" [showIcon]="true"  appendTo="body" [showIcon]="true"  placeholder="End Date" dateFormat="M dd, yy" styleClass="inline-block date-box" [minDate]="type2.startDate" [(ngModel)]="type2.endDate" (onSelect)="onChangeDate($event,'end',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked)" ></p-calendar>
+                                                            </span>
+                                                            <!-- date -->
+                                                        </div>
+                                                        <div class="type2-col-2-rt inline-block" *ngIf="type2.inputType == 'time-toggle'" [ngClass]="{ 'type2-col-2-rt-date time-toggle': type2.inputType == 'time-toggle' }">                                                             
+                                                            <!-- date -->
+                                                            <span class="checkbox-icon-col">
+                                                                <span *ngIf="type1.type == '3' && type1.description == 'timezone'" [ngClass]="{ 'chekboxvalid': !type2.chekboxvalid, 'checkboxinvalid': type2.chekboxvalid }">
+                                                                    <p-checkbox [disabled]="!type2.toggleBox"                                                                       
+                                                                    [(ngModel)]="type2.dayFlag" (onChange)="validationCheck(type1.type,'checkbox',item.settingsId,type.itemId,type2.datId,$event.checked,type2.inputType)"
+                                                                     [binary]="true" inputId="binary"
+                                                                    label="&nbsp;&nbsp;Full Day"></p-checkbox>
+                                                                </span>
+                                                             </span>
+                                                            <span class="date-icon-col-1">
+                                                                <span class="inline-block date-text">From</span>
+                                                                <p-calendar [ngClass]="{ 'valid': !type2.validstime, 'invalid': type2.validstime }" class="{{type2.inputType}}" [disabled]="type2.dayFlag || !type2.toggleBox" [showIcon]="true"  appendTo="body" placeholder="Time" [timeOnly]="true" showTime="true" [hourFormat]="12" class="time-dd" [(ngModel)]="type2.startTime" 
+                                                                (onSelect)="onChangeTime($event,type2.startTimeOld,'start',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked,'1')"
+                                                                (onBlur)="onChangeTime($event.target.value,type2.startTimeOld,'start',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked,'0')"
+                                                                ></p-calendar>
+                                                            </span>
+                                                            <span class="date-icon-col-2">
+                                                                <span class="inline-block date-text">To</span>
+                                                                <p-calendar [ngClass]="{ 'valid': !type2.validetime, 'invalid': type2.validetime }" class="{{type2.inputType}}" [disabled]="type2.dayFlag || !type2.toggleBox" [showIcon]="true"  appendTo="body" placeholder="Time" [timeOnly]="true" showTime="true" [hourFormat]="12" class="time-dd" [(ngModel)]="type2.endTime" 
+                                                                (onSelect)="onChangeTime($event,type2.endTimeOld,'end',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked,'1')"
+                                                                (onBlur)="onChangeTime($event.target.value,type2.endTimeOld,'end',type1.type,type2.inputType,item.settingsId,type.itemId,type2.datId,$event.checked,'0')"
+                                                                ></p-calendar>
+                                                            </span>
+                                                            <!-- date -->
+                                                        </div>
+
+                                                        <div class="type2-col-2-rt inline-block {{type2.inputType}}" *ngIf="type2.inputType == 'toggle' || type2.inputType == 'datePicker-toggle' || type2.inputType == 'time-toggle'" [ngClass]="{ 'type2-col-2-rt-toggle': type2.inputType == 'datePicker-toggle' || type2.inputType == 'time-toggle' }">
+                                                            <!-- toggle -->
+                                                            <div class="cursor toggle-box togglebox">
+                                                                <span class="toggle-col field-label"></span>
+                                                                <span class="toggle-col toggle-option">
+                                                                    <p-inputSwitch [(ngModel)]="type2.toggleBox" (onChange)="validationCheck(type1.type,'toggle',item.settingsId,type.itemId,type2.datId,$event.checked,type2.inputType)">
+                                                                    </p-inputSwitch>
+                                                                </span>
+                                                            </div>
+                                                            <!-- toggle -->
+                                                        </div> 
+
+                                                    </div> 
+                                                    <div *ngIf="((s3 + 1) != (type1.innerItems.length))" class="border-row set-margin-padding"></div>
+                                                </div>
+                                            </div>
+                                            
+                                        </div>                                   
+                                    </div>     
+                                </div>                           
+                            </div>                            
+
+                        </div>                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</div>
+</div>
+<p-dialog [(visible)]="holidayModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="message-modal-width">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{holidayModalType}} Holiday</span>
+            <button pButton pRipple type="button" label="SAVE"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': saveServiceEnable }" (click)="saveService()"></button>
+            <!-- [disabled]="serviceForm.invalid" -->
+        </div>
+    </ng-template>       
+    <div class="row my-head-row">
+        <div class="col-5">
+            <div>
+                <label>
+                    <img src="assets/images/system-settings/event-name-icon.png" alt="" />
+                    <span style="color: #9b9a9a;">&nbsp;Event Name</span>
+                </label>
+                <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+            </div>
+            <div>  
+                <input placeholder="Event Name" style="width: 100%;"  
+                (input)="onUpdate($event.target.value,'input')"
+                pInputText type="text"  [(ngModel)]="updateEventName">  
+            </div>                
+        </div>
+        <div class="col-3">
+            <div>
+                <label class="new-ro-icon">
+                    <img src="assets/images/system-settings/date-icon.png" alt="" />
+                    <span style="color: #9b9a9a;">&nbsp;From</span>
+                </label>
+                <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+            </div>
+            <div>
+                <p-calendar class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" placeholder="Start Date" dateFormat="M dd, yy" styleClass="inline-block date-box" [maxDate]="updateMaximumDate" [(ngModel)]="updateStartDate" (onSelect)="onUpdate($event,'start')" ></p-calendar>                        
+            </div>
+        </div>
+        <div class="col-3">
+            <div>
+                <label>
+                    <img src="assets/images/system-settings/date-icon.png" alt="" />
+                    <span style="color: #9b9a9a;">&nbsp;To</span>
+                </label>
+                <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+            </div>
+            <div>
+                <p-calendar class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" placeholder="End Date" dateFormat="M dd, yy" styleClass="inline-block date-box" [minDate]="updateMinimumDate" [(ngModel)]="updateEndDate" (onSelect)="onUpdate($event,'end')" ></p-calendar>                    
+            </div>
+        </div>
+        <div class="col-1">
+            <div style="margin-top: 35px;">
+                <div class="cursor toggle-box togglebox">
+                    <span class="toggle-col field-label"></span>
+                    <span class="toggle-col toggle-option">
+                        <p-inputSwitch [(ngModel)]="updateToggleBox" (onChange)="onUpdate($event.checked,'toggle')">
+                        </p-inputSwitch>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>    
+</p-dialog>
+<p-dialog [(visible)]="notesModalFlag" [modal]="true" [draggable]="false" [resizable]="false"
+    class="notes-modal">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{headText}}</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SAVE"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': notesValid}" (click)="saveNotes()"></button>
+
+        </div>
+    </ng-template>
+        <div class="">
+            <div class="popup-head notes-gray-icon">{{headText}}</div>
+            <ckeditor [editor]="Editor" [config]="configCke" container="body"
+                (change)="changeNotes($event)" 
+                [(ngModel)]="customerEditor"></ckeditor>
+
+        </div>
+</p-dialog>

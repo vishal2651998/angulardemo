@@ -1,0 +1,676 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" ></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" ></app-product-header>
+</div>
+<div class="left-section">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}" (sidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="right-section">
+    <div class="prob-index">
+        <div class="probing-content">
+           
+            <div class="escalationv2-list-head ">
+              <div class="prob-head-col head-col-1 text-left">
+                <span>
+                <img
+                    class="head-img"
+                    src="assets/images/repair-order/jobs-ratecard-placeholder.png"
+                />
+                </span>
+                <span class="head-title">
+                  Jobs and Rate Card
+                </span>            
+    
+                <span (click)="tabonpage('jobs')" class="jobs-ratecard-btn jobs" [ngClass]="{ 'active-bg' : loadjobs, 'normal-bg' : !loadjobs }">Jobs</span>
+                <span (click)="tabonpage('ratecard')" class="jobs-ratecard-btn ratecard" [ngClass]="{ 'normal-bg' : loadjobs, 'active-bg' : !loadjobs }">Rate Card</span>
+
+                </div>
+                <div class="prob-head-col head-col-2 text-right">
+                  <span
+                    *ngIf="publishbutton"
+                    class="tab tab-5 action-col"
+                    (click)="cancelAssignmentRules()"
+                    >Cancel <span class="cancel-btn"></span
+                  ></span>
+                  <span
+                    *ngIf="publishbutton"
+                    class="tab tab-6 action-col"
+                    (click)="saveAssignmentRules(true)"
+                  >
+                    Save
+                    <span class="submit-btn"> </span>
+                  </span>
+    
+                  <!--
+                      <span [ngClass]="{'hide': (headerCheck == 'checked' || headerCheck == 'all' || matrixActionFlag), 'show': (headerCheck == 'unchecked' || loading)}">
+                        <span *ngIf="!publishbutton" class="action-col cursor edit-make" (click)="editMake()">Edit Make</span>
+                    </span>
+                    -->
+                </div>
+    
+            </div>
+            
+            <div class="prob-list-cont prob-list-cont-escalation" [ngClass]="{ 'es-no-item-new-div' : ItemEmpty }" [style.height.px]="emptyHeight">
+                
+                <div *ngIf="loading" class="loading-small-screen-scroll" align="center">
+                    <img src="assets/images/loading.svg" alt="Loader" />
+                </div>
+            
+                <div *ngIf="!initLoading && !ItemEmpty">
+                <div *ngIf="loadjobs">
+                <p-table 
+                [value]="productsList"               
+                [styleClass]="
+                'p-datatable-sm p-datatable-sm-job p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+                "
+                [columns]="cols"            
+                [autoLayout]="true"
+                [scrollable]="true"
+                [lazy]="true"
+                [scrollHeight]="innerHeightFix"
+                (onRowReorder)="onRowReorder($event)"
+                [totalRecords]="itemTotal"
+                >
+                    <ng-template pTemplate="header" let-columns >
+                        <tr >   
+                            <!--th class="tech-sticky-col tech-col-1" [ngClass] = " { 'visibility-hidden' : productsList['id'] == 0 }" ></th-->                     
+                            <th *ngFor="let col of columns" class="{{col.columnpclass}}">
+                                
+                                {{col.header}}                               
+                                <img style="position: relative;top:-1px;left: 5px;cursor: pointer;" src="assets/images/escalations/escalation-help-white.png" *ngIf="col.columnName == 'price'" popoverClass="custom-tooltip menu-tooltip close-tooltip job-help-tooltip-icon" [ngbPopover]="sideMenu" popoverTitle="If price is entered, it will override the Hours times Hourly Rate Calculation" placement="bottom-right" triggers="hover">                                                             
+                                
+                                <ng-template #sideMenu></ng-template>
+                            </th>
+                            <th class="tech-sticky-col tech-col-more" [ngClass] = " { 'visibility-hidden' : productsList['id'] == 0 }"></th>
+                        </tr>
+                    </ng-template>
+                    <ng-template 
+                    pTemplate="body" 
+                    let-productsList
+                    let-rowData 
+                    let-columns="columns" 
+                    let-index="rowIndex">
+                        <tr 
+                        [pReorderableRow]="index" 
+                         class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.newmatrix }}"
+                          [ngClass] = " { 'disableClass' : productsList.isActive=='0'  } "
+    
+                        >
+                        <!--td class="tech-sticky-col tech-col-1">
+                            <span *ngIf="productsList.id != ''" class="pi pi-bars reorder-bg-image" pReorderableRowHandle></span>
+                        </td-->
+    
+                            <td 
+                                 #ptabletdata
+                                class="{{ col.columnpclass }}  oneclassstep font-email"
+                                pEditableColumn
+                                *ngFor="let col of columns" class="{{col.columnpclass}}">
+                          
+                                <ng-container *ngTemplateOutlet="inputtype2"> </ng-container>
+                                <ng-container *ngTemplateOutlet="inputtype3"> </ng-container>
+                                <ng-container *ngTemplateOutlet="inputtype4"> </ng-container>
+                                                            
+                                
+                                <ng-template #inputtype2>
+                                  <div *ngIf="col.inputType == '2'">                                
+                                 
+                                  
+                                    <p-cellEditor>
+                                      <ng-template pTemplate="input">
+                                        <p-dropdown
+                                          [id]="
+                                            'product_options' + productsList.id + col.headerId
+                                          "
+                                         
+                                          (onChange)="
+                                            onChangeOption(
+                                              $event,
+                                              productsList,
+                                              col.headerId,
+                                              col.columnName,
+                                              index
+                                            )
+                                          "
+                                        
+                                          [placeholder]="'Select'"
+                                          appendTo="body"                                        
+                                          [options]="productsList.optionNameListsArr"
+                                          
+                                          [(ngModel)]="rowData[col.field]"
+                                          
+                                          class="input-with-icon-inside-select {{
+                                            productsList.isPredefined
+                                          }}  mat-typography"
+                                        ></p-dropdown>
+                                      </ng-template>
+                    
+                                      <ng-template class="text-center" pTemplate="output">
+                                        
+                                        <span class="cursor"
+                                          [id]="
+                                            'product_options' + productsList.id + col.headerId
+                                          "
+                                          *ngIf="rowData[col.field]?.name"
+                                        >
+                                          {{ rowData[col.field].name }}
+                                        </span>
+                                        <span *ngIf="!rowData[col.field]?.name">
+                                          <span class="cursor"
+                                            [id]="
+                                              'product_options' +
+                                              productsList.id +
+                                              col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]"
+                                            >{{ rowData[col.field] }}</span
+                                          >
+                                          <span class="cursor"
+                                            [id]="
+                                              'product_options' +
+                                              productsList.id +
+                                              col.headerId
+                                            "
+                                            *ngIf="!rowData[col.field]"
+                                            >Select</span
+                                          >
+                                        </span>
+                                        <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                      </ng-template>
+                                    </p-cellEditor>
+                                  
+                                  
+                                  </div>
+                                  </ng-template>
+    
+                                  <ng-template #inputtype3>
+                                  
+                                    <div *ngIf="col.inputType == '3'">
+                                      <div [class]="'overflowclassdash'" >
+                                        <div
+                                        [title]="setItemSpace(rowData[col.field])"
+                                        class="cursor"
+                                        [id]="'product_options' + productsList.id + col.headerId"
+                                        (click)="
+                                          manageOption(
+                                            rowData[col.field],
+                                            productsList,
+                                            col.headerId,
+                                            col.columnName,
+                                            index
+                                          )
+                                        "
+                                        *ngIf="rowData[col.field]?.length>0"
+                                      >
+                                          <span class="font-email font-email-edit-c2" [innerHTML]="setItemSpace(rowData[col.field])">
+                                           
+                                          </span>
+                                          <span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+                    
+                    
+                                      </div>
+                                      <div
+                                        class="cursor"
+                                        [id]="'product_options' + productsList.id + col.headerId"
+                                        *ngIf="rowData[col.field]?.length==0"
+                                        (click)="
+                                          manageOption(
+                                            rowData[col.field],
+                                            productsList,
+                                            col.headerId,
+                                            col.columnName,
+                                            index)"
+                                      >
+                                      <div *ngIf="(col.headerId == '3' && productsList.optionType!='4') ||  col.headerId != '3'" class="font-email cursor">Select<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                      <div *ngIf="col.headerId == '3' && productsList.optionType=='4' " class="font-email">Any<!--span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span--></div>
+                                      </div>
+                                      </div> 
+                                    </div>                                     
+
+                                    <div *ngIf="col.inputType == '5'">
+                                      <div [class]="'overflowclassdash'" >
+                                        <div
+                                        title="{{rowData[col.field]}}"
+                                        class="cursor"
+                                        [id]="'product_options' + productsList.id + col.headerId"
+                                        (click)="
+                                        updateTitleDesc(
+                                          rowData[col.field],
+                                          productsList,
+                                          col.headerId,
+                                          col.columnName,
+                                          index)"
+                                        
+                                        *ngIf="rowData[col.field]"
+                                      >
+                                          <span class="font-email font-email-edit-c2">
+                                              {{rowData[col.field]}}
+                                          </span>
+                                          <span (click)="moreClick(productsList);$event.stopPropagation();" class="morelink-icon more-link-desc" *ngIf="col.headerId == '6' && rowData[col.field].length>300">
+                                            More...
+                                          </span>
+
+                                          <span class="matrix-action-icon matrix-action-icon-c1" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span>
+                    
+                    
+                                      </div>
+                                      <div
+                                        class="cursor"
+                                        [id]="'product_options' + productsList.id + col.headerId"
+                                        *ngIf="!rowData[col.field]"
+                                        (click)="
+                                          updateTitleDesc(
+                                            rowData[col.field],
+                                            productsList,
+                                            col.headerId,
+                                            col.columnName,
+                                            index)"
+                                      >
+                                      <div *ngIf="col.headerId == '5'" class="font-email cursor">Add Title<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                      <div *ngIf="col.headerId == '6'" class="font-email cursor">Add Description<span class="matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Matrix Action" style="vertical-align: revert;"></span></div>
+                                      
+                                      </div>
+                                      </div> 
+                                    </div>
+
+                                  </ng-template>  
+                                  
+                                  <ng-template #inputtype4>
+
+                                    <div *ngIf="col.inputType == '4'">                                
+                                   
+
+                                      <p-cellEditor>
+                                        <ng-template pTemplate="input">
+                                          <input [placeholder]="col.header" style="width: 100px;" [id]="'product_options' + productsList.id + col.headerId" 
+                                          (input)="inputChange( $event,
+                                          productsList,
+                                          col.headerId,
+                                          col.columnName,
+                                          index)" 
+                                          (keypress)="isNumberKey($event,rowData[col.field],col.columnName)"
+                                          pInputText type="text"  [(ngModel)]="rowData[col.field]">                                          
+                                        </ng-template>
+                      
+                                        <ng-template class="text-center" pTemplate="output">
+                                          
+                                          <span class="cursor"
+                                            [id]="
+                                              'product_options' + productsList.id + col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]"
+                                          >
+                                          
+                                            <span *ngIf="col.headerId != '7'">{{ rowData[col.field] }}</span>
+                                            <span *ngIf="col.headerId == '7' && (rowData[col.field]>zeroVal || rowData[col.field] == zeroVal)">${{ rowData[col.field] }}</span>
+                                            <span *ngIf="col.headerId == '7' && zeroVal>rowData[col.field]" data-negative>(${{ productsList.priceShowOnly}})</span>
+                                          </span>
+                                          <span *ngIf="!rowData[col.field] && col.headerId == '7'">
+                                            <span class="cursor"
+                                              [id]="
+                                                'product_options' +
+                                                productsList.id +
+                                                col.headerId"></span
+                                            >                                            
+                                          </span>
+
+                                          <span class="cursor"
+                                            [id]="
+                                              'product_options' + productsList.id + col.headerId
+                                            "
+                                            *ngIf="!rowData[col.field] && col.headerId != '7'"
+                                          >
+                                            <input [placeholder]="col.header" style="width: 100px;" [id]="'product_options' + productsList.id + col.headerId" 
+                                            (change)="inputChange( $event,
+                                            productsList,
+                                            col.headerId,
+                                            col.columnName,
+                                            index)" 
+                                            (keypress)="isNumberKey($event,rowData[col.field],col.columnName)"
+                                            pInputText type="text"  [(ngModel)]="rowData[col.field]">
+                                            
+  
+                                            </span>
+
+                                          <span *ngIf="rowData[col.field]" class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                        </ng-template>
+                                      </p-cellEditor>
+                                      
+                                      
+
+                                    </div>
+                                    </ng-template>
+    
+                            </td>
+
+                            <td class="tech-sticky-col tech-col-more cursor-pointer">
+                              <span *ngIf="productsList.id != ''" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();" class="custom-icon-user-dashboard more-icon"><img src="assets/images/more-icon.png" alt="Action"></span>
+                              
+                              <mat-toolbar color="primary">
+                                <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                    <div class="part-menu">
+                                        <ul class="more-actions">
+                                            <li class="cursor active" (click)="deleteAction(productsList.id,'jobs')"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                        </ul>
+                                    </div>
+                                </mat-menu>
+                              </mat-toolbar>
+
+                            </td>
+
+                        </tr>
+                    </ng-template>
+                </p-table>
+                </div>
+
+                <div *ngIf="!loadjobs">
+                
+                  <p-table 
+                  [value]="productsList"               
+                  [styleClass]="
+                  'p-datatable-sm p-datatable-sm-job p-datatable-gridlines  scrollbar-primary productmatrix-p-table thin p-datatable-responsive-demo'
+                  "
+                  [columns]="cols"            
+                  [autoLayout]="true"
+                  [scrollable]="true"
+                  [lazy]="true"
+                  [scrollHeight]="innerHeightFix"
+                  (onRowReorder)="onRowReorder($event)"
+                  [totalRecords]="itemTotal"
+                  >
+                      <ng-template pTemplate="header" let-columns >
+                          <tr >   
+                              <!--th class="tech-sticky-col tech-col-1"></th-->                     
+                              <th *ngFor="let col of columns" class="{{col.columnpclass}}" >
+                                  <span *ngIf="col.field=='resize'">&nbsp;</span>
+                                  <span *ngIf="col.field!='resize'" class=""></span>{{col.header}}
+                              </th>
+                              <th class="tech-sticky-col tech-col-more"></th>
+                          </tr>
+                      </ng-template>
+                      <ng-template 
+                      pTemplate="body" 
+                      let-productsList
+                      let-rowData 
+                      let-columns="columns" 
+                      let-index="rowIndex">
+                          <tr 
+                          [pReorderableRow]="index" 
+                           class="p-table-rows {{ addnewrowbgcolor }}{{ productsList.newmatrix }}"
+                            
+      
+                          >
+                          <!--td class="tech-sticky-col tech-col-1">
+                              <span *ngIf="productsList.id != ''" class="pi pi-bars reorder-bg-image" pReorderableRowHandle></span>
+                          </td-->
+      
+                              <td 
+                                   #ptabletdata
+                                  class="{{ col.columnpclass }}  oneclassstep font-email"
+                                  pEditableColumn
+                                  *ngFor="let col of columns" class="{{col.columnpclass}}">
+                            
+                                  <ng-container *ngTemplateOutlet="inputtype5"> </ng-container>
+                                  <ng-container *ngTemplateOutlet="inputtype6"> </ng-container>
+                                  
+                                  <ng-template #inputtype5>
+                                    <div *ngIf="col.inputType == '5'" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;" >                                
+                                   
+                                    
+                                      <p-cellEditor>
+                                        <ng-template pTemplate="input">
+
+                                          
+
+                                          <p-multiSelect
+                                         
+                                            [id]="
+                                              'product_options' + productsList.id + col.headerId
+                                            "
+                                            
+                                            (onChange)="
+                                              onChangeOption(
+                                                $event,
+                                                productsList,
+                                                col.headerId,
+                                                col.columnName,
+                                                index
+                                              )
+                                            "
+                                            
+                                            placeholder="Select State"
+                                            appendTo="body"                                        
+                                            [options]="stateDropDownOptions"                                            
+                                            [(ngModel)]="productsList.stateStr"
+                                            optionLabel="name"
+                                            [filter]="true" showClear="false"
+                                            class="input-with-icon-inside-select {{
+                                              productsList.isPredefined
+                                            }}  mat-typography"
+                                          ></p-multiSelect>
+                                        </ng-template>
+                      
+                                        <ng-template class="text-center" pTemplate="output">
+                                          
+                                          <span class="cursor"
+                                            [id]="
+                                              'product_options' + productsList.id + col.headerId
+                                            "
+                                            *ngIf="rowData[col.field]"
+                                          >
+                                          <span *ngFor="let stateitems of productsList.stateStr; let r1 = index" [title]="setItemArray(rowData[col.field])">
+                                            {{stateitems.name}}{{r1 === rowData[col.field].length -1 ? '' : ',&nbsp;' }}
+                                          </span>
+                                          </span>
+                                          <span *ngIf="productsList?.stateStr?.length == 0">                                            
+                                            <span class="cursor"
+                                              [id]="
+                                                'product_options' +
+                                                productsList.id +
+                                                col.headerId
+                                              "
+                                              *ngIf="productsList?.stateStr?.length == 0"
+                                              >Select State</span
+                                            >
+                                          </span>
+                                          <span class="cursor matrix-action-icon" ><img src="assets/images/escalations/edit-gray-icon.png" alt="Edit" style="vertical-align: revert;"></span>
+                                        </ng-template>
+                                      </p-cellEditor>
+                                    
+                                    
+                                    </div>
+                                    </ng-template>                               
+                                    
+                                    <ng-template #inputtype6>
+  
+                                      <div *ngIf="col.inputType == '6'">                                
+                                     
+  
+                                        <p-cellEditor>
+                                          <ng-template pTemplate="input">
+                                            <input placeholder="Enter Rate" *ngIf="col.headerId == '9'" style="width: 120px;" [id]="'product_options' + productsList.id + col.headerId" 
+                                            (input)="inputChange( $event,
+                                            productsList,
+                                            col.headerId,
+                                            col.columnName,
+                                            index)" 
+                                            (keypress)="isNumberKey($event,rowData[col.field],col.columnName)"
+                                            pInputText type="text"  [(ngModel)]="rowData[col.field]">
+                                            
+                                          </ng-template>
+                        
+                                          <ng-template class="text-center" pTemplate="output">
+                                            
+                                            
+  
+                                            <span class="cursor"
+                                              [id]="
+                                                'product_options' + productsList.id + col.headerId
+                                              "
+                                              *ngIf="rowData[col.field]"
+                                            >
+
+                        
+                                             <span *ngIf="(rowData[col.field]>zeroVal || rowData[col.field] == zeroVal)">${{ rowData[col.field] }}</span>
+                                             <span *ngIf="zeroVal>rowData[col.field]" data-negative>(${{ productsList.hourrateShowOnly }})</span>
+
+                                            </span>
+                                            
+                                            <span class="cursor"
+                                            [id]="
+                                              'product_options' + productsList.id + col.headerId
+                                            "
+                                            *ngIf="!rowData[col.field]"
+                                          >
+                                            <input placeholder="Enter Rate" *ngIf="col.headerId == '9'" style="width: 120px;" [id]="'product_options' + productsList.id + col.headerId" 
+                                            (change)="inputChange( $event,
+                                            productsList,
+                                            col.headerId,
+                                            col.columnName,
+                                            index)" 
+                                            pInputText type="text"  [(ngModel)]="rowData[col.field]">
+                                            
+  
+                                            </span>
+                                              
+                                          </ng-template>
+                                        </p-cellEditor>
+                                        
+                                        
+  
+                                      </div>
+                                      </ng-template>
+      
+                              </td>
+
+                              <td class="tech-sticky-col tech-col-more cursor-pointer">
+                                <span *ngIf="productsList.id != ''" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();" class="custom-icon-user-dashboard more-icon"><img src="assets/images/more-icon.png" alt="Action"></span>
+                                
+                                <mat-toolbar color="primary">
+                                  <mat-menu #more="matMenu" class="list-menu-content active" backdropClass="ptabletmenu">
+                                      <div class="part-menu">
+                                          <ul class="more-actions">
+                                              <li class="cursor active" (click)="deleteAction(productsList.id,'ratecard')"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>
+                                          </ul>
+                                      </div>
+                                  </mat-menu>
+                                </mat-toolbar>
+  
+                              </td>
+
+                          </tr>
+                      </ng-template>
+                  </p-table>
+
+                  </div>
+
+              </div>
+    
+                <div *ngIf="!initLoading && ItemEmpty"  >
+                  <div *ngIf="displayNoRecords == '1'" class="es-no-item-list-new-div"> 
+                    <div class="es-no-item-list">
+                      <div class="es-no-item-container">
+                        <div class="es-no-item-width">
+                        <img width="225" src="assets/images/job-ratecard-blank-page.png" alt="no-escalation" />
+                      </div>
+                        <p class="es-item-text">Get started by tapping on "Add New".</p>
+                        <span class="es-add-new" (click)="newMatrix($event)">Add New</span>
+                      
+                    </div>
+                    </div>   
+                  </div>
+                 
+                  <div *ngIf="displayNoRecords == '2'" class="es-no-item-list-new-div"> 
+                    <div class="es-no-item-list">
+                      <div class="es-no-item-container">
+                        <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                        <p class="es-no-item-text">No result found</p>              
+                      </div>
+                    </div>   
+                  </div>
+                
+                </div>
+    
+            </div>
+            
+        </div>
+    </div>
+</div>
+<p-dialog [(visible)]="updateTitleDescModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal dispatch-modal-width">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="SAVE"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{ 'setOpacity5' : jobtitle == '' || jobdescription == '' }" (click)="saveContent()"></button>
+            <!-- [disabled]="serviceForm.invalid" -->
+        </div>
+    </ng-template>
+
+    <div class="row my-3">
+      <input class="inputbox" style="visibility:hidden;height: 15px !important;" [(ngModel)]="jobindex"  matInput placeholder=""                                                           
+              maxlength="" /> 
+        <div class="col-12">
+            <div>
+                <label>
+                    <img src="assets/images/repair-order/job-title.png" alt="Title"
+                        class="mr-2 new-request-icon" />
+                    <span style="color: #9b9a9a;">Title</span>
+                </label>
+                <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+            </div>
+            <div class="input-text-row form-group firstname">
+               
+              <input class="inputbox" [(ngModel)]="jobtitle" (input)="oninputChange($event,'title')" matInput placeholder="Enter job title"                                                           
+                maxlength="" />                                                        
+            </div>
+        </div>
+        <div class="col-12">
+          <div>
+              <label>
+                  <img src="assets/images/repair-order/job-desc.png" alt="Title"
+                      class="mr-2 new-request-icon" />
+                  <span style="color: #9b9a9a;">Description</span>
+              </label>
+              <span style="color: #b2b2b2;font-style: italic;float: right;">Required</span>
+          </div>
+          <div class="input-text-row form-group firstname">
+              <textarea class="inputbox setDescHt" (input)="oninputChange($event,'desc')" [(ngModel)]="jobdescription" matInput placeholder="Enter Description"></textarea>                                                      
+          </div>
+      </div>
+    </div> 
+    
+</p-dialog>
+
+<p-dialog [(visible)]="descMoreModal" [modal]="true" [draggable]="false" [resizable]="true"
+    class="dispatch-modal desc-modal-width card-spacing" style="width:40% !important;">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Description - {{moreTitle}}</span>
+        </div>
+       
+   </ng-template>
+   <div class="row"> 
+        <div class="col-12">
+            <div class="label-head-row-3 flex-align-center">
+                <img src="assets/images/repair-order/prob-desc.svg" 
+                onload="SVGInject(this)" class="mr-2 new-request-icon" alt="" />
+                <span>Description</span>
+            </div>
+        </div>    
+    </div>
+    <div class="row">
+    <div class="col-12">                
+        <div class="more-desc-row">  
+            <span>{{moreDesc}}</span>                 
+        </div>
+    </div>
+    </div>
+        
+</p-dialog> 
+
+
+

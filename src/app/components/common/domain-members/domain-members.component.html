@@ -1,0 +1,61 @@
+<div class="right-landing-toggle-menu-bar">
+    <div class="domain-toggle active">
+        <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()"></div>
+        <div class="domain-widget" [style.height]="'calc(100vh - '+rmdHeight+'px)'">
+            <div *ngIf="disableRightPanel" class="no-item-list empty-container  text-center" style="background: #dfe1e3;">
+                <div class="item-empty-container">
+                    <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+                    <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                </div>
+            </div>
+            <div *ngIf="!disableRightPanel">
+                <div class="clock-timer">
+                    <div>{{clockTImer}}</div>
+                </div>
+                <div class="domain-user-listing-widget">
+                    <div class="text-input-search">
+                        <span class="p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input class="domain-text-box" (keyup)="searchDomainUserText($event)" type="text" pInputText placeholder="Search"  />
+                            <span *ngIf="clearInputIcon" class="clear-text-domainuser">
+                                <a (click)="clearText($event)"><i class="pi pi-times "></i></a>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="padding10">            
+                        <div class="domain-members-container-pscroll" [style.height]="'calc(100vh - '+rmsHeight+'px)'">
+                            <div class="loading-small-screen-div" *ngIf="loadingdm">
+                                <div class="loading-small-screen"  ><img src="assets/images/loading.svg" alt="Loader" /></div>
+                            </div>
+                            <div class="ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                            <!--div class="domain-members-scroll scrollbar scrollbar-primary thin"  (scroll)="onScroll($event)" [style.height.px]="sidebarHeight"-->
+                            <div class="domain-members-container">
+                                <div class="domain-no-result" *ngIf="loadingnousers">{{noescText}}</div>
+                                <div *ngFor="let domainUsers of landingdomainUsers; let dmx = index">
+                                    <div class="container-fluid">
+                                        <div (click)="taponprofileclick(domainUsers)" class="row col-lg-12 col-md-12 col-sm-12 cursor taponprofileclick landing-padding0 landing-margin0">
+                                            <div class="col col-lg-auto   col-md-auto  col-xl-auto  col-sm-auto  landing-padding0">
+                                                <img class="profileImg" [src]="domainUsers.profileImg"/>
+                                                <span *ngIf="domainUsers.badgeTopUser" class="bg-image-new-badgetopuser new-badgetopuser-tag"></span>
+                                                <span class="availability-status availability-status{{domainUsers.availability}}"></span>
+                                            </div>
+                                            <div class="col col-lg-8  col-md-8 col-xl-8 col-sm-12 landing-padding-left">
+                                                <div class="user-name" title="{{domainUsers.userName}}">
+                                                    <span *ngIf="domainUsers.badgeTopUser"> <img class="profile-topbadge-user" src="assets/images/thread/crownicon.svg"/></span>  
+                                                    <span>{{domainUsers.userName}}</span>
+                                                </div>
+                                                <div class="buss-title" title="{{domainUsers.title}}">{{domainUsers.title}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-border"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

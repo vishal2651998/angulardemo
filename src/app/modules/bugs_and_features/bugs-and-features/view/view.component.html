@@ -1,0 +1,480 @@
+<div id="header">
+    <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)">
+    </app-thread-detail-header>
+</div>
+
+<div class="landing-page-container" id="parts">
+    <div class="container-fluid">
+        <div class="{{wrapperClass}} wrapper-threadpage">
+            <div class="container-fluid" id="content">
+                <div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg"
+                        alt="Loader" /></div>
+                <div *ngIf="!loading" class="thread-detail-section">
+                    <div class="th-outer-col th-outer-col-1"></div>
+                    <div class="th-outer-col th-outer-col-2"
+                        [ngClass]="{'col-expand': rightpanel,  'col-collapse': !rightpanel}">
+                        <div [style.height.px]="innerHeight">
+                            <div #top id="step" class="ps thread-post" (scroll)="scrolled($event)"
+                                [perfectScrollbar]="sconfig">
+                                <div class="thread-detail-page">
+                                    <div class="thread-detail-div">
+                                        <div class="thread-detail-div-col thread-detail-div-left">
+                                            <div class="thread-detail-view">
+                                                <div class="titles">
+                                                    <div class="display-tablecell th-heads-img c1"
+                                                        (click)="taponprofileclick(dataObject.userId)"><span
+                                                            class="rounded-circle cursor-pointer"
+                                                            [ngStyle]="{'background-image': 'url(' + dataObject.profileImage + ')'}"></span>
+                                                    </div>
+                                                    <div class="display-tablecell"
+                                                        (click)="taponprofileclick(dataObject.userId)">
+                                                        <span
+                                                            class="th-head-text1 cursor-pointer">{{dataObject.userName}}</span>
+                                                        <span class="th-head-text2">{{dataObject.userRoleTitle}}</span>
+                                                        <span class="th-head-text3">Posted from Web</span>
+                                                    </div>
+                                                    <div class="display-tablecell thread-head-col4">
+                                                        <span class="th-date-text">{{dataObject.createdOn}}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="box bug-detials-img bug-details">
+                                                    <span class="title-word">Report Type</span>
+                                                    <div class="text">{{dataObject.reportType}}</div>
+                                                </div>
+                                                <div class="unbox bug-detials-img occurs-details">
+                                                    <span class="title-word"> Occurs</span>
+                                                    <div class="text">{{dataObject.occurs}}</div>
+
+                                                </div>
+                                                <div class="box bug-detials-img monitor-details">
+                                                    <span class="title-word"> PlatForm </span>
+                                                    <div class="text">{{dataObject.platformTypeTitle}}</div>
+                                                </div>
+                                                <!-- <div class="unbox bug-detials-img monitor-info-details">
+                                                    <span class="title-word"> Desktop Operating System </span>
+                                                    <div class="text">Windows</div>
+                                                </div> -->
+                                                <div class="box bug-detials-img platformType-details">
+                                                    <span class="title-word">Browser Type </span>
+                                                    <div class="text">{{dataObject.webplatform}}</div>
+                                                </div>
+                                                <div class="unbox bug-detials-img title-details">
+                                                    <span class="title-word"> Title </span>
+                                                    <div class="text">{{dataObject.threadTitle}}</div>
+                                                </div>
+                                                <div class="box bug-detials-img describ-details">
+                                                    <span class="title-word">Description </span>
+                                                    <div class="text">{{dataObject.content}}</div>
+                                                </div>
+                                                <div id="bug-accordion" class="thread-detail-widget main-contaier"
+                                                    *ngIf="attachments.length != 0">
+                                                    <p-accordion
+                                                        class="custom-accordion flat-custom-accordion thread-detail-accordion"
+                                                        [multiple]="true">
+                                                        <p-accordionTab class="comments" [transitionOptions]="'100ms'"
+                                                            [selected]="true">
+                                                            <p-header class="header"><span class="header-img">
+                                                                    <img
+                                                                        src="assets/images/thread-detail/attachments-white.png">
+                                                                </span>
+                                                                <span class="header-text">
+                                                                    Attachments
+                                                                </span>
+                                                            </p-header>
+                                                            <app-attachment-view [loading]="loading" [action]="action"
+                                                                [attachments]="attachments">
+                                                            </app-attachment-view>
+                                                        </p-accordionTab>
+                                                    </p-accordion>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="thread-detail-div-col thread-detail-div-right">
+                                            <div class="  fixed-button-top" *ngIf="buttonTop">
+                                                <div class="button-green" (click)="setActivePosition('bottom')">
+                                                    <span><span class="button-text">GOTO
+                                                            BOTTOM</span><span class="botton-icon"><img
+                                                                src="assets/images/thread-detail/goto-bottom-white.png"></span></span>
+                                                </div>
+                                            </div>
+                                            <div class=" fixed-button-bottom" *ngIf="buttonBottom">
+                                                <div class="button-green" (click)="setActivePosition('top')">
+                                                    <span><span class="button-text">GOTO
+                                                            TOP&nbsp;&nbsp;&nbsp;</span><span
+                                                            class="button-icon"><img
+                                                                src="assets/images/thread-detail/goto-top-white.png"></span></span>
+                                                </div>
+                                            </div>
+                                            <div *ngIf="!editPost "class="table-row21">
+                                                <div class="problem-row setPaddingTop">
+                                                    <div class="problem-col-lt thread-history-date"></div>
+                                                    <div class="problem-col-rt w86">
+                                                        <p class="edit-text1">Edited On</p>
+                                                        <p class="edit-text2">{{dataObject.updateOn}}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="problem-row setPaddingTop setPaddingTop2">
+                                                    <div class="problem-col-lt thread-history-edituser"><span
+                                                            class="thread-history-edituser-img rounded-circle"
+                                                            [ngStyle]="{'background-image': 'url(' + dataObject.profileImage + ')'}"></span>
+                                                    </div>
+                                                    <div class="problem-col-rt w86">
+                                                        <p class="edit-text1">Edited By</p>
+                                                        <p class="edit-text2">{{dataObject.userName}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                            <div class="post-div" *ngIf="!postData">
+                                                <div class="post-div-col post-div-left">
+                                                    <div class="post-view  first-div">
+                                                        <div class="seperater">
+                                                        <img class="lt-img"
+                                                            src="assets/images/thread-detail/dotted-post-img.png">
+                                                        <span *ngIf="postFixData.length == 1"
+                                                            class="ct-text comment-text">Comment</span>
+                                                        <span *ngIf="postFixData.length > 1"
+                                                            class="ct-text comment-text">Comments</span>
+                                                        <span class="rt-dot comment-dot">&nbsp;</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div *ngFor="let post of postFixData; let i = index">
+                                                    <div *ngIf="post.postLoading" class="thread-post-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+                                                    <div *ngIf="post.postView" class="post-div-col post-div-left">
+                                                        <div class="post-view  pid-{{post.postId}}">
+                                                            <div class="post-row display-table">
+                                                                <div class="display-tablecell post-col post-col1">
+                                                                    <div class="post-profile-img">
+                                                                        <!--span (click)="taponprofileclick(post.userId)" class="rounded-circle cursor-pointer" [ngStyle]="{'background-image': 'url(' + post.profileImage + ')'}"></span-->
+                                                                        <img (click)="taponprofileclick(post.userId)"
+                                                                            class="post-p-img" [src]="post.profileImage"
+                                                                            onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                <div class="display-tablecell post-col post-col2">
+                                                                    <div class="post-head display-table">
+                                                                        <div
+                                                                            class="display-tablecell post-head-col post-head-col1">
+                                                                            <div class="post-head-inner-col">
+                                                                                <div class="post-head-inner-col1">
+                                                                                    <div class="name-text ">
+                                                                                        <span class="cursor-pointer"
+                                                                                            (click)="taponprofileclick(post.userId)">
+                                                                                            <span
+                                                                                                class="profile-topbadge-user-pview1"
+                                                                                                *ngIf="post.badgeTopUser">
+                                                                                                <img
+                                                                                                    src="assets/images/thread/crownicon.svg" /></span>{{post.userName}}
+
+                                                                                        </span>
+                                                                                        <!-- <span class="th-date-text post-date-text">{{post.createdOn}}</span>   -->
+                                                                                        <span
+                                                                                            *ngIf="post.threadOwnerLabel"
+                                                                                            class="thread-owner-label thread-owner-label-white"></span>
+                                                                                    </div>
+                                                                                    <div class="title-text"
+                                                                                        [ngClass]="{ 'marginTop16' : post.threadOwnerLabel, 'marginTop8' : !post.threadOwnerLabel }"
+                                                                                        title="{{post.userRoleTitle}}">
+                                                                                        <span
+                                                                                            class="truncate1">{{post.userRoleTitle}}</span>
+                                                                                    </div>
+                                                                                    <div class="posted-text "
+                                                                                        [ngClass]="{ 'marginTop12' : post.threadOwnerLabel, 'marginTop6' : !post.threadOwnerLabel }">
+                                                                                        {{post.postedFrom}}</div>
+                                                                                </div>
+                                                                                <div class="post-head-inner-col2 hide"
+                                                                                    *ngIf="post.threadOwnerLabel">
+                                                                                    <div
+                                                                                        class="thread-owner-label thread-owner-label-white">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div
+                                                                            class="display-tablecell post-head-col post-head-col2">
+                                                                            <span
+                                                                                class="th-date-text post-date-text ">{{post.postCreatedOn}}</span>
+                                                                            <span title="Edit"
+                                                                                (click)="changePost(post,false)"><img
+                                                                                    class="post-edit-img cursor-pointer"
+                                                                                    src="assets/images/thread-detail/post-edit.png" /></span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="post-cont">
+                                                                        <p class="post-desp"
+                                                                            [innerHTML]="post.contentWeb"></p>
+                                                                        <app-attachment-view
+                                                                            *ngIf="!post.attachmentLoading"
+                                                                            [loading]="post.attachmentLoading"
+                                                                            [action]="post.action"
+                                                                            [dynamicGid]="post.postId"
+                                                                            [access]="pageAccess"
+                                                                            [attachments]="post.attachments">
+                                                                        </app-attachment-view>
+                                                                        <!-- <div class="table-row7-border"></div> -->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    
+                                                    <div *ngIf="!post.postView" class="post-edit post-div-col post-div-left">
+                                                        <div class="post-view"></div>
+                                                        <div class="post-new remove-radius">
+                                                            <div class="post-head descHead wrapper">
+                                                                <div class="display-tablecell th-heads-img c2 "><span
+                                                                        class="rounded1-circle cursor-pointer"
+                                                                        [ngStyle]="{'background-image': 'url(' + loginUserProfileImg + ')'}"></span>
+                                                                </div>
+                                                                <div class="display-tablecell">
+                                                                    <span
+                                                                        class="th-head-text1 cursor-pointer">{{dataObject.userName}}</span>
+                                                                    <span
+                                                                        class="th-head-text2">{{dataObject.userRoleTitle}}</span>
+
+                                                                </div>
+                                                                <span class="new-col actions">
+                                                                    <button class="btns cancels "
+                                                                        (click)="replyEditPost(false,post)">Cancel <img
+                                                                        src="assets/images/parts/cancel-icon.png"  /></button>
+                                                                    <span *ngIf="!postEditbutton"
+                                                                        class="btn next publish setOpacity3"
+                                                                        >Save
+                                                                        <img
+                                                                            src="assets/images/profile/profile-save.png" /></span>
+                                                                    <span *ngIf="postEditbutton" class="btn next publish"
+                                                                        (click)="replyEditPost(true,post)">Save
+                                                                        <img
+                                                                            src="assets/images/profile/profile-save.png" /></span>
+                                                                </span>
+                                                            </div>
+                                                            <form [formGroup]="replyPostEditForm">
+                                                                <div>
+                                                                    <p-editor formControlName="postEditDesc"
+                                                                        [(ngModel)]="postEditDesc"
+                                                                        [style]="{'height': '180px'}"
+                                                                        (onTextChange)="changeEditDesp($event,'new')"
+                                                                        >
+                                                                        <p-header>
+                                                                            <span class="ql-formats">
+                                                                                <button class="ql-bold"
+                                                                                    aria-label="Bold"></button>
+                                                                                <button class="ql-italic"
+                                                                                    aria-label="Italic"></button>
+                                                                                <button class="ql-underline"
+                                                                                    aria-label="Underline"></button>
+
+                                                                                <select title="Text Color"
+                                                                                    class="ql-color"
+                                                                                    defaultValue="rgb(0, 0, 0)">
+                                                                                    <option
+                                                                                        *ngFor="let c of textColorValues"
+                                                                                        value="{{c.color}}"
+                                                                                        label="{{c.color}}">
+                                                                                    </option>
+                                                                                </select>
+                                                                                <button class="ql-list"
+                                                                                    value="ordered"></button>
+                                                                                <button class="ql-list"
+                                                                                    value="bullet"></button>
+                                                                                <select title="Text Alignment"
+                                                                                    class="ql-align">
+                                                                                    <option selected>Gauche</option>
+                                                                                    <option value="center"
+                                                                                        label="Center"></option>
+                                                                                    <option value="right" label="Right">
+                                                                                    </option>
+                                                                                    <option value="justify"
+                                                                                        label="Justify">
+                                                                                    </option>
+                                                                                </select>
+
+                                                                                <!--<button aria-label="Link" class="ql-link"></button>-->
+                                                                                <!--button aria-label="Image" class="ql-image"></button-->
+                                                                            </span>
+                                                                        </p-header>
+                                                                    </p-editor>
+                                                                    <div *ngIf="emptydesc && submitpost && fe.postEditDesc.errors?.required"
+                                                                        class="invalid-feedback invalid-field">
+                                                                        <div id="valid-error" class="field-err">
+                                                                            Description is
+                                                                            required</div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                            <div class="attachment-row toppad">
+                                                                <app-file-attachment *ngIf="editPostUpload" class="attachment-file" [action]="manageAction" [apiData]="postEditApiData" [attachmentItems]="post.attachmentItems" [postData]="post" (uploadedItems)="editAttachments($event)"></app-file-attachment>
+                                                                <app-attachment-view *ngIf="post.attachments.length > 0" [action]="post.EditAttachmentAction" [access]="pageAccess" [attachments]="post.attachmentItems" (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                        <div *ngIf="!editPost" class="post-div-col post-div-right">
+                                                            <div class="edit-historys-div table-row21">
+                                                            <div class="problem-row setPaddingTop">
+                                                                <div class="problem-col-lt thread-history-date"></div>
+                                                                <div class="problem-col-rt w86">
+                                                                    <p class="edit-text1">Edited On</p>
+                                                                    <p class="edit-text2">{{post.postCreatedOn}}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="problem-row setPaddingTop setPaddingTop2">
+                                                                <div class="problem-col-lt thread-history-edituser"><span
+                                                                        class="thread-history-edituser-img rounded-circle"
+                                                                        [ngStyle]="{'background-image': 'url(' + post.profileImage + ')'}"></span>
+                                                                </div>
+                                                                <div class="problem-col-rt w86">
+                                                                    <p class="edit-text1">Edited By</p>
+                                                                    <p class="edit-text2">{{post.userName}}</p>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="post-div">
+                                                    <div *ngIf="noReplyPost">
+                                                    <div *ngIf="postDescFlag" class="post-view post-div-lefts"></div>
+                                                </div>
+                                                <div *ngIf="postData" class="post-views post-div-lefts">&nbsp;</div>
+                                                <div class="post-view post-div-lefts" *ngIf="postLoading">
+                                                    <div class="post-view-paddBottom">
+                                                        <div class="post-loader">
+                                                            <div class="post-loader-svg"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </div>
+
+                                                <!-- <div *ngIf="!postDescFlag" class="post-view" [ngClass]="{'post-view-last': !postDescFlag}"></div> -->
+                                                <div *ngIf="postDescFlag" class="post-div-lefts">
+                                                    <div class="post-new ">
+                                                    <div class="descHead wrapper">
+                                                        <div class="display-tablecell th-heads-img c1 "><span
+                                                            class="rounded1-circle cursor-pointer"
+                                                            [ngStyle]="{'background-image': 'url(' + loginUserProfileImg + ')'}"></span>
+                                                    </div>
+                                                    <div class="display-tablecell">
+                                                        <span
+                                                            class="th-head-text1 cursor-pointer">{{loginUsername}}</span>
+                                                        <span
+                                                            class="th-head-text2">{{loginUserRole}}</span>
+
+                                                    </div>
+                                                        <span class="new-col actions">
+                                                            <button *ngIf="postbutton" class="btn nexts publish setOpacity3"  
+                                                                >Post & Close <img
+                                                                    src="assets/images/parts/publish.png" /></button>
+                                                                <button *ngIf="!postbutton" class="btn nexts publish" (click)="replyPost('Yes')"
+                                                                    >Post & Close <img
+                                                                        src="assets/images/parts/publish.png" /></button>
+                                                            <span *ngIf="postbutton"
+                                                                class="btn next publish setOpacity3"
+                                                                (click)="replyPost('No')">Post
+                                                                <img src="assets/images/parts/publish.png" /></span>
+                                                            <span *ngIf="!postbutton" class="btn next publish"
+                                                                (click)="replyPost('No')">Post
+                                                                <img src="assets/images/parts/publish.png" /></span>
+                                                        </span>
+                                                    </div>
+                                                    <form [formGroup]="replyPostForm">
+                                                        <div>
+                                                            <p-editor formControlName="postDesc" [(ngModel)]="postDesc"
+                                                                [style]="{'height': '180px'}"
+                                                                (onTextChange)="changedesp($event,'new')">
+                                                                <p-header>
+                                                                    <span class="ql-formats">
+                                                                        <button class="ql-bold"
+                                                                            aria-label="Bold"></button>
+                                                                        <button class="ql-italic"
+                                                                            aria-label="Italic"></button>
+                                                                        <button class="ql-underline"
+                                                                            aria-label="Underline"></button>
+
+                                                                        <select title="Text Color" class="ql-color"
+                                                                            defaultValue="rgb(0, 0, 0)">
+                                                                            <option *ngFor="let c of textColorValues"
+                                                                                value="{{c.color}}" label="{{c.color}}">
+                                                                            </option>
+                                                                        </select>
+                                                                        <button class="ql-list"
+                                                                            value="ordered"></button>
+                                                                        <button class="ql-list" value="bullet"></button>
+                                                                        <select title="Text Alignment" class="ql-align">
+                                                                            <option selected>Gauche</option>
+                                                                            <option value="center" label="Center">
+                                                                            </option>
+                                                                            <option value="right" label="Right">
+                                                                            </option>
+                                                                            <option value="justify" label="Justify">
+                                                                            </option>
+                                                                        </select>
+
+                                                                        <!--<button aria-label="Link" class="ql-link"></button>-->
+                                                                        <!--button aria-label="Image" class="ql-image"></button-->
+                                                                    </span>
+                                                                </p-header>
+                                                            </p-editor>
+                                                            <div *ngIf="emptydesc && submitpost && f.postDesc.errors?.required"
+                                                                class="invalid-feedback invalid-field">
+                                                                <div id="valid-error" class="field-err">Description is
+                                                                    required</div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    <div class="attachment-row toppad">
+                                                        <app-file-attachment *ngIf="partUpload" class="attachment-file"
+                                                            [apiData]="postApiData" [action]="manageAction"
+                                                            (uploadedItems)="attachment($event)">
+                                                        </app-file-attachment>
+
+                                                    </div>
+                                                </div>
+                                                </div>
+
+                                                <div *ngIf="!postDescFlag" class="post-view post-view-last post-div-lefts"></div>
+
+                                                <div *ngIf="!postDescFlag">
+                                                    <div class="post-div-col post-div-lefts padding10px">
+                                                        <div class="close-div">
+                                                            <img class="close-div-icon"
+                                                                src="assets/images/thread-detail/thread-closed-white.png">
+                                                            <span class="close-div-text">{{headerTitle}} Closed on
+                                                                {{closedOn}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                    
+                                            
+                                        
+
+                                    
+
+                                </div>
+                                
+
+
+                            </div>
+                            
+                        </div>
+                        <div class="th-outer-col th-outer-col-3"
+                            [ngClass]="{'col-expand': rightpanel, 'col-collapse': !rightpanel}">
+                            <div class="cust-right-panel"
+                                [ngClass]="{'right-panel-expand': rightpanel, 'right-panel-collapse': !rightpanel}">
+                                <app-domain-members></app-domain-members>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

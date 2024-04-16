@@ -1,0 +1,26 @@
+<form class="custom-modal modal-container" id="wrapper" [formGroup]="summaryForm">
+  <div class="modal-header d-flex justify-content-center">
+    <h6 class="modal-title">{{title}}</h6>
+  </div>
+  <div class="modal-body" style="padding-bottom: 0px !important">
+    <div class="container px-4">
+      <textarea class="w-100" placeholder="Summary" rows="5" pInputTextarea formControlName="description"></textarea>
+      <span class="required">
+        <span
+          *ngIf="summaryForm.controls.description.errors && (summaryForm.controls.description.dirty || summaryForm.controls.description.touched)">
+          <span *ngIf="summaryForm.controls.description.errors.required">Please Enter description</span>
+        </span>
+      </span>
+      <app-file-attachment class="attachment-file" [action]="manageAction" [apiData]="postApiData"
+        (uploadedItems)="attachments($event)"></app-file-attachment>
+      <app-attachment-view [action]="EditAttachmentAction" [access]="pageAccess" [attachments]="attachmentItems"
+        (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+    </div>
+  </div>
+  <div class="modal-footer justify-content-center">
+    <button pButton icon="pi pi-times" iconPos="right" label="Cancel" (click)="cancel()"
+      class="p-button-secondary p-button-sm p-button-outlined button-sm"></button>
+    <button label="Save" class="p-button-danger p-button-sm button-sm" icon="pi pi-save" iconPos="right" pButton
+      type="button" (click)="save()"></button>
+  </div>
+</form>

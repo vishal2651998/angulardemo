@@ -1,0 +1,325 @@
+<div class="custom-modal modal-container" tabindex="0" id="wrapper">
+
+    <div class="modal-header view-modal-header d-flex align-items-center">
+        <div class="view-modal-title">
+            <h5 class="view-modal-title-text mb-0 pl-3">Add Tool/Equipment to Shop</h5>
+        </div>
+        <div class="action-buttons action-buttons-hq ">
+            <button (click)="submitForm()" pButton pRipple type="button" icon="pi pi-check" iconPos="right" label="Save"
+                class="p-button-rounded button-save button-save-hq cursor"></button>
+            <span class="cursor close-btn pr-3" role="button" aria-label="Close"
+                (click)="activeModal.dismiss('Cross click')">
+                <img src="assets/images/list-close.png" alt="Close" />
+            </span>
+        </div>
+    </div>
+
+    <div class="modal-body view-modal-body shop-modal-body">
+        <form [formGroup]="productForm" class="action-form">
+            <div class="container">
+                <div class="row input-row mb-25">
+                    <div class="col-sm-12 mb-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['toolProdId'] && !!productForm?.controls['toolProdId'].errors && !!productForm?.controls['toolProdId'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between" >
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/product-name.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="17" height="17"
+                                    style="min-width: 17px; min-height: 17px;" />
+                                <label class="mb-0">Product</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <p-dropdown formControlName="toolProdId" (click)="openSelectProduct()" class="p-dropdown-servicetype no-dropdown" [filter]="true"
+                            [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                            placeholder="Select Product" optionLabel="name" optionValue="id">
+                        </p-dropdown>
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedProduct && selectedProduct.id" class="col-sm-12">
+                        <div class="product-name-box position-relative">
+                            <div class="d-flex align-items-center">
+                                <div class="col-1">
+                                    <span *ngIf="selectedProduct.uploadContents && selectedProduct.uploadContents.length > 0 && selectedProduct.uploadContents[0]?.thumbFilePath"
+                                         class="toolImg product">
+                                        <img [src]="selectedProduct.uploadContents && selectedProduct.uploadContents[0]?.thumbFilePath">
+                                                  </span>
+                                    <span style="background-color: #abb2bd;" *ngIf="selectedProduct.uploadContents && selectedProduct.uploadContents.length <= 0 "
+                                        class="toolImg product">
+                                        <img class="upper-image-div-new" src="assets/images/hq/tools-default-image.png">
+                                    </span>
+                                </div>
+                                <div class="product-content">
+                                    <p class="mb-0 fw-bold">{{selectedProduct?.brandInfo?.name}}</p>
+                                    <div class="d-flex product-details align-items-center">
+                                        <p class="fw-medium mb-0">Vendor:<span class="fw-regular ml-2">{{selectedProduct?.vendorInfo?.name}}</span></p>
+                                        <p class="fw-medium mb-0">Model:<span class="fw-regular ml-2">{{selectedProduct?.modelInfo?.name}}</span></p>
+                                        <p class="fw-medium mb-0">Brand:<span class="fw-regular ml-2">{{selectedProduct?.brandInfo?.name}}</span></p>
+                                        <p class="fw-medium mb-0">Category:<span class="fw-regular ml-2">{{selectedProduct?.categoryInfo?.name}}</span></p>
+                                        <p class="fw-medium mb-0">Type:<span class="fw-regular ml-2">{{selectedProduct?.toolTypeInfo?.name}}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <img src="assets/images/close-icon.svg" alt="" width="12" height="12" class="close-img" (click)="clearSelectedProduct()">
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <div class="row input-row mb-25">
+                    <div class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['serialNo'] && !!productForm?.controls['serialNo'].errors && !!productForm?.controls['serialNo'].errors.required ? 'input-error' : ''">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/serial.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                    style="min-width: 17px; min-height: 19px;" />
+                                <label class="mb-0">Serial#</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed">
+                            <input (keyup)="validateModel($event)" formControlName="serialNo" type="text" pInputText class="input-bg  w-100" placeholder="Serial#" />
+                        </div>
+                        <span style="font-size: 13px; color: red;" *ngIf="!isSerialValid">Serial already exists</span>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['purchaseDate'] && !!productForm?.controls['purchaseDate'].errors && !!productForm?.controls['purchaseDate'].errors.required ? 'input-error' : ''">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/light-calendar.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                    style="min-width: 17px; min-height: 19px;" />
+                                <label class="mb-0">Purchase Date</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed position-relative">
+                            <p-calendar [maxDate] = "todayDate" (ngModelChange)="pDateChange()" [(ngModel)]="purchaseDate" formControlName="purchaseDate"  placeholder="Select Date" 
+                            [style]="{'width':'100%'}"></p-calendar>
+                            <img src="assets/images/inspection-home/light-calendar.png" alt="" class="calendar">
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between"  [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['installDate'] && !!productForm?.controls['installDate'].errors && !!productForm?.controls['installDate'].errors.required ? 'input-error' : ''">
+                            <div class="label-txt"> 
+                                <img src="assets/images/inspection-home/light-calendar.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                    style="min-width: 17px; min-height: 19px;" />
+                                <label class="mb-0">Install Date</label>
+                            </div>
+
+                            <div class="required">
+                                <span class="required-txt"></span>
+                            </div>
+                        </div>
+
+                        <div class="input-filed position-relative">
+                            <p-calendar  formControlName="installDate" [minDate]="!!purchaseDate ? purchaseDate : todayDate" [readonlyInput]="true" placeholder="Select Date"
+                            [style]="{'width':'100%'}"></p-calendar>
+                            <img src="assets/images/inspection-home/light-calendar.png" alt="" class="calendar">
+                        </div>
+
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="input-shop d-flex align-items-center justify-content-between">
+                            <div class="label-txt">
+                                <img src="assets/images/inspection-home/warrenty.png" alt="service"
+                                    class="icons-size mr-2 new-request-icon" width="21" height="20"
+                                    style="min-width: 21px; min-height: 20px;" />
+                                <label class="mb-0">Warranty</label>
+                            </div>
+
+                            <!-- <div class="required">
+                                <span class="required-txt">Required</span>
+                            </div> -->
+                        </div>
+
+                        <div class="input-filed">
+                            <input formControlName="warranty" type="text" pInputText class="input-bg  w-100" placeholder="Warranty" />
+                        </div>
+                    </div>
+                </div>
+
+                <section class="ntwk-section">
+                    <div class="d-flex align-items-center mb-2">
+                        <span>
+                            <img src="assets/images/inspection-home/black-network.png" alt="" width="26" height="19"
+                                style="min-width: 26px; min-height: 19px;">
+                        </span>
+                        <span class="fw-regular fs-18 ml-3">
+                            Network Details
+                        </span>
+                    </div>
+                    
+                    <div class="row input-row">
+
+                        <div class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelOneId'] && !!productForm?.controls['levelOneId'].errors && !!productForm?.controls['levelOneId'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                     class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                     style="min-width: 23px; min-height: 16px;"/>
+                                    <label class="mb-0">Level 1</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+    
+                            <div class="input-filed">
+                                <p-dropdown (onChange)="onLevel1Change()" formControlName="levelOneId" [options]="level1DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelTwoId'] && !!productForm?.controls['levelTwoId'].errors && !!productForm?.controls['levelTwoId'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                     class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                     style="min-width: 23px; min-height: 16px;"/>
+                                    <label class="mb-0">Level 2</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+    
+                            <div class="input-filed">
+                                <p-dropdown (onChange)="onLevel2Change()" formControlName="levelTwoId" [options]="level2DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelThreeId'] && !!productForm?.controls['levelThreeId'].errors && !!productForm?.controls['levelThreeId'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                     class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                     style="min-width: 23px; min-height: 16px;"/>
+                                    <label class="mb-0">Level 3</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+    
+                            <div class="input-filed">
+                                <p-dropdown (onChange)="onLevel3Change()" formControlName="levelThreeId" [options]="level3DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id">
+                                </p-dropdown>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['shopId'] && !!productForm?.controls['shopId'].errors && !!productForm?.controls['shopId'].errors.required ? 'input-error' : ''">
+                            <div class="input-shop d-flex align-items-center justify-content-between">
+                                <div class="label-txt">
+                                    <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                                    onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                    <label class="mb-0">Shop Name</label>
+                                </div>
+
+                                <div class="required">
+                                    <span class="required-txt">Required</span>
+                                </div>
+                            </div>
+    
+                            <div class="input-filed">
+                                <p-dropdown formControlName="shopId" [options]="shopListDropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                    [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                    placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onShopChange()">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </form>
+    </div>
+    <p-sidebar class="sidebar-cont ppp form-type-fields" [(visible)]="showSidebar" [baseZIndex]="100" position="right"
+    [dismissible]="false"  modal="true">
+    <div class=""> 
+        <!-- <form> -->
+            <div class="product-form d-flex align-items-center justify-content-between flex-wrap" style="z-index: 1;">
+                <p class="mb-0 product-heading">Select Product</p>
+                <div class="d-flex align-items-center justify-content-end product-actions">
+                    <div class="search">
+                        <a  class="search-icon">
+                            <img src="assets/images/search-icon.png" alt=""  width="15" height="15">
+                          </a>
+                          <input type="text" (keyup)="searchBrand()"  class="search-control" id="searchKey"  maxlength="50"
+                         placeholder="Search" [(ngModel)]="searchBrandName" />
+                    </div>
+                    <button style="padding-right: 20px;" pButton pRipple type="button" icon="pi pi-check" iconPos="left" label="Add"
+                    class="p-button-rounded button-save button-save-hq cursor" (click)="selectProduct()"></button>
+                    <span class="btn-close">
+                        <img  (click)="closeSelectProduct()" src="assets/images/hq/hq-popup-close-icon.png" alt="HQ"  role="button"/>
+                    </span>
+                </div>
+            </div>
+            <div style="height: calc(100vh - 63px);overflow: auto;">
+                <div *ngFor="let tool of toollist" class="row no-gutters"
+                    style="cursor: pointer;">
+                    <div style="width: 5%; display: flex; align-items: center; justify-content: center;">
+                                        <p-radioButton [value]="tool.id"  [(ngModel)]="selectedProductIndex" ></p-radioButton>
+                    </div>
+                    <div style="width: 95%;">
+                        <div class="d-flexdd align-items-center border-bottom  wrap-p row no-gutters">
+                            <div class="col-1">
+                            <span *ngIf="tool.uploadContents.length > 0 && tool.uploadContents[0]?.thumbFilePath"
+                                 class="toolImg product">
+                                <img [src]="tool.uploadContents[0]?.thumbFilePath">
+                                          </span>
+                            <span style="background-color: #abb2bd;" *ngIf="tool.uploadContents.length <= 0 "
+                                class="toolImg product">
+                                <img class="upper-image-div-new" src="assets/images/hq/tools-default-image.png">
+                            </span>
+                        </div>
+                            <div class="product-content col-11">
+                                <p class="mb-0 fw-bold pl-2">{{tool?.brandInfo?.name}}</p>
+                                <div class="d-flex product-details align-items-center " style="flex-wrap: nowrap !important;">
+                                <p class="fw-medium mb-0 product-detail-txt">Vendor:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.vendorInfo?.name}}</span></p>
+                                <p class="fw-medium mb-0 product-detail-txt">Model:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.modelInfo?.name}}</span></p>
+                                <p class="fw-medium mb-0 product-detail-txt">Brand:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.brandInfo?.name}}</span></p>
+                                <!-- <p class="fw-medium mb-0 product-detail-txt">Category:<span
+                                            class="fw-regular ml-2">{{tool?.categoryInfo?.name}}</span></p>
+                                <p class="fw-medium mb-0 product-detail-txt">Type:<span
+                                            class="fw-regular ml-2 text-truncate">{{tool?.toolTypeInfo?.name}}</span></p> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+
+        <!-- </form> -->
+    </div>
+</p-sidebar>
+</div>    

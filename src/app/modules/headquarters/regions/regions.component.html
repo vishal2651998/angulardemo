@@ -1,0 +1,158 @@
+<div id="header">
+    <app-header [pageData]="headerData"></app-header>
+</div>
+<div class="d-flex">
+    <div class="left-section">
+        <div class="first-left-width">
+            <nav id="nav-sidebar">
+                <app-sidebar *ngIf="!user || !user.data.shopId || !shopFacility" [pageData]="sidebarActiveClass" (menuNav)="menuNav($event)" accessModule="{{bodyClass}}" (SidebarComponentRef)="sidebarRef = $event"></app-sidebar>
+                <app-sidebar *ngIf="user && user.data.shopId && shopFacility" [pageData]="sidebarActiveClass" (menuNav)="menuNav($event)" accessModule="facility-layout" (SidebarComponentRef)="sidebarRef = $event"></app-sidebar>               
+                <app-sidebar *ngIf="user && user.data.shopId && shopTools" [pageData]="sidebarActiveClass" (menuNav)="menuNav($event)" accessModule="shop-tools" (SidebarComponentRef)="sidebarRef = $event"></app-sidebar>                 
+            </nav>
+        </div>
+    </div>
+    <div class="right-section right-section-new">
+        <router-outlet></router-outlet>
+    </div>
+    <!-- <div class="right-section">
+        <div class="prob-index system-setting">
+            <div class="container-fluid">
+                <div class="center-middle-width-container">
+                    <div class="center-middle-width padding-common padding-common-hq">
+    
+                        <div *ngIf="headquartersFlag" class="hq-head">
+                            <div class="hq-head-row-1">
+                                <img  class="hq-head-img" src="assets/images/hq/hq-head-icon.png" alt="" />
+                                <span class="hq-head-text">Headquarters</span>
+                            </div>
+                        </div>
+                        <div  class="hq-head d-flex">
+                            <div>
+                                <div class="hq-head-row-0">
+                                    <span class="hq-head-breadcrumb-text cursor" (click)="back('step1')">Headquarters</span>
+                                    <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                    <span class="hq-head-breadcrumb-text cursor" (click)="back('step1')">Region</span>
+                                    <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                    <span class="hq-head-breadcrumb-text cursor" (click)="back('step1')">{{regionName}}</span>
+                                    <img  class="hq-head-breadcrumb-img" src="assets/images/hq/hq-bc.png" alt="" />
+                                    <span class="hq-head-breadcrumb-text">{{featuredActionName}}</span>
+                                </div>
+                                <div class="hq-head-row-1">
+                                    <img  class="hq-head-img" src="assets/images/hq/hq-region-head-icon.png" alt="" />
+                                    <span class="hq-head-text">{{featuredActionName}}</span>
+                                </div>
+                                
+                            </div>
+                            <div class="ml-auto d-flex align-items-center" *ngIf="selectedSideBar==='SHOPS'">
+                                <div (click)="openAddShopModal()" class="m-0 add-action-btn cursor">
+                                    <img src="assets/images/hq/add-icon.png">
+                                    <span>New Shop</span>
+                                </div>
+                                <div class="m-0 border-0 add-action-btn cursor">
+                                    <img src="assets/images/export-green-icon.png">
+                                    <span>Template</span>
+                                </div>
+                                <div class="m-0 pl-0 border-0 add-action-btn cursor">
+                                    <img src="assets/images/common/cdownload-icon.png">
+                                    <span>Download Shops</span>
+                                </div>
+                                <div class="m-0 pl-0 border-0 add-action-btn cursor">
+                                    <img src="assets/images/hq/hq-media-green-upload-icon.png">
+                                    <span>Upload Shops</span>
+                                </div>
+                                <div class="bg-light rounded rounded-4 d-flex">
+                                    <div *ngIf="viewType !== 'MAP'" class="p-2 border-right border-gray cursor">
+                                        <img src="assets/images/hq/location-primary.png">
+                                    </div>
+                                    <div  *ngIf="viewType == 'MAP'" class="p-2 border-right border-gray cursor">
+                                        <img src="assets/images/hq/location-active.png">
+                                    </div>
+                                    <div *ngIf="viewType !== 'LIST'" class="p-2 cursor">
+                                        <img src="assets/images/hq/list-primary.png">
+                                    </div>
+                                    <div class="p-2 cursor">
+                                        <img *ngIf="viewType == 'LIST'" src="assets/images/hq/list-active.png">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <app-headquarter-sidebar (onSidebarSelect)="getSelectedSidebar($event)"></app-headquarter-sidebar> -->
+                        <!-- <div  class="ts-list-lt ts-list-bottom cbt-filter filter-expand">
+                            <div class="" >
+                                <div id="filter">
+                                    <div class="filter-widgets ts-list-lt-center transition">
+                                        <div [style.height]="'calc(100vh - '+leftEmptyHeight+'px)'">
+                                            <div  class="ps" [perfectScrollbar]="sconfig">
+                                                <div class="user-row">
+                                                    <div >
+                                                        <div class="profile-row system-settings-menu-row  active"
+                                                            [ngClass]="{active:selectedTab == 'SUMMARY'}">
+                                                            <div class="profile-row-inner">
+                                                                <span class="hq-summary-icon pimg"></span>
+                                                                <span class="uname">Summary</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="profile-row system-settings-menu-row"
+                                                            [ngClass]="{active:selectedTab == 'SHOPS'}">
+                                                            <div class="profile-row-inner">
+                                                                <span class="shops-icon pimg"></span>
+                                                                <span class="uname">Shops</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="profile-row system-settings-menu-row"
+                                                            [ngClass]="{active:selectedTab == 'TOOLS'}">
+                                                            <div class="profile-row-inner">
+                                                                <span class="tools-icon pimg"></span>
+                                                                <span class="uname">Tools & Equipment</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+    
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+    
+                        <!-- <div class="ts-list-rt transition filter-expand">
+                            <router-outlet></router-outlet> -->
+                            <!--ADD SHOP MODAL -->
+                            <!-- <div class="d-flex align-items-center justify-content-center shop-banner">
+            
+                                    <div class="rounded-circle" >
+                                        <img src="assets/images/hq/hq-lt-shops-large.png"> 
+                                    </div>
+                                    <div>
+                                        <p class="fs-14 shop-txt">Tap on the 'Add Shop' button to add New Shop</p>
+                                    </div>
+                                    <div (click)="openAddShopModal()" class="m-0 add-action-btn cursor">
+                                        <img src="assets/images/hq/add-icon.png">
+                                        <span>ADD SHOP</span>
+                                    </div>
+                                
+                            </div> -->
+    
+                            <!-- HEAD QUATERS ROUTES -->
+                            <!-- <div *ngIf="listShops"> -->
+                                <!-- SHOPS ROUTE -->
+                                <!-- <router-outlet></router-outlet> -->
+                                <!-- <app-list-shop (viewShop)="viewShopEmmiter($event)" *ngIf="selectedTab == 'SHOPS' && viewType == 'LIST'"></app-list-shop>
+                                <app-shop-list-map *ngIf="selectedTab == 'SHOPS' && viewType == 'MAP'"></app-shop-list-map> -->
+                                <!-- SUMMARY ROUTE -->
+                                <!-- <app-headquarters-list *ngIf="selectedTab == 'SUMMARY'"
+                                (onShopSelect)="selectNav($event)"
+                                    (headquartersComponentRef)="headquartersPageRef = $event"
+                                    (callback)="headquartersCallback($event)"></app-headquarters-list> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
+                    <!-- </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</div>
+
+
+

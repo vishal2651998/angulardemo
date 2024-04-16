@@ -1,0 +1,26 @@
+<div id="header">
+    <app-product-header
+      *ngIf="!headerFlag"
+      [pageData]="headerData"
+      (search)="applySearch($event)"
+    ></app-product-header>
+    <app-product-header
+      *ngIf="headerFlag"
+      [pageData]="headerData"
+      (search)="applySearch($event)"
+    ></app-product-header>
+  </div>
+<div class="prob-index">
+    <div class="part-list-head">
+        <div class="prob-head-col head-col-1">
+            <span class="head-txt part-head-txt escalation-img"><img src="assets/images/escalations/escalation-icon.png"> {{title}}</span>
+        </div>       
+    </div><div class="probing-content cbt-content part-content acc-content" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <div class="announcement-container announcement-container-es">            
+            <app-escalation-widgets></app-escalation-widgets>
+        </div>
+    </div>
+   <div class="cust-right-panel acc-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+        <app-domain-members></app-domain-members>
+    </div>
+</div>

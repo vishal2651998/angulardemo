@@ -1,0 +1,1469 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div class="loading-small-screen-scroll trst">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div *ngIf="!loading">
+    <form [formGroup]="productForm">
+        <div class="prob-list-cont action-form">
+            <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new {{access}}-grid-row">
+                <!-- <div class="hq-head-row-4 hq-head d-flex align-items-center" >
+                    
+                    <div class="col-sm-10 p-0">
+                        <span class="heading-txt cursor pr-2" (click)="back('historyback')" >
+                            <img src="assets/images/documents/doc-back.png" width="22px">
+                        </span>
+                        <span class="loc-head-text">{{toolsLocationPageData.productName}}</span>
+                    </div>
+                    <div class="col-sm-2 d-flex justify-content-end p-0">
+                        <img title="Edit" class="loc-head-edit-img cursor"
+                            src="assets/images/hq/hq-edit-icon.png" style="margin-right: 8px;">
+                            <img src="assets/images/hq/hq-delete-icon.png" alt=""  class="loc-head-edit-img cursor">
+    
+                    </div>             
+                </div> -->
+    
+                <div class="product-history-detail tool-banner">
+                    <div [style.height]="!selectedTool ? '' : 'calc(100vh - '+nonEmptyHeight+'px)'">
+                        <div *ngIf="selectedTool" class="ps" [perfectScrollbar]="sconfig">
+                            <div class="hq-head-row-4 hq-head d-flex align-items-center" style="background-color: #fff;
+                            box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1); padding: 10px;">
+                                <div class="col-sm-6 p-0 pl-3">
+                                    <!-- <span class="heading-txt cursor pr-2" (click)="back('historyback')" >
+                                        <img src="assets/images/documents/doc-back.png" width="22px">
+                                    </span> -->
+                                    <!-- <span class="loc-head-text">{{toolsLocationPageData.productName}}</span> -->
+                                    <div class="f-bold ml-3 mr-auto d-flex align-items-center">
+                                        {{toolsLocationPageData?.vendorInfo?.name}} <img src="assets/images/landing-page/black-chevron.png" style="height: 12px;" class="mx-1"> {{toolsLocationPageData?.modelInfo?.name}}
+                                    </div>
+                                </div>
+    
+                                <div class="col-sm-6 d-flex justify-content-end p-0 pr-2">
+                                   
+                                    <p class="mb-0 mr-3 entry-txt">
+                                        <ng-container *ngIf="selectedLocation?.validationHistory && selectedLocation?.validationHistory.length > 0">
+                                        Status:
+                                            <span [style.color]="selectedLocation?.validationHistory[0].textColor"
+                                                                                class="ml-1">{{selectedLocation?.validationHistory[0]?.validationStatusText}}
+                                                                                on {{selectedLocation?.validationHistory[0]?.createdOn | date: 'MMM d, y'}} by {{selectedLocation?.validationHistory[0]?.userName}}</span>
+
+                                        </ng-container>
+                                    </p>
+                                    <img *ngIf="!addProductFinal" title="Edit" class="loc-head-edit-img cursor"
+                                        src="assets/images/hq/hq-edit-icon.png" (click)="editProduct()" style="margin-right: 8px;">
+                                    <img *ngIf="!addProductFinal" src="assets/images/hq/hq-delete-icon.png" alt="" class="loc-head-edit-img cursor">
+    
+                                </div>
+                            </div>
+                            <div class="container">
+                                <div class="detail-container">
+                                    <div class="row no-gutters mb-2">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 p-0">
+                                            <div class="row border-bottom" >
+                                                <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/hq/category.png" alt="" width="19"
+                                                                height="18" style="min-width: 19px;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Category</p>
+                                                            <p class="tool-log-content">{{toolsLocationPageData.categoryInfo && toolsLocationPageData.categoryInfo.name ? toolsLocationPageData.categoryInfo.name : '-'}}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/hq/vendor-icon.png" alt="" width="19"
+                                                                height="19" style="min-width: 18px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Vendor Name</p>
+                                                            <p class="tool-log-content">{{toolsLocationPageData.vendorInfo && toolsLocationPageData.vendorInfo.name ? toolsLocationPageData.vendorInfo.name : '-'}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/inspection-home/product-model.png" alt="" width="19"
+                                                                height="18" style="min-width: 18px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Model</p>
+                                                            <p class="tool-log-content">{{toolsLocationPageData.modelInfo && toolsLocationPageData.modelInfo.name ? toolsLocationPageData.modelInfo.name : '-'}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/inspection-home/product-name.png" alt="" width="19"
+                                                                height="18" style="min-width: 18px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Product Name</p>
+                                                            <p class="tool-log-content">{{toolsLocationPageData.productNameInfo && toolsLocationPageData.productNameInfo.name ? toolsLocationPageData.productNameInfo.name : '-'}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/shop/stacked-rectangle.png" alt=""
+                                                                width="19" height="19"
+                                                                style="min-width: 18px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Type</p>
+                                                            <p class="tool-log-content">{{toolsLocationPageData.toolTypeInfo && toolsLocationPageData.toolTypeInfo.name ? toolsLocationPageData?.toolTypeInfo?.name : '-'}}</p>
+                                                        </div>
+                                                    </div>
+    
+                                                </div>
+                                               
+                                                
+                                                <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/hq/user-icon.png" alt="" width="19"
+                                                                height="18" style="min-width: 18px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Entered By</p>
+                                                            <p class="tool-log-content">{{toolsLocationPageData.enteredBy  ? toolsLocationPageData.enteredBy : '-'}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="col-2">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/hq/hist-cert.png" alt="" width="19"
+                                                                height="18" style="min-width: 19px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Certification&nbsp;&nbsp;<img
+                                                                    src="assets/images/gts/info.png" alt=""></p>
+                                                            <p class="tool-log-content ">
+                                                                <img class="check-bg-img"
+                                                                    src="assets/images/checkbox-active.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                    </div>
+    
+                                                </div> -->
+                                            </div>
+
+                                            <div class="row pb-3 border-bottom" *ngIf="!selectedShop || showNetwork">
+                                                <div class="col-sm-12 p-0 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <span>
+                                                            <img src="assets/images/hq/network.png" alt="" height="16"
+                                                                width="22">
+                                                        </span>
+                                                        <span class="fw-bold fs-18 ml-2">Network Details</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 d-flex">
+                                                    <div class="row col-12 input-row border-0">
+
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Level 1</p>
+                                                                <p class="tool-log-content">{{selectedTool?.levelOneName ? selectedTool?.levelOneName : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelOneId'] && !!productForm?.controls['levelOneId'].errors && !!productForm?.controls['levelOneId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                                 class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                                                 style="min-width: 23px; min-height: 16px;"/>
+                                                                <label class="mb-0">Level 1</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <!-- <span class="required-txt">Required</span> -->
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown (onChange)="onLevel1Change()" formControlName="levelOneId" [options]="level1DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Level 2</p>
+                                                                <p class="tool-log-content">{{selectedTool?.levelTwoName ? selectedTool?.levelTwoName : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelTwoId'] && !!productForm?.controls['levelTwoId'].errors && !!productForm?.controls['levelTwoId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                                 class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                                                 style="min-width: 23px; min-height: 16px;"/>
+                                                                <label class="mb-0">Level 2</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <!-- <span class="required-txt">Required</span> -->
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown (onChange)="onLevel2Change()" formControlName="levelTwoId" [options]="level2DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Level 3</p>
+                                                                <p class="tool-log-content">{{selectedTool?.levelThreeName ? selectedTool?.levelThreeName : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelThreeId'] && !!productForm?.controls['levelThreeId'].errors && !!productForm?.controls['levelThreeId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                                 class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                                                 style="min-width: 23px; min-height: 16px;"/>
+                                                                <label class="mb-0">Level 3</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <!-- <span class="required-txt">Required</span> -->
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown (onChange)="onLevel3Change()" formControlName="levelThreeId" [options]="level3DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/shop.png" alt="" width="20"
+                                                                    height="17"
+                                                                    style="min-width: 20px;vertical-align: top;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Shop Name</p>
+                                                                <p class="tool-log-content">{{selectedTool?.name ? selectedTool?.name : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['shopId'] && !!productForm?.controls['shopId'].errors && !!productForm?.controls['shopId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                                                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                                                <label class="mb-0">Shop Name</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <span class="required-txt">Required</span>
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown formControlName="shopId" [options]="shopListDropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onShopChange()">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+    
+                                                    <!-- <div class="col-2">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/inspection-home/d-code.png" alt=""
+                                                                    width="19" height="19"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Location#</p>
+                                                                <p class="tool-log-content">233
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+     -->
+                                                    <!-- <div class="col-2">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Location Address</p>
+                                                                <p class="tool-log-content">2100 Ross Ave
+                                                                    Waco, Texas 76706
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+    
+                                                    
+    
+                                                    </div>
+                                                </div>    
+                                            </div>
+    
+
+                                            <div class="row pb-3 border-bottom" *ngIf="selectedShop && !showNetwork">
+                                                <div class="col-sm-12 p-0 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <span>
+                                                            <img src="assets/images/hq/network.png" alt="" height="16"
+                                                                width="22">
+                                                        </span>
+                                                        <span class="fw-bold fs-18 ml-2">Network Details</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 d-flex">
+                                                    <div class="row col-12 input-row border-0">
+
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Level 1</p>
+                                                                <p class="tool-log-content">{{selectedTool?.levelOneName ? selectedTool?.levelOneName : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelOneId'] && !!productForm?.controls['levelOneId'].errors && !!productForm?.controls['levelOneId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                                 class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                                                 style="min-width: 23px; min-height: 16px;"/>
+                                                                <label class="mb-0">Level 1</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <!-- <span class="required-txt">Required</span> -->
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown (onChange)="onLevel1Change()" formControlName="levelOneId" [options]="level1DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb','opacity': '0.6',
+                                                                'pointer-events': 'none'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Level 2</p>
+                                                                <p class="tool-log-content">{{selectedTool?.levelTwoName ? selectedTool?.levelTwoName : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelTwoId'] && !!productForm?.controls['levelTwoId'].errors && !!productForm?.controls['levelTwoId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                                 class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                                                 style="min-width: 23px; min-height: 16px;"/>
+                                                                <label class="mb-0">Level 2</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <!-- <span class="required-txt">Required</span> -->
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown (onChange)="onLevel2Change()" formControlName="levelTwoId" [options]="level2DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb','opacity': '0.6',
+                                                                'pointer-events': 'none'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+    
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Level 3</p>
+                                                                <p class="tool-log-content">{{selectedTool?.levelThreeName ? selectedTool?.levelThreeName : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['levelThreeId'] && !!productForm?.controls['levelThreeId'].errors && !!productForm?.controls['levelThreeId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/inspection-home/light-network.png" alt="service"
+                                                                 class="icons-size mr-2 new-request-icon" width="23" height="16"
+                                                                 style="min-width: 23px; min-height: 16px;"/>
+                                                                <label class="mb-0">Level 3</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <!-- <span class="required-txt">Required</span> -->
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown (onChange)="onLevel3Change()" formControlName="levelThreeId" [options]="level3DropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb','opacity': '0.6',
+                                                                'pointer-events': 'none'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="!addProductFinal" class="col-3">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/shop.png" alt="" width="20"
+                                                                    height="17"
+                                                                    style="min-width: 20px;vertical-align: top;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Shop Name</p>
+                                                                <p class="tool-log-content">{{selectedTool?.name ? selectedTool?.name : '-'}}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['shopId'] && !!productForm?.controls['shopId'].errors && !!productForm?.controls['shopId'].errors.required ? 'input-error' : ''">
+                                                        <div class="input-shop d-flex align-items-center justify-content-between">
+                                                            <div class="label-txt">
+                                                                <img src="assets/images/dispatch/svg/service-form/shop_i.svg" alt="service"
+                                                                onload="SVGInject(this)" class="icons-size mr-2 new-request-icon" />
+                                                                <label class="mb-0">Shop Name</label>
+                                                            </div>
+                            
+                                                            <div class="required">
+                                                                <span class="required-txt">Required</span>
+                                                            </div>
+                                                        </div>
+                                
+                                                        <div class="input-filed">
+                                                            <p-dropdown formControlName="shopId" [options]="shopListDropdownData" class="p-dropdown-servicetype on-top" [filter]="true"
+                                                                [style]="{'width':'100%', 'border': ' solid 1px #dbddde', 'background-color': '#fbfbfb','opacity': '0.6',
+                                                                'pointer-events': 'none'}"
+                                                                placeholder="Select" optionLabel="name" optionValue="id" (onChange)="onShopChange()">
+                                                            </p-dropdown>
+                                                        </div>
+                                                    </div>
+    
+                                                    <!-- <div class="col-2">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/inspection-home/d-code.png" alt=""
+                                                                    width="19" height="19"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Location#</p>
+                                                                <p class="tool-log-content">233
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+     -->
+                                                    <!-- <div class="col-2">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/location-primary.png" alt=""
+                                                                    width="17" height="21"
+                                                                    style="min-width: 17px;vertical-align: top;min-height: 21px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Location Address</p>
+                                                                <p class="tool-log-content">2100 Ross Ave
+                                                                    Waco, Texas 76706
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+    
+                                                    
+    
+                                                    </div>
+                                                </div>    
+                                            </div>
+    
+                                            <div class="row border-bottom">
+                                                <div class="col-sm-12 p-0 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <span>
+                                                            <img src="assets/images/hq/box-black.png" style="filter: brightness(0);" alt="" height="18"
+                                                                width="18">
+                                                        </span>
+                                                        <span class="fw-bold fs-18 ml-2">Equipment Purchase Details</span>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-sm-12 pb-2 p-0">
+                                                    <div class="row p-0 col-12 input-row border-0">
+    
+                                                        <!-- <span class="htap-info-text cursor active pic-info"><span>Picture
+                                                                1</span></span>
+                                                        <span class="htap-info-text  cursor pic-info"><span>Picture
+                                                                2</span></span>
+                                                        <span class="htap-info-text cursor pic-info"><span>Picture
+                                                                3</span></span>
+                                                        <span class="htap-info-text cursor pic-info"><span>Picture
+                                                                4</span></span>
+                                                        <span class="htap-info-text cursor pic-info"><span>Picture
+                                                                5</span></span> -->
+                                                                <div *ngIf="!addProductFinal" class="col-sm-3">
+                                                                    <div class="d-flex">
+                                                                        <span>
+                                                                            <img src="assets/images/shop/dealer-code.png" alt=""
+                                                                                width="17" height="19"
+                                                                                style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                        </span>
+                                                                        <div class="ml-3">
+                                                                            <p class="tool-log-detail mb-0">Serial#</p>
+                                                                            <p class="tool-log-content">{{ selectedLocation?.serialNo ? selectedLocation?.serialNo : '-'}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div *ngIf="addProductFinal" class="col-sm-3" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['serialNo'] && !!productForm?.controls['serialNo'].errors && !!productForm?.controls['serialNo'].errors.required ? 'input-error' : ''">
+                                                                    <div class="input-shop d-flex align-items-center justify-content-between">
+                                                                        <div class="label-txt">
+                                                                            <img src="assets/images/inspection-home/serial.png" alt="service"
+                                                                                class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                                                                style="min-width: 17px; min-height: 19px;" />
+                                                                            <label class="mb-0">Serial#</label>
+                                                                        </div>
+                                            
+                                                                        <div class="required">
+                                                                            <span class="required-txt">Required</span>
+                                                                        </div>
+                                                                    </div>
+                                            
+                                                                    <div class="input-filed">
+                                                                        <input (keyup)="validateModel($event)" formControlName="serialNo" type="text" pInputText class="input-bg  w-100" placeholder="Serial#" />
+                                                                    </div>
+                                                                    <span style="font-size: 13px; color: red;" *ngIf="!isSerialValid">Serial already exists</span>
+                                                                </div>
+                                                                <div *ngIf="!addProductFinal" class="col-sm-3">
+                                                                    <div class="d-flex">
+                                                                        <span>
+                                                                            <img src="assets/images/hq/calendar.png" alt=""
+                                                                                width="17" height="19"
+                                                                                style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                        </span>
+                                                                        <div class="ml-3">
+                                                                            <p class="tool-log-detail mb-0">Purchase Date</p>
+                                                                            <p class="tool-log-content">{{selectedLocation?.purchaseDate && selectedLocation?.purchaseDate !='0000-00-00 00:00:00' ? (selectedLocation?.purchaseDate | localDatePipe | date: 'MMM d, yyyy ') : '-'}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div *ngIf="addProductFinal" class="col-sm-3">
+                                                                    <div class="input-shop d-flex align-items-center justify-content-between" [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['purchaseDate'] && !!productForm?.controls['purchaseDate'].errors && !!productForm?.controls['purchaseDate'].errors.required ? 'input-error' : ''">
+                                                                        <div class="label-txt">
+                                                                            <img src="assets/images/inspection-home/light-calendar.png" alt="service"
+                                                                                class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                                                                style="min-width: 17px; min-height: 19px;" />
+                                                                            <label class="mb-0">Purchase Date</label>
+                                                                        </div>
+                                            
+                                                                        <div class="required">
+                                                                            <span class="required-txt"></span>
+                                                                        </div>
+                                                                    </div>
+                                            
+                                                                    <div class="input-filed position-relative">
+                                                                        <p-calendar [maxDate] = "todayDate" (ngModelChange)="pDateChange()" [(ngModel)]="purchaseDate" formControlName="purchaseDate"  placeholder="Select Date" 
+                                                                            [showIcon]="true"  appendTo="body" dateFormat="M dd, yy" styleClass="inline-block date-box" class="valid datePicker-toggle"
+                                                                        ></p-calendar>
+                                                                        <!-- <img src="assets/images/inspection-home/light-calendar.png" alt="" class="calendar"> -->
+
+                                                                        <!-- <p-calendar [(ngModel)]="startDate" [minDate] = today formControlName="startDate" class="valid datePicker-toggle" [showIcon]="true"  appendTo="body" placeholder="Select Date" 
+                                                                        dateFormat="M dd, yy" styleClass="inline-block date-box"></p-calendar>  -->
+
+                                                                    </div>
+                                            
+                                                                </div>
+    
+                                                                <div *ngIf="!addProductFinal" class="col-sm-3">
+                                                                    <div class="d-flex">
+                                                                        <span>
+                                                                            <img src="assets/images/hq/calendar.png" alt=""
+                                                                                width="17" height="19"
+                                                                                style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                        </span>
+                                                                        <div class="ml-3">
+                                                                            <p class="tool-log-detail mb-0">Install Date</p>
+                                                                            <p class="tool-log-content">{{selectedLocation?.installDate && selectedLocation?.installDate!= '0000-00-00 00:00:00' ? (selectedLocation?.installDate | localDatePipe | date: 'MMM d, yyyy ') :'-'}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div *ngIf="addProductFinal" class="col-sm-3">
+                                                                    <div class="input-shop d-flex align-items-center justify-content-between"  [ngClass]="submitClicked && productForm && !!productForm?.controls && !!productForm?.controls['installDate'] && !!productForm?.controls['installDate'].errors && !!productForm?.controls['installDate'].errors.required ? 'input-error' : ''">
+                                                                        <div class="label-txt"> 
+                                                                            <img src="assets/images/inspection-home/light-calendar.png" alt="service"
+                                                                                class="icons-size mr-2 new-request-icon" width="17" height="19"
+                                                                                style="min-width: 17px; min-height: 19px;" />
+                                                                            <label class="mb-0">Install Date</label>
+                                                                        </div>
+                                            
+                                                                        <div class="required">
+                                                                            <span class="required-txt"></span>
+                                                                        </div>
+                                                                    </div>
+                                            
+                                                                    <div class="input-filed position-relative">
+                                                                        <p-calendar formControlName="installDate" [minDate]="!!purchaseDate ? purchaseDate : todayDate" [readonlyInput]="true" placeholder="Select Date"
+                                                                        [showIcon]="true"  appendTo="body" dateFormat="M dd, yy" styleClass="inline-block date-box" class="valid datePicker-toggle"></p-calendar>
+                                                                        <!-- <img src="assets/images/inspection-home/light-calendar.png" alt="" class="calendar"> -->
+                                                                    </div>
+                                            
+                                                                </div>
+    
+                                                                <div *ngIf="!addProductFinal" class="col-sm-3">
+                                                                    <div class="d-flex">
+                                                                        <span>
+                                                                            <img src="assets/images/hq/warrenty.png" alt=""
+                                                                                width="17" height="19"
+                                                                                style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                        </span>
+                                                                        <div class="ml-3">
+                                                                            <p class="tool-log-detail mb-0">Warranty</p>
+                                                                            <p class="tool-log-content">{{selectedLocation?.warranty ? selectedLocation?.warranty : '-'}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div> 
+                                                                
+                                                                <div *ngIf="addProductFinal" class="col-sm-3">
+                                                                    <div class="input-shop d-flex align-items-center justify-content-between">
+                                                                        <div class="label-txt">
+                                                                            <img src="assets/images/inspection-home/warrenty.png" alt="service"
+                                                                                class="icons-size mr-2 new-request-icon" width="21" height="20"
+                                                                                style="min-width: 21px; min-height: 20px;" />
+                                                                            <label class="mb-0">Warranty</label>
+                                                                        </div>
+                                            
+                                                                        <!-- <div class="required">
+                                                                            <span class="required-txt">Required</span>
+                                                                        </div> -->
+                                                                    </div>
+                                            
+                                                                    <div class="input-filed">
+                                                                        <input formControlName="warranty" type="text" pInputText class="input-bg  w-100" placeholder="Warranty" />
+                                                                    </div>
+                                                                </div>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-sm-12 p-0">
+    
+                                                    <div class="w-100 d-flex justify-content-between mb-4">
+                                                        <div class="d-flex align-items-center">
+                                                            <span>
+                                                                <img src="assets/images/hq/image-disable.png" alt=""
+                                                                    width="21" height="16"
+                                                                    style="min-width: 17px;min-height:16px; margin-bottom: 4px;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0" style="color: black;">Equipment Picture</p>
+                                                            </div>
+                                                        </div>
+                                                         <div *ngIf="selectedLocation?.mediaInfo.length != 0" class="d-flex align-items-center ml-4">
+                                                                <img src="assets/images/hq/img-re.png" alt="" width="23" height="17"
+                                                                    style=" vertical-align: top;margin-right: 5px;">
+                                                                <p style="color: #777777;font-size: 14px;margin: 0;">Pictures are required to be taken using the mobile app
+                                                                </p>
+                                                            </div>
+                                                       
+                                                    </div>
+                                                    <ng-container *ngIf="selectedLocation?.mediaInfo.length > 0; else noDataMediaTemplate">
+                                                        <ng-container *ngFor="let media of selectedLocation?.mediaInfo; let i = index">
+                                                            <div class="row d-block col-12" style="padding-bottom: 30px;">
+                                                                <div class="mb-2" style="font-weight: 700;">
+                                                                    Picture {{i + 1}}
+                                                                </div>
+                                                                <div class="d-flex">
+                                                                    <div class="col-sm-5 pl-0">
+                                                                        <div class="d-flex" style="gap: 20px;">
+                                                                            <div class="col-5 p-0">
+                                                                                <img [src]="media.filePath || ''" alt="" class="tool-img-set">
+                                                                            </div>
+                                                                            <div class="col-7">
+                                                                                <p class="mb-0 tool-desc mb-2">{{media?.fileCaption || '-'}}</p>
+                                                                                <div class="desc mb-2">
+                                                                                    <span class="o-name">{{media?.fileName || '-'}}</span>
+                                                                                    <div>{{media?.fileSize ? (media?.fileSize / 1000).toFixed(0) : '-'}} kb</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-7">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <div class="d-flex">
+                                                                                    <span>
+                                                                                        <img src="assets/images/hq/calendar.png" alt="" width="17" height="19"
+                                                                                            style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                                    </span>
+                                                                                    <div class="ml-3">
+                                                                                        <p class="tool-log-detail mb-0">Picture Taken on
+                                                                                        </p>
+                                                                                        <p class="tool-log-content">{{media?.createdOn | date: 'MMM d, y, h:mm a'}}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                    
+                                                                            <div class="col-sm-3">
+                                                                                <div class="d-flex">
+                                                                                    <span>
+                                                                                        <img src="assets/images/hq/round-loc.png" alt="" width="20" height="20"
+                                                                                            style="min-width: 20px;min-height:20px; vertical-align: top;">
+                                                                                    </span>
+                                                                                    <div class="ml-3">
+                                                                                        <p class="tool-log-detail mb-0">Location</p>
+                                                                                        <p class="tool-log-content">{{media?.locationInfo || '-'}}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                    
+                                                                            <div class="col-sm-3">
+                                                                                <div class="d-flex">
+                                                                                    <span>
+                                                                                        <img src="assets/images/hq/round-loc.png" alt="" width="20" height="20"
+                                                                                            style="min-width: 20px;min-height:20px; vertical-align: top;">
+                                                                                    </span>
+                                                                                    <div class="ml-3">
+                                                                                        <p class="tool-log-detail mb-0">Lat/Long
+                                                                                            Coordinates</p>
+                                                                                        <p *ngIf="media?.latValue && media?.langValue" class="tool-log-content">
+                                                                                            {{media?.latValue}}, {{media?.langValue}}</p>
+                                                                                        <p *ngIf="!media?.latValue && !media?.langValue" class="tool-log-content">
+                                                                                               -</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                    
+                                                                            <div class="col-sm-3">
+                                                                                <div class="d-flex">
+                                                                                    <span>
+                                                                                        <img src="assets/images/hq/mobile-icon.png" alt="" width="11    " height="19"
+                                                                                            style="min-width: 11px;min-height:19px; vertical-align: top;">
+                                                                                    </span>
+                                                                                    <div class="ml-3">
+                                                                                        <p class="tool-log-detail mb-0">Phone</p>
+                                                                                        <p class="tool-log-content">{{media?.deviceInfo || '-'}}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col-sm-3">
+                                                                                <div class="d-flex">
+                                                                                    <span>
+                                                                                        <img src="assets/images/hq/mobile-icon.png" alt="" width="11" height="19"
+                                                                                            style="min-width: 11px;min-height:19px; vertical-align: top;">
+                                                                                    </span>
+                                                                                    <div class="ml-3">
+                                                                                        <p class="tool-log-detail mb-0">App Version</p>
+                                                                                        <p class="tool-log-content">{{media?.app_version || '-'}}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                    
+                                                                            <div class="col-sm-3">
+                                                                                <div class="d-flex">
+                                                                                    <span>
+                                                                                        <img src="assets/images/hq/user.png" alt="" width="14" height="17"
+                                                                                            style="min-width: 14px;min-height:17px; vertical-align: top;">
+                                                                                    </span>
+                                                                                    <div class="ml-3">
+                                                                                        <p class="tool-log-detail mb-0">User</p>
+                                                                                        <p class="text-action-link">{{media?.userName || '-'}}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                    
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                    <!-- <div class="row d-block col-12" style="padding-bottom: 30px;">
+                                                        <div class="mb-2" style="font-weight: 700;">
+                                                            Picture 2
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="col-sm-4 pl-0">
+                                                                <div class="d-flex" style="gap: 20px;">
+                                                                    <div>
+                                                                        <img src="assets/images/hq/tool-1.png" alt=""
+                                                                            class="tool-img-set">
+                                                                    </div>
+                                                                    <div>
+                                                                        <p class="mb-0 tool-desc mb-2">Lorem ipsum dolor sit
+                                                                            amet, consectetur
+                                                                            adipiscing elit. Duis mattis, mauris id.</p>
+                                                                        <div class="desc mb-2">
+                                                                            <span class="o-name">D433547GDFGD56.jpg</span>
+                                                                            <span class="dot"></span>45 kb
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-8 ">
+                                                                <div class="row">
+                                                                    <div class="col-sm-3">
+                                                                        <div class="d-flex">
+                                                                            <span>
+                                                                                <img src="assets/images/hq/calendar.png" alt=""
+                                                                                    width="17" height="19"
+                                                                                    style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                            </span>
+                                                                            <div class="ml-3">
+                                                                                <p class="tool-log-detail mb-0">Picture Taken on
+                                                                                </p>
+                                                                                <p class="tool-log-content">Nov 25, 2023 11:36
+                                                                                    AM</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+        
+                                                                    <div class="col-sm-3">
+                                                                        <div class="d-flex">
+                                                                            <span>
+                                                                                <img src="assets/images/hq/round-loc.png" alt=""
+                                                                                    width="20" height="20"
+                                                                                    style="min-width: 20px;min-height:20px; vertical-align: top;">
+                                                                            </span>
+                                                                            <div class="ml-3">
+                                                                                <p class="tool-log-detail mb-0">Location</p>
+                                                                                <p class="tool-log-content">Lawrenceville,
+                                                                                    Georgia/p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+        
+                                                                    <div class="col-sm-3">
+                                                                        <div class="d-flex">
+                                                                            <span>
+                                                                                <img src="assets/images/hq/round-loc.png" alt=""
+                                                                                    width="20" height="20"
+                                                                                    style="min-width: 20px;min-height:20px; vertical-align: top;">
+                                                                            </span>
+                                                                            <div class="ml-3">
+                                                                                <p class="tool-log-detail mb-0">Lat/Long
+                                                                                    Coordinates</p>
+                                                                                <p class="tool-log-content">33.957245,
+                                                                                    -83.988441.</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+        
+                                                                    <div class="col-sm-3">
+                                                                        <div class="d-flex">
+                                                                            <span>
+                                                                                <img src="assets/images/hq/calendar.png" alt=""
+                                                                                    width="17" height="19"
+                                                                                    style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                            </span>
+                                                                            <div class="ml-3">
+                                                                                <p class="tool-log-detail mb-0">Phone</p>
+                                                                                <p class="tool-log-content">samsung SM-M135FU
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-3">
+                                                                        <div class="d-flex">
+                                                                            <span>
+                                                                                <img src="assets/images/hq/calendar.png" alt=""
+                                                                                    width="17" height="19"
+                                                                                    style="min-width: 17px;min-height:19px; vertical-align: top;">
+                                                                            </span>
+                                                                            <div class="ml-3">
+                                                                                <p class="tool-log-detail mb-0">App Version</p>
+                                                                                <p class="tool-log-content">1.259</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+        
+                                                                    <div class="col-sm-3">
+                                                                        <div class="d-flex">
+                                                                            <span>
+                                                                                <img src="assets/images/hq/user.png" alt=""
+                                                                                    width="14" height="17"
+                                                                                    style="min-width: 14px;min-height:17px; vertical-align: top;">
+                                                                            </span>
+                                                                            <div class="ml-3">
+                                                                                <p class="tool-log-detail mb-0">User</p>
+                                                                                <p class="text-action-link">Ben Stoke</p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+        
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+                                                    <ng-template #noDataMediaTemplate>
+                                                        <div class="col-12 d-flex" style="margin-bottom: 40px;">
+                                                            <div style="border-radius: 20px;border: solid 1px #ddd;height: 170px;"
+                                                                class="d-flex justify-content-center align-items-center col-2">
+                                                                <div class="text-center">
+                                                                    <img style="height:35px;margin-bottom: 5px;" src="assets/images/hq/img-grey.png">
+                                                                    <p style="  font-size: 14px;font-style: italic;color: #999999;margin: 0;">Picture not available</p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex align-items-center ml-4">
+                                                                <img src="assets/images/hq/img-re.png" alt="" width="23" height="17"
+                                                                    style=" vertical-align: top;margin-right: 5px;">
+                                                                <p style="color: #777777;font-size: 14px;margin: 0;">Pictures are required to be taken using the mobile app
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </ng-template>
+                                                </div>
+
+                                            </div>
+    
+                                            <!-- <div *ngIf="!isDealer" class="row pb-3 border-bottom">
+                                                <div class="col-sm-12 p-0 py-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <span>
+                                                            <img src="assets/images/hq/anti-clock.png" alt="" height="19"
+                                                                width="18" style="min-width: 18px; min-height: 19px;">
+                                                        </span>
+                                                        <span class="fw-bold fs-18 ml-2">Entry & Audit history</span>
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-sm-12 border-bottom" style="padding: 10px 0;">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="loc-list-col-1 pd-rgt">
+                                                            <div class="status d-flex align-items-center">
+                                                                <span class="no-imgs"><img
+                                                                        src="assets/images/facility-layout.png" alt=""
+                                                                        width="23" height="20"></span>
+                                                                <span class="loc-normal-text" style="margin-left: 13px;">No
+                                                                    Pictures</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-2 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Audit Status: </span><span
+                                                                    class="loc-normal-text">Unaudited</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-3 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Status: </span><span
+                                                                    class="loc-normal-text">Inspected on Nov 10, 2022</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-4 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Follow-up items: </span><span
+                                                                    class="insstatus-text-col"
+                                                                    style="background-color: #ea7d3d"><span
+                                                                        class="insstatus-text-col-text">Pending</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+    
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-sm-12 border-bottom" style="padding: 10px 0;">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="loc-list-col-1 pd-rgt">
+                                                            <div class="status d-flex align-items-center">
+                                                                <span class="img-added"
+                                                                    style="background-color: #abb2bd;"><img
+                                                                        src="assets/images/hq/slider-1.png" alt=""></span>
+                                                                <span class="loc-normal-text"
+                                                                    style="margin-left: 13px;">Pictures added</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-2 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Audit Status: </span><span
+                                                                    class="loc-normal-text">Unaudited</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-3 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Status: </span><span
+                                                                    class="loc-normal-text">Inspected on Nov 10, 2022</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-4 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Follow-up items: </span><span
+                                                                    class="insstatus-text-col"
+                                                                    style="background-color: #ea7d3d"><span
+                                                                        class="insstatus-text-col-text">Pending</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+    
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-sm-12 border-bottom" style="padding: 10px 0;">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="loc-list-col-1 pd-rgt">
+                                                            <div class="status d-flex align-items-center">
+                                                                <span class="img-added"
+                                                                    style="background-color: #abb2bd;"><img
+                                                                        src="assets/images/hq/slider-1.png" alt=""></span>
+                                                                <span class="loc-normal-text"
+                                                                    style="margin-left: 13px;">Pictures added</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-2 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Audit Status: </span><span
+                                                                    class="loc-normal-text">On-Site Nov 2, 2023</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-3 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Status: </span><span
+                                                                    class="loc-normal-text">Inspected on Nov 10, 2022</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-4 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Repair Status: </span><span
+                                                                    class="insstatus-text-col"><span
+                                                                        class="loc-normal-text">-</span> </span>
+                                                            </div>
+                                                        </div>
+    
+                                                    </div>
+                                                </div>
+    
+                                                <div class="col-sm-12" style="padding: 10px 0;">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="loc-list-col-1 pd-rgt">
+                                                            <div class="status d-flex align-items-center">
+                                                                <span class="img-added"
+                                                                    style="background-color: #abb2bd;"><img
+                                                                        src="assets/images/hq/slider-1.png" alt=""></span>
+                                                                <span class="loc-normal-text"
+                                                                    style="margin-left: 13px;">Pictures added</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-2 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Audit Status: </span><span
+                                                                    class="loc-normal-text">Unaudited</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-3 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Status: </span><span
+                                                                    class="loc-normal-text">Inspected on Nov 10, 2022</span>
+                                                            </div>
+                                                        </div>
+    
+                                                        <div class="loc-list-col-4 pd-rgt">
+                                                            <div class="status">
+                                                                <span class="loc-label-text">Repair Status: </span><span
+                                                                    class="insstatus-text-col"
+                                                                    style="background-color: #ea7d3d"><span
+                                                                        class="insstatus-text-col-text">Pending</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+    
+                                                    </div>
+                                                </div>
+                                            </div> -->
+
+                                            
+    
+                                            <ng-container>
+                                                <div class="row pb-3 border-bottom">
+                                                    <div class="col-sm-12 p-0 py-3 d-flex justify-content-between">
+                                                        <div class="d-flex align-items-center">
+                                                            <span>
+                                                                <img src="assets/images/hq/anti-clock.png" alt="" height="19"
+                                                                    width="18" style="min-width: 18px; min-height: 19px;">
+                                                            </span>
+                                                            <span class="fw-bold fs-18 ml-2">Entry & Audit history</span>
+                                                            <!-- <span class="orange-btn m-0 ml-3 text-white">
+                                                                <img src="assets/images/inspection-home/validation.png" alt=""
+                                                                    style="margin-right: 10px;filter: brightness(4);cursor: pointer;">
+                                                                     {{domainId == 1 ?'L2 Self-Validate' : 'L1 Self-Validate'}}
+                                                            </span> -->
+                                                        </div>
+                                                        <ng-container *ngIf="canShowMoreButtons; else restBtn">
+                                                            <div *ngIf="addProductFinal" class="d-flex">
+                                                                <span  (click)="cancelConfirm()" style="background-color: #777777;border-radius: 30px;    display: flex;cursor: pointer;
+                                                                                                                    align-items: center;" class="m-0 ml-3 px-3 text-white">
+                                                                    <img src="assets/images/hq/cancel.png" alt="" style="margin-right: 10px;filter: brightness(4);">
+                                                                    Cancel
+                                                                </span>
+                                                        
+                                                                <span (click)="submitForm()" class="orange-btn m-0 ml-3 text-white"
+                                                                    style="background-color: #469073; border-radius: 30px;cursor: pointer;">
+                                                                    <img src="assets/images/hq/draft-icon.png" alt="" style="margin-right: 10px;filter: brightness(4);">
+                                                                    SAVE DRAFT
+                                                                </span>
+                                                                <ng-container *ngIf="selectedLocation?.mediaInfo && selectedLocation?.mediaInfo.length > 0">
+                                                                    <span (click)="clickOnL2()" class="orange-btn m-0 ml-3 text-white"
+                                                                        style="background-color: #fb982c
+                                                                                                                                    ;border-radius: 30px;cursor: pointer">
+                                                                        <img src="assets/images/hq/validate-btn.png" alt="" style="margin-right: 10px;">
+                                                                        L2 Digitally Validated
+                                                                    </span>
+                                                                
+                                                                    <span (click)="clickOnL3()" class="orange-btn m-0 ml-3 text-white"
+                                                                        style="background-color: #fb982c;border-radius: 30px;cursor: pointer;">
+                                                                        <img src="assets/images/hq/validate-btn.png" alt="" style="margin-right: 10px;">
+                                                                        L3 On-Site Validated
+                                                                    </span>
+                                                                </ng-container>
+
+                                                            </div>
+                                                        </ng-container>
+                                                        <ng-template #restBtn>
+                                                            <div *ngIf="addProductFinal" class="d-flex">
+                                                                <span (click)="cancelConfirm()" style="background-color: #777777;border-radius: 30px;    display: flex;cursor: pointer;
+                                                                                                                    align-items: center;" class="m-0 ml-3 px-3 text-white">
+                                                                    <img src="assets/images/hq/cancel.png" alt="" style="margin-right: 10px;filter: brightness(4);">
+                                                                    Cancel
+                                                                </span>
+                                                        
+                                                                <span (click)="submitForm()" class="orange-btn m-0 ml-3 text-white"
+                                                                    style="background-color: #469073;border-radius: 30px;cursor: pointer;">
+                                                                    <img src="assets/images/hq/draft-icon.png" alt="" style="margin-right: 10px;filter: brightness(4);">
+                                                                    SAVE DRAFT
+                                                                </span>
+                                                        
+                                                                <span *ngIf="selectedLocation?.mediaInfo && selectedLocation?.mediaInfo.length > 0" (click)="clickOnL1()"
+                                                                    class="orange-btn m-0 ml-3 text-white" style="border-radius: 30px;cursor: pointer;">
+                                                                    <img src="assets/images/hq/validate-btn.png" alt="" style="margin-right: 10px;">
+                                                                    L1 Self-Validated
+                                                                </span>
+                                                            </div>
+                                                        </ng-template>
+
+                                                    </div>
+                                                    <!-- <p style="color: #444444;" class="my-1 ml-4">Nothing to show</p> -->
+        
+                                                </div>
+                                                <div class="row" style="padding: 10px 0;">
+                                                    <div class="col-12">
+                                                    <ng-container *ngFor="let validate of selectedLocation?.validationHistory">
+                                                        <div class="row" style="padding: 10px 0;">
+                                                            <div class="col-5 p-0">
+                                                                <div class="entry-box">
+                                                                    <div class="d-flex align-items-center">
+                                                                        <img *ngIf="validate?.validationStatus == 0" src="assets/images/hq/draft-icon.png" alt="" style="filter: brightness(0.5);margin-right: 10px;">
+                                                                        <img *ngIf="validate?.validationStatus != 0" src="assets/images/hq/validated.png" alt="" style="margin-right: 10px;">
+                                                                        <p class="mb-0 entry-txt">
+                                                                            Validation Status:<span [style.color]="validate.textColor"
+                                                                                class="ml-1">{{validate?.validationStatusText}}
+                                                                                on {{validate.createdOn | date: 'MMM d, y'}} by {{validate?.userName}}</span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- <div class="col-3 p-0">
+                                                                                                                    <div class="entry-box">
+                                                                                                                        <p class="mb-0 entry-txt">
+                                                                                                                            Follow-up:<span (click)="openFollowup()" class="blue-txt link ml-1">1 Action
+                                                                                                                                Pending</span>
+                                                                                                                        </p>
+                                                                                                                    </div>
+                                                                                                                </div> -->
+
+                                                        </div>
+                                                    </ng-container>
+                                                    </div>
+                                                </div>
+        
+                                                <!-- <div class="row" style="padding: 10px 0;">
+                                                    <div class="col-5 p-0">
+                                                        <div class="entry-box">
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="assets/images/inspection-home/validation.png" alt=""
+                                                                    style="margin-right: 10px;">
+                                                                <p class="mb-0 entry-txt">
+                                                                    Status:<span class="violet-txt ml-1">L2 - Digitally validated on
+                                                                        Dec 26, 2023 by John Doe</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3 p-0">
+                                                        <div class="entry-box">
+                                                            <p class="mb-0 entry-txt">
+                                                                Follow-up:<span class="black-text ml-1">None</span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+        
+                                                <div class="row" style="padding: 10px 0;">
+                                                    <div class="col-5 p-0">
+                                                        <div class="entry-box">
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="assets/images/inspection-home/validation.png" alt=""
+                                                                    style="margin-right: 10px;">
+                                                                <p class="mb-0 entry-txt">
+                                                                    Status:<span class="blue-txt ml-1">L1 - Self-validation on Dec
+                                                                        22, 2023 by Zack Chris</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3 p-0">
+        
+                                                    </div>
+                                                   
+                                                </div>
+        
+                                                <div class="row" style="padding: 10px 0;">
+                                                    <div class="col-5 p-0">
+                                                        <div class="entry-box">
+                                                            <div class="d-flex align-items-center">
+                                                                <img src="assets/images/inspection-home/cancel.png" alt=""
+                                                                    style="margin-right: 10px;">
+                                                                <p class="mb-0 entry-txt">
+                                                                    Status:<span class="danger-txt ml-1">Not-Validated</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3 p-0">
+        
+                                                    </div>
+                                                   
+                                                </div> -->
+                                            </ng-container>
+    
+    
+                                            
+                                        </div>
+                                    </div>
+    
+                                    <!-- <div class="row border-tb-1 border-0">
+    
+                                        <span class="htap-info-text cursor"><span>Inspections</span></span>
+                                        <span class="htap-info-text active cursor"><span>Repair History</span></span>
+                                        <span class="htap-info-text cursor"><span>Installation History</span></span>
+    
+                                        <span class="hcal-info-text">
+                                            <img class="cal-img-his" src='assets/images/hq/black-cal-icon.png' alt='' />
+                                            <span class="black-text">&nbsp;&nbsp;Recent activity on <span
+                                                    class="green-text">Sept 19, 2023</span></span>
+                                        </span>
+    
+    
+                                    </div> -->
+    
+                                    <!-- <div class="row mb-1">
+    
+                                        <div class="col-xl-12 col-lg-12 col-md-9 col-sm-12 p-0">
+                                            <div class="d-flex align-items-center pt-2 pb-3 mt-2">
+                                                <img src="assets/images/hq/preventive.PNG" alt="" width="22" height="21">
+                                                <h5 class="mb-0 ml-2">Recent perventative maintenance performed</h5>
+                                            </div>
+                                        </div>
+    
+                                        <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 p-0">
+    
+                                            <div class="col-xl-12 col-lg-12 col-md-9 col-sm-12 p-0">
+                                                <div class="col-xl-12 col-lg-12 col-md-9 col-sm-12 row p-0 m-0">
+                                                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 p-0">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/shop/dealer-code.png" alt=""
+                                                                    width="18" height="18"
+                                                                    style="min-width: 18px;;vertical-align: top;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Date</p>
+                                                                <p class="tool-log-content">Jan 24, 2023, 4:47 PM</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 p-0">
+                                                        <div class="d-flex">
+                                                            <span>
+                                                                <img src="assets/images/hq/settings-3.png" alt="" width="21"
+                                                                    height="21"
+                                                                    style="min-width: 21px;;vertical-align: top;">
+                                                            </span>
+                                                            <div class="ml-3">
+                                                                <p class="tool-log-detail mb-0">Serial number of part(s)</p>
+                                                                <p class="tool-log-content link">
+                                                                    <span class="text-action-link">6876846851,</span>&nbsp;
+                                                                    <span class="text-action-link">55467476,</span>&nbsp;
+                                                                    <span class="text-action-link">45645786</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+    
+                                                    </div>
+                                                </div>
+    
+    
+    
+                                                <div class="col-xl-12 col-lg-12 col-md-9 col-sm-12  p-0">
+                                                    <div class="d-flex">
+                                                        <span>
+                                                            <img src="assets/images/hq/description.png" alt="" width="19"
+                                                                height="19" style="min-width: 19px;;vertical-align: top;">
+                                                        </span>
+                                                        <div class="ml-3">
+                                                            <p class="tool-log-detail mb-0">Summary</p>
+                                                            <p class="tool-log-content text-left">Lorem ipsum dolor sit
+                                                                amet, consectetur
+                                                                adipiscing elit. Mauris at quam ut diam tincidunt maximus at
+                                                                sed quam. Integer
+                                                                vitae sapien eget lorem sollicitudin tincidunt eget eu nunc.
+                                                                Donec sodales
+                                                                sollicitudin lacus, a molestie ante tempor vestibulum.
+                                                                Morbi commodo erat a sollicitudin viverra.</p>
+    
+                                                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 p-0 m-0 cont-div"
+                                                                *ngIf="!attachmentLoading">
+                                                                <div>
+                                                                    <div id="attachment-v3"
+                                                                        class="reference-info ro-info hq-attachment-v3">
+                                                                        <app-attachment-view *ngIf="!attachmentLoading"
+                                                                            [loading]="attachmentLoading" [action]="action"
+                                                                            [attachments]="attachments"></app-attachment-view>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+    
+                                                        </div>
+                                                    </div>
+                                                </div>
+    
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 flex-1"
+                                            style="display: inline-flex;justify-content: flex-end;">
+                                            <div
+                                                class=" date-gbg1 due-date-card d-flex flex-column justify-content-center align-items-center">
+                                                <img src="assets/images/hq/green-calendar.png" alt="">
+                                                <p class="duedate-reg m-0 mt-3">Next Due Date</p>
+                                                <p class="duedate-bold m-0">Jan 25, 2024</p>
+                                            </div>
+                                        </div>
+    
+    
+                                    </div> -->
+    
+    
+    
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!selectedTool" class="ps" [perfectScrollbar]="sconfig">
+                            <div style="width: 100%; display: block;">
+                                <app-add-product-step-one [selectedShop] = selectedShop [oldTool] = oldTool (selectProductEmmiter)="selectProduct($event)"></app-add-product-step-one>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</div>

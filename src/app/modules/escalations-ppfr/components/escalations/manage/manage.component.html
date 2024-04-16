@@ -1,0 +1,365 @@
+<div  *ngIf="!loading" id="header">
+    <app-thread-detail-header *ngIf="!TVSIBDomain" [pageData]="headerData"></app-thread-detail-header> 
+    <app-new-edit-header *ngIf="TVSIBDomain" [pageData]="headerData" ></app-new-edit-header> 
+</div>
+<div class="prob-new">
+    <div *ngIf="loading" class="dash-loader cust-loader cust-loader2"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont" [ngClass]="{'col-lg-8 step1': step1Action }">
+        
+        <div class="form-cont" [ngClass]="{'col-lg-12': step1Action}">
+            <form class="form-horizontal" [formGroup]="ppfrForm" >
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="teamSystem" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>
+                        <div *ngIf="ppfrEdit == '1'" class="btn next pdf" (click)="viewPDF()">
+                            View PDF <img src="assets/images/escalations/ppfr/pdf.png" />
+                            </div>
+                        <div *ngIf="!saveButtonEnable" class="btn next save disabled">
+                           Save <img src="assets/images/escalations/ppfr/save.png" />
+                        </div>
+                        <div *ngIf="saveButtonEnable"  class="btn next save" (click)="submitAction('save')">
+                            Save <img src="assets/images/escalations/ppfr/save.png" />
+                         </div>
+                    </div>
+                </div> 
+                
+                <div [style.height.px]="innerHeight">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig">                         
+                        <div class="form-items">
+                            <div *ngIf="step1Action">
+
+                                <div class="row prob-form-row">
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/failure-status.png"></span><span class="lable-text">Failure Status</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Failure Status" formControlName="failureStatus"
+                                                [(ngModel)]="failureStatus" (ngModelChange)="onChange()"                                          
+                                                maxlength=""  />
+                                            </div>
+                                        </div>
+                                       <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/plant.png"></span><span class="lable-text">Plant</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Plant" formControlName="plant"
+                                                [(ngModel)]="plant" (ngModelChange)="onChange()"                                               
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                         <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/serverity.png"></span><span class="lable-text">Severity</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Severity" formControlName="serverity"
+                                                [(ngModel)]="serverity" (ngModelChange)="onChange()"                                                 
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">                                        
+                                        <div class="col-lg-6 col-md-6 col-xl-6 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/category.png"></span><span class="lable-text">Category</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Category" formControlName="category"
+                                                [(ngModel)]="category" (ngModelChange)="onChange()"                                                 
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-xl-6 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/occurrence.png"></span><span class="lable-text">No of Occurrence</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="No of Occurrence" formControlName="occurrence"
+                                                [(ngModel)]="occurrence"  (ngModelChange)="onChange()"                                                
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                       <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/date.png"></span><span class="lable-text">PPFR_DATE </span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                              
+                                                <!--p-calendar inputId="icon"  dateFormat="mm/dd/yy" placeholder="MM/DD/YYYY"
+                                                [(ngModel)]="ppfrDate" [showIcon]="true" [touchUI]="true"                                                                      
+                                                (onSelect)="changeDate($event,'date1')" >
+                                                </p-calendar-->
+
+                                                <dp-date-picker placeholder="MM/DD/YYYY"
+                                                formControlName="ppfrDate" [(ngModel)]="ppfrDate" [config]="datePickerConfig" #dayPicker1
+                                                (onSelect)="changeDate($event.date,'date1')" ></dp-date-picker>
+
+                                                <div class="input-cal cursor" (click)="openDatePicker('date1')"><span class="icon"></span></div>
+
+                                            </div>
+                                        </div>
+                                         <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/ref-no.png"></span><span class="lable-text">PPFR_REF No</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="PPFR_REF No" formControlName="refNo"
+                                                [(ngModel)]="refNo" (ngModelChange)="onChange()"                                                 
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/model.png"></span><span class="lable-text">Model</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Model" formControlName="model"
+                                                [(ngModel)]="model"  (ngModelChange)="onChange()"                                                
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/dealer-name.png"></span><span class="lable-text">Dealer Name</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Dealer Name" formControlName="dealerName"
+                                                [(ngModel)]="dealerName"  (ngModelChange)="onChange()"                                               
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/dealer-city.png"></span><span class="lable-text">Dealer City</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox cursor" matInput placeholder="Dealer City" formControlName="dealerCity"
+                                                [(ngModel)]="dealerCity"  readonly  (click)="selectContent('city')"  (ngModelChange)="onChange()"                                             
+                                                maxlength="" />
+                                                <div class="input-down-arrow cursor"><span class="icon"></span></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/dealer-city.png"></span><span class="lable-text">Dealer Area</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox cursor" matInput placeholder="Dealer Area" formControlName="dealerArea"
+                                                [(ngModel)]="dealerArea" readonly  (click)="selectContent('area')" (ngModelChange)="onChange()"                                                
+                                                maxlength="" />
+                                                <div class="input-down-arrow cursor"><span class="icon"></span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                       <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/frame.png"></span><span class="lable-text">Frame Number</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Frame Number" formControlName="frameNumber"
+                                                [(ngModel)]="frameNumber" (ngModelChange)="onChange()"                                                 
+                                                maxlength="" />
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/engine.png"></span><span class="lable-text">Engine Number</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Engine Number" formControlName="engineNumber"
+                                                [(ngModel)]="engineNumber" (ngModelChange)="onChange()"                                                 
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/date.png"></span><span class="lable-text">Date of sale</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                
+                                                <dp-date-picker placeholder="MM/DD/YYYY"
+                                                formControlName="dateOfSale" [(ngModel)]="dateOfSale" [config]="datePickerConfig" #dayPicker2
+                                                (onSelect)="changeDate($event.date,'date2')" ></dp-date-picker>
+
+                                                <div class="input-cal cursor" (click)="openDatePicker('date2')"><span class="icon"></span></div>
+
+                                                <!--p-calendar inputId="icon"  dateFormat="mm/dd/yy" placeholder="MM/DD/YYYY"
+                                                [(ngModel)]="dateOfSale" [showIcon]="true"  [touchUI]="true"                   
+                                                (onSelect)="changeDate($event,'date2')" >
+                                                </p-calendar-->
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/date.png"></span><span class="lable-text">Date of Repair</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                               
+                                                <!--p-calendar inputId="icon"  dateFormat="mm/dd/yy" placeholder="MM/DD/YYYY" 
+                                                [(ngModel)]="dateOfRepair" [showIcon]="true" [touchUI]="true"                     
+                                                (onSelect)="changeDate($event,'date3')" >
+                                                </p-calendar-->
+                                                
+                                                <dp-date-picker placeholder="MM/DD/YYYY"
+                                                formControlName="dateOfRepair" [(ngModel)]="dateOfRepair" [config]="datePickerConfig" #dayPicker3
+                                                (onSelect)="changeDate($event.date,'date3')" ></dp-date-picker>
+
+                                                <div class="input-cal cursor" (click)="openDatePicker('date3')"><span class="icon"></span></div>
+
+                                            </div>
+                                        </div>
+                                       <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/kms.png"></span><span class="lable-text">ODO</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="ODO" formControlName="KMSReading"
+                                                [(ngModel)]="KMSReading" (ngModelChange)="onChange()"                                               
+                                                maxlength="" />
+                                                <div class="input-odo cursor" (click)="openDatePicker('date3')"><span class="text">Kms</span></div>
+                                            </div>
+                                        </div>
+                                          <div class="col-lg-4 col-md-4 col-xl-4 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/part-replaced.png"></span><span class="lable-text">Part Replaced</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <input class="inputbox" matInput placeholder="Part Replaced" formControlName="partReplaced"
+                                                [(ngModel)]="partReplaced" (ngModelChange)="onChange()"                                                  
+                                                maxlength="" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/complaint.png"></span><span class="lable-text">Customer Complaint</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <p-editor [(ngModel)]="complaintDesc" formControlName="complaintDesc"  (onTextChange)="changeDesc($event,'desc1')" [style]="{'height': '180px'}">
+                                                    <p-header>
+                                                        <span class="ql-formats">
+                                                            <button class="ql-bold" aria-label="Bold"></button>
+                                                            <button class="ql-italic" aria-label="Italic"></button>
+                                                            <button class="ql-underline" aria-label="Underline"></button>
+                                                        
+                                                            <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                            <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                            </select>
+                                                            <button class="ql-list" value="ordered"></button>
+                                                            <button class="ql-list" value="bullet"></button>
+                                                            <select title="Text Alignment" class="ql-align" >
+                                                                <option selected>Gauche</option>
+                                                                <option value="center" label="Center"></option>
+                                                                <option value="right" label="Right"></option>
+                                                                <option value="justify" label="Justify"></option>
+                                                            </select>            
+                                                        
+                                                             </span>
+                                                    </p-header>
+                                                </p-editor>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/observation.png"></span><span class="lable-text">Dealer Observation</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <p-editor [(ngModel)]="observationDesc"  formControlName="observationDesc" (onTextChange)="changeDesc($event,'desc2')" [style]="{'height': '180px'}">
+                                                    <p-header>
+                                                        <span class="ql-formats">
+                                                            <button class="ql-bold" aria-label="Bold"></button>
+                                                            <button class="ql-italic" aria-label="Italic"></button>
+                                                            <button class="ql-underline" aria-label="Underline"></button>
+                                                        
+                                                            <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                            <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                            </select>
+                                                            <button class="ql-list" value="ordered"></button>
+                                                            <button class="ql-list" value="bullet"></button>
+                                                            <select title="Text Alignment" class="ql-align" >
+                                                                <option selected>Gauche</option>
+                                                                <option value="center" label="Center"></option>
+                                                                <option value="right" label="Right"></option>
+                                                                <option value="justify" label="Justify"></option>
+                                                            </select>            
+                                                        
+                                                            </span>
+                                                    </p-header>
+                                                </p-editor>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="part-label-row">
+                                                <span class="label-icon"><img src="assets/images/escalations/ppfr/dealer-action.png"></span><span class="lable-text">Dealer Action</span>
+                                            </div>
+                                            <div class="part-text-row form-group">
+                                                <p-editor [(ngModel)]="dealerActionDesc" formControlName="dealerActionDesc" (onTextChange)="changeDesc($event,'desc3')" [style]="{'height': '180px'}">
+                                                    <p-header>
+                                                        <span class="ql-formats">
+                                                            <button class="ql-bold" aria-label="Bold"></button>
+                                                            <button class="ql-italic" aria-label="Italic"></button>
+                                                            <button class="ql-underline" aria-label="Underline"></button>
+                                                        
+                                                            <select title="Text Color" class="ql-color" defaultValue="rgb(0, 0, 0)">
+                                                            <option *ngFor="let c of textColorValues" value="{{c.color}}" label="{{c.color}}"></option>
+                                                            </select>
+                                                            <button class="ql-list" value="ordered"></button>
+                                                            <button class="ql-list" value="bullet"></button>
+                                                            <select title="Text Alignment" class="ql-align" >
+                                                                <option selected>Gauche</option>
+                                                                <option value="center" label="Center"></option>
+                                                                <option value="right" label="Right"></option>
+                                                                <option value="justify" label="Justify"></option>
+                                                            </select>            
+                                                        
+                                                               </span>
+                                                    </p-header>
+                                                </p-editor>
+                                            </div>
+                                        </div>                                        
+                                    </div>
+                                    <div class="margin0 padding0 row col-lg-12 col-md-12 col-sm-12">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 margin0 padding0 paddingRt20">
+                                            <div class="prob-form-row attachment-row">
+                                                <div class="attachment-row black-theme-row">
+                                                    <div class="post-error-msg post-link-error" *ngIf="postServerError">{{postServerErrorMsg}}</div>
+                                                    <app-file-attachment *ngIf="postUpload" class="attachment-file" [action]="manageAction" [apiData]="postApiData" (uploadedItems)="attachments($event)"></app-file-attachment>
+                                                    <app-attachment-view [action]="EditAttachmentAction" [access]="pageAccess"  [attachments]="attachmentItems" (attachmentAction)="attachmentAction($event)"></app-attachment-view>                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div> 
+
+    </div>
+</div>

@@ -1,0 +1,292 @@
+<div id="header">
+    <app-product-header [pageData]="headerData" (search)="applySearch($event)"></app-product-header>
+</div>
+<div class="prob-index">
+    <div class="probing-content system-setting">
+        <div class="settings-p-msg"><p-messages [(value)]="systemMsg" [enableService]="false"></p-messages></div>
+        <div class="escalationv2-list-head head-row">
+            
+            <div class="head-col-1 text-left">
+                <img class="head-img" src="assets/images/escalations/escalation-icon.png" />
+                <span class="head-text">Escalation</span>
+            </div>
+            <div class="prob-head-col head-col-2 text-right">
+                <span *ngIf="!escalationViewlevelFlag" (click)="escalationsCancel()"
+                  class="tab tab-5 action-col"
+                  
+                  >Cancel <span class="cancel-btn"></span
+                ></span>
+
+                
+
+                <span *ngIf="!escalationViewlevelFlag && !editEscalationButtonEnable"                   
+                  class="tab tab-6 action-col setOpacity5"
+                >
+                  Save
+                  <span class="submit-btn"> </span>
+                </span> 
+                <span *ngIf="!escalationViewlevelFlag && editEscalationButtonEnable"                   
+                  class="tab tab-6 action-col" (click)="escalationsSave()"
+                >
+                  Save
+                  <span class="submit-btn"> </span>
+                </span>               
+                <span *ngIf="escalationViewlevelFlag" (click)="escalationsEdit()">
+                      <span class="tab tab-edit action-col">Edit
+                        <img class="event-title-img" src="assets/images/user-settings/edit-head-icon.png" />
+                      </span>
+                </span>
+                  
+              </div>
+        </div>
+
+        <div *ngIf="loading">
+            <div class="loader"><img width="60" height="60" src="assets/images/loading.svg" alt="Loader" /></div>
+        </div> 
+        <div *ngIf="!loading && !itemEmpty">
+            <div class="ts-list-lt ts-list-bottom cbt-filter" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+                <div  >
+                    <div id="filter">
+                        <div class="filter-toggle" [ngClass]="{ 'expand-arrow': !expandFlag, 'collapse-arrow': expandFlag }" (click)="expandAction()">
+                            <div *ngIf="expandFlag">
+                                <img src="assets/images/filter/filter-collapse-arrow.svg" class="filter-ic-collapse" alt="" onload="SVGInject(this)">
+                            </div>
+                            <div *ngIf="!expandFlag">
+                                <img src="assets/images/filter/filter-ic.svg" alt="" class="filter-ic-expand" onload="SVGInject(this)">
+                            </div>
+                        </div>
+                        <div class="filter-widgets ts-list-lt-center transition" *ngIf="expandFlag">
+                            <div [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                                <div class="ps" [perfectScrollbar]="sconfig">                            
+                                    <div class="user-row">
+                                        <div >
+                                            <div *ngFor="let menu of menuItemsData; let i=index;" class="profile-row system-settings-menu-row" [ngClass]="{ 'active' : menu.activeFlag, 'normal' : !menu.activeFlag }" (click)="navSection(i)">
+                                                <div class="profile-row-inner ">
+                                                    <span class="pimg {{menu.class}}"></span>
+                                                    <span class="uname" >{{menu.name}}</span>                                                    
+                                                </div>                    
+                                            </div>                                                                                                                                
+                                        </div>              
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ts-list-rt transition" [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">        
+                <div class="ts-list-rt-center">
+                    <div class="system-setting-container-outer">
+                        <div class="user-settings-container">
+                            <div class="user-settings-inner-container">
+
+                               
+                                    
+                                    <div class="system-setting-container">
+                                        <div [style.height]="'calc(100vh - '+innerHeight+'px)'">
+                                           
+                                            <div *ngIf="rtLoading" class="loading-small-screen-scroll" style="left:56%;">
+                                                <img src="assets/images/loading.svg" alt="Loader" />
+                                            </div>
+
+                                            <div *ngIf="!rtLoading" class="ps form-fields" [perfectScrollbar]="sconfig">  
+                                                
+                                                
+                                                <div >
+                                                    <div *ngIf="escalationViewlevelFlag">
+                                                        <div class="section-container" *ngFor="let item of configData; let s = index;">                
+                                                            <div  >                                                            
+                                                                <div class="padding-set">
+                                                                    <span class="title-img"><img width="14" height="14" src="assets/images/escalations/escalation-icon.png" />&nbsp;{{item.levelType}}</span>
+                                                                    <span class="title-text">{{item.levelName}}</span>
+                                                                </div>
+                                                                <div class="row-border"></div>
+                                                                <div class="bg-set" *ngFor="let event of item.events; let s = index;">
+                                                                    <div  class="set-width-100">                                                                                                                                            
+                                                                        <div class="set-width-20 padding-set">  
+                                                                            <img class="event-title-img" src="assets/images/escalations/{{event.imgname}}.png" />                                                                                                                                                  
+                                                                            <span class="event-title-text" >{{event.title}}</span>                                                                            
+                                                                        </div>
+                                                                        <div class="set-width-80 padding-set" *ngFor="let eventtype of event.eventsTypes; let s = index;" >                                                                           
+                                                                            <div class="set-width-100">
+                                                                                 
+                                                                                <span *ngIf="eventtype.eventfieldType == 'toggle'"  >
+                                                                                    <div *ngIf="eventtype.toggleFlag" class="set-width-100 event-value-text" >Yes</div>    
+                                                                                    <div *ngIf="!eventtype.toggleFlag" class="set-width-100 event-value-text" >No</div>    
+                                                                                </span>                                                                                   
+                                                                                <span *ngIf="eventtype.eventfieldType == 'dropdown' || eventtype.eventfieldType == 'text'" > 
+                                                                                    <div *ngIf="eventtype.eventSelectionType == 'multiple' && eventtype.eventSelectedValArrName != '' && eventtype.eventSelectedValArrName != undefined" class="set-width-40 event-value-text" >{{eventtype.eventSelectedValArrName.join(', ')}}</div>   
+                                                                                    <div *ngIf="eventtype.eventSelectionType == 'multiple' && (eventtype.eventSelectedValArrName == '' || eventtype.eventSelectedValArrName == undefined)" class="set-width-40 event-value-text" >-</div>   
+                                                                                    <div *ngIf="eventtype.eventfieldType != 'text' && eventtype.eventSelectionType == 'single' && eventtype.eventSelectedValName != '' && eventtype.eventSelectedValName != undefined" class="set-width-40 event-value-text" >{{eventtype.eventSelectedValName}}</div>   
+                                                                                    <div *ngIf="eventtype.eventfieldType != 'text' && eventtype.eventSelectionType == 'single' && (eventtype.eventSelectedValName == '' || eventtype.eventSelectedValName == undefined)" class="set-width-40 event-value-text" >-</div>   
+                                                                                    <div *ngIf="eventtype.eventfieldType == 'text'" class="set-width-40 event-value-text" [innerHTML]="eventtype.eventPlaceHolderText"></div>   
+                                                                                        
+                                                                                    <div class="set-width-60" > 
+                                                                                        <div *ngFor="let eventArr of eventtype.eventArr; let s = index;">                                                                                     
+
+                                                                                                <div *ngIf="( eventtype.eventSelectedValId.length>1 && eventtype.eventSelectedValId[0] == eventArr.id && event.eventId != 4 ) || ( eventtype.eventSelectedValId == eventArr.id && event.eventId != 4 ) || ( eventtype.eventSelectedValId == eventArr.id && event.eventId == 4 &&  eventArr.id != 1)">
+                                                                                                    <div *ngFor="let eventInnerArr of eventArr.eventInnerArr; let s = index;">
+                                                                                                        <div class="set-width-100" >
+                                                                                                            <div class="set-width-30"  *ngIf="eventtype.eventfieldType != 'text'">
+                                                                                                                <img *ngIf="event.eventId == 4" class="event-title-img" src="assets/images/escalations/esc-time-delay.png" />   
+                                                                                                                <img *ngIf="event.eventId != 4" class="event-title-img" src="assets/images/escalations/{{eventInnerArr.fieldimgname}}.png" />  
+                                                                                                                <span class="event-title-text" >{{eventInnerArr.fieldname}}</span>                                                                                                                                                                                                                              
+                                                                                                            </div>
+                                                                                                            <div class="set-width-30"  *ngIf="eventtype.eventfieldType == 'text' && eventInnerArr.fieldSelectedValName != ''  && eventInnerArr.fieldSelectedValName != undefined">
+                                                                                                               <img class="event-title-img" src="assets/images/escalations/{{eventInnerArr.fieldimgname}}.png" />  
+                                                                                                                <span class="event-title-text" >{{eventInnerArr.fieldSelectedValName}}</span>                                                                                                                
+                                                                                                            </div>                                                                                                              
+                                                                                                            <div *ngIf="eventInnerArr.fieldtype == 'input'" class="set-width-70 event-value-text" >{{eventInnerArr.fieldVal}}</div> 
+                                                                                                            <div *ngIf="eventtype.eventfieldType != 'text' && eventInnerArr.fieldtype == 'dropdown'" class="set-width-70 event-value-text"  >
+                                                                                                                <div *ngIf="eventInnerArr.fieldSelectionType == 'multiple' && eventInnerArr.fieldSelectedValArrName != '' && eventInnerArr.fieldSelectedValArrName != undefined" class="set-width-100">{{eventInnerArr.fieldSelectedValArrName.join(', ')}}</div>                                                                                                               
+                                                                                                                <div *ngIf="eventInnerArr.fieldSelectionType == 'multiple' && (eventInnerArr.fieldSelectedValArrName == '' || eventInnerArr.fieldSelectedValArrName == undefined)" class="set-width-100">-</div>                                                                                                               
+                                                                                                                <div *ngIf="eventInnerArr.fieldSelectionType == 'single' && eventInnerArr.fieldSelectedValName != '' && eventInnerArr.fieldSelectedValName != undefined" class="set-width-30" >{{eventInnerArr.fieldSelectedValName}}</div>  
+                                                                                                                <div *ngIf="eventInnerArr.fieldSelectionType == 'single' && (eventInnerArr.fieldSelectedValName == '' || eventInnerArr.fieldSelectedValName == undefined)" class="set-width-30" >-</div>                                                                                                                                                                                                                           
+                                                                                                            </div> 
+                                                                                                            <div *ngIf="eventtype.eventfieldType == 'text'"  class="set-width-70 event-value-text"  > 
+                                                                                                                <div *ngFor="let fieldStr of eventInnerArr.fieldStr; let s = index;">
+                                                                                                                    <div *ngIf="eventInnerArr.fieldSelectedValId == fieldStr.id">
+                                                                                                                        <span class="graybg-field-text" *ngFor="let usersList of fieldStr.usersList; let s = index;">{{usersList.name}}</span>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div> 
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div> 
+                                                                                    
+                                                                                </span>
+                                                                            </div>                                                                               
+                                                                        </div>                                                                    
+                                                                    </div>
+                                                                    <div class="row-border"></div>
+                                                                </div>
+                                                            </div>  
+                                                        </div>
+                                                    </div>
+                                                    <div *ngIf="!escalationViewlevelFlag">
+                                                        <div class="section-container" *ngFor="let item of configData; let s = index;">                
+                                                            <div  >                                                            
+                                                                <div class="padding-set">
+                                                                    <span class="title-img"><img width="14" height="14" src="assets/images/escalations/escalation-icon.png" />&nbsp;{{item.levelType}}</span>
+                                                                    <span class="title-text">{{item.levelName}}</span>
+                                                                </div>
+                                                                <div class="row-border"></div>
+                                                                <div *ngFor="let event of item.events; let s = index;">
+                                                                    <div  class="set-width-100">                                                                                                                                            
+                                                                        <div class="set-width-20 padding-set">  
+                                                                            <img class="event-title-img" src="assets/images/escalations/{{event.imgname}}.png" />                                                                                                                                                  
+                                                                            <span class="event-title-text" >{{event.title}}</span>                                                                            
+                                                                        </div>
+                                                                        <div class="set-width-80" *ngFor="let eventtype of event.eventsTypes; let s = index;">                                                                           
+                                                                            <div class="set-width-100">
+                                                                                                                                                                  
+                                                                                <span class="toggle-col toggle-option" *ngIf="eventtype.eventfieldType == 'toggle'"  >
+                                                                                    <p-inputSwitch [(ngModel)]="eventtype.toggleFlag" (onChange)="eventChange('column1-toggle',event.eventId,'',$event)"></p-inputSwitch>
+                                                                                </span>                                                                                   
+                                                                                <span *ngIf="eventtype.eventfieldType == 'dropdown' || (eventtype.eventfieldType == 'text')" >
+                                                                                    <div class="set-width-100">
+                                                                                        <div class="set-width-40 padding-set" >
+                                                                                            <span *ngIf="eventtype.eventSelectionType == 'single' && eventtype.eventfieldType != 'text'" >
+                                                                                                <p-dropdown [options]="eventtype.eventArr" placeholder="Select"                                                                                                 
+                                                                                                optionLabel="name" optionValue="id" 
+                                                                                                [disabled] = eventtype.disabled appendTo="body"
+                                                                                                class="eventdropdown" 
+                                                                                                (onChange)="eventChange('column1-dd-single',event.eventId,'',$event.value)"                                           
+                                                                                                [(ngModel)]="eventtype.eventSelectedValId" ></p-dropdown>
+                                                                                            </span>
+                                                                                            <span *ngIf="eventtype.eventSelectionType == 'multiple' && eventtype.eventfieldType != 'text'" >
+                                                                                                <p-multiSelect appendTo="body" 
+                                                                                                [options]="eventtype.eventArr" 
+                                                                                                [(ngModel)]="eventtype.eventSelectedValId" 
+                                                                                                placeholder="Select" optionLabel="name" optionValue="id" 
+                                                                                                (onChange)="eventChange('column1-dd-multiple',event.eventId,'',$event.value)"></p-multiSelect>
+                                                                                            </span>
+                                                                                            <span *ngIf="eventtype.eventfieldType == 'text'"  >
+                                                                                                <div class="set-width-100 event-value-text" [innerHTML]="eventtype.eventPlaceHolderText"></div> 
+                                                                                            </span>
+                                                                                        </div>
+                                                                                        <div class="set-width-60" > 
+                                                                                            <div *ngFor="let eventArr of eventtype.eventArr; let s = index;">
+                                                                                                <div *ngIf="((eventtype.eventSelectedValId.length>1 && eventtype.eventSelectedValId[0] == eventArr.id ) || (eventtype.eventSelectedValId == eventArr.id)) && (eventtype.eventPlaceHolderText != 'None')">
+                                                                                                    <div *ngFor="let eventInnerArr of eventArr.eventInnerArr; let s = index;">
+                                                                                                        <div class="set-width-100" >
+                                                                                                            <div class="set-width-30 padding-set" >
+                                                                                                                <img *ngIf="event.eventId == 4" class="event-title-img" src="assets/images/escalations/esc-time-delay.png" />   
+                                                                                                                <img *ngIf="event.eventId != 4" class="event-title-img" src="assets/images/escalations/{{eventInnerArr.fieldimgname}}.png" />   
+                                                                                                                <span class="event-title-text" >{{eventInnerArr.fieldname}}</span>
+                                                                                                            </div>
+                                                                                                             
+                                                                                                            <div *ngIf="eventInnerArr.fieldtype == 'input'" class="set-width-70 padding-set" >
+                                                                                                                <input class="inputbox"  matInput type="text" placeholder="eventInnerArr.fieldname"
+                                                                                                                [(ngModel)]="eventInnerArr.fieldVal"
+                                                                                                                (input)="eventChange('column2-input',event.eventId,eventArr.id,eventInnerArr.fieldVal)"
+                                                                                                                    autocomplete="off" min="0" maxlength="50" >
+                                                                                                            </div> 
+                                                                                                            <div *ngIf="eventInnerArr.fieldtype == 'dropdown'" class="set-width-70 padding-set"  >                                                                                                                
+                                                                                                                <span *ngIf="eventInnerArr.fieldSelectionType == 'single'">
+                                                                                                                    <p-dropdown [options]="eventInnerArr.fieldStr" placeholder="Select" 
+                                                                                                                    [filter]="true" optionLabel="name" optionValue="id" 
+                                                                                                                    [disabled] = eventInnerArr.disabled appendTo="body"
+                                                                                                                    class="eventdropdown"
+                                                                                                                    (onChange)="eventChange('column2-dd-single',event.eventId,eventtype.eventSelectedValId,$event.value)"                                                
+                                                                                                                    [(ngModel)]="eventInnerArr.fieldSelectedValId" ></p-dropdown>
+                                                                                                                </span>
+
+                                                                                                                <span *ngIf="eventtype.eventfieldType == 'text'">                                                                                    
+                                                                                                                    <span *ngFor="let fieldStr of eventInnerArr.fieldStr; let s = index;">                                                                                                                
+                                                                                                                        <span *ngIf="eventInnerArr.fieldSelectedValId == fieldStr.id">
+                                                                                                                            <span>&nbsp;&nbsp;&nbsp;</span>
+                                                                                                                            <span class="cursor add-new-button" (click)="updatePerson(event.eventId,eventArr.id,fieldStr.id,fieldStr.usersList)">
+                                                                                                                                <span><i class="pi pi-plus" style="font-size: 13px; margin-right: 4px;"></i></span>
+                                                                                                                                <span>Add {{eventInnerArr.fieldname}}</span>
+                                                                                                                            </span> 
+                                                                                                                            <span>&nbsp;&nbsp;&nbsp;</span>
+                                                                                                                            <div style="margin-top: 10px;">
+                                                                                                                            <span class="graybg-field-text" *ngFor="let userList of fieldStr.usersList; let s = index;">{{userList.name}}</span>
+                                                                                                                            </div>
+                                                                                                                        </span>
+                                                                                                                    </span> 
+                                                                                                                </span>       
+
+                                                                                                                <span *ngIf="eventInnerArr.fieldSelectionType == 'multiple'">
+                                                                                                                    <p-multiSelect [options]="eventInnerArr.fieldStr" placeholder="Select" 
+                                                                                                                    [filter]="true" optionLabel="name" optionValue="id" 
+                                                                                                                    [disabled] = eventInnerArr.disabled appendTo="body"
+                                                                                                                    class="eventdropdown"
+                                                                                                                    (onChange)="eventChange('column2-dd-multiple',event.eventId,eventtype.eventSelectedValId,$event.value)"                                               
+                                                                                                                    [(ngModel)]="eventInnerArr.fieldSelectedValId" ></p-multiSelect>
+                                                                                                                </span> 
+                                                                                                            </div> 
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div> 
+                                                                                </span>
+                                                                            </div>                                                                               
+                                                                        </div>                                                                    
+                                                                    </div>
+                                                                    <div class="row-border"></div>
+                                                                </div>
+                                                            </div>  
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>                                    
+                            </div>
+                        </div>   
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+

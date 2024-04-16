@@ -1,0 +1,16 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData"></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData"></app-product-header>
+</div>
+<div class="prob-index">
+    <div class="container-fluid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0"></div>
+        <div class="center-middle-width-container">
+            <div class="center-middle-width padding-common">              
+              <div class="probing-content cbt-content part-content part-content-threads-new">
+                  <app-gts-sessions-list [pageAccess]="pageAccess" (gtsComponentRef)="gtsPageRef = $event" (callback)="gtsCallback($event)"></app-gts-sessions-list>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>

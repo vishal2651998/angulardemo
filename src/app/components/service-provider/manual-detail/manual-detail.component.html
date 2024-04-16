@@ -1,0 +1,543 @@
+<div class="wrapCls">
+  <p-dialog [(visible)]="isManualDeleted" [showHeader]="false" [modal]="true" class="deleted-training" styleClass="deleted-training">
+    <div class="text-center deleted-training-inner">
+      <img src="assets/images/service-provider/deleted-manual.png" >
+      <p>This manual has been removed.<br>Sorry for the inconvenience.</p>
+      <button class="btn" (click)="goToMarketplace()">OK</button>
+    </div>
+    </p-dialog>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin  flex-center background-white"
+  *ngIf="!pageLoading">
+  <!-- <div *ngIf="!reparifyDomain" class="width-80-perc">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row custom-padding-breadcum no-margin flex-align-center">
+      <img (click)="goBack()" style="margin-right: 15px; cursor: pointer;" width="17px" height="17px" src="assets/images/service-provider/back-arrow.png"><a style="color: #000 !important;" href="https://marketplace.collabtic.com/"><i class="pi pi-home margin-right-5px"></i><span class="heading-font-style-1">Home</span></a><i class="pi pi-angle-right"></i><a style="color: #000 !important;;" href="{{domainurl}}"><span class="heading-font-style-2">{{domainData?.business_name}}</span></a><i class="pi pi-angle-right"></i><span class="color-green heading-font-style-2">{{trainingData?.trainingName}}</span>
+    </div>
+  </div> -->
+</div>
+<div style="padding: 10px 0 0 0 !important; background-color: #eff1f3 !important; flex-wrap: wrap;"
+  class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding  flex-center app-manual-detail-page" *ngIf="!pageLoading">
+  <div class="width-80-perc">
+    <div class="d-inline-block" style="margin-bottom: 10px;padding-left: 17px;cursor: pointer;" (click)="location.back()">
+      <img src="assets/images/service-provider/back-arrow-new.png" alt=""> <span style="padding-left:5px"> BACK</span>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+      <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 custom-padding-gallery flex-start"
+           style="width: 210px !important; display: block; flex: none;">
+        <img *ngIf="trainingData?.bannerImageUrl" class="responsive-image-height" [src]="trainingData?.bannerImageUrl" style="width: auto;display: block; max-height: 220px; height: 100%; margin-bottom: 30px;" />
+        <div *ngIf="!trainingData?.bannerImageUrl">
+          <img style="max-height: 220px; margin-bottom: 30px;" src="assets/images/service-provider/manual-placeholder.png" /></div>
+          <div class="custom-manual-id-div-design">
+            <span>
+              ID#{{trainingData.id}}
+            </span>
+          </div>
+      </div>
+      <div class="col-xl-10 col-lg-9 col-md-6 col-sm-12 col-12" style="margin-bottom: 10px;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+          <span class="inner-page-title">{{trainingData?.manualName}}</span>
+        </div>
+        <div
+          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail flex-align-center"
+          style="margin-top: 20px;">
+
+          <div>
+            <img class="margin-right-10px" width="auto" height="16px" src="assets/images/service-provider/sku-green.png" alt="sku">
+           </div>
+
+          <span class="training-text-style">SKU: {{trainingData?.sku}}</span>
+        </div>
+
+
+        <div
+          class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail flex-align-center"
+          style="margin-top: 20px;">
+          <div>
+            <img class="margin-right-10px" width="auto" height="16px" src="assets/images/service-provider/provider-icon.png" alt="sku">
+           </div>
+
+          <span class="training-text-style"><img  height="24px" src="{{trainingData?.businessDomainData?.business_logo}}"></span>
+
+          <a *ngIf="trainingData?.email" style="position: absolute; right: 0;" href="mailto:{{trainingData?.email}}">
+            <img class="margin-right-10px" width="18px" height="18px"
+              src="assets/images/service-provider/question.png" />
+              <span class="ask-question">Ask a Question</span>
+          </a>
+        </div>
+
+        <hr class="custom-margin-hr" *ngIf="trainingData?.forTrainingOnly != 1 || trainingData?.forTrainingOnly == 1" />
+
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-align-center pt-3 pl-0" *ngIf="trainingData?.forTrainingOnly == 1">
+          <img src="assets/images/service-provider/info-orange.png" alt="" style="width: 15px;height: 15px;">
+          <span class="ml-2" style="color:#ff9100; font-size: 15px;"><i>This manual is only available with a training. It's not available for sale independently.</i></span>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-center"
+          style="flex-wrap: wrap;" *ngIf="trainingData?.forTrainingOnly != 1 && trainingData?.isActive == 1">
+          <div *ngIf="openTraining && payablePrice && payablePrice != '0'"
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+            <div>
+              <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 10px;"><span
+                class="custom-price-text">{{threadApi.isInt(trainingData?.discountPrice, true, true)}}</span></span>
+              <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 5px;"><span
+                class="custom-price-text cutted">{{threadApi.isInt(payablePrice, true, true)}}</span></span>
+              <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 20px;"><span
+                class="custom-price-text percent">{{threadApi.isInt(trainingData?.discountPercentage, false, true)}}% off</span></span>
+              <span *ngIf="!trainingData?.discountPrice || trainingData?.discountPrice == '0'" style="margin-right: 20px;"><span
+                class="custom-price-text">{{threadApi.isInt(payablePrice, true, true)}}</span></span>
+              <!-- <div class="percentage-design">-{{trainingData?.discountPercentage | number}}%</div>
+              <div class="bird-price-design">${{trainingData?.discountPrice | number}}</div> -->
+            </div>
+          </div>
+          <div *ngIf="openTraining && !payablePrice || payablePrice == '0'"
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+            <div><span class="custom-price-text" style="margin-right: 50px;">Free</span></div>
+          </div>
+          <div *ngIf="openTraining"
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+            <!-- <div class="manuals-count-box">
+              <a class="subtract" (click)="toggleBuyManualCount('subtract')"><img src="assets/images/service-provider/minus-sign.png"></a>
+              <span>{{buyManualCount}}</span>
+              <a class="add" (click)="toggleBuyManualCount('add')"><img src="assets/images/service-provider/add-new.png"></a>
+            </div> -->
+            <!-- <span *ngIf="payablePrice && payablePrice != '0'" (click)="openPurchasePopup()"
+              class="buy-now-design cursor-pointer">BUY NOW
+              <figure class="whiteArrow">
+                <img src="assets/images/service-provider/btnArrowWhite.png">
+              </figure>
+              <i class="pi pi-angle-double-right"></i>
+            </span> -->
+            <!-- <span *ngIf="!payablePrice || payablePrice == '0'" (click)="openPurchasePopup()"
+              class="buy-now-design cursor-pointer"> GET NOW <i class="pi pi-angle-double-right"></i></span> -->
+            <img (click)="openPurchasePopup()" class="buy-now-image-position cursor-pointer" height="50px"
+              src="assets/images/service-provider/Training - Buy button.png">
+              <span *ngIf="!cartItemSelect" (click)="updateCartItem()"
+              class="buy-now-design cart-background cursor-pointer">ADD TO CART
+              <figure class="cart-img">
+                <img src="assets/images/service-provider/cart-orange.png">
+              </figure>
+            </span>
+            <span *ngIf="cartItemSelect" (click)="updateCartItem()"
+              class="buy-now-design cart-background selected cursor-pointer">ADDED
+              <figure class="cart-img">
+                <img src="assets/images/service-provider/cart-white.png">
+              </figure>
+            </span>
+          </div>
+          <div
+            class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center ask-question-parent {{openTraining ? 'text-align-left' : ''}}"
+            style="display: block; flex-wrap: wrap">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center background-white {{this.trainingData?.attachments?.length ? 'custom-design-description-old-details' : 'custom-design-description-details'}}"
+  *ngIf="!pageLoading" style="margin-bottom: 40px !important;">
+  <div class="width-80-perc">
+    <p-tabView styleClass="market-place-tab-panel-old">
+      <p-tabPanel header="DESCRIPTION" [innerHtml]="trainingData?.description | safeHtml">
+      </p-tabPanel>
+    </p-tabView>
+    <div *ngIf="this.trainingData?.attachments?.length"
+      class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-center background-white custom-design-description-details-attach">
+      <app-attachment-view style="width: 100%;" action="view" [dynamicGid]="1" [isStartGTSTest]="false"
+        [publicData]="this.trainingData" [attachments]="this.trainingData.attachments"
+        [hideLabel]="true"></app-attachment-view>
+    </div>
+  </div>
+</div>
+<div align="center" style="z-index: 10000001;" class="custom-loading-class" *ngIf="loading">
+  <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+</div>
+<p-dialog styleClass="{{paymentLoading ? 'service-payment-loading-popup' : '' || showPaymentFields ? 'service-payment-provider-popup manual-buy' : '' || paymentSuccessPopup ? 'service-payment-success-provider-popup shipping-popup' : '' || paymentFailurePopup ? 'service-payment-failure-provider-popup' : ''}} {{showRefundPolicy ? 'service-policy-open' : ''}}" [modal]="true" [breakpoints]="{'1024px': '90vw', '960px': '90vw', '640px': '95vw'}" [style]="{width: '90vw'}" [draggable]="false" [(visible)]="displayPaymentPopup">
+  <app-manuals-payment-controller *ngIf="displayPaymentPopup" [isAdmin]="false" [payablePrice]="payablePrice"
+    [buyManualCount]="buyManualCount" [hidePaymentButton]="hidePaymentButton" [domainId]="trainingData.domainID"
+    (refundPolicyShow)="refundPolicyShow($event)" (sendPaymentData)="submitPaymentData($event)"
+    [formValue]="this.shippingForm.getRawValue()" (sendHidePaymentButtonData)="setHidePaymentButton($event)"
+    (closeEvent)="closePopup()"
+    [discountPrice]="trainingData?.discountPrice ? trainingData?.discountPrice : ''"
+    [discountPercent]="trainingData?.discountPercentage ? trainingData?.discountPercentage : ''"
+    (backToFormEvent)="backToFormPopup()" (closePaymentPopupEvent)="closePaymentPopup()"
+    [showPaymentFields]="showPaymentFields" [paymentLoading]="paymentLoading"
+    [successData]="successData" [paymentSuccessPopup]="paymentSuccessPopup"
+    [paymentFailurePopup]="paymentFailurePopup" [paymentMessage]="paymentMessage"
+    [totalAmount]="totalAmount" [shippingCost]="shippingCost" [salesTaxPercent]="salesTaxPercent"
+    [salesTax]="salesTax" [shippingTax]="shippingTax" [manualName]="trainingData?.manualName" [freeOffer]="false" [manualData]="trainingData" (paymentPopupEvent)="openPaymentFromEvent()">
+  </app-manuals-payment-controller>
+</p-dialog>
+<p-dialog styleClass="service-provider-popup buy-manual" [(visible)]="displayDetailsPopup" [modal]="true"
+  [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+  <ng-template pTemplate="header">
+    <span>TRAINING MANUAL</span>
+    <div>
+      <i (click)="checkConfirmPopup()" class="cursor-pointer pi pi-times color-grey"></i>
+    </div>
+  </ng-template>
+  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 no-padding buy-manual">
+    <div style="border: 1px solid #dedede; border-radius: 10px; padding: 20px 0 0 0 !important; background-color: #fff !important; flex-wrap: wrap;"
+      class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding  flex-center" *ngIf="!pageLoading">
+      <div style="width: 100%;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 custom-padding-gallery flex-start"
+              style="width: 150px !important; display: block; flex: none;">
+            <img *ngIf="trainingData?.bannerImageUrl" class="responsive-image-height" [src]="trainingData?.bannerImageUrl" style="width: auto;display: block;height: 150px;" />
+            <div *ngIf="!trainingData?.bannerImageUrl" >
+              <img style="max-height: 150px;" src="assets/images/service-provider/manual-placeholder.png" /></div>
+          </div>
+          <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12" style="margin-bottom: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+              <span class="inner-page-title">{{trainingData?.manualName}}</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail flex-align-center"
+              style="margin-top: 8px;">
+              <span class="training-text-style"><span>SKU:</span> {{trainingData?.sku}}</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-center"
+              style="flex-wrap: wrap;">
+              <div *ngIf="openTraining && payablePrice && payablePrice != '0'"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+                <div>
+                  <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 10px;"><span
+                    class="custom-price-text">{{threadApi.isInt(trainingData?.discountPrice, true, true)}}</span></span>
+                  <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 5px;"><span
+                    class="custom-price-text cutted">{{threadApi.isInt(payablePrice, true, true)}}</span></span>
+                  <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 20px;"><span
+                    class="custom-price-text percent">{{threadApi.isInt(trainingData?.discountPercentage, false, true)}}% off</span></span>
+                  <span *ngIf="!trainingData?.discountPrice || trainingData?.discountPrice == '0'" style="margin-right: 20px;"><span
+                    class="custom-price-text">{{threadApi.isInt(payablePrice, true, true)}}</span></span>
+                </div>
+              </div>
+              <div *ngIf="openTraining && !payablePrice || payablePrice == '0'"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+                <div><span class="custom-price-text" style="margin-right: 50px;">Free</span></div>
+              </div>
+              <div *ngIf="openTraining"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center counter-plus-minus-div">
+                <div class="manuals-count-box">
+                  <a class="subtract" (click)="toggleBuyManualCount('subtract')"><img src="assets/images/service-provider/minus-sign.png"></a>
+                  <span>{{buyManualCount}}</span>
+                  <a class="add" (click)="toggleBuyManualCount('add')"><img src="assets/images/service-provider/add-new.png"></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <div style="display: flex;align-items: center;" class="user-info-header col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-5px margin-top-20px pl-2 responsive-padding">
+        <span class="additional-participant-design2 margin-right-5px">
+          <img style="width: 15px; margin-right: 0px; filter: invert(1);" src="assets/images/service-provider/map-pin-white.png">
+          <span style="padding: 10px 5px;">Shipping Address</span>
+        </span>
+      </div>
+      <form [formGroup]="shippingForm">
+        <div formArrayName="user_data_map" *ngFor="let userData of user_data_map?.controls; let i = index">
+          <div [formGroupName]="i" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-end">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+              <div class="row no-margin">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                    <span class="popup-text-style">First Name </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="p-inputgroup new-design">
+                      <span class="p-inputgroup-addon"><img width="20px" height="20px"
+                          src="assets/images/service-provider/user.png"></span>
+                      <input type="text" pInputText placeholder="Enter First Name" formControlName="firstName">
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.firstName?.errors?.required && formSubmitted">
+                    First name is required
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                    <span class="popup-text-style">Last Name </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="p-inputgroup new-design">
+                      <span class="p-inputgroup-addon"><img width="20px" height="20px"
+                          src="assets/images/service-provider/user.png"></span>
+                      <input type="text" pInputText placeholder="Enter Last Name" formControlName="lastName">
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.lastName?.errors?.required && formSubmitted">
+                    Last name is required
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                    <span class="popup-text-style">Email </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="p-inputgroup new-design">
+                      <span class="p-inputgroup-addon"><img width="22px" height="15px"
+                          src="assets/images/service-provider/mail-grey.png"></span>
+                      <!-- <input (blur)="checkFirstLastNameValueIndex($event?.target?.value, i)" type="text" pInputText
+                        placeholder="Enter Email" formControlName="email"> -->
+                      <input type="text" pInputText placeholder="Enter Email" formControlName="email">
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.email?.errors?.required && formSubmitted">
+                    Email is required
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.email?.errors?.email && formSubmitted">
+                    Enter valid email
+                  </div>
+                  <div *ngIf="showUserEmailValidationError[i]"
+                    class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    {{showUserEmailValidationError[i]}}
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-4px responsive-padding">
+                    <span class="popup-text-style">Phone Number </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="col-12 no-padding">
+                      <ngx-intl-tel-input [cssClass]="'custom'" class="KA_input_text_Phone_new"
+                        [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                        [enablePlaceholder]="true" [searchCountryFlag]="true" [phoneValidation]="true"
+                        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                        [selectFirstCountry]="true" [selectedCountryISO]="selectedCountryIS0" [maxLength]="10"
+                        [phoneValidation]="false" [separateDialCode]="separateDialCode"
+                        [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phoneNumber">
+                      </ngx-intl-tel-input>
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.phoneNumber?.errors?.required && formSubmitted">
+                    Phone number is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12  no-padding">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding flex-justify-spacebetween">
+                <span class="popup-text-style">Address 1</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                      src="assets/images/service-provider/map-pin.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="Address 1" formControlName="shippingAddress1">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingAddress1.errors?.required && formSubmitted">
+                Address 1 is required
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12  no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">Address 2</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                    src="assets/images/service-provider/map-pin.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="Address 2" formControlName="shippingAddress2">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingAddress2.errors?.required && formSubmitted">
+                Address 2 is required
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">State</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                    src="assets/images/service-provider/map-pin.png"></span>
+                  <p-dropdown class="width-100-perc" appendTo="body" [filter]="true" name="stateValue" styleClass="width-100-perc custom-dropdown-design-company-4" [(ngModel)]="shippingUserStateValue" formControlName="shippingState" [options]="shippingStateDropdownData" placeholder="Select State" optionLabel="name" optionValue="id" [group]="true" (onChange)="getSalesTax()">
+                    <ng-template let-group pTemplate="group">
+                      <div class="p-d-flex p-ai-center">
+                        <span>{{group.name}}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingState.errors?.required && formSubmitted">
+                State is required
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">City</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                    src="assets/images/service-provider/map-pin.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="City" formControlName="shippingCity">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingCity.errors?.required && formSubmitted">
+                City is required
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">Zip</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="12px" height="18px"
+                    src="assets/images/service-provider/map-circle-pin-grey.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="Zip" formControlName="shippingZip">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingZip.errors?.required && formSubmitted">
+                Zip is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-24px margin-bottom-5px responsive-padding">
+        <div class="row no-margin">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-end mobile-margin no-padding"
+            style="flex-wrap: wrap;">
+            <div
+              class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding custom-button-design responsive-padding">
+              <button class="custom-button-style" *ngIf="!userAddLoader && ((payablePrice && payablePrice != '0') || shippingCost || salesTax)"
+                (click)="openPaymentPopup();" pButton type="button" label="Next"
+                icon="pi pi-chevron-right" iconPos="right"></button>
+              <button class="custom-button-style" *ngIf="!userAddLoader && !payablePrice && payablePrice == '0' && !shippingCost && !salesTax"
+                (click)="openPaymentPopup();" pButton type="button" label="Order"></button>
+              <button class="custom-button-style" *ngIf="userAddLoader" pButton type="button" label="">
+                <button style="background-color: #469073 !important; border-color: #469073 !important; height: 1.5rem"
+                  pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                  class="p-button-rounded button-save button-spin"></button>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding manual-slip">
+    <div class="slip-details">
+      <div class="price-details">
+        PRICE DETAILS
+      </div>
+      <div class="slip-summary">
+        <img style="width: 20px; filter: invert(1); margin-right: 10px; float: left;" src="assets/images/service-provider/manual-white.png" />
+        <div class="summary-title">Manual Price Summary</div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          {{trainingData?.manualName}}
+        </div>
+        <div class="detail-right">
+          {{buyManualCount}}
+          <span *ngIf="payablePrice">X {{threadApi.isInt(payablePrice)}}</span>
+          <span *ngIf="!payablePrice">(Free)</span>
+        </div>
+      </div>
+      <div class="slip-details-inner" *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'">
+        <div class="detail-left">
+          Discount ({{threadApi.isInt(trainingData?.discountPercentage, false)}}% off)
+        </div>
+        <div class="detail-right" style="color: #7f17ff;">
+          {{threadApi.isInt((payablePrice - trainingData?.discountPrice) * buyManualCount)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Shipping Cost
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(shippingCost)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Tax on Shipping
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(shippingTax)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Sales Tax {{threadApi.isInt(salesTaxPercent, false)}}%
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(salesTax)}}
+        </div>
+      </div>
+      <div class="slip-details-inner final">
+        <div class="detail-left">
+          Total Amount
+        </div>
+        <div class="detail-right">
+          <span *ngIf="totalAmount">{{threadApi.isInt(totalAmount)}}</span>
+          <span *ngIf="!totalAmount">Free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog styleClass="service-provider-address-popup other-provider-popup" [(visible)]="domainSelectPopup" [modal]="true" [showHeader]="false" 
+    [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+    <div class="other-provider d-flex flex-column align-items-center">
+            <img src="assets/images/service-provider/cart-filled-green.png">
+            <p>There is already one provider in your cart, so you can't add other providers' training or manuals.</p>
+            <span class="d-flex" (click)="domainSelectPopup = false">
+              OK 
+              <figure class="tickImg">
+                <img src="assets/images/service-provider/tick-white.png">
+              </figure>
+            </span>
+    </div>
+</p-dialog>
+
+<!-- new cart popup  -->
+<div class="cart-popup sm-center-popup" *ngIf="showCartUserDetailPopup">
+  <div class="cart-popup-instruction">Please enter your email so we can save your cart for you</div>
+  <form [formGroup]="userInfoForm">
+    <div class="p-inputgroup new-design" style="padding-top:20px">
+      <span class="p-inputgroup-addon bg-white">
+        <img width="22px" height="15px" src="assets/images/service-provider/mail-grey.png">
+      </span>
+      <input formControlName="email" type="text" placeholder="Enter Email"
+        class="p-inputtext p-component ng-pristine ng-invalid border-left-0 register-email">
+    </div>
+  </form>
+  <button class="d-inline custom-buttom-design-new-2" pButton type="button" label="save" (click)="submitUserInfo();"
+    icon="pi pi-check" iconPos="right"></button>
+  <button class="d-inline custom-buttom-design-new" (click)="closeUserDetailForm()" pButton type="button" label="Cancel"
+    icon="pi pi-times" iconPos="right"></button>
+</div>

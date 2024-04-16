@@ -1,0 +1,226 @@
+<div *ngIf="collabticFixes && showSearchRes">
+  <div id="header" style="min-height:42px;" class="detail-page-header" >
+    <app-thread-detail-header [pageData]="headerData" (threadDetailHeaderRef)="threadDetailHeaderRef = $event" (detailHeaderCallback)="detailHeaderCallback($event)" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>
+  </div>
+  <div class="search-content">
+    <div *ngIf="currentContentTypeId == 2">
+      <app-fix-threads [filterItems]="filterItems" [pageData]="headerData" (fixThreadRef)="fixThreadRef = $event" (fixThreadCallback)="fixThreadCallback($event)"></app-fix-threads>
+    </div>
+    <div *ngIf="currentContentTypeId == 11" class="parts-thumb-view">
+      <app-parts-list [fromSearchPage]="fromSearchPage" (searchResultData)="searchResultData($event);"></app-parts-list>
+    </div>
+  </div>
+</div>
+<div *ngIf="(!collabticFixes || (collabticFixes && !showSearchRes))">
+  <div id="header" *ngIf="!msTeamAccess" class="search-page-header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit-search', $event)">
+    </app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit-search', $event)">
+    </app-product-header>
+  </div>
+  <div class="main-section main-section-search">
+    <div class="search-col" *ngIf="teamSystem" [ngClass]="{'search-div-msm' : msTeamAccess}">
+      <span *ngIf="msTeamAccess" class="cursor team-back-icon team-back-icon-msm" (click)="backPage()">
+        <span class="text-thread-title">
+          <span>Search</span>
+        </span>
+      </span>
+      <span *ngIf="searchFlag" class="search-div"
+        [ngClass]="{'search-filter search-btn' : searchClose || searchTick, 'search-bg': searchBgFlag, 'search-div-ms' : msTeamAccess}">
+        <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+          <a *ngIf="!searchTick && !searchClose" class="search-icon">
+            <img alt="Search" src="{{assetPath}}/search-icon.png"></a>
+          <input type="text" class="form-control search-control" [(ngModel)]="searchVal" id="searchKey"
+            formControlName="searchKey" maxlength="50" [readonly]="searchReadonlyFlag" placeholder="{{searchPlacehoder}}"
+            (input)="onSearchChange($event.target.value)">
+          <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()">
+            <img alt="Search Close" src="{{searchCloseImg}}"></a>
+          <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()">
+            <img alt="Search" src="{{searchImg}}"></a>
+        </form>
+      </span>
+    </div>
+    <div *ngIf="!pageLoading" class="search-section">
+      <div class="container-fluid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+          <!-- -->
+          <!--<div class="text-thread-title">
+                          <span>
+                              <img class="thread-img" src="assets/images/landing-page/thread-normal.png">
+                          </span><span>Threads</span>
+                      </div>-->
+          <div *ngIf="!msTeamAccess"
+            class="threads-page-filter padding-right-class" [ngClass]="{'hide': !showSearchRes, 'col col-lg-2 col-md-2 col-xl-2 col-sm-2': showSearchRes && expandFlag}">
+            <div class="cbt-filter thread-filter"
+              [ngClass]="{'filter-expand': expandFlag, 'filter-collapse': !expandFlag}">
+              <app-filter *ngIf="filterLoading" [pageDataInfo]="pageData" (toggle)="expandAction($event)"
+                (filterComponentRef)="filterRef = $event" (callback)="filterCallback($event)"
+                [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+              <app-filter *ngIf="!filterLoading" [pageDataInfo]="pageData" (toggle)="expandAction($event)"
+                (filterComponentRef)="filterRef = $event" (callback)="filterCallback($event)"
+                [filterOptions]="filterOptions" (filterAction)="applyFilter($event)"></app-filter>
+            </div>
+          </div>
+          <div class="center-middle-width-container search"
+            [ngClass]="{'col-lg-8 col-md-8 col-xl-8 col-sm-8': (docInfoFlag && !msTeamAccess && showSearchRes && expandFlag), 
+              'col-lg-10 col-md-10 col-xl-10 col-sm-10': (docInfoFlag && !msTeamAccess && showSearchRes && !expandFlag) || (!docInfoFlag && !msTeamAccess && showSearchRes && expandFlag), 
+              'col col-lg-12 col-md-12 col-xl-12 col-sm-12': (!docInfoFlag && !msTeamAccess && showSearchRes && !expandFlag) || (!docInfoFlag && msTeamAccess && !showSearchRes), 
+              'filter-collapse': !expandFlag}">
+            <div class="center-middle-width padding-common workstream-center-width search-middle-width">
+              <div *ngIf="showSearchRes && !msTeamAccess" class="workstream-page-center-menu" align="left">
+                <div class="workstream-page-center-menu-inner" [ngClass]="{'search-view': viewFlag}">
+                  <div class="inline-class search" (click)="taponContent(contentType.contentTypeId)" [ngClass]="{'hide': contentType.name == 'Standard Reports'}"
+                    *ngFor="let contentType of getcontentTypesArr; let ct=index">
+                    <div [ngClass]="{'active': contentType.contentTypeId == currentContentTypeId}">
+                      <span *ngIf="contentType.searchCount == 0">
+                        <img [src]="'assets/images/workstreams-page/'+contentType.urlPath" onload="SVGInject(this)"
+                          class="contenttype-img contentTypeId{{contentType.contentTypeId}} img-contenttype img-contenttype{{contentType.contentTypeId}} {{contentType.submenuimageClass}}">
+                      </span>
+                      <div *ngIf="contentType.searchCount > 0" class="search-count">
+                        <span *ngIf="contentType.searchCount < 100" class="count">{{contentType.searchCount}}</span>
+                        <span *ngIf="contentType.searchCount >= 100" class="count">99+</span>
+                      </div>
+                      <span class="content-type-title" [ngClass]="{'ws-count': contentType.searchCount > 0}" title="{{contentType.name}}"> {{contentType.name}}</span>
+                    </div>                  
+                    <div [ngClass]="{'active ': contentType.contentTypeId == currentContentTypeId}"
+                      class="search bottom-border border-contenttype border-contenttype{{contentType.contentTypeId}} ">
+                    </div>
+                  </div>                
+                </div>
+                <div *ngIf="viewFlag" class="view-type search">
+                  <div class="view-icon cursor {{threadThumbView}}" [ngClass]="{'cba': CBADomian, 'list': threadThumbView, 'thumb': !threadThumbView}" 
+                    [title]="threadThumbView ? 'Switch to List View' : 'Switch to Tile View'" (click)="changeView()"></div>
+                </div>
+              </div>
+              <div *ngIf="currentContentTypeId == 2 && showSearchRes">
+                <app-threads-page [tspageInfo]="threadInfo" [pageDataInfo]="pageData" [parentData]="workstreamId" [fromSearchPage]="fromSearchPage"
+                  [fromOthersTab]="comefromOthersTab" (searchResultData)="searchResultData($event);">
+                </app-threads-page>
+              </div>
+              <div *ngIf="currentContentTypeId == 11 && showSearchRes" class="parts-thumb-view">
+                <app-parts-list [fromSearchPage]="fromSearchPage" (searchResultData)="searchResultData($event);"></app-parts-list>
+              </div>
+              <div *ngIf="currentContentTypeId == 7 && showSearchRes">
+                <app-knowledge-articles-solr [pageDataInfo]="kaData" [fromSearchPage]="fromSearchPage" (searchResultData)="searchResultData($event);">
+                </app-knowledge-articles-solr>
+              </div>
+              <div *ngIf="currentContentTypeId == 28 && showSearchRes" class="parts-thumb-view">
+                <app-knowledge-base-list [fromSearchpage]="kbData"></app-knowledge-base-list>
+              </div>
+              <div *ngIf="currentContentTypeId == 4 && showSearchRes">
+                <!--<div class="documents-grid-row ps" style="padding-top: 0px !important;position: relative;max-height: 610px;"
+                                  [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                                  <app-files [items]="files" [thumbView]="thumbView"></app-files></div-->
+                <app-documents [tspageInfo]="threadInfo" [accessFrom]="pageAccess" (searchResultData)="searchResultData($event);"></app-documents>
+              </div>
+              <div *ngIf="currentContentTypeId == 16 && showSearchRes">
+                <app-sib-list [fromSearchpage]="sibData"></app-sib-list>
+              </div>
+              <div *ngIf="currentContentTypeId == 53 && showSearchRes" class="adas-thumb-view">
+                <app-adas-list [accessFrom]="pageData" (adasCallback)="adasCallback($event)" (searchResultData)="searchResultData($event);"></app-adas-list>
+              </div>
+              <div>
+                <app-recent-searches-widgets (search)="applySearch('emit', $event)" *ngIf="!showSearchRes"
+                  [fromSearchPage]="fromSearchPage"></app-recent-searches-widgets>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!msTeamAccess" class="right-middle-width-container landing-padding0 col padding-right-class"
+            [ngClass]="{'col-lg-2 col-md-2 col-xl-2 col-sm-2' : currentContentTypeId == 4 && (rightPanel && !emptyFlag)}">
+            <div class="right-width-column padding-common">
+              <!--
+  <div *ngIf="currentContentTypeId != 4">
+                                          <app-domain-members ></app-domain-members>
+                                      </div>
+                                  -->
+              <div *ngIf="currentContentTypeId == 4">
+                <div class="cust-right-panel ws-doc-info-panel info-panel media-info media-info-search"
+                  [style.height.px]="innerHeight+110"
+                  [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel || emptyFlag}">
+                  <span *ngIf="!rightPanel && !emptyFlag" class="expand-icon cursor"
+                    (click)="toggleInfo(rightPanel)"></span>
+                  <app-doc-info class="landing-doc-info" [ngClass]="{'hide': (!rightPanel && !emptyFlag) || emptyFlag}"
+                    (toggleAction)="toggleAction($event)"></app-doc-info>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-dialog [header]="false" [modal]="true" [draggable]="false" [resizable]="false" [(visible)]="feedbackFormFlag"
+ [position]="dialogPosition" class="v3-mask">
+    <h1 style="font-weight: normal">
+        <span class="head truncate">
+            <div class="head-text">Feedback</div>
+        </span>
+        <span class="sidebar-close-icon cursor text-right" (click)="closeSidebar('feedback')"></span>
+    </h1>
+    <div class="feedback-content" [style.height.px]="feedbackHeight+94">
+        <div *ngIf="feedbackLoading" class="loading-small-screen-scroll trst" align="center">
+            <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+        </div>
+        <div *ngIf="!feedbackLoading && !feedbackFormValid">
+            <form class="form-horizontal" [formGroup]="feedbackForm">
+                <div class="form-items {{tf.fieldClass}}" *ngFor="let tf of feedbackFields; let ti = index;">
+                    <div *ngIf="tf.isRequired" class="required-text text-right {{tf.fieldName}}">{{requiredText}}</div>
+                    <div class="field-label {{tf.fieldName}} {{tf.fieldIcon}} item-label">{{tf.fieldLabel}}</div>
+                    <div class="field-item">
+                        <div *ngIf="tf.fieldType == 'radio'">
+                            <div class="radio-button">
+                                <label class="cursor" [ngClass]="{'active': opt.isChecked }"
+                                    *ngFor="let opt of tf.selectionItems; let oi = index" id="radio-{{opt.id}}">
+                                    <input type="radio" [name]="opt.name" [formControlName]="tf.fieldName" [value]="opt.id" [checked]="opt.isChecked"
+                                        (change)="onChange(tf.fieldName, tf, $event, oi)" [(ngModel)]="tf.selectedValue">
+                                    <span class="checkmark" [ngClass]="{'active': opt.isChecked}"></span>
+                                    {{opt.name}}
+                                </label>
+                            </div>
+                        </div>
+                        <div *ngIf="tf.fieldType == 'textarea'">
+                            <textarea rows="5" placeholder="{{tf.fieldPlacehoder}}" formControlName="{{tf.fieldName}}" [ngModel]="tf.selectedValue"
+                                autocomplete="off" (ngModelChange)="onChange(tf.fieldName, tf, $event)"></textarea>
+                        </div>
+                        <div *ngIf="tf.fieldType == 'text-editor'">
+                          <ckeditor [editor]="Editor" [config]="configCke" (drop)="dropEvent($event,tf)"
+                          formControlName="{{tf.fieldName}}"
+                          [ngModel]="tf.selectedValue" 
+                          (change)="onEditorChange(tf.fieldName, tf, $event)"
+                          ></ckeditor>
+                        </div>
+                        <div *ngIf="feedbackFormSubmit && feedbackForm.controls[tf.fieldName].errors" class="invalid-feedback"
+                            [ngClass]="{'invalid-field': tf.submitted && !tf.valid}">
+                            <div id="valid-error" class="field-err" *ngIf="feedbackForm.controls[tf.fieldName].errors.required">{{tf.requiredText}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-action text-right">
+                    <button icon="pi pi-check" pButton pRipple type="button" label="Submit" class="p-button-rounded p-button-danger feedback-submit" [ngClass]="{'setOpacity5': feedbackFormValid}" (click)="saveData()"></button>
+                </div>
+            </form>
+
+            <div class="bottom-content">
+                <div class ="bc-row">
+                    <div class="bc-col bc-col-1"></div>
+                    <div class="bc-col bc-col-2 text-center"><span>OR</span></div>
+                    <div class="bc-col bc-col-3"></div>
+                </div>
+                <div class ="bc-row bc-row-cont">
+                    <div class="bct-row-1 text-center">Email Us</div>
+                    <div class="bct-row-2 text-center">
+                        <span class="support">support@collabtic.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="!feedbackLoading && feedbackFormValid">
+            <div class="loading-small-screen-scroll trst success" align="center">
+                {{feedbackSucess}}
+            </div> 
+        </div>
+    </div>
+</p-dialog>

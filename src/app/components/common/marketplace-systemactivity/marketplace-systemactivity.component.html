@@ -1,0 +1,27 @@
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin no-padding">
+    <div class="col-xl-1 col-lg-1 col-md-1 col-sm-12 col-12 no-padding"></div>
+    <div class="col-xl-11 col-lg-11 col-md-11 col-sm-12 col-12 no-padding">
+        <div class="activity-container activity-bg">                        
+            <div class="activity-title">System Activity</div> 
+            <div  class="activity-row activity-row-{{sys.uid}} {{sys.activeClass}}" [ngStyle]="{'background-color': sys.bgColor,'color': sys.fontColor}" [@inOutAnimation]="'in'" *ngFor="let sys of systemActivityArr">
+                <div class="activity-item">
+                    <span class="lt {{sys.imageClass}} " [ngStyle]="{'background-color': sys.iconBgColor}"></span>
+                    <span class="rt">{{sys.contentTypeName}} <span class="dot">&nbsp;</span> {{sys.localcreatedOnDate}}</span>
+                </div>
+            </div>
+           <!--<div class="activity-row">
+                <div class="activity-item">
+                    <span class="lt activity-thread-icon"></span>
+                    <span class="rt">Thread Viewed <span class="dot">&nbsp;</span> 10:36 AM</span>
+                </div>
+            </div>
+            <div class="activity-row">
+                <div class="activity-item">
+                    <span class="lt activity-thread-icon"></span>
+                    <span class="rt">Thread Liked <span class="dot">&nbsp;</span> 10:36 AM</span>
+                </div>
+            </div>-->
+                                                        
+        </div>
+    </div>
+</div>

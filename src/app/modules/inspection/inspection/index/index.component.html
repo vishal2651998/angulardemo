@@ -1,0 +1,35 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" ></app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" ></app-product-header>
+</div>
+<div class="left-section" *ngIf="dashView">
+    <div class="first-left-width">
+      <nav id="nav-sidebar">
+        <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}" (SidebarComponentRef)="sidebarRef = $event" (menuNav)="menuNav($event)"></app-sidebar>
+      </nav>
+    </div>
+</div>
+<div class="prob-index" [ngClass]="{'split-sec': dashView}">
+    <div class="container-fluid">
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+        </div>
+        <div class="center-middle-width-container">
+            <div class="center-middle-width padding-common">
+              <div class="thread-top-section hide">
+                <div class="thread-top-right" [ngClass]="{ 'ms-thread-top-right': msTeamAccess }">
+                </div>
+              </div>
+              <div class="clear"></div>
+              <div class="probing-content cbt-content part-content part-content-threads-new">
+                <div style="min-height: 80vh;" [ngClass]="{'hide': !pageLoading}" class="col">
+                  <div class="loading-small-screen-scroll trst" align="center" *ngIf="pageLoading">
+                    <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+                  </div>
+                </div>
+                <app-inspection-list [paramFlag]="paramFlag" (inspectionComponentRef)="inspectionPageRef = $event" (callback)="inspectionCallback($event)"></app-inspection-list>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+

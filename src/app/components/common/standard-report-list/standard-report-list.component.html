@@ -1,0 +1,784 @@
+<div class="report-container">
+    <div *ngIf="loading" class="col">
+        <div class="center-loading trst justify-content-center align-items-center" align="center">
+            <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+    </div>
+    <div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader report" [ngClass]="{'part-thumb-lazy-loader': thumbView, 'part-list-lazy-loader': !thumbView}"></div>
+    <div *ngIf="!reportFlag && !loading" class="docbreadcrumb"  [ngClass]="{'bottom-space': !reportFlag && !typeFlag}">
+        <div class="breadcrumb-back">
+            <span *ngIf="typeFlag" class="cursor" (click)="breadcrumb('report')"></span>
+            <span *ngIf="sectionFlag || diagnosticFlag || adasFlag" class="cursor" (click)="breadcrumb('type')"></span>
+        </div>
+        <div class="breadcrumb-home"></div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <!--li *ngIf="!reportFlag" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span class="cursor" (click)="breadcrumb('report')">Standard Reports</span></li-->
+                <li *ngIf="!reportFlag" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span class="cursor" (click)="breadcrumb('report')">{{wsName}}</span></li>
+                <li *ngIf="!reportFlag" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span class="cusror-default" [ngClass]="{'cursor': !reportFlag && !typeFlag}" (click)="breadcrumb('type')">{{reportInfo.name}}</span></li>
+                <li *ngIf="!reportFlag && !typeFlag" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span>{{typeInfo.name}}</span></li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Main Report List -->
+    <div *ngIf="!loading && reportFlag">
+        <div *ngIf="thumbView && !reportItemEmpty && !reportSearchEmpty" class="report-thumb-view" [style.height]="'calc(100vh - 162px)'">
+            <div #top *ngIf="!loading && !reportItemEmpty" id="reportList" [perfectScrollbar]="sconfig" [disabled]="parentScrollDisabled" (psYReachEnd)="onScrollEvent('report', $event)">
+                <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row report-row masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                    <div ngxMasonryItem class="parts-grid-col masonry-item" *ngFor="let item of reportItems; let i = index">
+                        <div class="report-card cursor" (click)="sectionNav('type', item)">
+                            <div class="card-logo justify-content-center align-items-center">
+                                <img *ngIf="item.logo != ''" class="system" [ngClass]="{'mfg': item.isMfg == 1}" [src]="item.logo" >
+                                <img *ngIf="item.logo == ''" class="default" [src]="defaultReportLogo" >
+                            </div>
+                            <div class="card-info" [ngClass]="{'search-info': item.facetCount >= 0}">
+                                <span class="truncate name" title="{{item.name}}">{{item.name}}</span>
+                                <span *ngIf="item.facetCount >= 0" class="item-count">({{item.facetCount}})</span>
+                                <span *ngIf="editAccess || deleteAccess" class="three-dot" (click)="$event.stopPropagation();" [matMenuTriggerFor]="reportAction"></span>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #reportAction="matMenu" backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul>
+                                                <li mat-menu-item *ngIf="editAccess" class="raction-menu cursor" (click)="actionEdit('report', item, item.id)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                <li mat-menu-item *ngIf="!item.isMfg && editAccess" class="raction-menu upload cursor" (click)="updateLogo(item)"><img src="assets/images/media/image-thumb.png" alt="Upload" class="img-upload">&nbsp;Update Logo</li>
+                                                <li mat-menu-item *ngIf="deleteAccess" class="raction-menu cursor" (click)="actionDelete('report', item, i)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                            </ul>
+                                        </div> 
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </div>                        
+                        </div>                    
+                    </div>
+                </ngx-masonry>
+            </div>            
+        </div>
+        <div *ngIf="reportItemEmpty && !reportSearchEmpty" class="empty-container">
+            <div class="center-loading empty-banner report justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="reportEmptyBanner" alt="Empty" /><br />
+                    <div class="item-empty-para empty-res report-empty padd-top-20">{{emptyReportCont}}</div>
+                    <div class="cursor thread-add-new" (click)="addReport()">                            
+                        <span class="action-new"><i style="font-size: 13px;margin-right: 4px;" class="pi pi-plus"></i></span><span>New</span>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="reportSearchEmpty" class="empty-container">
+            <div class="center-loading empty-banner justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="emptyBanner" alt="Empty" />
+                    <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Type List -->
+    <div *ngIf="!loading && typeFlag">
+        <div *ngIf="thumbView && !reportSearchEmpty" class="report-thumb-view" [style.height]="'calc(100vh - 198px)'">
+            <div #top *ngIf="!loading" id="reportList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row type-row report-row masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                    <div ngxMasonryItem class="parts-grid-col masonry-item masonry-item-type" *ngFor="let item of typeItems">
+                        <div class="catg-card cursor" [ngClass]="{'setOpacity5 cusror-default': !item.isActive}" (click)="item.isActive ? sectionNav(item.slug, item) : false">
+                            <div class="catg-col catg-logo">
+                                <img src="assets/images/standard-report/svg/{{item.logo}}.svg" onload="SVGInject(this)">
+                            </div>
+                            <div class="catg-col card-info" [ngClass]="{'search-info': item.facetCount >= 0}">
+                                <span class="truncate two-line name" title="{{item.name}}">{{item.name}}</span>
+                                <span *ngIf="item.facetCount >= 0" class="item-count">({{item.facetCount}})</span>
+                            </div>                        
+                        </div>                    
+                    </div>
+                </ngx-masonry>
+            </div>
+        </div>
+        <div *ngIf="reportSearchEmpty" class="empty-container">
+            <div class="center-loading empty-banner justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="emptyBanner" alt="Empty" />
+                    <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Section List -->
+    <div *ngIf="!loading && sectionFlag" cdkDropListGroup>
+        <div *ngIf="thumbView && !sectionItemEmpty" class="report-thumb-view" [style.height]="'calc(100vh - 202px)'">
+            <div #top *ngIf="!loading" id="reportList" class="section-scroll report-row active" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                <p-accordion class="report-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of sectionItems; let s = index;"
+                (onClose)="onTabClose('section', item, s)" (onOpen)="onTabOpen('section', item, s)">
+                    <p-accordionTab id="section-{{s}}" class="section" [transitionOptions]="'100ms'" [selected]="item.isSelected">
+                        <p-header class="sec-info">
+                            <div class="sec-title">
+                                <span class="sec-index" [style.backgroundColor]="item.orderBg">{{item.sectionOrder}}</span>
+                                <span class="sec-head truncate" title="{{item.title}}">{{item.title}}</span>
+                                <button *ngIf="createAccess" id="add-more-{{s}}" icon="pi pi-plus" pButton pRipple type="button" label="Add Content"
+                                [ngClass]="{'setOpacity5': !item.addMoreFlag, 'hide': item.formFlag || this.searchFlag}" class="p-button-outlined p-button-rounded p-button-danger title-button" 
+                                (click)="$event.stopPropagation(); item.addMoreFlag ? addCont(s, item) : false"></button>
+                                <!-- <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-sec-{{s}} hide" [matMenuTriggerFor]="secAction" 
+                                    (click)="matmenu('more-sec','active', s);$event.stopPropagation();" (clickOutside)="matmenu('more-sec','inactive', s);$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div> -->
+                                <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-sec-{{s}} hide" [matMenuTriggerFor]="secAction" 
+                                    (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #secAction="matMenu" backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul>
+                                                <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor" (click)="actionEdit('section', item, item.id)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor" (click)="actionDelete('section', item, s)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                            </ul>
+                                        </div> 
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </div>
+                            <div class="sec-desc" [innerHTML]="item.desc"></div>
+                        </p-header>
+                        <div class="content-list" id="cont-list-{{s}}" [style.height.px]="item.contHeight">
+                            <div [perfectScrollbar]="dconfig" [perfectScrollbar]="iconfig">
+                                <p-timeline *ngIf="item.dataFlag" [value]="item.contItems" align="left" styleClass="customized-timeline sec-cont">
+                                    <ng-template pTemplate="marker" let-cont>
+                                    <span class="custom-marker p-shadow-2" [style.backgroundColor]="cont.orderBg">
+                                        {{cont.corder}}
+                                    </span>
+                                    </ng-template>
+                                    <ng-template pTemplate="content" let-cont>
+                                        <div class="cont-info sec-cont-{{item.sectionOrder}}">
+                                            <div class="cont-desc" [innerHTML]="cont.content"></div>
+                                        </div>
+                                        <ng-template #copy></ng-template>
+                                        <div *ngIf="cont.content != ''" id="copy" class="cursor copy-icon hide" popoverClass="custom-tooltip menu-tooltip" 
+                                            [ngbPopover]="copy" popoverTitle="Copy" placement="bottom" triggers="hover" 
+                                            (click)="$event.stopPropagation(); copyToClipboard(cont.content)"></div>
+                                        <!-- <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-sec-cont-{{s}}-{{cont.corder}} hide" [matMenuTriggerFor]="contAction" 
+                                            (click)="matmenu('more-sec-cont','active', s, cont.corder);$event.stopPropagation();" (clickOutside)="matmenu('more-sec-cont','inactive', s, cont.corder);$event.stopPropagation();">
+                                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                        </div> -->
+                                        <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-sec-cont-{{s}}-{{cont.corder}} hide" [matMenuTriggerFor]="contAction" 
+                                            (click)="$event.stopPropagation();">
+                                            <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                        </div>
+                                        <mat-toolbar color="primary">
+                                            <mat-menu #contAction="matMenu" backdropClass="ptabletmenu">
+                                                <div class="part-menu">
+                                                    <ul>
+                                                        <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor" (click)="actionEdit('content', cont, s)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                        <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor" (click)="actionDelete('content', cont, s)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                    </ul>
+                                                </div> 
+                                            </mat-menu>
+                                        </mat-toolbar>
+                                    </ng-template>                                
+                                </p-timeline>
+                            </div>
+                        </div>
+                        <form *ngIf="item.formFlag" id="cform-{{s}}" class="section-form" [formGroup]="contentForm">
+                            <div class="field-row">
+                                <div class="label bg desc">{{manageTitle}} <span class="right-info-col">Required</span></div>
+                                <div class="field">
+                                    <!--textarea class="text-area" placeholder="Description" formControlName="desc" autocomplete="off"></textarea-->
+                                    <ckeditor id="custom-editor" [editor]="Editor" [config]="configCke" formControlName="desc"
+                                        [ngClass]="{ 'is-invalid': contentFormSubmit && cf.desc.errors }"></ckeditor>
+                                    <div *ngIf="contentFormSubmit && cf.desc.errors" class="invalid-feedback">
+                                        <div id="valid-error" class="field-err" *ngIf="cf.desc.errors.required">Description is required</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field-row">
+                                <button icon="pi pi-save" pButton pRipple type="button" label="Save" class="p-button-rounded p-button-danger" [ngClass]="{'setOpacity5': formValid}" (click)="saveData()"></button>
+                                <button icon="pi pi-times" pButton pRipple type="button" label="Cancel" class="p-button-outlined p-button-rounded cancel" (click)="cancelForm('content', item, s)"></button>        
+                            </div>
+                        </form>
+                    </p-accordionTab>
+                </p-accordion>
+            </div>
+        </div>
+        <div *ngIf="sectionItemEmpty" class="empty-container">
+            <div class="center-loading empty-banner justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="emptyBanner" alt="Empty" />
+                    <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Diagnostic List -->
+    <div *ngIf="!loading && diagnosticFlag" cdkDropListGroup>
+        <div *ngIf="thumbView && !diagnosticItemEmpty" class="report-thumb-view" [style.height]="'calc(100vh - 202px)'">
+            <div #top *ngIf="!loading" id="reportList" class="section-scroll active" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                <div class="report-row">
+                    <p-accordion class="report-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of diagnosticItems; let d = index;"
+                    (onClose)="onTabClose('diagnostic', item, d)" (onOpen)="onTabOpen('diagnostic', item, d)">
+                        <p-accordionTab id="diagnostic-{{d}}" class="section" [transitionOptions]="'100ms'" [selected]="item.isSelected">
+                            <p-header class="sec-info">
+                                <div class="sec-title mod-title">
+                                    <span class="sec-head truncate"  title="{{item.name}} {{item.slug}}">{{item.name}}<span *ngIf="item.slug != ''">, ({{item.slug}})</span></span>
+                                    <button *ngIf="createAccess" id="add-more-{{d}}" icon="pi pi-plus" pButton pRipple type="button" label="Add Codes"
+                                        [ngClass]="{'setOpacity5': !item.addMoreFlag, 'hide': item.formFlag || this.searchFlag}" class="p-button-outlined p-button-rounded p-button-danger title-button" 
+                                        (click)="$event.stopPropagation();item.addMoreFlag ? addDiagnosticInfo(d, item) : false"></button>
+                                    <!-- <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-diag-{{d}} hide" [matMenuTriggerFor]="modAction" 
+                                        (click)="matmenu('more-diag','active', d);$event.stopPropagation();" (clickOutside)="matmenu('more-diag','inactive', d);$event.stopPropagation();">
+                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div> -->
+                                    <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-diag-{{d}} hide" [matMenuTriggerFor]="modAction" 
+                                        (click)="$event.stopPropagation();">
+                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #modAction="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul>
+                                                    <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor" (click)="actionEdit('diagnostic', item, item.id)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                    <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor" (click)="actionDelete('diagnostic', item, d)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                </ul>
+                                            </div> 
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                                <div class="sec-desc mod-desc" [innerHTML]="item.desc"></div>
+                            </p-header>
+                            <div class="content-list" id="info-list-{{d}}" [style.height.px]="item.contHeight">
+                                <div class="customized-timeline info-cont" [perfectScrollbar]="iconfig">
+                                    <div class="info-items sec-cont-{{di}}" *ngFor="let info of item.infoItems; let di = index;">
+                                        <div class="info-content" [ngClass]="{'no-bottom': di == item.infoItems.length-1}">
+                                            <div class="cont-info mod-info">
+                                                <div class="info-row cont-dtc d-flex" [ngClass]="{'no-border': info.instruction == ''}">
+                                                    <div class="dtc-icon {{industryType.class}}"></div>
+                                                    <div class="dtc-code">{{info.dtcCode}}</div>
+                                                    <div class="dtc-desc">&#8211;&nbsp;{{info.dtcDesc}}</div>
+                                                </div>
+                                                <div *ngIf="info.instruction != ''" class="info-row cont-desc" [innerHTML]="info.instruction"></div>
+                                            </div>
+                                            <div class="info-actions">
+                                                <ng-template #copy></ng-template>
+                                                <div *ngIf="info.instruction != ''" id="copy" class="cursor copy-icon hide" popoverClass="custom-tooltip menu-tooltip" 
+                                                    [ngbPopover]="copy" popoverTitle="Copy" placement="bottom" triggers="hover"
+                                                    (click)="$event.stopPropagation(); copyToClipboard(info.instruction)"></div>
+                                                <!-- <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-diag-cont-{{d}}-{{di}} hide" [matMenuTriggerFor]="contAction" 
+                                                    (click)="matmenu('more-diag-cont','active', d, di);$event.stopPropagation();" (clickOutside)="matmenu('more-diag-cont','inactive', d, di);$event.stopPropagation();">
+                                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                </div> -->
+                                                <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-diag-cont-{{d}}-{{di}} hide" [matMenuTriggerFor]="contAction" 
+                                                    (click)="$event.stopPropagation();">
+                                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                </div>
+                                                <mat-toolbar color="primary">
+                                                    <mat-menu #contAction="matMenu" backdropClass="ptabletmenu">
+                                                        <div class="part-menu">
+                                                            <ul>
+                                                                <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor" (click)="actionEdit('diagnosticInfo', info, d)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                                <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor" (click)="actionDelete('diagnosticInfo', info, d)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                            </ul>
+                                                        </div> 
+                                                    </mat-menu>
+                                                </mat-toolbar>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <form *ngIf="item.formFlag" id="dform-{{d}}" class="section-form" [formGroup]="diagnosticInfoForm">
+                                <div class="field-row">
+                                    <div class="label bg dtc {{industryType.class}}">DTC Code & Description <span class="right-info-col">Required</span></div>
+                                    <div class="field row">
+                                        <div class="col-5">
+                                            <input class="input" placeholder="Enter DTC Code" formControlName="dtcCode" (blur)="changeItem('dtcCode', $event.target.value)"
+                                                maxlength="20" autocomplete="off" [ngClass]="{ 'is-invalid': (diagnosticInfoFormSubmit && dif.dtcCode.errors) || dtcCodeExist }" />
+                                            <div *ngIf="dtcCodeExist || (diagnosticInfoFormSubmit && dif.dtcCode.errors)" class="invalid-feedback">
+                                                <div *ngIf="dtcCodeExist" id="valid-error" class="field-err">{{existError}}</div>
+                                                <div id="valid-error" class="field-err" *ngIf="!dtcCodeExist && dif.dtcCode.errors.required">DTC Code is required</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-7">
+                                            <input class="input" placeholder="Enter DTC Description" formControlName="dtcDesc" maxlength="100" 
+                                                autocomplete="off" [ngClass]="{ 'is-invalid': diagnosticInfoFormSubmit && dif.dtcDesc.errors }" />
+                                            <div *ngIf="diagnosticInfoFormSubmit && dif.dtcDesc.errors" class="invalid-feedback">
+                                                <div id="valid-error" class="field-err" *ngIf="dif.dtcDesc.errors.required">DTC Description is required</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <div class="label bg desc">Diagnositc Instruction</div>
+                                    <div class="field">
+                                        <ckeditor [editor]="Editor" [config]="configCke" formControlName="desc"></ckeditor>
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <button icon="pi pi-save" pButton pRipple type="button" label="Save" class="p-button-rounded p-button-danger" [ngClass]="{'setOpacity5': formValid}" (click)="saveData()"></button>
+                                    <button icon="pi pi-times" pButton pRipple type="button" label="Cancel" class="p-button-outlined p-button-rounded cancel" (click)="cancelForm('diagnosticInfo', item, d)"></button>        
+                                </div>
+                            </form>                        
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="diagnosticItemEmpty" class="empty-container">
+            <div class="center-loading empty-banner justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="emptyBanner" alt="Empty" />
+                    <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Report Adas Calibration List -->
+    <div *ngIf="!loading && adasFlag" cdkDropListGroup>
+        <div *ngIf="thumbView && !adasItemEmpty" class="report-thumb-view" [style.height]="'calc(100vh - 202px)'">
+            <div #top *ngIf="!loading" id="reportList" class="section-scroll active" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                <div class="report-row">
+                    <p-accordion class="report-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of adasItems; let s = index;"
+                    (onClose)="onTabClose('adas', item, s)" (onOpen)="onTabOpen('adas', item, s)">
+                        <p-accordionTab id="section-{{s}}" class="section" [transitionOptions]="'100ms'" [selected]="item.isSelected">
+                            <p-header class="sec-info">
+                                <div class="sec-title adas-title">
+                                    <span class="sec-head truncate" title="{{item.title}}">
+                                        {{item.make}}<span class="chevron pi pi-angle-right"></span>
+                                        {{item.model}}<span class="chevron pi pi-angle-right"></span>
+                                        {{item.year}}<span class="equip" *ngIf="item.equipmentStr != ''">{{item.equipmentStr}}</span>
+                                    </span>
+                                    <!--button id="add-more-{{s}}" icon="pi pi-plus" pButton pRipple type="button" label="Add New"
+                                    [ngClass]="{'setOpacity5': !item.addMoreFlag, 'hide': item.formFlag || this.searchFlag}" class="p-button-outlined p-button-rounded p-button-danger title-button" 
+                                    (click)="$event.stopPropagation(); item.addMoreFlag ? addCont(s, item) : false"></button-->
+                                    <!-- <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-adas-{{s}} hide" [matMenuTriggerFor]="secAction" 
+                                        (click)="matmenu('more-adas','active', s);$event.stopPropagation();" (clickOutside)="matmenu('more-adas','inactive', s);$event.stopPropagation();">
+                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div> -->
+                                    <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-adas-{{s}} hide" [matMenuTriggerFor]="secAction" 
+                                        (click)="$event.stopPropagation();">
+                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #secAction="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul>
+                                                    <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor hide" (click)="actionEdit('adas', item, item.id)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                    <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor" (click)="actionDelete('adas', item, s)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                </ul>
+                                            </div> 
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                            </p-header>
+                            
+                            <div class="content-list" id="info-list-{{s}}" [style.height.px]="item.contHeight">
+                                <div class="customized-timeline info-cont" [perfectScrollbar]="iconfig">
+                                    <div class="info-items sec-cont-{{ci}}" *ngFor="let cont of item.contItems; let ci = index;">
+                                        <div class="info-content" [ngClass]="{'no-bottom': ci == item.contItems.length-1}">
+                                            <div class="cont-info adas-info">
+                                                <div class="adas-cont">
+                                                    <div class="cont-title">{{cont.adasName}}</div>
+                                                    <div *ngIf="cont.description != ''" class="cont-desc" [innerHTML]="cont.description"></div>
+                                                    <div *ngIf="cont.description == ''" class="cont-desc">None</div>
+                                                </div>                                            
+                                            </div>
+                                            <div *ngIf="cont.notes != ''" class="adas-cont-notes" [innerHTML]="cont.notes"></div>
+                                            <div class="adas-cont-actions">
+                                                <ng-template #copy></ng-template>
+                                                <div *ngIf="cont.name != ''" id="copy" class="cursor copy-icon" popoverClass="custom-tooltip menu-tooltip" 
+                                                    [ngbPopover]="copy" popoverTitle="Copy" placement="bottom" triggers="hover"
+                                                    (click)="$event.stopPropagation(); copyToClipboard(cont.realDescription)"></div>
+                                               <!-- <div *ngIf="editAccess || deleteAccess" id="more" class="cursor more-icon more-adas-cont-{{s}}-{{ci}} hide hide" [matMenuTriggerFor]="contAction" 
+                                                    (click)="$event.stopPropagation();">
+                                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                </div>
+                                                <mat-toolbar color="primary">
+                                                    <mat-menu #contAction="matMenu" backdropClass="ptabletmenu">
+                                                        <div class="part-menu">
+                                                            <ul>
+                                                                <li *ngIf="editAccess" mat-menu-item class="raction-menu cursor hide" (click)="actionEdit('adasInfo', cont, s)"><img src="assets/images/edit.png" alt="Edit" class="img-edit">&nbsp;Edit</li>
+                                                                <li *ngIf="deleteAccess" mat-menu-item class="raction-menu cursor hide" (click)="actionDelete('adasInfo', cont, s)"><img src="assets/images/delete.png" alt="Delete" class="img-delete">&nbsp;Delete</li>
+                                                            </ul>
+                                                        </div> 
+                                                    </mat-menu>
+                                                </mat-toolbar>-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--form *ngIf="item.formFlag" id="cform-{{s}}" class="section-form" [formGroup]="adasContentForm">
+                                <div class="field-row">
+                                    <div class="label bg desc">{{manageTitle}} <span class="right-info-col">Required</span></div>
+                                    <div class="field">
+                                        <ckeditor id="custom-editor" [editor]="Editor" [config]="configCke" formControlName="desc"
+                                            [ngClass]="{ 'is-invalid': contentFormSubmit && cf.desc.errors }"></ckeditor>
+                                        <div *ngIf="contentFormSubmit && cf.desc.errors" class="invalid-feedback">
+                                            <div id="valid-error" class="field-err" *ngIf="cf.desc.errors.required">Description is required</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field-row">
+                                    <button icon="pi pi-save" pButton pRipple type="button" label="Save" class="p-button-rounded p-button-danger" [ngClass]="{'setOpacity5': formValid}" (click)="saveData()"></button>
+                                    <button icon="pi pi-times" pButton pRipple type="button" label="Cancel" class="p-button-outlined p-button-rounded cancel" (click)="cancelForm('content', item, s)"></button>        
+                                </div>
+                            </form-->
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="adasItemEmpty" class="empty-container">
+            <div class="center-loading empty-banner justify-content-center align-items-center" align="center">
+                <div class="empty-cont">
+                    <img [src]="emptyBanner" alt="Empty" />
+                    <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Report Adas Calibration List -->
+    <div *ngIf="!loading && recallFlag">
+        <form [formGroup]="recallForm" class="recall-form">
+            <div class="field-row rc-field-row split-row vin">
+                <div class="label bg vin">VIN</div>
+                <div class="d-flex field">
+                    <div class="p-inputgroup mr-2">
+                        <div *ngIf="vinLoader" class="dash-loader cust-loader field-loader rc-vin-loader"><img
+                            src="assets/images/loading.svg" alt="Loader" /></div>
+                        <input type="text" pInputText formControlName="vin" [(ngModel)]="recallForm.value.vin" class="input-bg vin-input text-uppercase" maxlength="17" (input)="vinChanged('change', $event.target.value)"
+                            placeholder="Enter VIN" [ngClass]="{'is-invalid': vinIsValid && !vinValid}">
+                        <button type="button" pButton pRipple icon="pi pi-check" (click)="vinChanged('api')"
+                            [disabled]="vinDisable" class="p-button-secondary" [ngClass]="{'p-button-danger': vinIsValid, 'vin-check-btn': !vinIsValid}"></button>
+                    </div>
+                    <button pButton pRipple type="button" class="p-button-outlined p-button-rounded vin-btn" (click)="getRecentVin()">
+                        <!-- this.miSpecialForm.get('miName').valid -->
+                        <img src="assets/images/standard-report/svg/recent-vin-icon.svg" />
+                    </button>
+                </div>
+                <div *ngIf="vinIsValid && !vinValid" class="invalid-feedback invalid-field rc-vin-valid">
+                    <div id="valid-error" class="field-err">Invalid VIN</div>
+                </div>
+            </div>
+            <div class="field-row rc-field-row split-row">
+                <div class="label bg make">Make <span class="right-info-col">Required</span></div>
+                <div class="field">
+                    <div *ngIf="makeLoader" class="dash-loader cust-loader field-loader"><img
+                        src="assets/images/loading.svg" alt="Loader" /></div>
+                    <p-dropdown class="split-col catg-col" appendTo="body" [options]="makeItems" optionLabel="name" optionValue="name" 
+                        [(ngModel)]="recallForm.value.make" formControlName="make" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false"
+                        placeholder="Select" [ngClass]="{ 'is-invalid': recallFormSubmit && rcf.make.errors }" (onChange)="changeItem('make', $event.value, 'recall')">
+                    </p-dropdown>
+                    <div *ngIf="recallFormSubmit && rcf.make.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="rcf.make.errors.required">Make is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="field-row rc-field-row split-row">
+                <div class="label bg model">Model <span class="right-info-col">Required</span></div>
+                <div class="field">
+                    <div *ngIf="modelLoader" class="dash-loader cust-loader field-loader"><img
+                        src="assets/images/loading.svg" alt="Loader" /></div>
+                    <p-dropdown class="split-col catg-col" appendTo="body" [options]="modelItems" optionLabel="name" optionValue="name" 
+                        [(ngModel)]="recallForm.value.model" formControlName="model" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false" [disabled]="disableFlag('model')"
+                        placeholder="Select" [ngClass]="{ 'is-invalid': recallFormSubmit && rcf.model.errors }" (onChange)="changeItem('model', $event.value, 'recall')">
+                    </p-dropdown>
+                    <div *ngIf="recallFormSubmit && rcf.model.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="rcf.model.errors.required">Model is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="field-row rc-field-row split-row">
+                <div class="label bg year">Year <span class="right-info-col">Required</span></div>
+                <div class="field">
+                    <div *ngIf="yearLoader" class="dash-loader cust-loader field-loader"><img
+                        src="assets/images/loading.svg" alt="Loader" /></div>
+                    <p-dropdown class="split-col catg-col" appendTo="body" [options]="yearItems" optionLabel="name" optionValue="name" 
+                        [(ngModel)]="recallForm.value.year" formControlName="year" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false"
+                        placeholder="Select" [ngClass]="{ 'is-invalid': recallFormSubmit && rcf.year.errors }" (onChange)="changeItem('year', $event.value, 'recall')">
+                    </p-dropdown>
+                    <div *ngIf="recallFormSubmit && rcf.year.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="rcf.year.errors.required">Year is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="field-row rc-field-row split-row button-row">
+                <div class="label empty"></div>
+                <div class="field">
+                    <div class="recall-action check" [ngClass]="{'active': recallButtonFlag}" (click)="recallButtonFlag ? getRecallItems() : false"></div>
+                    <div class="recall-action clear" [ngClass]="{'active': recallButtonFlag}" (click)="recallButtonFlag ? clearRecallData() : false"></div>
+                </div>
+            </div>
+        </form>
+        <div *ngIf="!recallLoader && !recallEmpty" class="report-thumb-view" [style.height]="'calc(100vh - '+recallHeight+'px)'">
+            <div #top *ngIf="!loading" id="reportList" class="section-scroll active" [perfectScrollbar]="sconfig">
+                <div class="report-row">
+                    <p-accordion class="report-section recall-section custom-accordion flat-custom-accordion thread-detail-accordion" *ngFor="let item of recallItems; let r = index;"
+                    (onClose)="onTabClose('adas', item, r)" (onOpen)="onTabOpen('adas', item, r)">
+                        <p-accordionTab id="section-{{r}}" class="section" [transitionOptions]="'100ms'" [selected]="recallItemEmpty">
+                            <p-header class="sec-info">
+                                <div class="sec-title">
+                                    <span class="sec-head">
+                                        {{item.Make}}
+                                        <span class="chevron pi pi-angle-right"></span>
+                                        {{item.Model}}
+                                        <span class="chevron pi pi-angle-right"></span>
+                                        {{item.ModelYear}}
+                                    </span>
+                                    <span class="sec-head camp-num">Campaign Number : {{item.NHTSACampaignNumber}}</span>
+                                </div>
+                            </p-header>
+                            <div class="content-list" id="info-list-{{r}}">
+                                <div class="row col-12 vinfo-row">
+                                    <div class="col-3 field-row vinfo-col">
+                                        <div class="label bg mfg">Manufacturer</div>
+                                        <div class="info">{{item.Manufacturer}}</div>
+                                    </div>
+                                    <div class="col-3 field-row vinfo-col">
+                                        <div class="label bg act">Action Number</div>
+                                        <div class="info" *ngIf="item.NHTSAActionNumber != undefined">{{item.NHTSAActionNumber}}</div>
+                                        <div class="info" *ngIf="item.NHTSAActionNumber == undefined">-</div>
+                                    </div>
+                                    <div class="col-3 field-row vinfo-col">
+                                        <div class="label bg rcd">Report Received Date</div>
+                                        <div class="info">{{item.ReportReceivedDate}}</div>
+                                    </div>
+                                    <div class="col-3 field-row vinfo-col">
+                                        <div class="label bg cmp">Component</div>
+                                        <div class="info">{{item.Component}}</div>
+                                    </div>
+                                </div>
+                                <div class="border-bottom"></div>
+                                <div class="row col-12 vinfo-row">
+                                    <div class="col-12 field-row vinfo-col">
+                                        <div class="label bg sum">Summary</div>
+                                        <div class="info">{{item.Summary}}</div>
+                                    </div>
+                                </div>
+                                <div class="border-bottom"></div>
+                                <div class="row col-12 vinfo-row">
+                                    <div class="col-12 field-row vinfo-col">
+                                        <div class="label bg conseq">Consequence</div>
+                                        <div class="info">{{item.Consequence}}</div>
+                                    </div>
+                                </div>
+                                <div class="border-bottom"></div>
+                                <div class="row col-12 vinfo-row">
+                                    <div class="col-12 field-row vinfo-col">
+                                        <div class="label bg remedy">Remedy</div>
+                                        <div class="info">{{item.Remedy}}</div>
+                                    </div>
+                                </div>
+                                <div class="border-bottom"></div>
+                                <div class="row col-12 vinfo-row">
+                                    <div class="col-12 field-row vinfo-col">
+                                        <div class="label bg notes">Notes</div>
+                                        <div class="info">{{item.Notes}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-accordionTab>
+                    </p-accordion>
+                </div>
+                <div *ngIf="recallItemEmpty" class="empty-container">
+                    <div class="center-loading empty-banner justify-content-center align-items-center" align="center">
+                        <div class="empty-cont">
+                            <img [src]="emptyBanner" alt="Empty" />
+                            <p class="item-empty-para empty-res padd-top-20">{{emptyText}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="recallLoader" class="recall-loader text-center">
+            <img src="assets/images/loading.svg" alt="Loader" />
+        </div>
+        <div *ngIf="!recallLoader && recallEmpty" class="empty-container">
+            <div class="center-loading empty-banner justify-content-center align-items-center" align="center"  [style.min-height]="'calc(100vh - '+recallHeight+'px)'">
+                <div class="empty-cont">
+                    <img [src]="recallEmptyBanner" alt="Empty" />
+                    <p class="item-empty-para empty-res padd-top-20">{{recallEmptyText}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="displayModal" [modal]="true" [draggable]="false" [resizable]="true" class="report-modal card-spacing">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">{{manageTitle}}</span>
+            <button *ngIf="reportFormFlag" pButton pRipple type="button" icon="pi pi-save" iconPos="right" label="Save"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': formValid}" (click)="saveData('check')"></button>
+            <button *ngIf="!reportFormFlag" pButton pRipple type="button" icon="pi pi-save" iconPos="right" label="Save"
+                class="p-button-rounded p-button-danger float-right" [ngClass]="{'setOpacity5': formValid}" (click)="saveData()"></button>    
+            <!-- [disabled]="serviceForm.invalid" -->
+        </div>
+    </ng-template>
+    <form *ngIf="reportFormFlag" [formGroup]="reportForm">
+        <div class="field-row">
+            <div class="label bg ws">Select Workstream <span class="right-info-col">Required</span></div>
+            <div class="field">
+                <!--p-multiSelect class="split-col catg-col" appendTo="body" [options]="workstreamItems" [filter]="true" showClear="false"
+                    formControlName="workstreamId" defaultLabel="Select workstream"
+                    [ngClass]="{ 'is-invalid': reportFormSubmit && rf.workstreamId.errors }"
+                    optionLabel="name" optionValue="id" selectedItemsLabel="{0} worksdtreams selected">
+                </p-multiSelect-->
+                <p-dropdown class="split-col catg-col" appendTo="body" [options]="workstreamItems" optionLabel="name" optionValue="id" 
+                    [(ngModel)]="wsId[0]" formControlName="workstreamId" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false"
+                    placeholder="Select workstream" [ngClass]="{ 'is-invalid': reportFormSubmit && rf.workstreamId.errors }" (onChange)="changeItem('workstream', $event.value)">
+                </p-dropdown>
+                <div *ngIf="reportFormSubmit && rf.workstreamId.errors" class="invalid-feedback">
+                    <div id="valid-error" class="field-err" *ngIf="rf.workstreamId.errors.required">Workstream is required</div>
+                </div>
+            </div>
+        </div>
+        <div class="row field-row">
+            <div class="col-12">
+                <div class="label bg report-type">Report Type <span class="right-info-col">Required</span></div>
+                <div class="field">
+                    <p-dropdown appendTo="body" [options]="reportSelectionList" optionLabel="name" formControlName="reportType" optionValue="id"
+                        [ngClass]="{ 'is-invalid': (reportFormSubmit && rf.reportType.errors) }" (onChange)="changeItem('reportType', $event.value)"
+                        placeholder="Section Report Type" [virtualScroll]="false" [itemSize]="5" [filter]="true" resetFilterOnHide="true">
+                    </p-dropdown>
+                    <div *ngIf="reportFormSubmit && rf.reportType.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="rf.reportType.errors.required">Report Type is required</div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+        <div class="row field-row" [ngClass]="{'hide': !customReportFlag}">
+            <div class="col-12">
+                <div class="label bg catg">Category Name <span class="right-info-col">Required</span></div>
+                <div class="field">
+                    <input class="input" placeholder="Enter Category Name" formControlName="reportName" maxlength="50" 
+                        [ngClass]="{ 'is-invalid': (reportFormSubmit && rf.reportName.errors) || reportExist }"
+                        autocomplete="off" [readonly]="reportFieldDisabled" (blur)="changeItem('reportName', $event.target.value)" />
+                    <div *ngIf="reportForm.value.reportName != '' && reportExist" class="invalid-feedback">
+                        <div id="valid-error" class="field-err">{{existError}}</div>
+                    </div>
+                    <div *ngIf="reportFormSubmit && rf.reportName.errors && !reportFieldDisabled" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="rf.reportName.errors.required">Category Name is required</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row field-row" [ngClass]="{'hide': !mfgReportFlag}">
+            <div class="col-6">
+                <div class="label bg mfg">Manufacturer<span class="right-info-col mfg">Required</span></div>
+                <div class="field col-11">
+                    <p-dropdown appendTo="body" [options]="mfgItems" optionLabel="mfgName" formControlName="mfgName" optionValue="mfgName"
+                        showClear="showClear" [ngClass]="{ 'is-invalid': (reportFormSubmit && rf.mfgName.errors) || reportExist }"
+                        placeholder="Select Manufacturer" [virtualScroll]="false" [itemSize]="5" [filter]="true" resetFilterOnHide="true"
+                         (onChange)="changeItem('mfg', $event.value)">
+                    </p-dropdown>
+                    <div *ngIf="reportForm.value.mfgName != null && reportExist" class="invalid-feedback">
+                        <div id="valid-error" class="field-err">{{existError}}</div>
+                    </div>
+                    <div *ngIf="reportFormSubmit && rf.mfgName.errors" class="invalid-feedback">
+                        <div id="valid-error" class="field-err" *ngIf="rf.mfgName.errors.required">Manufacturer is required</div>
+                    </div>
+                </div>
+                <div class="col-sep">(OR)</div>
+            </div>
+            <div class="col-6" [ngClass]="{'setOpacity5': alternateMfgFieldDisabled, 'hide': reportFieldVisible}">
+                <div class="label bg mfg">Alternate Manufacturer Name</div>
+                <div class="field">
+                    <input class="input" placeholder="Enter Alternate Manufacturer Name" formControlName="mfgAltName" maxlength="50" 
+                        [ngClass]="{ 'is-invalid': reportExist}"
+                        autocomplete="off" [readOnly]="alternateMfgFieldDisabled" (blur)="changeItem('altMfgName', $event.target.value)" />
+                    <div *ngIf="!alternateMfgFieldDisabled && reportForm.value.mfgAltName != '' && reportExist" class="invalid-feedback">
+                        <div id="valid-error" class="field-err">{{existError}}</div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </form>
+    <form *ngIf="sectionFormFlag" [formGroup]="sectionForm">
+        <div class="field-row">
+            <div class="label bg title">Title <span class="right-info-col">Required</span></div>
+            <div class="field">
+                <input class="input" placeholder="Enter Title" formControlName="title" (blur)="changeItem('secTitle', $event.target.value)"
+                    maxlength="50" autocomplete="off" [ngClass]="{ 'is-invalid': (sectionFormSubmit && sf.title.errors) || sectionExist }" />
+                <div *ngIf="sectionExist || (sectionFormSubmit && sf.title.errors)" class="invalid-feedback">
+                    <div *ngIf="sectionExist" id="valid-error" class="field-err">{{existError}}</div>
+                    <div id="valid-error" class="field-err" *ngIf="!sectionExist && sf.title.errors.required">Title is required</div>
+                </div>    
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="label bg desc">Description <span class="right-info-col">{{sectionForm.value.desc.length}}/500</span></div>
+            <div class="field">
+                <ckeditor [editor]="Editor" [config]="configCke" formControlName="desc"></ckeditor>
+            </div>
+        </div>
+    </form>
+    <form *ngIf="diagnosticFormFlag" [formGroup]="diagnosticForm">
+        <div class="row field-row">
+            <div class="col-7">
+                <div class="label bg title">Module Name <span class="right-info-col">Required</span></div>
+                <div class="field">
+                    <input class="input" placeholder="Enter Module Name" formControlName="moduleName" (blur)="changeItem('moduleName', $event.target.value)"
+                        maxlength="100" autocomplete="off" [ngClass]="{ 'is-invalid': (diagnosticFormSubmit && df.moduleName.errors) || moduleExist }" />
+                    <div *ngIf="moduleExist || (diagnosticFormSubmit && df.moduleName.errors)" class="invalid-feedback">
+                        <div *ngIf="moduleExist" id="valid-error" class="field-err">{{existError}}</div>
+                        <div id="valid-error" class="field-err" *ngIf="!moduleExist && df.moduleName.errors.required">Module Name is required</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="label bg title">Module Abbreviation</div>
+                <div class="field">
+                    <input class="input" placeholder="Enter Module Abbreviation" formControlName="moduleSlug" maxlength="20" autocomplete="off" />
+                </div>
+            </div>
+        </div>
+        <div class="field-row">
+            <div class="label bg desc">Module Description 
+                <span class="right-info-col">
+                    <span *ngIf="diagnosticForm.value?.moduleDesc == null || diagnosticForm.value?.moduleDesc == ''">0</span>
+                    <span *ngIf="diagnosticForm.value.moduleDesc != ''">{{diagnosticForm.value.moduleDesc?.length}}</span>/100
+                </span>
+            </div>
+            <div class="field">
+                <textarea class="input" placeholder="Enter Module Description" formControlName="moduleDesc" maxlength="100" autocomplete="off"></textarea>
+            </div>
+        </div>
+    </form>
+    <form *ngIf="vehicleFormFlag" [formGroup]="vehicleForm" class="vehicle-form">
+        <div class="field-row split-row">
+            <div class="label bg make">Make <span class="right-info-col">Required</span></div>
+            <div class="field">
+                <p-dropdown class="split-col catg-col" appendTo="body" [options]="makeItems" optionLabel="name" optionValue="name" 
+                    [(ngModel)]="vehicleForm.value.make" formControlName="make" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false"
+                    placeholder="Select" [ngClass]="{ 'is-invalid': vehicleFormSubmit && v.make.errors }" (onChange)="changeItem('make', $event.value)">
+                </p-dropdown>
+                <div *ngIf="vehicleFormSubmit && v.make.errors" class="invalid-feedback">
+                    <div id="valid-error" class="field-err" *ngIf="v.make.errors.required">Make is required</div>
+                </div>
+            </div>
+        </div>
+        <div class="field-row split-row">
+            <div class="label bg model">Model <span class="right-info-col">Required</span></div>
+            <div class="field">
+                <p-dropdown class="split-col catg-col" appendTo="body" [options]="modelItems" optionLabel="name" optionValue="name" 
+                    [(ngModel)]="modelVal" formControlName="model" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false" [disabled]="disableFlag('model')"
+                    placeholder="Select" [ngClass]="{ 'is-invalid': vehicleFormSubmit && v.model.errors }" (onChange)="changeItem('model', $event.value)">
+                </p-dropdown>
+                <div *ngIf="vehicleFormSubmit && v.model.errors" class="invalid-feedback">
+                    <div id="valid-error" class="field-err" *ngIf="v.model.errors.required">Model is required</div>
+                </div>
+            </div>
+        </div>
+        <div class="field-row split-row">
+            <div class="label bg year">Year <span class="right-info-col">Required</span></div>
+            <div class="field">
+                <p-dropdown class="split-col catg-col" appendTo="body" [options]="yearItems" optionLabel="name" optionValue="id" 
+                    [(ngModel)]="vehicleForm.value.year" formControlName="year" [filter]="true" resetFilterOnHide="true" [itemSize]="5" [virtualScroll]="false"
+                    placeholder="Select" [ngClass]="{ 'is-invalid': vehicleFormSubmit && v.year.errors }" (onChange)="changeItem('year', $event.value)">
+                </p-dropdown>
+                <div *ngIf="vehicleFormSubmit && v.year.errors" class="invalid-feedback">
+                    <div id="valid-error" class="field-err" *ngIf="v.year.errors.required">Year is required</div>
+                </div>
+            </div>
+        </div>
+    </form>
+</p-dialog>
+<p-dialog [(visible)]="copiedModal" [modal]="true" [draggable]="false" [resizable]="true" class="copied-modal">
+    <div class="text-center copied-txt">Copied</div>
+</p-dialog>

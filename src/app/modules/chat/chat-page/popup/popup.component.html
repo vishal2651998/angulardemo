@@ -1,0 +1,198 @@
+<!--Add users Start-->
+<section id="groupUserPopup" class="overlay-modal" >
+    <section class="modal-dialog user-pop-up">
+        <section class="modal-content">
+            <section class="modal-header" *ngIf="access != 'market-place'">
+                <div class="header-action">
+                    <button class="pri-button" (click)="ClearAllMember()" type="button">Clear all <img src="assets/images/chat/popup-images/clear-all.png"/></button>
+                    <button class="pri-button red-btn" (click)="AddMemberToGroup()" type="button">Add <img src="assets/images/chat/popup-images/add-users.png"/></button>
+                    <button class="close" (click)="CloseUserPopup()" type="button" aria-label="Close modal popup"><img src="assets/images/chat/popup-images/close.png" alt="Close modal popup"/></button>
+                </div>
+                <h3>Users</h3>
+            </section>
+            <section class="modal-header" *ngIf="access == 'market-place'">
+                <div class="header-action">
+                    <button (click)="AddMemberToGroup()" class="pri-button btn green-btn" type="button" [disabled]="isRequired && newMeberList.length < 1">{{buttonTitle}} <i style="margin-left: 5px; font-size: 14px;" class="pi {{isUpdate ? 'pi-check' : 'pi-chevron-right'}}"></i></button>
+                    <button class="close" (click)="CloseUserPopup()" type="button" aria-label="Close modal popup"><img src="assets/images/chat/popup-images/close.png" alt="Close modal popup"/></button>
+                </div>
+                <h3>{{title}}</h3>
+            </section>
+            <section class="modal-body overflow-hidden">
+                <div class="modal-body-inner">
+                    <section class="search-wrapper">
+                        <div class="search-cntr">
+                            <button type="button" aria-label="Search"><img src="assets/images/chat/popup-images/search.png"></button>
+                            <input type="text" [(ngModel)]="searchUserText" #searchusertext name="search"  placeholder="Search" />
+                        </div>
+                    </section>
+                    <section>
+                        <div class="d-flex justify-content-center" *ngIf="isLoadingOnScroll">
+                            <div class="spinner-border position-fixed" role="status" style="z-index: 1;">
+                              <span class="sr-only">Loading...</span>
+                            </div>
+                          </div>
+
+                    </section>
+                    <section class="presenting-users" *ngIf="memberSelectedList && memberSelectedList.length > 0">
+                        <ul >
+                            <li  *ngFor="let item of memberSelectedList">
+                                <div class="img-cntr">
+                                    <a><span (click)="removeemberSelected(item)" class="icon-cntr">&ndash;</span></a>
+                                    <div class="img-cntr-inner">
+                                        <img src="{{item.profileImg}}" onerror="this.src='assets/images/thumb_profile_image.png'"/>
+                                    </div>
+                                </div>
+                                <p class="text-nowrap">{{item.userName}}</p>
+                            </li>
+
+                        </ul>
+                    </section>
+                    <section class="active-users">
+                        <ul class="list-group-flush"  #UserListScrollPopop>
+                          <ng-container *ngFor="let user of userlist;let i=index">
+                            <li *ngIf="!user.isMemberSelected && !selectedSalesPersonId.includes(user?.userId)">
+
+                            <div  *ngIf="user.isMemberSelected!=true">
+                                <div class="input-cntr">
+                                    <input type="checkbox" [ngModel]="user.isMemberSelected" (click)="SelectMember(user)" id="input-cntr-01{{i}}" />
+                                    <label for="input-cntr-01{{i}}"></label>
+                                </div>
+                                <div class="img-cntr">
+                                    <div class="lt-wsimg.image-cntr">
+                                        <img src="{{user.profileImg}}" [ngStyle]="{clipPath:'circle(50%)', height:'40px'}" />
+                                    </div>
+                                </div>
+                                <h4>{{user.userName}}<span>{{user.title}}</span></h4>
+                            </div>
+                        </li>
+                      </ng-container>
+                        </ul>
+                    </section>
+                </div>
+            </section>
+        </section>
+    </section>
+</section>
+<section id="ReplyPopup" class="overlay-modal" >
+    <section class="modal-dialog user-pop-up">
+        <section class="modal-content">
+            <section class="modal-header">
+                <div class="header-action">
+                    <img ReplyChatMessage (click)="ReplyChatMessage(chatService.ReplyMessage)" style="cursor: pointer;" src="assets/images/chat/reply-btn.png" alt="Reply" />
+                    <button class="close" (click)="CloseReplyPopup()" type="button" aria-label="Close modal popup"><img src="assets/images/chat/popup-images/close.png" alt="Close modal popup"/></button>
+                </div>
+                <h3>Reply to Message</h3>
+            </section>
+            <section class="modal-body">
+              <app-chat-reply-message-popup  [replyChat] = "chatService.ReplyMessage" ></app-chat-reply-message-popup>
+            </section>
+        </section>
+    </section>
+  </section>
+<!--Add users End-->
+<!--Edit Group Start-->
+<section class="overlay-modal modal-fade" style="display: none;">
+    <section class="modal-dialog small-pop-up">
+        <section class="modal-content">
+            <section class="modal-header center-text">
+                <h3>Edit User</h3>
+            </section>
+            <section class="modal-body content-pad">
+                <div class="modal-body-inner">
+                    <section class="group-icon">
+                        <div class="group-icon-inner">
+                            <img src="assets/images/chat/popup-images/group-icon.png" />
+                            <span><img src="assets/images/chat/popup-images/edit-icon.png" /></span>
+                        </div>
+                    </section>
+                    <section class="group-input">
+                        <div class="group-input-inner">
+                            <input type="text" placeholder="Senior Tech" />
+                        </div>
+                    </section>
+                </div>
+            </section>
+            <section class="modal-footer">
+                <button type="button">Cancel <img src="assets/images/chat/popup-images/close.png" /></button>
+                <button type="button" class="red-btn">Save <img src="assets/images/chat/popup-images/save.png" /></button>
+            </section>
+        </section>
+    </section>
+</section>
+<!--Edit Group End-->
+<!--Confirmation Remove Start-->
+<section class="overlay-modal modal-fade" style="display: none;">
+    <section class="modal-dialog small-pop-up">
+        <section class="modal-content">
+            <section class="modal-header center-text">
+                <h3>Confirmation</h3>
+            </section>
+            <section class="modal-body content-pad">
+                <div class="modal-body-inner">
+                    <section class="confirmation-text">
+                        Are you sure you want to remove “<span>Mark N</span>“?
+                    </section>
+                </div>
+            </section>
+            <section class="modal-footer">
+                <button type="button">Cancel <img src="assets/images/chat/popup-images/close.png" /></button>
+                <button type="button" class="red-btn">Yes <img src="assets/images/chat/popup-images/yes.png" /></button>
+            </section>
+        </section>
+    </section>
+</section>
+<!--Confirmation Remove End-->
+<!--Confirmation Start-->
+<!-- <section id="LeveGroup" class="overlay-modal modal-fade" >
+    <section class="modal-dialog small-pop-up">
+        <section class="modal-content">
+            <section class="modal-header center-text">
+                <h3>Confirmation</h3>
+            </section>
+            <section class="modal-body content-pad">
+                <div class="modal-body-inner">
+                    <section class="confirmation-text">
+                        Are you sure you want to leave group?
+                    </section>
+                </div>
+            </section>
+            <section class="modal-footer">
+                <button type="button">Cancel <img src="../../../../../assets/images/chat/popup-images/close.png" /></button>
+                <button type="button" class="red-btn">Yes <img src="../../../../../assets/images/chat/popup-images/yes.png" /></button>
+            </section>
+        </section>
+    </section>
+</section> -->
+<!--Confirmation End-->
+<!--New Group Start-->
+<section id="manageGroupPopup" class="overlay-modal" >
+    <section class="modal-dialog small-pop-up">
+        <section class="modal-content">
+            <section class="modal-header center-text">
+                <h3>{{groupAction}} Group</h3>
+            </section>
+            <section class="modal-body content-pad">
+                <div class="modal-body-inner">
+                    <section class="group-icon">
+                        <div class="group-icon-inner">
+                            <!-- [ngStyle]="{'background-image': 'url(' + imgURL + ')'}" -->
+                            <img  *ngIf="imgURL==''" src="assets/images/chat/popup-images/group-icon.png" />
+                            <img *ngIf="imgURL!=''" src="{{imgURL}}" />
+                            <span> <img (click)="changeProfile()" src="assets/images/chat/popup-images/edit-icon.png" /></span>
+                        </div>
+                    </section>
+                    <section class="group-input">
+                        <div class="group-input-inner">
+                            <input type="text" placeholder="Group Name" [(ngModel)]="groupName" />
+                        </div>
+                    </section>
+                </div>
+            </section>
+            <section class="modal-footer">
+                <button type="button"(click)="CloseManagGroupPopup()">Cancel <img src="assets/images/chat/popup-images/close.png" /></button>
+                <button type="button" (click)="SaveMembersToGroup(chatTypeGroupChat)" class="red-btn">Save <img src="assets/images/chat/popup-images/save.png" /></button>
+            </section>
+        </section>
+    </section>
+</section>
+<!--New Group End-->

@@ -1,0 +1,85 @@
+<div class="adas-container" [ngClass]="{'search': accessFrom == searchPage}">
+    <div *ngIf="view > 1 && breadcrumbFlag" class="docbreadcrumb">
+        <div class="breadcrumb-back">
+            <span *ngIf="yearView" class="cursor" (click)="breadcrumb('mfg')"></span>
+            <span *ngIf="modelView" class="cursor" (click)="breadcrumb('year')"></span>
+            <span *ngIf="fileView" class="cursor" (click)="breadcrumb('model')"></span>
+        </div>
+        <div class="breadcrumb-home"></div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li *ngIf="view > 1" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span class="cursor" (click)="breadcrumb('mfg')">{{mfgInfo.name}}</span></li>
+                <li *ngIf="view > 2" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span class="cusror-default cursor" (click)="breadcrumb('year')">{{yearInfo.name}}</span></li>
+                <li *ngIf="view > 3" class="breadcrumb-item" [ngClass]="{'hide': loading}"><span>{{modelInfo.name}}</span></li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="adas-content"  [ngClass]="{'adas-search-cont': view == 4 && !breadcrumbFlag}" [style.height]="'calc(100vh - '+innerSectionRemove+'px)'">
+        <!-- Manufacturer List -->
+        <div #top *ngIf="!loading && mfgView && !itemEmpty" [perfectScrollbar]="sconfig" [disabled]="parentScrollDisabled">
+            <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row report-row masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                <div ngxMasonryItem class="parts-grid-col masonry-mfg-item" *ngFor="let item of mfgItems; let i = index">
+                    <div class="report-card cursor" (click)="sectionNav('year', item)">
+                        <div class="card-logo justify-content-center align-items-center">
+                            <img *ngIf="item.logo != ''" class="system mfg" [src]="item.logo" >
+                            <img *ngIf="item.logo == ''" class="default" [src]="defaultMfgLogo" >
+                        </div>
+                        <div class="card-info mfg-info">
+                            <span class="truncate name" title="{{item.name}}">
+                                <span *ngIf="item.facetCount >= 0" class="adas-item-count text-center hide">{{item.facetCount}}</span>
+                                {{item.name}}
+                            </span>
+                        </div>                        
+                    </div>
+                </div>
+            </ngx-masonry>
+        </div>
+
+        <!-- Year List -->
+        <div #top *ngIf="!loading && yearView" [perfectScrollbar]="sconfig" [disabled]="parentScrollDisabled">
+            <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row report-row masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                <div ngxMasonryItem class="parts-grid-col masonry-year-item" *ngFor="let yitem of yearItems; let i = index">
+                    <div class="report-card cursor" (click)="sectionNav('model', yitem)">
+                        <div class="card-info year-info text-center">
+                            <span class="name" title="{{yitem.name}}">
+                                <span *ngIf="yitem.facetCount >= 0" class="adas-item-count text-center hide">{{yitem.facetCount}}</span>
+                                {{yitem.name}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </ngx-masonry>
+        </div>
+
+        <!-- Model List -->
+        <div #top *ngIf="!loading && modelView" [perfectScrollbar]="sconfig" [disabled]="parentScrollDisabled">
+            <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row report-row masonry-item-container" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                <div ngxMasonryItem class="parts-grid-col masonry-model-item" *ngFor="let mitem of modelItems; let i = index">
+                    <div class="report-card cursor" (click)="sectionNav('file', mitem)">
+                        <div class="card-info adas-card-info">
+                            <div class="card-info-col ci-col-1"></div>
+                            <div class="card-info-col ci-col-2">
+                                <div class="minfo truncate" title="{{mitem.makeName}} > {{mitem.name}}">{{mitem.makeName}} <span *ngIf="mitem.id > 0"><i class="pi pi-chevron-right chevron"></i> {{mitem.name}}</span></div>
+                                <div class="myinfo">{{mitem.facetCount}} {{mitem.files}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ngx-masonry>
+        </div>
+
+        <!-- File List -->
+        <div #top *ngIf="!loading && fileView && !itemEmpty" id="adasFile" [ngClass]="{'adas-list-view': !thumbView}" [perfectScrollbar]="sconfig" [disabled]="parentScrollDisabled" (scroll)="onScroll($event)">
+            <app-adas-files [thumbView]="thumbView" [items]="fileItems" [itemTotal]="itemTotal" [itemLength]="itemLength" (filesCallback)="filesCallback($event)"></app-adas-files>
+        </div>
+        
+        <!-- Empty Container -->
+        <div class="list" *ngIf="!loading && itemEmpty">
+            <div class="documents-grid-row documents-grid-row-new adas-empty" [style.height.px]="innerHeight">        
+                <app-empty-container [redirectionPage]="actionUrl" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newADASInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentType" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="actionUrl"></app-empty-container>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader adas-list-lazy-loader" [ngClass]="{'ws-list': accessFrom == wsPage}"></div>

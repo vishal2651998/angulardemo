@@ -1,0 +1,78 @@
+<div id="header">
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>   
+</div>
+<div class="prob-new">
+    <div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont dynmic-new-form-cont"
+        [ngClass]="{'col-lg-8 step1': step1Action && !step2Action, 'col-lg-12 step2': step1Action && step2Action}">
+        <div *ngIf="step2Action" class="step2-info" [ngClass]="{'col-lg-3': step1Action && step2Action}"
+            [style.height.px]="innerHeight+62">
+            <div class="ps form-values" [perfectScrollbar]="sconfig">
+                <app-dynamic-values [apiFields]="formFields[0]['step1']" [banner]="bannerImage" [defaultBanner]="defaultBanner" [industryType]="industryType"></app-dynamic-values>
+            </div>
+        </div>
+        <div id="form-cont" class="form-cont"
+            [ngClass]="{'col-lg-12': step1Action && !step2Action, 'col-lg-8': step1Action && step2Action}">
+            <form class="form-horizontal" [formGroup]="KBForm">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="teamSystem && step1Action && !step2Action" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                        <span *ngIf="step1Action && step2Action" class="back-icon cursor" title="Back to Step1"
+                            (click)="backStep1()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>
+                        <button *ngIf="step1Action && !step2Action" class="btn next" (click)="submitAction()">Next <img
+                                src="assets/images/parts/next-icon.png" /></button>
+                        <div *ngIf="step1Action && step2Action" class="btn next publish" (click)="submitAction()">
+                            {{saveText}} <img src="assets/images/parts/publish.png" /></div>
+                    </div>
+                </div>
+                <div *ngIf="step2Loading || !step2Loading" class="dynamic-form-content" [style.height.px]="innerHeight">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig">
+                        <ul class="progressbar">
+                            <li [ngClass]="{'active': step1, 'selection': step2}">{{step1Title}}</li>
+                            <li [ngClass]="{'active': step2}">{{step2Title}}</li>
+                        </ul>
+                        <div class="form-items">
+                            <div *ngIf="step2Loading" class="dash-loader cust-loader"><img
+                                    src="assets/images/loading.svg" alt="Loader" /></div>
+                            <div *ngIf="!step2Loading">
+                                <div class="field-row"
+                                    *ngFor="let th of apiFormFields[stepIndex][stepTxt]; let i=index;">
+                                    <div *ngIf="th.displayFlag" class="field-label {{th.sectionClass}}"
+                                        [ngClass]="{'bg-label': th.isBackground > 0}">{{th.name}}</div>
+                                    <div [ngClass]="{'bg-fileld': th.cells.isBackground > 0}">
+                                        <div class="web-fields default-fields">
+                                            <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo"
+                                                [secIndex]="i" fieldSec="name" [formGroup]="KBForm"
+                                                [apiFormFields]="th.cells.name" [formFields]="formFields">
+                                            </app-dynamic-fields>
+                                            <div class="opt-field-toggle user-select text-right"
+                                                [ngClass]="{'hide': th.cells.optionFilter.length == 0}">
+                                                <div class="cursor toggle-opt"
+                                                    [ngClass]="{'disabled': th.optDisableFlag}"
+                                                    (click)="optFieldToggle(i, th.optFieldsFlag, th.optDisableFlag)">
+                                                    {{th.toggleTxt}} {{optionTxt}} <span
+                                                        [ngClass]="{'hide-more': th.optFieldsFlag, 'show-more': !th.optFieldsFlag}"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="web-fields optianal-fields" id="op-{{i}}"
+                                            [ngClass]="{'hide': !th.optFieldsFlag}">
+                                            <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo"
+                                                [secIndex]="i" fieldSec="optionFilter" [formGroup]="KBForm"
+                                                [apiFormFields]="th.cells.optionFilter"></app-dynamic-fields>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

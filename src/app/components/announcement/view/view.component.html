@@ -1,0 +1,44 @@
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading">
+    <div class="th-error-div" *ngIf="threadViewError"><div class="error-msg">{{threadViewErrorMsg}}</div></div> 
+    <div  *ngIf="!threadViewError">
+    <div id="header">
+        <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+    </div>  
+    
+    <div class="thread-detail-section">
+        <div class="th-outer-col th-outer-col-1"></div>
+        <div class="th-outer-col th-outer-col-2" [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel}">
+            <div [style.height.px]="innerHeight">
+                <div id="step" class="ps thread-post" [perfectScrollbar]="sconfig" >                      
+                    <div #tdpage class="thread-detail-page">   
+                        <app-detail-view [threadViewData]="threadViewData"></app-detail-view>  
+                        <div class="thread-detail-div" *ngIf="anncType == 'more' && !anncReadUpdate"  [ngClass]="{ 'setOpacity3' : updateAnnouncement }">
+                            <div class="thread-detail-div-col thread-detail-div-left">
+                                <div class="anno-read-update-cont">
+                                    <div class="anno-read-update-inner-cont">
+                                        <span class="check-box normal" [ngClass]="{ 'selected' : updateBtnFlag  }" (click)="checkboxToggle(updateBtnFlag)"></span>
+                                        <span class="read-text"> I’ve read this announcement</span>
+                                        <span (click)="updateAccouncement()" class="update-button" [ngClass]="{ 'update-button-vissible' : updateBtnFlag  }" ><span class="btn-text">Update</span><img class="btn-img" src="assets/images/announcement/update-ok.png" ></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="thread-detail-div-col thread-detail-div-right">&nbsp;</div>
+                        </div>
+                    </div>      
+                  </div>
+            </div> 
+        </div>
+        
+        <div class="th-outer-col th-outer-col-3" [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel}">
+            <div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+                <app-domain-members></app-domain-members>
+            </div>
+        </div>             
+        
+    </div>
+        
+</div>
+</div>
+
+

@@ -1,0 +1,32 @@
+<div *ngIf="tagLoading" class="cust-select gts-sel prob-catg">
+    <mat-icon class="material-icon tag-icon"></mat-icon>
+    <mat-form-field class="custom-mat-sel tag-sel">
+        <mat-select #selectopt panelClass="mat-bottom-panel" (openedChange)="openedChange($event)" placeholder="Select Tags" [formControl]="tagFormControl" [(ngModel)]="dbSelectedTag" multiple disableOptionCentering>
+            <div class="select-container" *ngIf="tagLoadingSelect">
+                <mat-optgroup >
+                    <mat-form-field style="width:100%;">
+                        <input #search autocomplete="off" class="model-search-input" placeholder="Search Tags" aria-label="Search Tags" matInput [formControl]="tagSearchTextboxControl">
+                        <button  *ngIf="search.value" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch($event)">
+                        <mat-icon >close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="(tagFilteredOptions | async).length == 0">
+                    <div>No results found!</div>
+                </mat-optgroup>
+                <div *ngIf="selectClose" class="ngdialog-close" (click)="selectopt.close()">Close</div>
+                <mat-option (onSelectionChange)="selectionChange($event)" *ngFor="let option of tagFilteredOptions | async" [value]="option" [disabled]="disableSelection(option)">
+                {{option}}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+</div>
+<div *ngIf="tagLoadingSelect">
+    <div *ngIf="tagFormControl.value != ''" class="selected-items">
+        <div *ngFor="let item of tagItems; let t=index" class="tag-text">
+            <span>{{item}}</span>
+            <i class="material-icons tag-close" (click)="disableTagSelection(t)">close</i>
+        </div>
+    </div>
+</div>

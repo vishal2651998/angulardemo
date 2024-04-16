@@ -1,0 +1,1348 @@
+<div id="header">
+    <app-thread-detail-header [pageData]="headerData" [headingPageTitle]="trainingData?.manualName" (threadHeaderActionEmit)="threadHeaderAction($event)">
+    </app-thread-detail-header>
+</div>
+<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding display-flex" style="height: 100vh;">
+  <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2">
+    <div style="height: calc(100vh - 110px); padding: 30px 0 0 0;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 backgroud-color-black custom-margin-gallery">
+      <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+        <div [ngClass]="showTrainingDetails ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu" (click)="getManualDetails()">
+          <img style="margin-right: 5px;" width="16px" height="18px" src="{{showTrainingDetails ? 'assets/images/service-provider/manual-white.png' : 'assets/images/service-provider/manual.png'}}">
+          <span class="{{showTrainingDetails ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Manual Detail</span>
+        </div>
+      </div>
+      <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+        <div [ngClass]="showRegisteredUserDetails ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu" (click)="openRegisteredDetailTab()">
+          <img style="margin-right: 5px;" width="20px" height="20px" src="{{showRegisteredUserDetails ? 'assets/images/service-provider/dollar-white.png' : 'assets/images/service-provider/dollar-grey.png'}}">
+          <span class="{{showRegisteredUserDetails ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Purchased</span>
+        </div>
+      </div>
+      <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+        <div [ngClass]="showMarketingMenu ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu">
+          <img style="margin-right: 5px;" width="20px" height="17px" src="{{showMarketingMenu ? 'assets/images/service-provider/marketing-white.png' : 'assets/images/service-provider/marketing.png'}}">
+          <span class="{{showMarketingMenu ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Marketing</span>
+        </div>
+      </div>
+      <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+        <div [ngClass]="showSalesMenu ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu" (click)="openSalesTab();">
+          <img style="margin-right: 5px;" width="16px" height="16px" src="{{showSalesMenu ? 'assets/images/service-provider/sales-white.png' : 'assets/images/service-provider/sales.png'}}">
+          <span class="{{showSalesMenu ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Sales</span>
+        </div>
+      </div>
+      <div style="margin-bottom: 15px;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-right-pad">
+        <div [ngClass]="showSettingUserDetails ? 'select-nav-menu' : ''" class="cursor-pointer custom-padding-nav-menu" (click)="showSettingDetail()">
+          <img style="margin-right: 5px;" width="18px" height="18px" src="{{showSettingUserDetails ? 'assets/images/service-provider/setting-white.png' : 'assets/images/service-provider/setting.png'}}">
+          <span class="{{showSettingUserDetails ? 'side-menu-text-style-selected' : 'side-menu-text-style'}}">Settings</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-popup *ngIf="showSalesPersonPopup" access="market-place" title="Select Sales Person" buttonTitle="{{!isUpdateSalesPerson ? 'Next' : 'Update'}}" [isUpdate]="isUpdateSalesPerson" [workStreamId]="workStreamId" (sendUserData)="getUserData($event)" (closeUserPopup)="closeSalePersonPopup()" [currentUser]="currentUser" [selectedSalesPersonId]="selectedSalesPersonId" [isRequired]="true"></app-popup>
+
+  <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-10 pl-0">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center custom-margin-gallery">
+      <div style="height: calc(100vh - 110px)" class="width-100-perc {{!showSalesMenu && !showParticipantsMenu ? 'background-white' : 'no-padding'}} {{showSettingUserDetails ? 'no-padding' : 'custom-padding'}} {{!innerLoading && showRegisteredUserDetails ? ' custom-padding-for-registered' : ''}} border-radius-top-right-left">
+        <div *ngIf="!showSalesMenu && !showParticipantsMenu" class="ps" style="height: 100%" [perfectScrollbar]="sconfig">
+          <div class="loading-small-screen-scroll trst" align="center" *ngIf="innerLoading" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+          <div *ngIf="trainingData && !innerLoading && showTrainingDetails" style="margin: 0 0 10px 0!important" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row">
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12 custom-padding-gallery" style="width: 220px !important; max-width: 220px !important;">
+                <div style="display: table; justify-content: center; z-index: 1; width: 100%;  vertical-align: middle;">
+                  <div style="display: table-cell; width: 100%; height: 200px; vertical-align: middle;position: relative;">
+                    <img *ngIf="trainingData?.bannerImageUrl" [src]="trainingData?.bannerImageUrl" style="width: auto; height: 100%; display: block; border-radius: 10px; max-height: 200px;"/>
+                    <div *ngIf="!trainingData?.bannerImageUrl">
+                      <img style="max-height: 200px;" src="assets/images/service-provider/manual-placeholder.png" /></div>
+                      <ng-container *ngIf="headerData?.trainingStatus == 'Open'">
+                        <span *ngIf="!cartItemSelect" (click)="toggleCartItem()"><img class="cart-icon"
+                            src="assets/images/service-provider/marketPlace-inner-cart-orange.png"></span>
+                        <span *ngIf="cartItemSelect" (click)="toggleCartItem()"><img class="cart-icon"
+                            src="assets/images/service-provider/marketPlace-inner-cart-selected.png"></span>
+                      </ng-container>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12 no-padding">
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+                      <span class="inner-page-title">{{trainingData?.manualName}}</span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail flex-align-center">
+                    <div class="col-xl-4 col-lg4 col-md-4 col-sm-4 col-4 no-padding">
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                        <div class="icon-img">
+                          <img class="margin-right-10px" width="22px" height="20px" src="assets/images/service-provider/sku.png">
+                        </div>
+                          <div class="training-text-style">SKU</div>
+                      </div>
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                          <p class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0px;
+                          margin-top: -5px;">{{trainingData?.sku}}</p>
+                      </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8 no-padding">
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                        <div class="icon-img">
+                          <img class="margin-right-10px" width="20px" height="16px" src="assets/images/service-provider/mail-grey.png">
+                        </div>
+                          <div class="training-text-style">Email</div>
+                      </div>
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                          <p class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0px;
+                          margin-top: -5px;">{{trainingData?.email}}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-center">
+                        <div class="col-xl-4 col-lg4 col-md-4 col-sm-4 col-4 no-padding">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                              <div class="icon-img">
+                                <img class="margin-right-10px" width="20px" height="20px" src="assets/images/service-provider/dollar-full.png">
+                              </div>
+                                <div class="training-text-style">{{trainingData?.discountPrice && trainingData?.discountPrice != '0' ? 'Regular ' : ''}}Price</div>
+                            </div>
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                                <p *ngIf="trainingData?.price && trainingData?.price != '0'" class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0px;
+                                margin-top: -5px;">{{threadApi.isInt(trainingData?.price, true, true)}}</p>
+                                <p *ngIf="!trainingData?.price || trainingData?.price == '0'" class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0px;
+                                margin-top: -5px;">Free</p>
+                            </div>
+                        </div>
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8 no-padding" *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'">
+                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                            <div class="icon-img">
+                              <img class="margin-right-10px" width="13px" height="23px" src="assets/images/service-provider/dollar-simple.png">
+                            </div>
+                              <div class="training-text-style">Discount Pricing</div>
+                          </div>
+                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                              <p class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0px;
+                              margin-top: -5px;">{{threadApi.isInt(trainingData?.discountPrice, true, true)}}</p>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail-1">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-center">
+                        <div class="col-xl-4 col-lg4 col-md-4 col-sm-4 col-4 no-padding" *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'">
+                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                            <div class="icon-img">
+                              <img class="margin-right-10px" width="18px" height="16px" src="assets/images/service-provider/percentage.png">
+                            </div>
+                              <div class="training-text-style">Discount</div>
+                          </div>
+                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                              <p class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0px;
+                              margin-top: -5px;">{{trainingData?.discountPercentage}}%</p>
+                          </div>
+                        </div>
+                        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-8 no-padding" >
+                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                            <div class="icon-img">
+                              <img class="margin-right-10px" width="18px" height="16px" src="assets/images/service-provider/dollar-in-hand.png">
+                            </div>
+                              <div class="training-text-style">Sale Condition</div>
+                          </div>
+                          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                              <p class="training-text-style-1" style="margin-left: 28px;margin-bottom: 0; line-height: 1.3; margin-top: -5px !important;">{{trainingData?.forTrainingOnly == 1 ? 'Must be offered with a training. Not available for sale independently.' : 'Can be offered with training or sold independently.'}}</p>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+              </div>
+          </div>
+          <div *ngIf="trainingData && !innerLoading && showTrainingDetails" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-margin-gallery-2">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-background description-new-class" style="margin-bottom: 0 !important;">Description</div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 description-title-parent"><img src="assets/images/service-provider/description-grey.png"><span class="description-title">Description</span></div>
+
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-padding-description-value ul-list-allow" [innerHtml]="trainingData?.description | safeHtml"></div>
+            </div>
+
+            <div class="col-12 no-padding row no-margin" *ngIf="trainingData?.selectedPolicies && trainingData.selectedPolicies.length > 0">
+              <div class="col-12 custom-background policies-new-class" style="margin-bottom: 0 !important;">Policies</div>
+              <div class="px-0 py-2 col-12">
+                <span class="tag-preview" *ngFor="let policy of trainingData.selectedPolicies">
+                  {{policy.name}} <u class="preview cursor-pointer" (click)="previewPolicy(policy.id)" >Preview</u>
+                </span>
+              </div>
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin" *ngIf="trainingData?.tags && trainingData?.tags.length > 0">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-class-tags manual keywords-new-class">Keywords</div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-padding-class-tags">
+                <div style="display: flex">
+                  <span *ngFor="let tag of trainingData?.tags; let i = index" class="custom-tag-text-design">
+                    {{tag?.name}}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin" *ngIf="this.trainingData?.attachments?.length">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-background attachments-new-class" style="margin: 10px 0px 10px;">Attachments</div>
+              <app-attachment-view style="width: 100%;" action="view" [dynamicGid]="1" [isStartGTSTest]="false" *ngIf="this.trainingData?.attachments?.length" [attachments]="this.trainingData.attachments" [hideLabel]="true"></app-attachment-view>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-background system-new-class">System</div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 custom-padding-description-value-1 flex-align-center">
+                    <app-system-info-view class="manuals" style="width: 100%;" [systemInfo]="systemInfo" [customStyle]="true"></app-system-info-view>
+                </div>
+            </div>
+          </div>
+          <!-- <div *ngIf="!innerLoading && showRegisteredUserDetails" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-end-align-center margin-bottom-30px">
+            <div>
+              <div class="custom-register-user-button flex-justify-align-center cursor-pointer" (click)="openRegisterPopup()" *ngIf= "headerData?.trainingStatus!='Canceled' && headerData?.trainingStatus!='Sold-out'">
+                <img width="14px" height="18px" src="assets/images/service-provider/manual-white.png"/>
+                <span class="register-user-text-design">Purchase Manual</span>
+              </div>
+            </div>
+            <div *ngIf="marketPlaceUserData && marketPlaceUserData.length">
+              <div style="cursor: pointer;" (click)="exportAsCSV()">
+                <img style="margin-right: 5px" width="17px" height="18px" src="assets/images/service-provider/excel-icon.png"/> <span class="export-excel-design">EXPORT TO EXCEL</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!innerLoading && showRegisteredUserDetails" style="flex-wrap: wrap; padding: 0 20px" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-align-center margin-bottom-30px">
+            <div class="col-xl-6 col-lg-5 col-md-5 col-sm-12 col-12 display-flex no-padding" style="flex-wrap: wrap;">
+              <div class="col-xl-3 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+                <p class="heading-design">Purchased</p>
+                <p class="heading-count-design">{{totalRegisterUserData}}</p>
+              </div>
+             <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-5 no-padding">
+                <p class="heading-design">Invited</p>
+                <p class="heading-count-design">0</p>
+              </div>
+            </div>
+            <div style="height: 32px;" class="col-xl-6 col-lg-7 col-md-7 col-sm-12 col-12 border-1px-all display-flex no-padding">
+              <div class="col-xl-2 col-lg-1 col-md-2 col-sm-2 col-2 border-right-1px filter-text flex-justify-align-center cursor-pointer {{currentFilter == 'ALL' ? 'selected-text' : ''}}" (click)="currentFilter = 'ALL'; filterChangeRegisterDetailTab()">All</div>
+              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-4 border-right-1px filter-text flex-justify-align-center cursor-pointer {{currentFilter == 'PAID' ? 'selected-text' : ''}}" (click)="currentFilter = 'PAID'; filterChangeRegisterDetailTab()">Paid</div>
+              <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-2 filter-text flex-justify-align-center cursor-pointer {{currentFilter == 'REFUNDED' ? 'selected-text' : ''}}" (click)="currentFilter = 'REFUNDED'; filterChangeRegisterDetailTab()">Cancelled</div>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 border-1px"></div>
+          </div>
+          <div class="loading-small-screen-scroll trst" align="center" *ngIf="registerInnerLoading" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+          <div [ngClass]="!marketPlaceUserData.length ? 'flex-justify-align-center ' : ''" *ngIf="!registerInnerLoading && !innerLoading && showRegisteredUserDetails" style="height: 65vh;">
+                <div *ngIf="marketPlaceUserData && marketPlaceUserData.length">
+                  <div class="ps" style="height: 100%" [perfectScrollbar]="sconfig">
+                    <div *ngFor="let userData of marketPlaceUserData; let i = index" style="padding: 15px 0 0 0!important;" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-margin row hoverdiv cursor-pointer {{userData?.isNew && userData?.isNew != '0' ? 'green-color-background' : ''}}" (click)="viewCustomerDetails(userData)">
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin" style="padding-right: 10px!important; padding-left: 10px!important;">
+                        <div class="flex-93-perc col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex pad-left-0" style="padding-right: 5px;">
+                          <div class="col-xl-6 col-lg-5 col-md-5 col-sm-6 col-6 pad-left-0">
+                            <div class="users-image-design" style="width: 40px; float: left; margin-right: 10px; margin-left: 20px;">
+                              <img src="/assets/images/thumb_profile_image.png">
+                            </div>
+                            <p style="display: flex; align-items: center;" class="user-name-design margin-bottom-5px margin-left-70">
+                              <span>{{userData?.firstName ? userData?.firstName : 'Participant'}} {{userData?.lastName ? userData?.lastName : 'TBD'}}</span>
+                              <img (click)="$event.stopPropagation();setUserFillableData(userData)" class="cursor-pointer edit-btn" style="margin-left: 10px;" width="15px" height="15px" src="assets/images/service-provider/edit-green.png" />
+                            </p>
+                            <p class="user-other-detail-design margin-bottom-5px margin-left-70">
+                              <span *ngIf="userData?.formType === 'REGISTER_USER'">{{userData?.dialCode}} {{userData?.phoneNumber}}, {{userData?.email}}</span>
+                            <p class="user-other-detail-design margin-bottom-5px margin-left-70">{{userData?.shippingAddress1}}{{userData?.shippingAddress2 ? ' ' : ''}}{{userData?.shippingAddress2}}{{userData?.shippingCity ? ', ' : ''}}{{userData?.shippingCity}}{{userData?.shippingState ? ', ' : ''}}{{userData?.shippingState}} {{userData?.shippingZip}}</p>
+                          </div>
+                          <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3 users-register-design pad-top-15" style="padding-bottom: 15px;" [ngClass]="{'tagged-sales-person' : userData?.selfRegistered && userData?.selfRegistered == '1'}">
+                            <p class="users-register-design margin-bottom-5px" style="line-height: 15px !important; margin-bottom: 0 !important;">{{userData?.numberOfManuals}} Manual{{userData?.numberOfManuals > 1 ? 's':''}}</p>
+                            <p class="users-register-date-design margin-bottom-5px">{{getDateTimeWithoutDotFormat(userData?.createdOn)}}</p>
+                            <p class="purchase-by-style">{{userData?.selfRegistered && userData?.selfRegistered != '1' ? 'By '+ userData?.salesPersonName : 'Self'}} <img *ngIf="userData?.selfRegistered && userData?.selfRegistered != '1'" (click)="$event.stopPropagation();updateSalesPersonData(userData)" class="cursor-pointer edit-btn-sales" style="margin-left: 10px;" width="15px" height="15px" src="assets/images/service-provider/edit-green.png" /></p>
+                            <p class="mb-0" *ngIf="userData?.selfRegistered && userData?.selfRegistered == '1'">
+                              <span (click)="$event.stopPropagation();updateSalesPersonData(userData)" class="d-block user-tagged-details ml-n1 orange-color" *ngIf="!userData?.isSalePerson || userData?.isSalePerson == '0'">
+                                <i class="pi pi-tag pl-2 py-0 mr-1" style="transform: rotate(90deg);"></i><span>Tag sales person</span></span>
+                              <span (click)="$event.stopPropagation();updateSalesPersonData(userData)" class="d-flex tagged-person user-tagged-details ml-n1" style="line-height: 1.1;"
+                                *ngIf="userData?.isSalePerson != '0'">
+                                <span style="color:black"><i class="pi pi-tag pl-2 py-0 mr-1" style="transform: rotate(90deg);"></i>{{userData?.salesPersonName}}</span>
+                                <img width="15px" height="15px"
+                                  src="assets/images/service-provider/edit-green.png" class="cursor-pointer edit-btn-1" style="margin-left: 5px;">
+                              </span>
+                              <span (click)="$event.stopPropagation();openCommentPopup(userData)" class="d-block user-tagged-details orange-color"
+                                *ngIf="!userData?.comment || userData.comment == ''"> <i class="pi pi-comment py-0 icon-comment pr-2"></i><span>Add comment</span></span>
+                              <span (click)="$event.stopPropagation();openCommentPopup(userData)" class="d-flex add-comment user-tagged-details "
+                                style="line-height: 1.1;" *ngIf="userData?.comment">
+                                <span class="comment-text"><span class="icon-comment"><i class="pi pi-comment py-0 pr-2" style="color:black"></i></span><span style="color:black">{{userData.comment}}</span></span>
+                                <img width="15px" height="15px" src="assets/images/service-provider/edit-green.png" style="margin-left: 5px;"
+                                  class="cursor-pointer edit-btn-2">
+                              </span>
+                            </p>
+                          </div>
+                          <div class="col-xl-3 col-lg-4 col-md-4 col-sm-3 col-3 users-button-design display-flex pad-top-15" style="display: flex !important; padding-right: 0 !important; padding-bottom: 15px;">
+                            <div *ngIf="!userData?.trainingId && userData?.trainingId!= 0 && userData?.status == 'PAID' && userData?.requestType != 'MULTIPLE' && userData?.paidPrice" class="refund-button-design cursor-pointer {{userData?.payment_method == 'check' ? 'refund-check':''}}" (click)="$event.stopPropagation();refundProcess(userData)">
+                              <img style="margin-right: 5px;" width="17px" height="17px" src="assets/images/service-provider/{{userData?.payment_method == 'check' ? 'refund-check':'refund'}}.png"><span class="refund-button-design-text">Refund</span>
+                            </div>
+                            <div style="float: right;">
+                              <div (click)="$event.stopPropagation();setUserPaymentInfoData(userData)" *ngIf="userData?.status == 'PAID' || userData?.paidPrice == 0" style="margin-top: 3px;cursor: pointer;">
+                                <img style="margin-right: 5px;" width="17px" height="17px" src="assets/images/service-provider/paid-green.png"> <span class="paid-text-design">{{userData?.paidPrice > 0 ? 'Paid' : 'Ordered'}}</span>
+                              </div>
+                              <div (click)="$event.stopPropagation();setUserPaymentInfoData(userData)" *ngIf="(userData?.status == 'ORDERED' || userData?.status == 'UNPAID')  && userData?.actualPrice > 0" style="margin-top: 3px;">
+                                <img style="margin-right: 5px;" width="17px" height="17px" src="assets/images/service-provider/cross-grey.png">
+                                <span class="unpaid-text-design">Unpaid</span>
+                              </div>
+                              <div (click)="$event.stopPropagation();" *ngIf="(userData?.status == 'REFUNDED' || userData?.status == 'VOID') && userData?.requestType != 'MULTIPLE'" style="margin-top: 3px;">
+                                <div>
+                                  <img style="margin-right: 5px;" width="17px" height="17px" src="assets/images/service-provider/refund-grey.png">
+                                  <span class="unpaid-text-design">Cancelled: Amount Refunded</span>
+                                </div>
+                                <div>
+                                  <span class="unpaid-text-design">{{getDateFormat(userData?.refundedDate)}}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 row no-margin">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 border-1px"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="!marketPlaceUserData || !marketPlaceUserData.length" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center margin-bottom-15px">
+                    <img width="86px" height="49px" src="assets/images/service-provider/group-light-grey.png" />
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center">
+                    <span class="no-participate-text-style">Users will be listed here<br/>who have ordered.</span>
+                  </div>
+                </div>
+          </div> -->
+          <div *ngIf="!innerLoading && showRegisteredUserDetails" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 d-flex mb-2 align-items-center justify-content-between" style="padding:0px 20px">
+            <div class="d-flex align-items-center">
+              <img width="34px" height="20px" src="assets/images/service-provider/group-black.png"/>
+              <span class="registered-heading">Registered</span>
+            </div>
+
+            <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center custom-padding-register-head" >
+                <span class="group-green">
+                <img width="18px" height="19px" src="assets/images/service-provider/note-green.png"/>
+                </span>
+                <span class="heading-design" style="padding-right:20px">No. of Registered</span>
+                <span class="head-count">{{totalRegisterUserData ? totalRegisterUserData : 0}}</span>
+              </div>
+
+              <!-- <div class="d-flex align-items-center custom-padding-register-head" *ngIf="marketPlaceData?.trainingMode != 'Recorded'">
+                <span class="group-blue">
+                  <img width="25px" height="14px" src="assets/images/service-provider/group-blue-vector.png"/>
+                </span>
+                <span class="heading-design" style="padding-right:20px">No. of Participants</span>
+                <span class="head-count">{{marketPlaceData?.maxParticipants}}</span>
+              </div> -->
+
+              <!-- single purchase functionality not in use after Cart implementation
+                <div class=" margin-right-20px custom-register-user-green-button flex-justify-align-center cursor-pointer" (click)="openRegisterPopup()" *ngIf= "headerData?.trainingStatus!='Canceled' && headerData?.trainingStatus!='Sold-out'">
+                  <img width="19px" height="11px" src="assets/images/service-provider/group-white.png"/>
+                  <span class="register-user-text-design">Register User</span>
+                </div> -->
+
+              <div class="margin-right-20px" *ngIf="marketPlaceUserData && marketPlaceUserData.length">
+                <div style="cursor: pointer;" (click)="exportAsCSV()">
+                  <img style="margin-right: 5px" width="17px" height="18px" src="assets/images/service-provider/excel-icon.png"/> <span class="export-excel-design">EXPORT TO EXCEL</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!innerLoading && showRegisteredUserDetails" class="registered-user-table">
+            <p-table [value]="marketPlaceUserData" dataKey="id">
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th class="registered-table-heading" style="padding-top:14px;padding-bottom:14px">Business Name</th>
+                      <!-- <th class="registered-table-heading px-0" style="padding:14px 0px">Participants</th> -->
+                      <th class="registered-table-heading px-0" width="21%">Email & Phone</th>
+                      <th class="registered-table-heading px-0" width="16%">Purchased  Date</th>
+                      <th class="registered-table-heading px-0">Purchased  by </th>
+                      <th class="registered-table-heading" width="19%">Tag Sales Person & Add Comment</th>
+                      <th class="registered-table-heading px-0" width="15%">Action</th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-product let-expanded="expanded">
+                  <tr [class.color-silver-row]="product === highlighted" (click)="highlighted = product">
+                      <td class="pl-0">
+                        <span class="d-flex align-items-center" style="line-height:1" >
+                          <!-- <button type="button" pButton pRipple [pRowToggler]="product" style="line-height:1" class="p-button-text p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button> -->
+                          <span class="ml-3 text-capitalize">{{product?.companyName}}</span>
+                          </span>
+                      </td>
+                      <!-- <td class="p-0 text-capitalize">{{product?.firstName ? product?.firstName : 'Participant'}} {{product?.lastName ? product?.lastName : 'TBD'}}</td> -->
+                      <td class="p-0 ">
+                        <span class="d-flex flex-column">
+                          <span>{{product?.email}}</span>
+                        <span>{{product?.dialCode}}{{product?.phoneNumber}}</span>
+                        </span>
+                      </td>
+                      <td class="p-0">{{getDateTimeWithoutDotFormat(product?.createdOn)}}</td>
+                      <td class="p-0">{{product?.selfRegistered && product?.selfRegistered != '1' ? product?.salesPersonName ? 'By' + product?.salesPersonName : '' : 'Self'}}</td>
+                      <td style="padding:5px 0px">
+                        <span class="mb-0 cursor-pointer" *ngIf="product?.selfRegistered && product?.selfRegistered == '1'">
+                          <span (click)="$event.stopPropagation();updateSalesPersonData(product)" class="d-block user-tagged-details ml-n1 blue-color" *ngIf="!product?.isSalePerson || product?.isSalePerson == '0'">
+                            <i class="pi pi-tag pl-2 py-0 mr-1" style="transform: rotate(90deg);"></i><i class="blue-color">Tag sales person</i></span>
+                          <span (click)="$event.stopPropagation();updateSalesPersonData(product)" class="d-flex tagged-person user-tagged-details ml-n1" style="line-height: 1.1;"
+                            *ngIf="product?.isSalePerson != '0'">
+                            <span style="color:black"><i class="pi pi-tag pl-2 py-0 mr-1" style="transform: rotate(90deg);"></i>{{product?.salesPersonName}}</span>
+                            <img width="15px" height="15px"
+                              src="assets/images/service-provider/edit-green.png" class="cursor-pointer edit-btn-1" style="margin-left: 5px;">
+                          </span>
+                          <span (click)="$event.stopPropagation();openCommentPopup(product)" class="d-block user-tagged-details blue-color m-0"
+                            *ngIf="!product?.comment || product.comment == ''"> <i class="pi pi-comment py-0 icon-comment pr-2"></i><i class="blue-color">Add comment</i></span>
+                          <span (click)="$event.stopPropagation();openCommentPopup(product)" class="d-flex add-comment user-tagged-details m-0 "
+                            style="line-height: 1.1;" *ngIf="product?.comment">
+                            <span class="comment-text"><span class="icon-comment"><i class="pi pi-comment py-0 pr-2" style="color:black"></i></span><span style="color:black">{{product?.comment}}</span></span>
+                            <img width="15px" height="15px" src="assets/images/service-provider/edit-green.png" style="margin-left: 5px;"
+                              class="cursor-pointer edit-btn-2">
+                          </span>
+                        </span>
+                      </td>
+                      <td class="p-0"><span style="color:#0044cc;text-decoration: underline;cursor:pointer" (click)="openTransactionPopup(product?.transaction_id)" >See Transaction Details</span></td>
+                  </tr>
+              </ng-template>
+              <!-- <ng-template pTemplate="rowexpansion" let-product>
+                  <tr *ngFor="let order of product.userList" dataKey="id">
+                      <td class="p-0"></td>
+                      <td class="p-0" style="padding:5px 0px !important">
+                        <span class="d-flex align-items-center">
+                          <img width="37px" height="37px"src="assets/images/chat/user-icon.png">
+                          <span class="ml-2">
+                        {{order?.firstName ? order?.firstName : 'Participant'}} {{order?.lastName ? order?.lastName : 'TBD'}}
+                          </span>
+                        </span>
+                      </td>
+                      <td class="p-0" width="21%">
+                        <span class="">
+                          <span *ngIf="product?.formType === 'REGISTER_USER'">{{order?.dialCode}} {{order?.phoneNumber}}, {{order?.email}}</span>
+                          <span *ngIf="product?.formType !== 'REGISTER_USER'">{{order?.dialCode}} {{order?.phoneNumber}}{{order?.phoneNumber ? ', ' : ''}}{{order?.companyName}}</span>
+                        </span>
+                      </td>
+                      <td class="p-0">-</td>
+                      <td class="p-0"><span>-</span></td>
+                      <td class="p-0" width="19%"></td>
+                      <td class="p-0"></td>
+                  </tr>
+              </ng-template> -->
+            </p-table>
+
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding" *ngIf="showSalesMenu">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-between" style="margin-bottom: 10px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+              <div class="sales-custom-heading"><img style="margin-right: 10px;" width="22px" height="21px" src="assets/images/service-provider/sales-black.png"> <span style="padding-top: 3px; position: fixed;">Sales</span></div>
+            </div>
+            <!-- <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding flex-end">
+              <div class="custom-register-user-button flex-justify-align-center cursor-pointer no-margin" (click)="openRegisterPopup()" *ngIf= "headerData?.trainingStatus!='Canceled' && headerData?.trainingStatus!='Sold-out'">
+                <img width="14px" height="18px" src="assets/images/service-provider/manual-white.png"/>
+                <span class="register-user-text-design">Purchase Manual</span>
+              </div>
+            </div> -->
+          </div>
+          <p-table styleClass="custom-table-design-sales-person" [scrollable]="true" scrollHeight="78vh" [value]="salesData" dataKey="isSalePerson" [tableStyle]="{'min-width': '100%'}">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="custom-table-heading" style="width: 30%; background-color: #687083; padding: 15px 20px; border-radius: 10px 0 0 0;">Sales Person</th>
+                <th class="custom-table-heading" style="width: 20%; background-color: #687083; padding: 15px 0px;">Number of Manuals Purchased</th>
+                <th class="custom-table-heading" style="width: 30%; background-color: #687083; padding: 15px 0px;">Registered Date/Time</th>
+                <th class="custom-table-heading" style="width: 20%; background-color: #687083; padding: 15px 0px; border-radius: 0 10px 0 0;">Total Price</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-salePerson let-expanded="expanded">
+              <tr class="custom-hover-color">
+                <td style="padding: 8px 0px; width: 30%;">
+                  <div style="display: flex; align-items: center;">
+                    <button style="margin-right: 5px;" type="button" pButton [pRowToggler]="salePerson" class="p-button-text p-button-rounded p-button-plain button-class-font-size" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                    <div style="margin-right: 10px;">
+                      <img class="users-image-design" [src]="salePerson?.salesPersonProfile" onerror="this.src='/assets/images/thumb_profile_image.png'">
+                    </div>
+                    {{salePerson?.FirstName}} {{salePerson?.LastName}}
+                  </div>
+                </td>
+                <td style="padding: 8px 0px; width: 20%;">{{salePerson?.total_sales}}</td>
+                <td style="padding: 8px 0px; width: 30%;"></td>
+                <td style="padding: 8px 0px; font-weight: bold; width: 20%;">{{calculateTotalAmountLocal(salePerson?.total_sales_price) ? '$' + calculateTotalAmountLocal(salePerson?.total_sales_price) : 'Free'}}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="rowexpansion" let-sales>
+              <tr class="hover-color-none">
+                <td style="padding: 0px!important;" colspan="4">
+                  <p-table [value]="sales.customerData" dataKey="id">
+                    <ng-template pTemplate="body" let-customerData>
+                      <tr class="custom-hover-color">
+                        <td style="padding:1rem 0px!important;width: 30%;"></td>
+                        <td style="padding:1rem 0px!important;width: 20%;" *ngIf="customerData?.firstName">{{customerData?.firstName}} {{customerData?.lastName}} ({{customerData?.numberOfManuals}} Manual{{customerData?.numberOfManuals > 1 ? 's':''}})</td>
+                        <td style="padding:1rem 0px!important;width: 20%;" *ngIf="!customerData?.firstName">Participant TBD ({{customerData?.numberOfManuals}} Manuals)</td>
+                        <td style="padding:1rem 0px!important;width: 30%;">{{getDateTimeFormat(customerData?.createdOn)}}</td>
+                        <td style="padding:1rem 0px!important;width: 20%;">{{customerData?.paidPrice ? '$' + customerData?.paidPrice : 'Free'}} {{checkLabelForPrice(customerData?.actualPrice, trainingData?.price) ? 'Regular Price' : ''}}{{checkLabelForPrice(customerData?.actualPrice, trainingData?.discountPrice) ? 'Discount Price' : ''}}{{!checkLabelForPrice(customerData?.actualPrice, trainingData?.discountPrice) && !checkLabelForPrice(customerData?.actualPrice, trainingData?.price) && trainingData?.price && trainingData?.price!='0'   ? 'Alternate Price' : ''}}</td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="4">No orders found</td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="4">No sales person found</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p-dialog styleClass="update-user-info-popup" [(visible)]="showEditUserDetailPopup" [modal]="true">
+  <ng-template pTemplate="header">
+    <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin row">
+      <div class="col-11 col-xl-11 col-lg-11 col-md-11 col-sm-11 no-padding flex-align-center">
+        <span class="heading-style">Add User Info <span *ngIf="currentUserData?.companyName">-</span> {{currentUserData?.companyName}}</span>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 no-padding flex-end">
+        <button style="background: transparent; border: none; box-shadow: none; color: #fff;" (click)="closeUserDetailForm()" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+      </div>
+    </div>
+  </ng-template>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+    <form [formGroup]="userInfoForm">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/user.png"></span>
+                <input type="text" pInputText placeholder="First Name" formControlName="firstName">
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.firstName.errors?.required && userInfoFormSubmitted">
+              First name is required
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/user.png"></span>
+                <input type="text" pInputText placeholder="Enter Last Name" formControlName="lastName">
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.lastName.errors?.required && userInfoFormSubmitted">
+              Last name is required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+        <div class="row no-margin">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 margin-top-15px margin-bottom-10px no-padding">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="22px" height="15px" src="assets/images/service-provider/mail-grey.png"></span>
+                <input type="text" pInputText placeholder="Email" formControlName="email">
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.email.errors?.required && userInfoFormSubmitted">
+              Email is required
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.email.errors?.email && userInfoFormSubmitted">
+              Enter valid email
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 margin-top-15px margin-bottom-10px no-padding">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/phone.png"></span>
+                <ngx-intl-tel-input style="width: 100%" [cssClass]="'custom'" class="KA_input_text_Phone_new_2" [preferredCountries]="preferredCountries" [(ngModel)]="phoneValue" [enableAutoCountrySelect]="true" [enablePlaceholder]="true" [searchCountryFlag]="true" [phoneValidation]="true" [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]" [selectFirstCountry]="true" [selectedCountryISO]="selectedCountryIS0" [maxLength]="10" [phoneValidation]="false" [separateDialCode]="separateDialCode" [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phoneNumber">
+                </ngx-intl-tel-input>
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.phoneNumber.errors?.required && userInfoFormSubmitted">
+              Phone number is required
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+        <div class="row no-margin">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                <input type="text" pInputText placeholder="Address 1" formControlName="address1">
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.address1.errors?.required && userInfoFormSubmitted">
+              Address 1 is required
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                <input type="text" pInputText placeholder="Address 2" formControlName="address2">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+        <div class="row no-margin">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                <p-dropdown class="width-100-perc" name="countryValue" styleClass="width-100-perc custom-dropdown-design-company-new-2 dropdown-panel-change" [options]="countryDropDownOptions" [(ngModel)]="countryValue" formControlName="country" placeholder="Country" optionLabel="name" optionValue="id" (onChange)="getStatesDropdownData($event.value);"></p-dropdown>
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.country.errors?.required && userInfoFormSubmitted">
+              Country is required
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                <p-dropdown class="width-100-perc" [filter]="true" name="stateValue" [(ngModel)]="stateValue" styleClass="width-100-perc custom-dropdown-design-company-new-2 dropdown-panel-change" formControlName="state" [options]="stateDropDownOptions" placeholder="State" optionLabel="name" optionValue="id"></p-dropdown>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.state.errors?.required && userInfoFormSubmitted">
+                State is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+        <div class="row no-margin">
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                <input type="text" pInputText placeholder="City" formControlName="city">
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.city.errors?.required && userInfoFormSubmitted">
+              City is required
+            </div>
+          </div>
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+              <div class="p-inputgroup new-design">
+                <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                <input type="text" pInputText placeholder="Zip Code" formControlName="zipCode">
+              </div>
+            </div>
+            <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding" *ngIf="userInfoFormControl?.zipCode.errors?.required && userInfoFormSubmitted">
+              Zip code is required
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-24px margin-bottom-5px responsive-padding">
+      <div class="row no-margin">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 flex-start margin-top-5px margin-bottom-5px no-padding">
+          <button class="custom-buttom-design-new-2" pButton type="button" label="Save" (click)="submitUserInfo();" icon="pi pi-check" iconPos="right"></button>
+          <button class="custom-buttom-design-new" (click)="closeUserDetailForm()" pButton type="button" label="Cancel" icon="pi pi-times" iconPos="right"></button>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-button-design responsive-padding">
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+<p-dialog styleClass="update-user-payment-info-popup" [(visible)]="showPaymentUserDetailPopup" [modal]="true" [draggable]="false">
+  <ng-template pTemplate="header">
+    <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 no-padding no-margin row">
+      <div class="col-11 col-xl-11 col-lg-11 col-md-11 col-sm-11 no-padding flex-align-center">
+        <span class="heading-style-payment">{{(currentUserData?.status == 'ORDERED' || currentUserData?.status == 'UNPAID')  && currentUserData?.actualPrice > 0 ? "Error Details" : "More Payment Details "}} - {{currentUserData?.firstName}} {{currentUserData?.lastName}}</span>
+      </div>
+      <div class="col-xl-1 col-lg-1 col-md-1 col-sm-1 col-1 no-padding flex-end">
+        <button style="background: transparent; border: none; box-shadow: none; color: #fff;" (click)="showPaymentUserDetailPopup = false" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+      </div>
+    </div>
+  </ng-template>
+  <div *ngFor="let item of paymentCols, let i = index">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 display-flex border-bottom-1px" *ngIf="currentUserPaymentData">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6 custom-object-pair-padding flex-start">
+        <span class="key-label-class">{{paymentColNames[i]}}</span>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col -6 custom-object-pair-padding flex-end">
+        <span class="value-label-class">{{currentUserPaymentData[item]? currentUserPaymentData[item]: '-'}}</span>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+<p-dialog [(visible)]="displayViewModal" [modal]="true" [draggable]="false" [resizable]="true"
+    styleClass="customer-info-popup">
+    <ng-template pTemplate="header">
+        <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+            <span style="font-size: 18px;font-weight: 500;">Customer Details - {{userCurrentData?.firstName}} {{userCurrentData?.lastName}}</span>
+            <button pButton pRipple type="button" (click)="this.displayViewModal = false; setUserFillableData(userCurrentData)" icon="pi pi-pencil" iconPos="right" label="Edit" class="p-button-rounded p-button-success green-button-color float-right"></button>
+        </div>
+    </ng-template>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/user.png"></span>
+                        First Name
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.firstName}}</span>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/user.png"></span>
+                        Last Name
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.lastName}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="22px" height="15px" src="assets/images/service-provider/mail-grey.png"></span>
+                        Email
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.email}}</span>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/phone.png"></span>
+                        Phone Number
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.dialCode}} {{userCurrentData?.phoneNumber}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                  <div class="p-inputgroup new-design-2 view-label-style">
+                      <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                      Address 1
+                  </div>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                  <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.shippingAddress1}}</span>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                        Address 2
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.shippingAddress2}}</span>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                  <div class="p-inputgroup new-design-2 view-label-style">
+                      <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                      Country
+                  </div>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                  <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.shippingCountry}}</span>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                        State
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.shippingState}}</span>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                  <div class="p-inputgroup new-design-2 view-label-style">
+                      <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                      City
+                  </div>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                  <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.shippingCity}}</span>
+              </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding margin-top-15px">
+        <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="17px" height="22px" src="assets/images/service-provider/map-pin.png"></span>
+                        Zip
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.shippingZip}}</span>
+                </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding margin-top-15px margin-bottom-10px">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-12 responsive-padding">
+                    <div class="p-inputgroup new-design-2 view-label-style">
+                        <span class="p-inputgroup-addon"><img width="20px" height="20px" src="assets/images/service-provider/info-grey.png"></span>
+                        Status
+                    </div>
+                </div>
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    <span style="padding-left:37px;" class="view-value-style">{{userCurrentData?.status}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+<p-dialog styleClass="service-provider-pricing-popup" [(visible)]="displayPricingPopup" [modal]="true" [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+  <ng-template pTemplate="header">
+    <div>
+      <i (click)="backToSaleSelect()" class="pi pi-arrow-left" style="margin-right: 10px; color: #fff; font-weight: bold; cursor: pointer;"></i>
+      <span>Pricing</span>
+    </div>
+    <div class="flex-align-center">
+      <button (click)="goToPaymentPopup()" class="pri-button red-btn" type="button">Next <i style="margin-left: 5px; font-size: 14px;" class="pi pi-chevron-right"></i></button>
+      <i style="color: #c4cbdb; margin-left: 10px;" (click)="closePricingPopup()" class="cursor-pointer pi pi-times"></i>
+    </div>
+  </ng-template>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+      <div class="custom-box-design-pricing">
+        <img width="20px" height="20px" src="assets/images/service-provider/dollar-green.png" />
+      </div>
+      <div>
+        <span class="no-margin pricing-label-design">Regular Price</span>
+        <p class="no-margin pricing-value-design">{{!trainingData?.price || trainingData?.price == '0' ? 'Free' : threadApi.isInt(trainingData?.price, true, true) }}</p>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+      <div class="custom-box-design-pricing">
+        <img width="13px" height="23px" src="assets/images/service-provider/dollar-simple-green.png" />
+      </div>
+      <div>
+        <span class="no-margin pricing-label-design">Dicount Price</span>
+        <p class="no-margin pricing-value-design">{{trainingData?.discountPrice ? '$'+trainingData?.discountPrice : '-'}}</p>
+      </div>
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 no-padding flex-start-center">
+      <div class="custom-box-design-pricing">
+        <img width="18px" height="16px" src="assets/images/service-provider/percentage-green.png" />
+      </div>
+      <div>
+        <span class="no-margin pricing-label-design">Discounted</span>
+        <p class="no-margin pricing-value-design">{{trainingData?.discountPercentage ? trainingData?.discountPercentage+'%' : '-'}}</p>
+      </div>
+    </div>
+  </div>
+  <hr style="margin: 30px 0;"/>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-center">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+      <span class="checkbox-label-design">Check here for alternate pricing</span> <p-checkbox styleClass="custom-highlight-checkbox" [(ngModel)]="alternatePricing" [binary]="true" (onChange)="updateIsBirdPriceValue()"></p-checkbox>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+      <span class="checkbox-label-design">Check here to offer this training at no charge</span> <p-checkbox styleClass="custom-highlight-checkbox" [(ngModel)]="freeOffer" [binary]="true" (onChange)="updateFreeOfferValue()"></p-checkbox>
+    </div>
+  </div>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding {{!alternatePricing ? 'low-opacity' : ''}}">
+    <form [formGroup]="pricingForm">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px no-padding">
+            <span class="pricing-popup-text-style">Alternative price</span>
+          </div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 no-padding">
+            <div class="p-inputgroup new-design-text-2">
+              <span class="p-inputgroup-addon"><img width="12px" height="20px" src="assets/images/service-provider/dollar-simple.png"></span>
+              <input type="text" [attr.disabled]="alternatePricing ? null: false" [(ngModel)]="discountValue" pInputText placeholder="Enter alternative price" formControlName="discountPrice" (keyup)="updateBirdPriceValue($event?.target?.value)" (blur)="updateBirdPriceValue($event?.target?.value)">
+            </div>
+          </div>
+          <div style="font-size: 14px;" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin" *ngIf="pricingFormControl?.discountPrice?.errors?.required && pricingFormSubmitted">
+            Alternate price is required
+          </div>
+          <div style="font-size: 14px;" *ngIf="showDiscountPriceValidation" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+            Discount must be less than regular price
+          </div>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding flex-center-end" style="padding-bottom: 10px!important;">
+          <span class="or-label-design">(OR)</span>
+        </div>
+        <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12 no-padding">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px no-padding">
+            <span class="pricing-popup-text-style">Alternative discount </span>
+          </div>
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 no-padding">
+            <div class="p-inputgroup new-design-text-2">
+              <span class="p-inputgroup-addon"><img width="17px" height="15px" src="assets/images/service-provider/percentage.png"></span>
+              <input type="text" [attr.disabled]="alternatePricing ? null: false" [(ngModel)]="discountPercentage" pInputText placeholder="Enter alternative discount" formControlName="discountPercentage" (keyup)="updatediscountPercentageValue($event?.target?.value)" (blur)="updatediscountPercentageValue($event?.target?.value)">
+            </div>
+          </div>
+          <div style="font-size: 14px;" class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin" *ngIf="pricingFormControl?.discountPercentage?.errors?.required && pricingFormSubmitted">
+            Alternate discount is required
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+<p-dialog styleClass="service-provider-popup buy-manual" [(visible)]="displayDetailsPopup" [modal]="true"
+  [breakpoints]="{'1024px': '50vw', '960px': '75vw', '640px': '95vw'}" [style]="{width: '50vw'}" [draggable]="false">
+  <ng-template pTemplate="header">
+    <span>TRAINING MANUAL</span>
+    <div>
+      <i (click)="checkConfirmPopup()" class="cursor-pointer pi pi-times color-grey"></i>
+    </div>
+  </ng-template>
+  <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 no-padding buy-manual">
+    <div style="border: 1px solid #dedede; border-radius: 10px; padding: 20px 0 0 0 !important; background-color: #fff !important; flex-wrap: wrap;"
+      class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding  flex-center" *ngIf="!pageLoading">
+      <div style="width: 100%;">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row no-margin">
+          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 flex-start"
+              style="width: 150px !important; display: block; flex: none;">
+            <img *ngIf="trainingData?.bannerImageUrl" class="responsive-image-height" [src]="trainingData?.bannerImageUrl" style="width: auto;display: block;height: 150px;" />
+            <div *ngIf="!trainingData?.bannerImageUrl" >
+              <img style="max-height: 150px;" src="assets/images/service-provider/manual-placeholder.png" /></div>
+          </div>
+          <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12" style="margin-bottom: 10px;">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding no-margin">
+              <span class="inner-page-title">{{trainingData?.manualName}}</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding custom-margin-inner-detail flex-align-center"
+              style="margin-top: 8px;">
+              <span class="training-text-style"><span>SKU:</span> {{trainingData?.sku}}</span>
+            </div>
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-center"
+              style="flex-wrap: wrap;">
+              <div *ngIf="(payablePrice && payablePrice != '0')"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+                <div>
+                  <span *ngIf="defaultDiscountValue && defaultDiscountValue != '0'" style="margin-right: 10px;"><span
+                    class="custom-price-text">{{defaultDiscountValue | currency: 'USD':true:'1.0-0'}}</span></span>
+                  <span *ngIf="defaultDiscountValue && defaultDiscountValue != '0'" style="margin-right: 5px;"><span
+                    class="custom-price-text cutted">{{defaultPrice | currency: 'USD':true:'1.0-0'}}</span></span>
+                  <span *ngIf="defaultDiscountValue && defaultDiscountValue != '0'" style="margin-right: 20px;"><span
+                    class="custom-price-text percent">{{defaultDiscountPercentage}}% off</span></span>
+                  <span *ngIf="!defaultDiscountValue || defaultDiscountValue == '0'" style="margin-right: 20px;"><span
+                    class="custom-price-text">{{defaultPrice | currency: 'USD':true:'1.0-0'}}</span></span>
+                </div>
+              </div>
+              <div *ngIf="(!payablePrice || payablePrice == '0') && freeOffer"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+                <div>
+                  <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 10px;"><span
+                    class="custom-price-text">{{trainingData?.discountPrice | currency: 'USD':true:'1.0-0'}}</span></span>
+                  <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 5px;"><span
+                    class="custom-price-text cutted">{{trainingData?.price | currency: 'USD':true:'1.0-0'}}</span></span>
+                  <span *ngIf="trainingData?.discountPrice && trainingData?.discountPrice != '0'" style="margin-right: 20px;"><span
+                    class="custom-price-text percent">{{trainingData?.discountPercentage}}% off</span></span>
+                  <span *ngIf="!trainingData?.discountPrice || trainingData?.discountPrice == '0'" style="margin-right: 20px;"><span
+                    class="custom-price-text">{{trainingData?.price | currency: 'USD':true:'1.0-0'}}</span></span>
+                </div>
+              </div>
+              <div *ngIf="(!payablePrice || payablePrice == '0') && !freeOffer"
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center">
+                <div><span class="custom-price-text" style="margin-right: 50px;">Free</span></div>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding row custom-margin-inner-detail-2 flex-align-center counter-plus-minus-div">
+                <div class="manuals-count-box">
+                  <a class="subtract" (click)="toggleBuyManualCount('subtract')"><img src="assets/images/service-provider/minus-sign.png"></a>
+                  <span>{{buyManualCount}}</span>
+                  <a class="add" (click)="toggleBuyManualCount('add')"><img src="assets/images/service-provider/add-new.png"></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+      <div style="display: flex;align-items: center;" class="user-info-header col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-bottom-5px margin-top-20px pl-2 responsive-padding">
+        <span class="additional-participant-design2 margin-right-5px">
+          <img style="width: 15px; margin-right: 0px; filter: invert(1);" src="assets/images/service-provider/map-pin-white.png">
+          <span style="padding: 10px 5px;">Shipping Address</span>
+        </span>
+      </div>
+      <form [formGroup]="shippingForm">
+        <div formArrayName="user_data_map" *ngFor="let userData of user_data_map?.controls; let i = index">
+          <div [formGroupName]="i" class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding flex-align-end">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+              <div class="row no-margin">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                    <span class="popup-text-style">First Name </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="p-inputgroup new-design">
+                      <span class="p-inputgroup-addon"><img width="20px" height="20px"
+                          src="assets/images/service-provider/user.png"></span>
+                      <input type="text" pInputText placeholder="Enter First Name" formControlName="firstName">
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.firstName?.errors?.required && formSubmitted">
+                    First name is required
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                    <span class="popup-text-style">Last Name </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="p-inputgroup new-design">
+                      <span class="p-inputgroup-addon"><img width="20px" height="20px"
+                          src="assets/images/service-provider/user.png"></span>
+                      <input type="text" pInputText placeholder="Enter Last Name" formControlName="lastName">
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.lastName?.errors?.required && formSubmitted">
+                    Last name is required
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                    <span class="popup-text-style">Email </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="p-inputgroup new-design">
+                      <span class="p-inputgroup-addon"><img width="22px" height="15px"
+                          src="assets/images/service-provider/mail-grey.png"></span>
+                      <!-- <input (blur)="checkFirstLastNameValueIndex($event?.target?.value, i)" type="text" pInputText
+                        placeholder="Enter Email" formControlName="email"> -->
+                      <input type="text" pInputText placeholder="Enter Email" formControlName="email">
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.email?.errors?.required && formSubmitted">
+                    Email is required
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.email?.errors?.email && formSubmitted">
+                    Enter valid email
+                  </div>
+                  <div *ngIf="showUserEmailValidationError[i]"
+                    class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding">
+                    {{showUserEmailValidationError[i]}}
+                  </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 no-padding">
+                  <div
+                    class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-4px responsive-padding">
+                    <span class="popup-text-style">Phone Number </span>
+                  </div>
+                  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                    <div class="col-12 no-padding">
+                      <ngx-intl-tel-input [cssClass]="'custom'" class="KA_input_text_Phone_new"
+                        [preferredCountries]="preferredCountries" [enableAutoCountrySelect]="true"
+                        [enablePlaceholder]="true" [searchCountryFlag]="true" [phoneValidation]="true"
+                        [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                        [selectFirstCountry]="true" [selectedCountryISO]="selectedCountryIS0" [maxLength]="10"
+                        [phoneValidation]="false" [separateDialCode]="separateDialCode"
+                        [numberFormat]="PhoneNumberFormat.National" name="phone" formControlName="phoneNumber">
+                      </ngx-intl-tel-input>
+                    </div>
+                  </div>
+                  <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                    *ngIf="userData?.controls?.phoneNumber?.errors?.required && formSubmitted">
+                    Phone number is required
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12  no-padding">
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding flex-justify-spacebetween">
+                <span class="popup-text-style">Address 1</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                      src="assets/images/service-provider/map-pin.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="Address 1" formControlName="shippingAddress1">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingAddress1.errors?.required && formSubmitted">
+                Address 1 is required
+              </div>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12  no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">Address 2</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                    src="assets/images/service-provider/map-pin.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="Address 2" formControlName="shippingAddress2">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingAddress2.errors?.required && formSubmitted">
+                Address 2 is required
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+          <div class="row no-margin">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">State</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                    src="assets/images/service-provider/map-pin.png"></span>
+                  <p-dropdown class="width-100-perc" appendTo="body" [filter]="true" name="stateValue" styleClass="width-100-perc custom-dropdown-design-company-4" [(ngModel)]="shippingUserStateValue" formControlName="shippingState" [options]="shippingStateDropdownData" placeholder="Select State" optionLabel="name" optionValue="id" [group]="true" (onChange)="getSalesTax()">
+                    <ng-template let-group pTemplate="group">
+                      <div class="p-d-flex p-ai-center">
+                        <span>{{group.name}}</span>
+                      </div>
+                    </ng-template>
+                  </p-dropdown>
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingState.errors?.required && formSubmitted">
+                State is required
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">City</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="14px" height="19px"
+                    src="assets/images/service-provider/map-pin.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="City" formControlName="shippingCity">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingCity.errors?.required && formSubmitted">
+                City is required
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding">
+              <div
+                class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-12px margin-bottom-5px responsive-padding">
+                <span class="popup-text-style">Zip</span>
+              </div>
+              <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 md:col-4 responsive-padding">
+                <div class="p-inputgroup new-design">
+                  <span class="p-inputgroup-addon"><img width="12px" height="18px"
+                    src="assets/images/service-provider/map-circle-pin-grey.png"></span>
+                  <input (blur)="getSalesTax()" type="text" pInputText placeholder="Zip" formControlName="shippingZip">
+                </div>
+              </div>
+              <div class="error-msg col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 responsive-padding"
+                *ngIf="shippingFormControl?.shippingZip.errors?.required && formSubmitted">
+                Zip is required
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 margin-top-24px margin-bottom-5px responsive-padding">
+        <div class="row no-margin">
+          <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 flex-end mobile-margin no-padding"
+            style="flex-wrap: wrap;">
+            <div
+              class="col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 no-padding custom-button-design responsive-padding">
+              <button class="custom-button-style" *ngIf="!userAddLoader && ((payablePrice && payablePrice != '0') || shippingCost || salesTax)"
+                (click)="openPaymentPopup();" pButton type="button" label="Next"
+                icon="pi pi-chevron-right" iconPos="right"></button>
+              <button class="custom-button-style" *ngIf="!userAddLoader && !payablePrice && payablePrice == '0' && !shippingCost && !salesTax"
+                (click)="openPaymentPopup();" pButton type="button" label="Order"></button>
+              <button class="custom-button-style" *ngIf="userAddLoader" pButton type="button" label="">
+                <button style="background-color: #469073 !important; border-color: #469073 !important; height: 1.5rem"
+                  pButton pRipple type="button" icon="pi pi-spin pi-spinner" iconPos="right" label=""
+                  class="p-button-rounded button-save button-spin"></button>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 no-padding manual-slip">
+    <div class="slip-details">
+      <div class="price-details">
+        PRICE DETAILS
+      </div>
+      <div class="slip-summary">
+        <img style="width: 20px; filter: invert(1); margin-right: 10px; float: left;" src="assets/images/service-provider/manual-white.png" />
+        <div class="summary-title">Manual Price Summary</div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          {{trainingData?.manualName}}
+        </div>
+        <div class="detail-right">
+          {{buyManualCount}}
+          <ng-container *ngIf="!freeOffer">
+            <span *ngIf="payablePrice">X {{threadApi.isInt(payablePrice)}}</span>
+            <span *ngIf="!payablePrice">(Free)</span>
+          </ng-container>
+          <ng-container *ngIf="freeOffer">
+            <span>X {{threadApi.isInt(trainingData?.price)}}</span>
+          </ng-container>
+        </div>
+      </div>
+      <div class="slip-details-inner" *ngIf="(discountValue && discountValue != '0') || freeOffer">
+        <div class="detail-left">
+          Discount ({{threadApi.isInt(discountPercentage, false)}}% off)
+        </div>
+        <div class="detail-right" style="color: #7f17ff;" *ngIf="!freeOffer">
+          -{{threadApi.isInt((payablePrice - discountValue) * buyManualCount)}}
+        </div>
+        <div class="detail-right" style="color: #7f17ff;" *ngIf="freeOffer">
+          -{{threadApi.isInt(trainingData?.price * buyManualCount)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Shipping Cost
+            <img (click)="editShippingCost('open')" class="cursor-pointer" style="margin-left: 10px;" width="15px" height="15px" src="assets/images/service-provider/edit-green.png" />
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(shippingCost)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Tax on Shipping
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(shippingTax)}}
+        </div>
+      </div>
+      <div class="slip-details-inner">
+        <div class="detail-left">
+          Sales Tax {{threadApi.isInt(salesTaxPercent, false)}}%
+        </div>
+        <div class="detail-right">
+          {{threadApi.isInt(salesTax)}}
+        </div>
+      </div>
+      <div class="slip-details-inner final">
+        <div class="detail-left">
+          Total Amount
+        </div>
+        <div class="detail-right">
+          <span *ngIf="totalAmount || freeOffer">{{threadApi.isInt(totalAmount)}}</span>
+          <span *ngIf="!totalAmount && !freeOffer">Free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</p-dialog>
+<p-dialog styleClass="{{paymentLoading ? 'service-payment-loading-popup' : '' || showPaymentFields ? 'service-payment-provider-popup manual-buy' : '' || paymentSuccessPopup ? 'service-payment-success-provider-popup shipping-popup' : '' || paymentFailurePopup ? 'service-payment-failure-provider-popup' : ''}} {{showRefundPolicy ? 'service-policy-open' : ''}}" [modal]="true" [breakpoints]="{'1024px': '90vw', '960px': '90vw', '640px': '95vw'}" [style]="{width: '90vw'}" [draggable]="false" [(visible)]="displayPaymentPopup">
+  <app-manuals-payment-controller *ngIf="displayPaymentPopup" [isAdmin]="false" [payablePrice]="payablePrice"
+    [buyManualCount]="buyManualCount" [hidePaymentButton]="hidePaymentButton" [domainId]="trainingData.domainID"
+    (refundPolicyShow)="refundPolicyShow($event)" (sendPaymentData)="submitPaymentData($event)"
+    [formValue]="this.shippingForm.getRawValue()" (sendHidePaymentButtonData)="setHidePaymentButton($event)"
+    (closeEvent)="closePopup()"
+    [discountPrice]="discountValue ? discountValue : ''"
+    [discountPercent]="discountPercentage ? discountPercentage : ''"
+    (backToFormEvent)="backToFormPopup()" (closePaymentPopupEvent)="closePaymentPopup()"
+    [showPaymentFields]="showPaymentFields" [paymentLoading]="paymentLoading"
+    [successData]="successData" [paymentSuccessPopup]="paymentSuccessPopup"
+    [paymentFailurePopup]="paymentFailurePopup" [paymentMessage]="paymentMessage"
+    [totalAmount]="totalAmount" [shippingCost]="shippingCost" [shippingTax]="shippingTax" [salesTaxPercent]="salesTaxPercent"
+    [salesTax]="salesTax" [manualName]="trainingData?.manualName" [freeOffer]="freeOffer" [manualData]="trainingData" (paymentPopupEvent)="openPaymentFromEvent()">
+  </app-manuals-payment-controller>
+</p-dialog>
+
+<p-dialog [header]="'Shipping Cost'" [(visible)]="shippingCostDialog" [closable]="true" [modal]="true"
+ [draggable]="false" class="adjust-shipping-cost">
+  <div class="row mt-4">
+    <div class="p-inputgroup new-design col-6">
+      <span class="p-inputgroup-addon"><img width="12px" height="20px"
+          src="assets/images/service-provider/dollar-simple.png"></span>
+      <input class="number-input" type="number" pInputText placeholder="Shipping cost" min="0" [(ngModel)]="customShippingCost">
+    </div>
+    <div class="col-6 flex-start my-2 no-padding">
+      <button (click)="editShippingCost('save')" type="button" label="Save" icon="pi pi-check" iconpos="right"
+        class="custom-buttom-design-new-2 p-button p-component">
+        <span class="p-button-icon p-button-icon-right pi pi-check" aria-hidden="true"></span>
+        <span class="p-button-label">Save</span></button>
+      <button (click)="editShippingCost('cancel')" type="button" label="Cancel" icon="pi pi-times" iconpos="right"
+        class="custom-buttom-design-new p-button p-component">
+        <span class="p-button-icon p-button-icon-right pi pi-times" aria-hidden="true"></span>
+        <span class="p-button-label">Cancel</span></button>
+    </div>
+  </div>
+  <div class="error-msg col-12 responsive-padding" *ngIf="!customShippingCost && customShippingCost != 0">
+    Please enter a valid Shipping cost
+  </div>
+</p-dialog>
+
+<!-- comment popup -->
+<p-dialog [(visible)]="addCommentPopup" [modal]="true" [draggable]="false"
+  styleClass="customer-info-popup">
+  <ng-template pTemplate="header">
+    <div class="w-100 mx-3" style="display: flex;align-items: center;justify-content: space-between;">
+      <span style="font-size: 18px;font-weight: 500;">Comment</span>
+      <button pButton pRipple type="button"
+        (click)="addCommentPopup = false; saveComment()" icon="pi pi-check"
+        iconPos="right" label="Save" class="p-button-rounded p-button-success green-button-color float-right"></button>
+    </div>
+  </ng-template>
+  <div class="row mt-4">
+    <div class="col-12 flex-start my-2 no-padding">
+      <textarea placeholder="Comment" [(ngModel)]="editCommentValue" maxlength="100"
+        class="form-control mx-4 w-100" name="comment" rows="6"></textarea>
+    </div>
+    <div class="col-12 comment-info mx-2 py-2">
+      {{editCommentValue.length}}/100
+    </div>
+  </div>
+</p-dialog>
+<!-- salesPerson popoup -->
+<app-popup *ngIf="showCartUserPopup" access="market-place" title="Select Sales Person" buttonTitle="continue" (sendUserData)="getCartUserData($event)" (closeUserPopup)="closeCartSalePersonPopup()" [currentUser]="user" [isMultipleSalesPerson]="false" [isRequired]="true"></app-popup>
+<!-- manual add / remove popup -->
+<div class="custom-top-popup add-remove-popup text-center sm-center-popup" *ngIf="cartUpdatedMessage">
+  <div class="add-remove">
+      <img src="assets/images/service-provider/tick-filled.png" style="height: 19px; width: 19px;">
+      <span style="color:#298368">{{cartUpdatedMessage}}</span>
+  </div>
+</div>

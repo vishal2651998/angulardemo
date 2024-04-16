@@ -1,0 +1,345 @@
+<!--div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div-->
+<div *ngIf="!loading">
+    <div *ngIf="pageRefresh" class="new-button-top">
+        <span  class="new-button-div"><img class="new-button-div-img" src="assets/images/thread-detail/thread-notifiy-icon.png" alt="Loader" />&nbsp;&nbsp;Tap to get new updates</span>
+        <!--span class="th-badge-content"><span class="text">{{this.postNotificationCount}}</span></span-->
+    </div>
+    <div *ngIf="threadActionRefresh && pushText != ''" class="new-button-top">
+        <span class="new-div"><img class="" src="assets/images/thread-detail/{{pushTextIcon}}-svg.svg"/>&nbsp;&nbsp;{{pushText}}</span>
+    </div>
+                 
+    <div class="th-error-div" *ngIf="threadViewError"><div class="error-msg">{{threadViewErrorMsg}}</div></div> 
+    <div  *ngIf="!threadViewError">
+        <div id="header" style="min-height:42px;" class="detail-page-header" >
+            <!--app-product-header class="hide" [pageData]="headerData"></app-product-header-->
+            <app-thread-detail-header *ngIf="pageDetailHeaderFlag" [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)"></app-thread-detail-header>    
+        </div>  
+        <div class="tech-detail-v2" *ngIf="techSupportView" ><p-messages [(value)]="msgs1" [enableService]="false"></p-messages></div>
+                
+        <div class="thread-detail-section">
+            <div class="section-left thread-view-recent" 
+            [ngClass]="{'left-col-expand': !leftPanel , 'left-col-collapse': leftPanel,
+                         'left-col-hide': hideLeftSidePanel }"
+            [style.height.px]="innerHeight">
+            
+            </div>
+            <div class="section-middle thread-view-comments" 
+            [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel,'left-col-expand': leftPanel, 'left-col-collapse': !leftPanel, 'left-col-hide':hideLeftSidePanel } ">                           
+                <div class="th-outer-col th-outer-col-2">
+                    <div [style.height.px]="innerHeight" class="thread-post-hover">
+                        
+                        <div class="arrow-tt-hide">
+                        <div popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="scrollbottom" popoverTitle="Goto Bottom" placement="bottom" triggers="hover" class="scroll-top-on" *ngIf="buttonTop" (click)="setActivePosition('bottom')"><img src="assets/images/thread-detail/goto-bottom-v2.png"></div>
+                        <ng-template #scrollbottom></ng-template>
+                        <div popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="scrolltop" popoverTitle="Goto Top" placement="top" triggers="hover" class="scroll-bottom-on" *ngIf="buttonBottom" (click)="setActivePosition('top')"><img src="assets/images/thread-detail/goto-top-v2.png"></div>
+                        <ng-template #scrolltop></ng-template>    
+                        </div>
+                        
+                        <div #top id="step" class="ps thread-post  threadPostcomment" (scroll)="scrolled($event)" [perfectScrollbar]="sconfig" >  
+
+                           
+
+                            <button style="visibility: hidden;" #print printTitle="Thread View" printSectionId="mytodosItemsId" ngxPrint styleSheetFile="assets/print.css" >Print</button> 
+                            <div id="mytodosItemsId" #tdpage class="thread-detail-page threadPostcommentDiv">                        
+                                <!-- notification -->
+                                <div *ngIf="nloading" class="post-div th-notification-loader-outer">
+                                    <div class="post-div-col post-div-left">                                
+                                        <div class="th-notification-loader">
+                                            <img src="assets/images/loading.svg" alt="Loader" />
+                                        </div>                                                                                     
+                                    </div>
+                                    <div class="post-div-col post-div-right">&nbsp;</div>
+                                </div>
+                                <!-- notification -->
+                                <app-thread-detail-view (activePosition)="setActivePosition($event)" (threadTranslateActionEmit)="threadTranslateAction($event)" 
+                                (detailViewComponentRef)="detailViewRef = $event" (detailViewCallBack)="detailViewCallBack($event)"></app-thread-detail-view>
+                    
+                                <div class="post-div" *ngIf="threadRemindersData!=''">
+                                    <div class="post-div-col post-div-left"> 
+                                        <div class="post-view">
+                                            <div class="reminder-view mTopm">
+                                                <div class="reminder-row" *ngFor="let trdata of threadRemindersData;" >
+                                                    <p *ngIf="trdata.title != ''" class="reminder-title">{{trdata.title}}</p>
+                                                    <div class="reminder-date"><img src="assets/images/thread-detail/thread-view-reminder.png"> <span>Reminder sent on {{trdata.createdOn}}</span></div>                                                                                               
+                                                </div>
+                                            </div>                             
+                                        </div>                                                 
+                                    </div>
+                                    <div class="post-div-col post-div-right">&nbsp;</div>
+                                </div>                                
+                               
+                                <div class="post-div" *ngIf="postDataLength>0">
+                                    <div class="post-div-col post-div-left"> 
+                                        <div class="post-view first-div">
+                                            <div class="seperater">
+                                                <img class="lt-img" src="assets/images/thread-detail/dotted-post-img.png">
+                                                <span class="ct-text comment-text" *ngIf="postData.length == 1">Comment</span>
+                                                <span class="ct-text comment-text" *ngIf="postData.length > 1 ">Comments</span>
+                                                <span class="rt-dot comment-dot">&nbsp;</span>
+                                            </div>                                                 
+                                        </div>
+                                    </div>
+                                    <div class="post-div-col post-div-right">&nbsp;</div>                            
+                                </div>
+                               
+                                <div *ngFor="let post of postData; let i = index;" class="reply-{{post.commentPostId}}">                            
+                                   
+                                    <div class="post-div post-comment-div" id="notify-{{post.commentPostId}}" *ngIf="((post.deleteFlag == '0' || post.deleteFlag == '1')) "> 
+                                       
+                                        <!--div *ngIf="post.postLoading" class="thread-post-loader"><img src="assets/images/loading.svg" alt="Loader" /></div-->
+                                        <div class="post-div-col post-div-left" [ngClass]="{ 'setOpacity3' : post.postLoading }">                                
+                                            <div class="post-view" *ngIf="(post.deleteFlag == '1')">
+                                                <div class="post-row" >
+                                                    <div class="delete-comment-row">
+                                                        <img class="img" src="assets/images/thread-detail/delete-comment.png" alt="delete comment" />
+                                                        <span class="text">&nbsp;&nbsp;Comment deleted</span>
+                                                    </div>                                           
+                                                </div>                                
+                                            </div>
+                                            <div *ngIf="(post.postView && post.deleteFlag == '0')" class="post-view pid-{{post.commentPostId}}" [ngClass]="{ 'padding-bottom' : post.postNew }">                                
+                                                <div class="post-row display-table">                                                    
+                                                    <div class="display-tablecell post-col post-col1">
+                                                        <div class="tooltipUseDiv" >
+                                                            <div class="tooltipUseDivInner" ></div>                                                        
+                                                            <div class="post-profile-img" >
+                                                                <img class="post-p-img" [src]="post.commentProfileImage" onerror="this.src='assets/images/thumb_profile_image.png'"  />   
+                                                            </div>                                                    
+                                                           
+                                                        </div>
+                                                    </div>  
+                                                    <div class="display-tablecell post-col post-col2">
+                                                        <div class="post-head display-table">
+                                                            <div class="display-tablecell post-head-col post-head-col1">  
+                                                                <div class="post-head-inner-col">
+                                                                    <div class="post-head-inner-col1 arrow-tt-hide">                                                                
+                                                                        <span class="name-text cursor-pointer">
+                                                                            <span class="profile-topbadge-user-pview1" *ngIf="post.badgeTopUser"> <img  src="assets/images/thread/crownicon.svg"/></span>{{post.commentUserName}}
+                                                                        </span>                                                                
+                                                                        <span class="title-text th-head-inline" *ngIf="post.userRoleTitle != undefined" [ngClass]="{ 'marginTop16' : post.threadOwnerLabel, 'marginTop8' : !post.threadOwnerLabel }" title="{{post.commentUserRoleTitle}}"><span class="truncate1">{{post.userRoleTitle}}<span style="padding:0 ;" *ngIf="!post.threadOwnerLabel">,</span></span></span>                                                                    
+                                                                        <span *ngIf="post.threadOwnerLabel" class="thread-owner-label">Thread Owner</span>
+                                                                        <span class="posted-text" [ngClass]="{ 'marginTop12' : post.threadOwnerLabel && post.userRoleTitle != undefined, 'marginTop6' : !post.threadOwnerLabel && post.commentUserRoleTitle != undefined }">{{post.postedFrom}}</span>
+                                                                        <span *ngIf="post.newComment" popoverClass="custom-tooltip menu-tooltip" [ngbPopover]="commentnew" popoverTitle="New" placement="bottom" triggers="hover" class="dot-ret">&nbsp;</span>
+                                                                        <ng-template #commentnew></ng-template>
+                                                                    </div>                                                           
+                                                                </div>                                    
+                                                            </div>                                                            
+                                                        </div>
+                                                        <div class="post-cont" [ngClass]=" { 'active-border' : post.activeBorder, 'active' : post.postNew, 'zendesk' : (post.fromzenDesk || post.commentFromzenDeskInt==1), 'post-cont-active-old' : post.newComment  } ">
+                                                            <p class="post-desp" [innerHTML]="post.contentWeb"></p>
+                                                        
+                                                            <!-- Attachment List-->
+                                                            <app-attachment-view *ngIf="!post.attachmentLoading" [loading]="post.attachmentLoading" [action]="post.action" [dynamicGid]="'00'+post.commentPostId" [access]="pageAccess"  [attachments]="post.attachments"></app-attachment-view>
+                                                            <!-- Attachment List-->
+                                                            <div [ngClass]="{ 'table-row4-border' : post.attachmentLoading }" class="table-row4 cursor-pointer"> 
+                                                                <div class="display-table row4">
+                                                                    <div class="display-tablecell row4-col1">
+                                                                        
+                                                                        <div *ngIf="replyEnable && post.enableActionButton" [ngClass]=" { 'hide' : post.postNew } " class="reply-button-div" (click)="tapOnComment(post);$event.stopPropagation();">
+                                                                            <span class="post-replies-img"></span>
+                                                                            <span class="post-replies-text">Reply</span>
+                                                                        </div>                                                     
+                                                                    </div>                                                        
+                                                                    <div class="display-tablecell row4-col2 ">   
+                                                                        
+                                                                         <div class="icons-div icon-left">
+                                                                                                                        
+                                                                            <span *ngIf="post.enableActionButton" title="Translate" class="post-button post-button-green cursor-pointer" tooltipClass="post-submit-tooltip translate-tooltip" container="body" triggers="click" (click)="$event.stopPropagation();" [autoClose]="true" placement="bottom-right" [ngbTooltip]="SelectlanguageContent"><img class="post-delete-img cursor-pointer" src="assets/images/thread-detail/post-lang-icon.png" /></span>                                                       
+                                                                            <span class="th-date-text post-date-text">{{post.postCreatedOn}}</span>                                                        
+                                                                            
+                                                                            <ng-template #SelectlanguageContent>
+                                                                                <div class="thread-owner-reply div-f-border">
+                                                                                    <div class="display-table label-tt-cont" (click)="changeTranslateLanguage(post.transText,post.contentTranslate,i,'comment','');$event.stopPropagation();">
+                                                                                        <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="32" height="32" src="assets/images/thread-detail/post-lang-translate.png"></span>
+                                                                                        <span class="display-tablecell label-tt-cont-rt cursor-pointer">{{post.transText}}</span>
+                                                                                    </div>                                                                                                                     
+                                                                                </div> 
+                                                                                <div class="thread-owner-reply div-s-border">
+                                                                                    <div class="display-table label-tt-cont" (click)="changeTranslateLanguage('settings',post.contentTranslate,i,'comment','');$event.stopPropagation();">
+                                                                                        <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="32" height="32" src="assets/images/thread-detail/post-lang-settings.png"></span>
+                                                                                        <span class="display-tablecell label-tt-cont-rt cursor-pointer">Language Settings</span>
+                                                                                    </div>                                                                                                                     
+                                                                                </div>                                                          
+                                                                            </ng-template> 
+                                                                            
+                                                                        </div>
+
+                                                                        <!--div *ngIf="!msTeamAccessMobile" class="icons-div icon-left">
+                                                                            <span title="Flag" class="icon icon-thread-flag"></span>                                
+                                                                        </div-->
+                                                                        <div class="icons-div icon-left setWidth50">
+                                                                        <div *ngIf="post.postType != '' && (post.postType == 'Fix' || post.postType == 'fix')">
+                                                                            <span class="proposed-bulb-border" *ngIf="(post.commentPostStatus == '0' && closeStatus == 0 && (this.userId == this.threadUserId || specialOwnerAccess) && this.userId != post.commentUserId)"></span>
+                                                                            <span *ngIf="(post.commentPostStatus != '0' && closeStatus == 0 && (this.userId == this.threadUserId || specialOwnerAccess) && this.userId != post.commentUserId)"></span>
+                                                                            <span *ngIf="((closeStatus == 1) || ((userId != threadUserId && !specialOwnerAccess && userId != post.userId) || (userId != threadUserId && !specialOwnerAccess && userId == post.commentUserId) || ((this.userId == this.threadUserId || specialOwnerAccess) && userId == post.commentUserId)))" title="Post Status" class="icon icon-thread-bstatus{{post.commentPostStatus}}" ></span>  
+                                                                            
+                                                                        </div> 
+                                                                        </div>                                                           
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                           
+                                                        </div>                                                                                                            
+
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                                                                             
+                                        </div>                                        
+                                    </div>                          
+                                    
+                                   
+                                    <!-- // Heading -->
+                                    <div *ngFor="let npdata of post.commentNestedReplies; let i1 = index;">
+                                        <div class="post-div post-reply-div" id="notify-{{npdata.replyId}}">                            
+                                            <!--div *ngIf="npdata.postReplyLoading" class="thread-post-loader"><img src="assets/images/loading.svg" alt="Loader" /></div-->
+                                            <div *ngIf="post.commentReplyCount>1" class="view-more-reply-text" (click)="tapOnComment(post);">View more replies</div>  
+                                            <div class="post-div-col post-div-left" [ngClass]="{ 'setOpacity3' : npdata.postReplyLoading }">                                
+                                                <div *ngIf="npdata.postView" class="post-view pid-{{npdata.replyId}} nested-post-view">                                
+                                                    <div class="post-row display-table">
+                                                        <div class="display-tablecell post-col post-col1">
+                                                            <div class="tooltipUseDiv">
+                                                                <div class="tooltipUseDivInner" ></div>                                                        
+                                                                <div class="post-profile-img" >
+                                                                    <img class="post-p-img" [src]="npdata.replyProfileImage" onerror="this.src='assets/images/thumb_profile_image.png'"  />   
+                                                                </div>                                                    
+                                                               
+                                                            </div>
+                                                        </div>
+                                                        <div class="display-tablecell post-col post-col2">
+                                                            <div class="post-head display-table">
+                                                                <div class="display-tablecell post-head-col post-head-col1">  
+                                                                    <div class="post-head-inner-col">                                                                
+                                                                        <div class="post-head-inner-col1 arrow-tt-hide">                                                                    
+                                                                            <span class="name-text cursor-pointer" >
+                                                                                <span class="profile-topbadge-user-pview1" *ngIf="npdata.badgeTopUser"> <img  src="assets/images/thread/crownicon.svg"/></span>{{npdata.replyUserName}}
+                                                                            </span>                                                                        
+                                                                            <span class="title-text th-head-inline" *ngIf="npdata.userRoleTitle != undefined" [ngClass]="{ 'marginTop16' : npdata.threadOwnerLabel, 'marginTop8' : !npdata.threadOwnerLabel }" title="{{npdata.userRoleTitle}}"><span class="truncate1">{{npdata.userRoleTitle}}<span style="padding:0 ;" *ngIf="!npdata.threadOwnerLabel">,</span></span></span>   
+                                                                            <span *ngIf="npdata.threadOwnerLabel" class="thread-owner-label">Thread Owner</span>                                                                                                                                        
+                                                                            <span class="posted-text" [ngClass]="{ 'marginTop12' : npdata.threadOwnerLabel && npdata.userRoleTitle != undefined, 'marginTop6' : !npdata.threadOwnerLabel && npdata.userRoleTitle != undefined }" >{{npdata.postedFrom}}</span>
+                                                                            <span *ngIf="npdata.newReply" popoverClass="new-dot-tooltip" [ngbPopover]="replynew" popoverTitle="New" placement="bottom" triggers="hover" class="dot-ret">&nbsp;</span>
+                                                                            <ng-template #replynew></ng-template>
+                                                                         </div>                                                                
+                                                                    </div>                                    
+                                                                </div>
+                                                                
+                                                                
+                                                            </div>
+                                                            <div class="post-cont" [ngClass]="{ 'post-cont-active-old' : npdata.newReply, 'zendesk' : post.fromzenDesk }">
+                                                                <p class="post-desp" [innerHTML]="npdata.contentWeb"></p>                                                               
+                                                                <!-- Attachment List-->
+                                                                <app-attachment-view *ngIf="!npdata.attachmentLoading" [loading]="npdata.attachmentLoading" [action]="npdata.action" [dynamicGid]="'0'+npdata.replyPostId" [access]="pageAccess"  [attachments]="npdata.attachments"></app-attachment-view>
+                                                                <!-- Attachment List-->
+                                                                
+                                                                <div [ngClass]="{ 'table-row4-border' : (npdata.replyUploadContents && npdata.replyUploadContents.length == 0) }" class="table-row4 cursor-pointer" > 
+                                                                    <div class="display-table row4" >
+                                                                        <div class="display-tablecell row4-col1 setWidth30">                                                                                                                                                                                                 
+                                                                        </div>                                                        
+                                                                        <div class="display-tablecell row4-col2 setWidth70">                                                                                                                                
+                                                                            <div class="icons-div icon-left">
+                                                                                                                           
+                                                                                <span *ngIf="npdata.enableActionButton" title="Translate" class="post-button post-button-green cursor-pointer" tooltipClass="post-submit-tooltip translate-tooltip" container="body" triggers="click" (click)="$event.stopPropagation();" [autoClose]="true" placement="bottom-right" [ngbTooltip]="SelectlanguageContent"><img class="post-delete-img cursor-pointer" src="assets/images/thread-detail/post-lang-icon.png" /></span>                                                       
+                                                                                <span class="th-date-text post-date-text">{{npdata.postCreatedOn}}</span>  
+                                                                               
+                                                                                <ng-template #SelectlanguageContent>
+                                                                                    <div class="thread-owner-reply div-f-border">
+                                                                                        <div class="display-table label-tt-cont" (click)="changeTranslateLanguage(npdata.transText,npdata.contentTranslate,i,'reply',npdata.parentPostId,i1);$event.stopPropagation();">
+                                                                                            <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="32" height="32" src="assets/images/thread-detail/post-lang-translate.png"></span>
+                                                                                            <span class="display-tablecell label-tt-cont-rt cursor-pointer">{{npdata.transText}}</span>
+                                                                                        </div>                                                                                                                     
+                                                                                    </div> 
+                                                                                    <div class="thread-owner-reply div-s-border">
+                                                                                        <div class="display-table label-tt-cont" (click)="changeTranslateLanguage('settings',npdata.contentTranslate,i,'reply',npdata.parentPostId,i1);$event.stopPropagation();">
+                                                                                            <span class="display-tablecell label-tt-cont-lt cursor-pointer"><img width="32" height="32" src="assets/images/thread-detail/post-lang-settings.png"></span>
+                                                                                            <span class="display-tablecell label-tt-cont-rt cursor-pointer">Language Settings</span>
+                                                                                        </div>                                                                                                                     
+                                                                                    </div>                                                          
+                                                                                </ng-template>  
+
+                                                                                
+            
+                                                                            </div>
+                                                                            <!--div *ngIf="!msTeamAccessMobile" class="icons-div icon-left">
+                                                                                <span title="Flag" class="icon icon-thread-flag"></span>                                
+                                                                            </div-->
+                                                                            <div class="icons-div icon-left setWidth50">
+                                                                            <div *ngIf="npdata.postType != '' && (npdata.postType == 'Fix' || npdata.postType == 'fix')">
+                                                                                <span class="proposed-bulb-border" *ngIf="(npdata.replyPostStatus == '0' && closeStatus == 0 && (this.userId == this.threadUserId || specialOwnerAccess) && this.userId != npdata.userId)"></span>
+                                                                                <span *ngIf="(npdata.replyPostStatus != '0' && closeStatus == 0 && (this.userId == this.threadUserId || specialOwnerAccess) && this.userId != npdata.userId)"></span>
+                                                                                <span *ngIf="((closeStatus == 1) || ((userId != threadUserId && !specialOwnerAccess && userId != npdata.userId) || (userId != threadUserId && !specialOwnerAccess && userId == npdata.userId) || ((this.userId == this.threadUserId || specialOwnerAccess) && userId == npdata.userId)))" title="Post Status" class="icon icon-thread-bstatus{{npdata.replyPostStatus}}" ></span>  
+                                                                                
+                                                                            </div> 
+                                                                            </div>                                                           
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                                                                                
+                                                            </div>
+                                                                                                        
+                                                        </div>
+                                                    </div>
+                                                </div> 
+                                                                                                        
+                                            </div>                                            
+                                        </div>
+                                    </div>  
+                                    <!-- empty div start----- Loading div  --->
+                                    <div class="post-div" *ngIf="post.postReplyLoading">
+                                        <div class="post-div-col post-div-left"> 
+                                            <div class="post-view">
+                                                <div class="post-view-paddBottom" >
+                                                    <div class="post-loader">
+                                                        <div class="post-loader-svg"></div>
+                                                    </div>
+                                                </div>                                
+                                            </div>                                                      
+                                        </div>
+                                        <div class="post-div-col post-div-right">&nbsp;</div>
+                                    </div>
+                                    
+                                                     
+                            </div>
+                                
+                                
+                            </div>                             
+                             
+                        </div>
+                        
+
+                    </div> 
+                    
+                </div>               
+            </div>
+
+            <div class="section-right thread-view-reply" [style.height.px]="innerHeight" [ngClass]="{'col-expand': rightPanel , 'col-collapse': !rightPanel }">
+                <div class="cust-right-panel" [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+                    <app-thread-view-reply-public></app-thread-view-reply-public>
+                </div>
+            </div>
+        </div>     
+    </div>        
+</div>
+
+
+<p-dialog [header]="false" [modal]="true" [draggable]="false" [resizable]="false" [(visible)]="moreInfoFlag"
+ [position]="dialogPosition" class="v2-mask">
+    <h1 style="font-weight: normal">
+        <span class="head truncate">More Additional Info</span>
+        <span class="sidebar-close-icon cursor text-right" (click)="closeSidebar('more-info')"></span>
+    </h1>
+    <div class="content" [style.height.px]="innerHeight+148">
+        <div class="vehicle-info" [perfectScrollbar]="dconfig">
+            <div class="items" *ngFor="let item of detailInfo;">
+                <div class="item-row">
+                    <div class="item-col key">
+                        <span class="truncate" title="{{item.name}}">{{item.name}}</span>
+                    </div>
+                    <div class="item-col value text-right">
+                        <span class="truncate" title="{{item.value}}">{{item.value}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>

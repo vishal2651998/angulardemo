@@ -1,0 +1,373 @@
+<div [style.height.px]="innerHeight" *ngIf="loading">
+    <div *ngIf="subLevel" class="loading-small-screen-scroll trst" style="left:50% !important">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+    <div *ngIf="!subLevel" class="loading-small-screen-scroll trst">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" />
+    </div>
+</div>
+<div *ngIf="!loading">
+    <div *ngIf="lazyLoading" style="left:47% !important"
+        class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{access}}-list-lazy-loader">
+        <img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+    <div class="prob-list-cont">
+        <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new {{access}}-grid-row"
+            [style.height.px]="innerHeight">
+            <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs"
+                [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+                <p-table #table [columns]="toolsListColumns" [scrollable]="true" [totalRecords]="toolsList.length"
+                    id="file-datatable" class="file-datatable thread-list-table shop-list-table ro-list"
+                    [value]="toolsList" [ngClass]="{'opacity': opacityFlag, 'hide': displayNoRecords}"
+                    [scrollHeight]="'calc(100vh - '+tableRemoveHeight+'px)'" (scroll)="scroll($event)" (onLazyLoad)="lazyLoad($event)" [lazy]="true">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr *ngIf="!displayNoRecords">
+                            <th [pSortableColumn]="col.sortName" *ngFor="let col of columns" class="{{col.columnpclass}}">
+                                <span>{{col.header}}</span>
+                                <ng-container *ngIf="col.sortName">
+                                    <p-sortIcon  [field]="col.sortName"></p-sortIcon>
+                                    <p-columnFilter *ngIf="!['startDate', 'completionDeadline', 'isPublished', 'createdOn'].includes(col.sortName)" type="text" [field]="col.sortName" display="menu"></p-columnFilter>
+                                    </ng-container>
+                            </th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-toolsList let-i="rowIndex">
+                        <tr *ngIf="inspectionListFlag" class="cursor" (click)="goToDetailPage('inspection', toolsList)">
+
+
+                            <!-- id column -->
+                            <td class=" aud-thl-col-1">
+                                <span
+                                    *ngIf="toolsList && !toolsList?.logoUrl || (toolsList?.logoUrl && toolsList?.logoUrl.includes('gts-placeholder'))"
+                                    class="toolImg1 inspection-icon"></span>
+                                <img class="toolImg1"
+                                    *ngIf="toolsList && toolsList?.logoUrl && !toolsList?.logoUrl.includes('gts-placeholder')"
+                                    [src]="toolsList?.logoUrl">
+                                <span class="tool-text-div" *ngIf="toolsList.id">{{toolsList.id}}</span>
+                            </td>
+
+                            <!-- type column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.typeName">{{toolsList.typeName}}</span>
+                                <span *ngIf="!toolsList.typeName">-</span>
+                            </td>
+                            <!-- insName column -->
+                            <td class=" aud-thl-col-4">
+                                <span class="overflow-text-table text-action-link"
+                                    *ngIf="toolsList.title">{{toolsList.title}}</span>
+                                <span *ngIf="!toolsList.title">-</span>
+                            </td>
+                            <!-- instance column -->
+                            <!-- <td class=" aud-thl-col-2" >
+                                <div class="">
+                                    <span class="overflow-text-table" *ngIf="toolsList.instance != ''">{{toolsList.instance}}</span>
+                                    <span *ngIf="toolsList.instance == ''">-</span>
+                                </div>
+                            </td>    -->
+                            <!-- Category column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.inspectionTime != ''">{{toolsList.inspectionTime}}</span>
+                                <span *ngIf="toolsList.inspectionTime == ''">-</span>
+                            </td>
+                            <!-- Department column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.startDate && toolsList.startDate != '0000-00-00 00:00:00'">{{toolsList.startDate
+                                    | localDatePipe | date: 'MMM d, yyyy '}}</span>
+                                <span
+                                    *ngIf="!toolsList.startDate || toolsList.startDate == '0000-00-00 00:00:00'">-</span>
+                            </td>
+                            <td class=" aud-thl-col-3">
+                                <span *ngIf="!!toolsList.completionDeadline ">{{toolsList.completionDeadline |
+                                    localDatePipe | date: 'MMM d, yyyy '}}</span>
+                                <span *ngIf="!toolsList.completionDeadline">-</span>
+                            </td>
+                            <td class=" aud-thl-col-2">
+                                <span *ngIf="!!toolsList.totalTime">{{toolsList.totalTime}}</span>
+                                <span *ngIf="!toolsList.totalTime">-</span>
+                            </td>
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table text-action-link"
+                                    *ngIf="!!toolsList.loc">{{toolsList.loc}}</span>
+                                <span *ngIf="!toolsList.loc || toolsList.loc == ''">-</span>
+                            </td>
+                            <td class=" aud-thl-col-4">
+
+                                <div class="process-div ">
+                                    <span class="color-1" popoverClass="custom-tooltip menu-tooltip title-tooltip"
+                                        container="body" [ngbPopover]="completed" popoverTitle="Completed: 31"
+                                        placement="bottom" triggers="hover"></span>
+                                    <ng-template #completed></ng-template>
+                                    <span class="color-2" popoverClass="custom-tooltip menu-tooltip title-tooltip"
+                                        container="body" [ngbPopover]="open" popoverTitle="Open: 22" placement="bottom"
+                                        triggers="hover"></span>
+                                    <ng-template #open></ng-template>
+                                    <span class="color-3" popoverClass="custom-tooltip menu-tooltip title-tooltip"
+                                        container="body" [ngbPopover]="inprogress" popoverTitle="In-Process: 23"
+                                        placement="bottom" triggers="hover"></span>
+                                    <ng-template #inprogress></ng-template>
+                                    <span class="color-4" popoverClass="custom-tooltip menu-tooltip title-tooltip"
+                                        container="body" [ngbPopover]="notstarted" popoverTitle="Not Started: 24"
+                                        placement="bottom" triggers="hover"></span>
+                                    <ng-template #notstarted></ng-template>
+                                </div>
+
+                            </td>
+                            <td class=" aud-thl-col-2">
+                                <!-- <span  class="overflow-text-table" *ngIf="toolsList.status || toolsList.status == '0'">{{toolsList.status}}</span> -->
+                                <span class="insstatus-text-col" [style.background-color]="toolsList.statusColor"><span
+                                        class="insstatus-text-col-text">{{toolsList.status}}</span></span>
+                                <span *ngIf="!toolsList.status && toolsList.status!= 0">-</span>
+                            </td>
+                            <td class=" aud-thl-col-10 col-sticky">
+                                <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" class="list-menu-content active"
+                                        backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul class="more-actions">
+                                                <li class="cursor active" (click)="editInspection(toolsList.id)"><img
+                                                        src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                <!--li class="cursor active" (click)="menuTrigger.closeMenu();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li-->
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="templateListFlag" class="cursor" (click)="goToDetailPage('template', toolsList)">
+                            <!-- id column -->
+                            <td class=" aud-thl-col-2">
+                                <span
+                                    *ngIf="toolsList && !toolsList?.logoUrl || (toolsList?.logoUrl && toolsList?.logoUrl.includes('gts-placeholder'))"
+                                    class="toolImg1 template-icon"></span>
+                                <img class="toolImg1"
+                                    *ngIf="toolsList && toolsList?.logoUrl && !toolsList?.logoUrl.includes('gts-placeholder')"
+                                    [src]="toolsList?.logoUrl">
+                                <span class="tool-text-div" *ngIf="toolsList.id">{{toolsList.id}}</span>
+                            </td>
+                            <!-- type column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.typeName">{{toolsList.typeName}}</span>
+                                <span *ngIf="!toolsList.typeName">-</span>
+                            </td>
+                            <!-- title column -->
+                            <td class=" aud-thl-col-4">
+                                <span class="overflow-text-table" *ngIf="toolsList.title">{{toolsList.title}}</span>
+                                <span *ngIf="!toolsList.title">-</span>
+                            </td>
+
+                            <td class=" aud-thl-col-2">
+                                <div class="">
+                                    <span class="overflow-text-table text-action-link"
+                                        *ngIf="toolsList.sectionsCount">{{toolsList.sectionsCount}}</span>
+                                    <span *ngIf="!toolsList.sectionsCount">-</span>
+                                </div>
+                            </td>
+                            <!-- questions column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.questionsCount || toolsList.questionsCount == 0">{{toolsList.questionsCount}}</span>
+                                <span *ngIf="!toolsList.questionsCount && toolsList.questionsCount != 0">-</span>
+                            </td>
+
+                            <!-- customer column -->
+                            <td *ngIf="domainId == 1" class=" aud-thl-col-3">
+                                <span class="overflow-text-table text-action-link"
+                                    *ngIf="toolsList.customer != '' && toolsList.customer != 'general'">{{toolsList.customer}}</span>
+                                <span style="position: relative;bottom:8px"
+                                    [ngClass]="(toolsList.networkName == 'General' || toolsList.networkName == 'general') ? '' : 'text-action-link'"
+                                    class="overflow-text-table"
+                                    *ngIf="toolsList.networkName">{{toolsList.networkName}}</span>
+                                <span *ngIf="!toolsList.networkName">-</span>
+                            </td>
+                            <td class=" aud-thl-col-2">
+                                <span *ngIf="!!toolsList.createdOn">{{toolsList.createdOn | localDatePipe | date: 'MMM
+                                    d, yyyy '}}</span>
+                                <span *ngIf="!toolsList.createdOn">-</span>
+                            </td>
+                            <td class=" aud-thl-col-2">
+                                <span *ngIf="!!toolsList.userName">{{toolsList.userName}}</span>
+                                <span *ngIf="!toolsList.userName">-</span>
+                            </td>
+                            <!-- status column -->
+                            <td class=" aud-thl-col-2">
+                                <!-- <span  class="overflow-text-table" *ngIf="toolsList.status || toolsList.status == '0'">{{toolsList.status}}</span> -->
+                                <span class="insstatus-text-col" [style.background-color]="toolsList.statusColor"><span
+                                        class="insstatus-text-col-text">{{toolsList.status}}</span></span>
+                                <span *ngIf="!toolsList.status && toolsList.status!= 0">-</span>
+                            </td>
+                            <td class=" aud-thl-col-10 col-sticky">
+                                <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" class="list-menu-content active"
+                                        backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul class="more-actions">
+                                                <li class="cursor active" (click)="editTemplate(toolsList?.id)"><img
+                                                        src="assets/images/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                <!--li class="cursor active" (click)="menuTrigger.closeMenu();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li-->
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </td>
+                        </tr>
+
+                        <tr *ngIf="sectionListFlag" class="cursor" (click)="goToDetailPage('section', toolsList)">
+                            <!-- id column -->
+                            <td class=" aud-thl-col-2">
+                                <span
+                                    *ngIf="toolsList && !toolsList?.gtsImg || (toolsList?.gtsImg && toolsList?.gtsImg.includes('gts-placeholder'))"
+                                    class="toolImg1 section-icon"></span>
+                                <!-- <span *ngIf="toolsList && !toolsList?.gtsImg && (!toolsList?.gtsImg && !toolsList?.gtsImg.includes('gts-placeholder'))" class="toolImg1 inspection-icon"></span> -->
+                                <img class="toolImg1"
+                                    *ngIf="toolsList && toolsList?.gtsImg && !toolsList?.gtsImg.includes('gts-placeholder')"
+                                    [src]="toolsList?.gtsImg">
+                                <span class="tool-text-div" *ngIf="toolsList.id != ''">{{toolsList.id}}</span>
+                                <span class="tool-text-div"
+                                    *ngIf="toolsList.procedureId">{{toolsList.procedureId}}</span>
+                                <span class="tool-text-div" *ngIf="!toolsList.procedureId">-</span>
+                            </td>
+                            <!-- type column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.workFlowName">{{toolsList.workFlowName}}</span>
+                                <span *ngIf="!toolsList.workFlowName">-</span>
+                            </td>
+                            <!-- title column -->
+                            <td class=" aud-thl-col-4">
+                                <span class="overflow-text-table " *ngIf="toolsList.name">{{toolsList.name}}</span>
+                                <span *ngIf="!toolsList.name">-</span>
+                            </td>
+                            <!-- questions column -->
+                            <td class=" aud-thl-col-2">
+                                <span class="overflow-text-table"
+                                    *ngIf="toolsList.questionsCount || toolsList.questionsCount == '0'">{{toolsList.questionsCount}}</span>
+                                <span *ngIf="!toolsList.questionsCount && toolsList.questionsCount!= 0">-</span>
+                            </td>
+
+                            <!-- section column -->
+                            <!-- <td class=" aud-thl-col-3" >
+                            <div class="">
+                                <span class="overflow-text-table text-action-link" *ngIf="toolsList.section != ''">{{toolsList.section}}</span>
+                                <span *ngIf="toolsList.section == ''">-</span>
+                            </div>
+                        </td>    -->
+
+                            <!-- customer column -->
+                            <td *ngIf="domainId == 1" class=" aud-thl-col-4">
+                                <span
+                                    [ngClass]="(toolsList.networkName == 'General' || toolsList.networkName == 'general') ? '' : 'text-action-link'"
+                                    class="overflow-text-table"
+                                    *ngIf="toolsList.networkName">{{toolsList.networkName}}</span>
+                                <span *ngIf="!toolsList.networkName">-</span>
+                            </td>
+                            <td class=" aud-thl-col-4">
+                                <span *ngIf="!!toolsList.createdOn">{{toolsList.createdOn | localDatePipe | date: 'MMM
+                                    d, yyyy '}}</span>
+                                <span *ngIf="!toolsList.createdOn">-</span>
+                            </td>
+                            <td class=" aud-thl-col-4">
+                                <span *ngIf="!!toolsList.createdBy">{{toolsList.createdBy}}</span>
+                                <span *ngIf="!toolsList.createdBy">-</span>
+                            </td>
+                            <!-- status column -->
+                            <td class=" aud-thl-col-2">
+                                <!-- <span  class="overflow-text-table" *ngIf="toolsList.status || toolsList.status == '0'">{{toolsList.status}}</span> -->
+                                <span class="insstatus-text-col" [style.background-color]="toolsList.statusColor"><span
+                                        class="insstatus-text-col-text">{{toolsList.status}}</span></span>
+                                <span *ngIf="!toolsList.status && toolsList.status!= 0">-</span>
+                            </td>
+                            <td class=" aud-thl-col-10 col-sticky">
+                                <div id="more" class="more-icon more-icon-bg" #menuTrigger="matMenuTrigger"
+                                    [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                    <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                </div>
+                                <mat-toolbar color="primary">
+                                    <mat-menu #more="matMenu" class="list-menu-content active"
+                                        backdropClass="ptabletmenu">
+                                        <div class="part-menu">
+                                            <ul class="more-actions">
+                                                <li (click)="editSection(toolsList.procedureId)" class="cursor active"
+                                                    (click)="menuTrigger.closeMenu()"><img src="assets/images/edit.png"
+                                                        alt="Edit">&nbsp;&nbsp;Edit</li>
+                                                <!--li class="cursor active" (click)="menuTrigger.closeMenu();"><img src="assets/images/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li-->
+                                            </ul>
+                                        </div>
+                                    </mat-menu>
+                                </mat-toolbar>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+
+
+                </p-table>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="itemEmpty">
+        <div *ngIf="userData && userData.length == 0" [style.height.px]="innerHeight"
+            class="d-flex align-items-center justify-content-center">
+            <div class="empty-show-container">
+                <div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="d-flex align-items-center justify-content-center flex-column">
+                                    <div *ngIf="inspectionListFlag" class="rounded-circle center-img">
+                                        <img src="assets/images/hq/blank-insp.png">
+                                    </div>
+                                    <div *ngIf="sectionListFlag" class="rounded-circle center-img">
+                                        <img src="assets/images/hq/blank-section.png">
+                                    </div>
+                                    <div *ngIf="templateListFlag" class="rounded-circle center-img">
+                                        <img src="assets/images/hq/audit-insepction.png">
+                                    </div>
+                                    <div *ngIf="inspectionListFlag">
+                                        <p class="fs-14 shop-txt">Tap on the ‘New Audit/Inspection’ button to add
+                                            Audit/Inspection</p>
+                                    </div>
+                                    <div *ngIf="templateListFlag">
+                                        <p class="fs-14 shop-txt">Tap on the ‘New Template’ button to add New Template
+                                        </p>
+                                    </div>
+                                    <div *ngIf="sectionListFlag">
+                                        <p class="fs-14 shop-txt">Tap on the ‘New Section’ button to add New Section</p>
+                                    </div>
+
+                                    <div *ngIf="inspectionListFlag" (click)="addItem('inspection')"
+                                        class="m-0 add-action-btn cursor d-flex align-items-center">
+                                        <img src="assets/images/hq/add-icon.png" class="mr-2">
+                                        <span class="btn-txt">New Audit/Inspection</span>
+                                    </div>
+                                    <div *ngIf="templateListFlag" (click)="addItem('template')"
+                                        class="m-0 add-action-btn cursor d-flex align-items-center">
+                                        <img src="assets/images/hq/add-icon.png" class="mr-2">
+                                        <span class="btn-txt">New Template</span>
+                                    </div>
+                                    <div *ngIf="sectionListFlag" (click)="addItem('section')"
+                                        class="m-0 add-action-btn cursor d-flex align-items-center">
+                                        <img src="assets/images/hq/add-icon.png" class="mr-2">
+                                        <span class="btn-txt">New Section</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

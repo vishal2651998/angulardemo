@@ -1,0 +1,7 @@
+<div class="refer-info err-info">
+    <div class="label">Error Codes</div>
+    <div class="cont err-code" *ngIf="errorCodes == '-'" [innerHtml]="emptyCont"></div>
+    <div class="cont err-code" *ngIf="errorCodes != '-'">
+        <span *ngFor="let err of errorCodes">{{err.code}} - {{err.description}}</span>
+    </div>
+</div>

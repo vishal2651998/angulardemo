@@ -1,0 +1,217 @@
+<div id="header">
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>
+</div>
+<div class="prob-new">
+    <div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont dynmic-new-form-cont"
+        [ngClass]="{'col-lg-8 step1': step1Action && !step2Action, 'col-lg-12 step2': (step1Action && step2Action) || (msTeamAccessMobile) }">
+        <div *ngIf="step2Action && !msTeamAccessMobile" class="step2-info" [ngClass]="{'col-lg-3': step1Action && step2Action}"
+            [style.height]="'calc(100vh - '+rmSHeight+'px)'">
+            <div class="ps form-values">
+                <perfect-scrollbar [ngClass]="{'disabled': disablePerfectScroll}" [config]="sconfig">
+                    <app-dynamic-values type="market-place" [apiFields]="showAbleformFields" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)" [banner]="bannerImage" [defaultBanner]="defaultBanner" [industryType]="industryType" [marketPlaceimgUrl]="marketPlaceimgUrl" [trainingMode]="currentTrainingMode" [startDate]="startDate" [endDate]="endDate"></app-dynamic-values>
+                </perfect-scrollbar>
+            </div>
+        </div>
+        <div id="form-cont" class="form-cont"
+            [ngClass]="{'col-lg-12': (step1Action && !step2Action) || msTeamAccessMobile, 'col-lg-8': (step1Action && step2Action) && (!msTeamAccessMobile) }">
+            <form class="form-horizontal" [formGroup]="threadForm">
+                <div class="new-prob-head">
+                    <div class="new-col title">
+                        <span *ngIf="teamSystem && step1Action && !step2Action" class="cursor back-icon team-back-icon" title="Back" (click)="closeWindow()"></span>
+                        <span *ngIf="step1Action && step2Action" class="back-icon cursor" title="Back to Step1"
+                            (click)="backStep1()"></span>
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img
+                                src="assets/images/parts/cancel-icon.png" /></div>
+                        <button *ngIf="step1Action && !step2Action" class="btn next" (click)="submitAction()">Next <img
+                                src="assets/images/parts/next-icon.png" /></button>
+                        <div *ngIf="step1Action && step2Action" class="btn next publish" (click)="submitAction()">
+                            {{saveText}} <img src="assets/images/parts/publish.png" /></div>
+                    </div>
+                </div>
+                <div *ngIf="step2Loading || !step2Loading" class="dynamic-form-content" [style.height]="'calc(100vh - '+rmHeight+'px)'">
+                    <div id="step" class="ps form-fields" [perfectScrollbar]="sconfig">
+                        <ul class="progressbar">
+                            <li [ngClass]="{'active': step1, 'selection': step2}">{{step1Title}}</li>
+                            <li [ngClass]="{'active': step2}">{{step2Title}}</li>
+                        </ul>
+                        <div class="form-items">
+                            <div *ngIf="step2Loading" class="dash-loader cust-loader"><img
+                                    src="assets/images/loading.svg" alt="Loader" /></div>
+                            <div *ngIf="!step2Loading">
+                                <div class="col-12 field-row no-padding {{th?.newSectionClass}}"
+                                    *ngFor="let th of apiFormFields[stepIndex][stepTxt]; let i=index;">
+                                    <div *ngIf="showOnlineField && th.stepsName != 'Hours' && th.stepsName != 'Recorded Video Link' && th.stepsName != 'Venue Addess' && !th.stepsName.includes('In-person time select')">
+                                        <div *ngIf="th.displayFlag && th.name!=''" class="field-label {{th.stepsName}}-new-class {{th.sectionClass}}"
+                                            [ngClass]="{'bg-label': th.isBackground > 0}">{{th.name}}</div>
+                                        <div [ngClass]="{'bg-fileld': th.cells.isBackground > 0}">
+                                            <div class="web-fields default-fields">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet"  (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="name" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.name" [selectedMarketPlaceBanner]="selectedMarketPlaceBanner" (sendFileData)="updateFileData($event)" [marketPlaceimgName]="marketPlaceimgName" [marketPlaceimgUrl]="marketPlaceimgUrl" [miniumEndDate]="miniumEndDate" [maximumEndDate]="maximumEndDate" [miniumStartDate]="miniumStartDate" [miniumExpiryDateBird]="miniumExpiryDateBird" [birdPercentage]="birdPercentage" [birdValue]="birdValue" [miniumStartDate]="miniumStartDate" [maximumStartDate]="maximumStartDate" [threadInfo]="threadInfo" (sendStartDateValue)="updateStartDateSteps($event)" (sendEndDateValue)="updateEndDateSteps($event)" (sendTrainingModeValue)="updateTrainingModeSteps($event)" (sendManualDiscountPriceValue)="updateManualDiscountPriceValue($event)" (sendRegularPrice)="updateRegularPrice($event)" (sendTimeZoneValue)="updateTimeZoneSteps($event)" (sendIsBirdPriceValue)="updateIsBirdPriceValue($event)" (sendBirdPriceValue)="updateBirdPriceValue($event)" (sendBirdPriceFocus)="birdPriceFocus($event)" (sendBirdPercentageFocus)="birdPercentageFocus($event)" (sendBirdPercentageValue)="updateBirdPercentageValue($event)" (sendStartTimeValue)="updateStartTimeSteps($event)" (sendEndTimeValue)="updateEndTimeSteps($event)" (sendInPersonStartTimeValue)="updateInpersonStartTimeSteps($event)" (sendNormalStartTimeValue)="updateNormalStartTimeSteps($event)" (sendNormalEndTimeValue)="updateNormalEndTimeSteps($event)" (sendFreeValue)="updateFreePrice($event)" [showStartDateValidation]="showStartDateValidation" [showBirdPriceValidation]="showBirdPriceValidation" [showPriceError]="showPriceError" [showBirdPercentageValidation]="showBirdPercentageValidation" [formFields]="formFields" [customValidationMsg]="customValidationMsg" [showCustomValidation]="showCustomValidation" (sendMaxParticipantsValue)="updateMaxParticipantValidation($event)" [countryDropdownData]="countryDropdownData" [stateDropdownData]="stateDropdownData" (setStateDropdown)="getStatesDropdownData($event);" (sendIsIncludedWithTraining)="updateManualIncludedWithTraining($event)" (scrollBarEvent)="scrollBarEvent($event)" formType="market-place">
+                                                </app-dynamic-fields>
+                                                <div class="opt-field-toggle user-select text-right"
+                                                    [ngClass]="{'hide': th.cells.optionFilter.length == 0}">
+                                                    <div class="cursor toggle-opt"
+                                                        [ngClass]="{'disabled': th.optDisableFlag}"
+                                                        (click)="optFieldToggle(i, th.optFieldsFlag, th.optDisableFlag)">
+                                                        {{th.toggleTxt}} {{optionTxt}} <span
+                                                            [ngClass]="{'hide-more': th.optFieldsFlag, 'show-more': !th.optFieldsFlag}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="web-fields optianal-fields" id="op-{{i}}"
+                                                [ngClass]="{'hide': !th.optFieldsFlag}">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="optionFilter" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.optionFilter"></app-dynamic-fields>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="showInPersonField && th.stepsName != 'Recorded Video Link' && th.stepsName != 'Hours' && th.stepsName != 'Time And Time Zone'">
+                                        <div *ngIf="th.displayFlag && th.name!=''" class="field-label {{th.sectionClass}}"
+                                            [ngClass]="{'bg-label': th.isBackground > 0}">{{th.name}}</div>
+                                        <div [ngClass]="{'bg-fileld': th.cells.isBackground > 0, 'custom-backgroud-in-person' : th.stepsName.includes('In-person time select') && showInPersonField}">
+                                            <div *ngIf="th.newCustomLabel" class="{{th.newCustomClass}}">
+                                                {{th.newCustomLabel}}
+                                            </div>
+                                            <div class="web-fields default-fields">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="name" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.name" [selectedMarketPlaceBanner]="selectedMarketPlaceBanner" (sendFileData)="updateFileData($event)" [marketPlaceimgName]="marketPlaceimgName" [marketPlaceimgUrl]="marketPlaceimgUrl" [miniumEndDate]="miniumEndDate" [miniumExpiryDateBird]="miniumExpiryDateBird" [birdPercentage]="birdPercentage" [birdValue]="birdValue" [maximumEndDate]="maximumEndDate" [maximumStartDate]="maximumStartDate" [threadInfo]="threadInfo" [showPriceError]="showPriceError" [miniumStartDate]="miniumStartDate" (sendStartDateValue)="updateStartDateSteps($event)" (sendEndDateValue)="updateEndDateSteps($event)" (sendIsBirdPriceValue)="updateIsBirdPriceValue($event)" (sendBirdPriceValue)="updateBirdPriceValue($event)" (sendBirdPriceFocus)="birdPriceFocus($event)" (sendBirdPercentageFocus)="birdPercentageFocus($event)" (sendBirdPercentageValue)="updateBirdPercentageValue($event)" (sendManualDiscountPriceValue)="updateManualDiscountPriceValue($event)" (sendRegularPrice)="updateRegularPrice($event)" (sendTrainingModeValue)="updateTrainingModeSteps($event)" (sendTimeZoneValue)="updateTimeZoneSteps($event)" (sendStartTimeValue)="updateStartTimeSteps($event)" (sendInPersonStartTimeValue)="updateInpersonStartTimeSteps($event)" (sendEndTimeValue)="updateEndTimeSteps($event)" (sendNormalStartTimeValue)="updateNormalStartTimeSteps($event)" (sendNormalEndTimeValue)="updateNormalEndTimeSteps($event)" [showStartDateValidation]="showStartDateValidation" [showBirdPriceValidation]="showBirdPriceValidation" [showBirdPercentageValidation]="showBirdPercentageValidation" (sendFreeValue)="updateFreePrice($event)" [formFields]="formFields" [customValidationMsg]="customValidationMsg" [showCustomValidation]="showCustomValidation" (sendMaxParticipantsValue)="updateMaxParticipantValidation($event)" [countryDropdownData]="countryDropdownData" [stateDropdownData]="stateDropdownData" (setStateDropdown)="getStatesDropdownData($event);" (sendIsIncludedWithTraining)="updateManualIncludedWithTraining($event)" (scrollBarEvent)="scrollBarEvent($event)" formType="market-place">
+                                                </app-dynamic-fields>
+                                                <div class="opt-field-toggle user-select text-right"
+                                                    [ngClass]="{'hide': th.cells.optionFilter.length == 0}">
+                                                    <div class="cursor toggle-opt"
+                                                        [ngClass]="{'disabled': th.optDisableFlag}"
+                                                        (click)="optFieldToggle(i, th.optFieldsFlag, th.optDisableFlag)">
+                                                        {{th.toggleTxt}} {{optionTxt}} <span
+                                                            [ngClass]="{'hide-more': th.optFieldsFlag, 'show-more': !th.optFieldsFlag}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="web-fields optianal-fields" id="op-{{i}}"
+                                                [ngClass]="{'hide': !th.optFieldsFlag}">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="optionFilter" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.optionFilter"></app-dynamic-fields>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="showHoursField && th.stepsName != 'Venue Addess' && th.stepsName != 'Date' && th.stepsName != 'Time And Time Zone' && !th.stepsName.includes('In-person time select')">
+                                        <div *ngIf="th.displayFlag  && th.name!=''" class="field-label {{th.sectionClass}}"
+                                            [ngClass]="{'bg-label': th.isBackground > 0}">{{th.name}}</div>
+                                        <div [ngClass]="{'bg-fileld': th.cells.isBackground > 0}">
+                                            <div class="web-fields default-fields">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="name" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.name" [selectedMarketPlaceBanner]="selectedMarketPlaceBanner" (sendFileData)="updateFileData($event)" [marketPlaceimgName]="marketPlaceimgName" [marketPlaceimgUrl]="marketPlaceimgUrl" [miniumEndDate]="miniumEndDate" [miniumExpiryDateBird]="miniumExpiryDateBird" [birdPercentage]="birdPercentage" [birdValue]="birdValue" [showPriceError]="showPriceError" [maximumEndDate]="maximumEndDate" [maximumStartDate]="maximumStartDate" [threadInfo]="threadInfo" [miniumStartDate]="miniumStartDate" (sendStartDateValue)="updateStartDateSteps($event)" (sendManualDiscountPriceValue)="updateManualDiscountPriceValue($event)" (sendRegularPrice)="updateRegularPrice($event)" (sendEndDateValue)="updateEndDateSteps($event)" (sendIsBirdPriceValue)="updateIsBirdPriceValue($event)" (sendBirdPriceValue)="updateBirdPriceValue($event)" (sendBirdPriceFocus)="birdPriceFocus($event)" (sendBirdPercentageFocus)="birdPercentageFocus($event)" (sendBirdPercentageValue)="updateBirdPercentageValue($event)" (sendInPersonStartTimeValue)="updateInpersonStartTimeSteps($event)" (sendTrainingModeValue)="updateTrainingModeSteps($event)" (sendTimeZoneValue)="updateTimeZoneSteps($event)" (sendStartTimeValue)="updateStartTimeSteps($event)" (sendEndTimeValue)="updateEndTimeSteps($event)" (sendNormalStartTimeValue)="updateNormalStartTimeSteps($event)" (sendNormalEndTimeValue)="updateNormalEndTimeSteps($event)" [showStartDateValidation]="showStartDateValidation" [showBirdPriceValidation]="showBirdPriceValidation" [showBirdPercentageValidation]="showBirdPercentageValidation" (sendFreeValue)="updateFreePrice($event)" [formFields]="formFields" [customValidationMsg]="customValidationMsg" [showCustomValidation]="showCustomValidation" (sendMaxParticipantsValue)="updateMaxParticipantValidation($event)" [countryDropdownData]="countryDropdownData" [stateDropdownData]="stateDropdownData" (setStateDropdown)="getStatesDropdownData($event);" (sendIsIncludedWithTraining)="updateManualIncludedWithTraining($event)" (scrollBarEvent)="scrollBarEvent($event)" formType="market-place"> 
+                                                </app-dynamic-fields>
+                                                <div class="opt-field-toggle user-select text-right"
+                                                    [ngClass]="{'hide': th.cells.optionFilter.length == 0}">
+                                                    <div class="cursor toggle-opt"
+                                                        [ngClass]="{'disabled': th.optDisableFlag}"
+                                                        (click)="optFieldToggle(i, th.optFieldsFlag, th.optDisableFlag)">
+                                                        {{th.toggleTxt}} {{optionTxt}} <span
+                                                            [ngClass]="{'hide-more': th.optFieldsFlag, 'show-more': !th.optFieldsFlag}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="web-fields optianal-fields" id="op-{{i}}"
+                                                [ngClass]="{'hide': !th.optFieldsFlag}">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="optionFilter" [formGroup]="threadForm"
+                                                    [apiFormFields]="th.cells.optionFilter"></app-dynamic-fields>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="!showHoursField && !showInPersonField && !showOnlineField && th.stepsName != 'Venue Addess' && th.stepsName != 'Date' && th.stepsName != 'Time And Time Zone' && !th.stepsName.includes('In-person time select') && th.stepsName != 'Hours' && th.stepsName != 'Recorded Video Link'">
+                                        <div *ngIf="th.displayFlag  && th.name!=''" class="field-label {{th.sectionClass}}"
+                                            [ngClass]="{'bg-label': th.isBackground > 0}">{{th.name}}</div>
+                                        <div [ngClass]="{'bg-fileld': th.cells.isBackground > 0}">
+                                            <div class="web-fields default-fields">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="name" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.name" [selectedMarketPlaceBanner]="selectedMarketPlaceBanner" [miniumExpiryDateBird]="miniumExpiryDateBird" (sendFileData)="updateFileData($event)" [marketPlaceimgName]="marketPlaceimgName" [marketPlaceimgUrl]="marketPlaceimgUrl" [miniumEndDate]="miniumEndDate" [birdPercentage]="birdPercentage" [birdValue]="birdValue" [showPriceError]="showPriceError" [maximumEndDate]="maximumEndDate" [maximumStartDate]="maximumStartDate" [threadInfo]="threadInfo" [miniumStartDate]="miniumStartDate" (sendStartDateValue)="updateStartDateSteps($event)" (sendIsBirdPriceValue)="updateIsBirdPriceValue($event)" (sendManualDiscountPriceValue)="updateManualDiscountPriceValue($event)" (sendRegularPrice)="updateRegularPrice($event)" (sendBirdPriceValue)="updateBirdPriceValue($event)" (sendBirdPriceFocus)="birdPriceFocus($event)" (sendBirdPercentageFocus)="birdPercentageFocus($event)" (sendBirdPercentageValue)="updateBirdPercentageValue($event)" (sendEndDateValue)="updateEndDateSteps($event)" (sendInPersonStartTimeValue)="updateInpersonStartTimeSteps($event)" (sendTrainingModeValue)="updateTrainingModeSteps($event)" (sendTimeZoneValue)="updateTimeZoneSteps($event)" (sendStartTimeValue)="updateStartTimeSteps($event)" (sendEndTimeValue)="updateEndTimeSteps($event)" (sendNormalStartTimeValue)="updateNormalStartTimeSteps($event)" (sendNormalEndTimeValue)="updateNormalEndTimeSteps($event)" [showStartDateValidation]="showStartDateValidation" [showBirdPriceValidation]="showBirdPriceValidation" [showBirdPercentageValidation]="showBirdPercentageValidation" (sendFreeValue)="updateFreePrice($event)" [formFields]="formFields" [customValidationMsg]="customValidationMsg" [showCustomValidation]="showCustomValidation" (sendMaxParticipantsValue)="updateMaxParticipantValidation($event)" [countryDropdownData]="countryDropdownData" [stateDropdownData]="stateDropdownData" (setStateDropdown)="getStatesDropdownData($event);" (sendIsIncludedWithTraining)="updateManualIncludedWithTraining($event)" (scrollBarEvent)="scrollBarEvent($event)" formType="market-place">
+                                                </app-dynamic-fields>
+                                                <div class="opt-field-toggle user-select text-right"
+                                                    [ngClass]="{'hide': th.cells.optionFilter.length == 0}">
+                                                    <div class="cursor toggle-opt"
+                                                        [ngClass]="{'disabled': th.optDisableFlag}"
+                                                        (click)="optFieldToggle(i, th.optFieldsFlag, th.optDisableFlag)">
+                                                        {{th.toggleTxt}} {{optionTxt}} <span
+                                                            [ngClass]="{'hide-more': th.optFieldsFlag, 'show-more': !th.optFieldsFlag}"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="web-fields optianal-fields" id="op-{{i}}"
+                                                [ngClass]="{'hide': !th.optFieldsFlag}">
+                                                <app-dynamic-fields *ngIf="th.displayFlag" [pageInfo]="pageInfo" [duplicateMarketPlace]="duplicateMarketPlace" (trainingsTitleListPass)="trainingsTitleListPass($event)" [trainingsTitleListGet]="trainingsTitleListGet" (sameNameValidator)="sameNameValidator($event)" [selectedTrainingMode]="currentTrainingMode" [zoomEmail]="zoomEmail" [manualDiscountPrice]="manualDiscountPrice" [showManualDiscountPriceValidation]="showManualDiscountPriceValidation" [manualName]="manualName"
+                                                    [secIndex]="i" fieldSec="optionFilter" [formGroup]="threadForm"
+                                                    [trainingManual]="trainingManual" [policies]="policies" [selectedPolicies]="selectedPolicies" [salesPersonsList]="salesPersonsList" [salesPersonNames]="salesPersonNames" (previewPolicyEmit)="previewPolicy($event)"  (removeSalesPerson)="removeSalesPerson($event)" (removeLinkedManual)="removeLinkedManualFn($event)" (showSalesPersonPopup)="showSalesPersonPopupFn($event)" (showManualsPopup)="showManualsPopupFn($event)"
+                                                    [apiFormFields]="th.cells.optionFilter"></app-dynamic-fields>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<p-dialog styleClass="training-manuals-popup" [(visible)]="showManualsPopup" [modal]="true">
+    <ng-template pTemplate="header">
+      <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 ml-0 mr-0 row">
+        <div class="col-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 flex-align-center">
+          <span class="heading-style">Training Manuals</span>
+        </div>
+        <div class="col-6 col-xl-6 col-lg-6 col-md-6 col-sm-6  flex-end right-header-content">
+            <form class="search-input" action="action_page.php">
+                <input type="text" placeholder="Search..." [(ngModel)]="manualSearch" (keyup)="searchManual()">
+                <button type="button"><img src="assets/images/service-provider/search.png"></button>
+              </form>           
+          <button class="close-btn" style="background: transparent; border: none; box-shadow: none; color: #fff;" (click)="showManualsPopupFn(false)" pButton type="button" icon="pi pi-times" iconPos="left"></button>
+        </div>
+      </div>
+    </ng-template>
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 no-padding">
+        <div class="manual-images">
+            <div class="col-md-3 training-manual-display" *ngFor="let manual of filteredManuals" (click)="setManual(manual, '')">
+                <div class="box-style">
+                    <div class="manual-image">
+                        <img [src]="manual?.bannerImageUrl ? manual?.bannerImageUrl : 'assets/images/service-provider/manual-placeholder.png'" style="max-height: 135px;">
+                    </div>
+                    <div class="manual-details">
+                        <div class="training-manual-content">
+                            <h4 class="ttl">{{manual?.manualName}}</h4>
+                            <p class="sku-text"><img src="assets\images\service-provider/sku.png"><span class="sku">SKU: {{manual?.sku}}</span></p>
+                            <p class="price-text free-select-btn">
+                                <span class="left-price-text">
+                                <span *ngIf="!manual?.price || manual?.price == '0'" class="all-left-text">Free</span> 
+                                <span *ngIf="manual?.price && manual?.price != '0'">${{(manual?.discountPrice && manual?.discountPrice != '0' ? manual?.discountPrice : manual?.price)}} </span>
+                                <span *ngIf="manual?.discountPrice && manual?.discountPrice != '0'" class="strike-text">${{manual?.price}}</span>
+                                <span *ngIf="manual?.discountPrice && manual?.discountPrice != '0'"class="per-discount">{{manual?.discountPercentage}}% off</span>
+                                </span>
+                                <a class="select-btn">select<img src="assets/images/service-provider/tick-inactive.png"></a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
+<app-popup *ngIf="openSalesPersonPopup" access="market-place" title="Select Sales Person" buttonTitle="save" [isUpdate]="true" (sendUserData)="getSalesPerson($event)" (removeSalesPerson)="removeSalesPerson($event)" (closeUserPopup)="closeSalesPersonPopup()" [currentUser]="user" [selectedSalesPersonId]="salesPersonSelectedIds" [salesPersonsList]="salesPersonsList" [isMultipleSalesPerson]="true" [workstreams]="workStreamIds" [isSales]="true"></app-popup>

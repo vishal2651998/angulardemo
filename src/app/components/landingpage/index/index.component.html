@@ -1,0 +1,168 @@
+<div id="header">
+    <app-product-header *ngIf="!headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+    </app-product-header>
+    <app-product-header *ngIf="headerFlag" [pageData]="headerData" (search)="applySearch('emit', $event)">
+    </app-product-header>
+</div>
+
+<div class="left-section">
+    <div class="first-left-width">
+        <nav id="nav-sidebar">
+            <app-sidebar [pageData]="sidebarActiveClass" accessModule="{{bodyClass}}"></app-sidebar>
+        </nav>
+    </div>
+</div>
+<div class="right-section">
+    <div class="container-fluid">
+        
+        
+        <div class="row col-lg-12 col-md-12 col-sm-12 landing-padding0 landing-margin0">
+
+            
+            <!-- -->
+            <div class="col col-lg-2  col-md-2 col-xl-2 col-sm-2 padding-right-class">
+                <div class="second-left-width padding-common">
+                    <app-landing-left-side-menu [pageData]="sidebarActiveClass"></app-landing-left-side-menu>
+                </div>
+            </div>
+            <div class="center-middle-width-container col col-lg-10 col-md-10 col-xl-10 col-sm-10 adding-width-10">
+
+
+                <div class="center-middle-width padding-common">
+
+                    <div class="tvsib-header" *ngIf="TVSIBdomain">
+                        TVSIB Interactive Technical Forum
+                    </div>
+                    <div id="homeSec" class="ps" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                        <!--div class="loading-small-screen loading-small-screen-new" *ngIf="loadingelanding"><img
+                                src="assets/images/loading.svg" alt="Loader" /></div-->
+                    <!--<div class="center-scroll-to scrollbar scrollbar-primary thin" [style.height.px]="midHeight">-->
+                    <div class="" [style.height]="'calc(100vh - '+midHeight+'px)'">
+                        
+                            
+                            <div class="welcome-header-outer" *ngIf="businessRoleFlag && CBADomain">
+                                <div class="welcome-header">
+                                    <div class="wel-text">
+                                        {{welcomeText}}
+                                    </div>
+                                    <!--div class="avail-dd">
+                                        <p-dropdown [(ngModel)]="SelectItem" [options]="listItems" (change)="onChange($event)">
+                                            <ng-template let-item pTemplate="SelectItem">
+                                                <span class="{{item.label}}"></span>
+                                            </ng-template>
+                                            <ng-template let-object pTemplate="item">
+                                                    <div>
+                                                    <div><span class="{{object.label}}"></span> {{object.label}}</div>
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div-->
+                                    <div class="avail-dd">
+                                        <form [formGroup]="tsForm">
+                                            <div class="placeholderText">Tech Support Readiness</div>
+                                            <div class="p-dropdown-item dd-left"><span class="status status{{selectedGroup}}"></span></div>
+                                            <p-dropdown formControlName="tsFormControl" class="select-group-order"  appendTo="body" [options]="listItems" [(ngModel)]="selectedGroup" placeholder="" optionValue="id" optionLabel="name" (onChange)="selectEvent($event);" >                                                
+                                                <ng-template let-object pTemplate="item">
+                                                    <div>
+                                                        <div><span class="status {{object.label}}"></span><span class="status-text"> {{object.name}}</span></div>
+                                                    </div>
+                                                </ng-template>
+                                            </p-dropdown>
+                                        </form>
+                                    </div>
+                                </div>                        
+                            </div>
+
+                            <div class="welcome-header-outer" *ngIf="headerBanner">
+                                <div class="banner-outer">
+                                    <div class="banner-outer-layer-1">
+                                        <div class="b1-row1 visible-hidden" [ngClass]="{ 'visible' : landingBannerBgFlag }" [ngStyle]="{'background-image': 'url('+landingBannerBg+')'}"></div>
+                                        <div class="b1-row2" ></div>
+                                    </div>
+                                    <div class="banner-outer-layer-2">
+                                        <div class="b2-row1">
+                                            <img title="Edit Banner" (click)="updateBannerImage()" class="cursor" src="assets/images/landing-banner-upload.png" />
+                                        </div>
+                                        <div class="b2-row2">{{timeText}}!</div>
+                                        <div class="b2-row3">
+                                            <div class="b2-lt">
+                                                <span class="head-profile-img">
+                                                    <img [src]="apiUrl.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'"  /> 
+                                                </span>
+                                                <span class="head-profile-name"><span class="name">{{apiUrl.userName}}</span><span *ngIf="apiUrl.userRole != ''" class="designation">, {{apiUrl.userRole}}</span></span>
+                                            </div>
+                                            <div class="b2-rt">
+                                                <img src="assets/images/common/date-time-icon.png" />
+                                                <span class="data-time-label">&nbsp;&nbsp;Last Login:&nbsp;</span>
+                                                <span class="data-time-text">{{lastLoginDate}}</span>
+                                            </div>
+                                        </div>                                       
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="center-container center-container-home">
+                                <div *ngFor="let currentComponent of landingpageWidgets; let cm = index">
+                                    <ng-container *ngComponentOutlet="currentComponent.componentName">
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<ng-container *ngComponentOutlet="outlet; injector: dynamicComponentInjector"></ng-container>-->
+                        <!--<div class="announcement-widgets"></div>-->
+                    </div>
+                </div>
+            </div>
+            <div class="right-middle-width-container landing-padding0 col col-lg-2 col-md-2 col-xl-2 col-sm-2 padding-right-class addon-contain " [ngClass]="{  'hide' : loadingelanding } ">
+                <div class="right-width-column padding-common">
+                    <app-domain-members [disableRightPanel]="disableRightPanel"></app-domain-members>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog [header]="false" [(visible)]="displayloadPopup" [modal]="true" styleClass="p-fluid logginginPopup-prime"
+  [style]="{width: '20vw'}">
+  <div class="col-lg-12 col-md-12 col-sm-12 loggingin-dialog-main-container">
+    <div class="vertical-centerimg">
+    <img src="assets/images/landing-page/loggingin.svg"/>
+</div>
+<div class="vertical-centertext">
+    Logging in . .
+    </div>
+  </div>
+  </p-dialog>
+
+  <p-dialog [header]="false" [(visible)]="automatedMsgPopup" [modal]="true" styleClass="p-fluid automated-msg-dialog-popup"> 
+ 
+    <div class="automated-msg-container">
+      <div class="lt">
+        <img src="assets/images/special-msg-icon.png">
+      </div>
+      <div class="rt">
+        <div class="img-div">
+          <img src="assets/images/special-msg-logo.png">
+          <span class="img-div-rt">
+            <div class="htext text-1" *ngIf="platformId == '3'">CBA TAC</div>
+            <div class="htext text-1" *ngIf="platformId == '1'">Collabtic</div>
+            <div class="htext text-1" *ngIf="platformId == '2' && domainId == '52'">TVS</div>
+            <div class="htext text-2">Automated Message</div>           
+          </span>
+        </div>
+        <div class="cont-div">
+          <!--div style="height: 140px">
+            <div class="ps" [perfectScrollbar]="sconfig" -->
+            <div class="htext text-3" [innerHTML]="automatedSystemMessage"></div>
+          </div>
+         <!--/div>
+        </div-->
+        <div (click)="automatedMsgPopupUpdate()" class="cursor btn-div">
+          <span>OK</span>
+          <img src="assets/images/tick-active.png">
+        </div>
+      </div>
+    </div>
+  
+</p-dialog>

@@ -1,0 +1,249 @@
+<div *ngIf="loading" class="login-loader text-center"><img src="assets/images/filter/filter-loading.svg" alt="Loader" width="100" height="100" /></div>    
+<div class="main-container" [style.height.px]="innerHeight">     
+    <div *ngIf="!loading" class="mcont-col-1">
+        <div class="header-logo" [ngClass]="{ 'canoo-logo': domainId == '69'}" ><span [ngClass]="{ 'bgsize-cover': domainId == '24' , 'bgsize-90': domainId == '68' }" [style.background-image]="'url(' + headerLogo + ')'"></span></div>
+        <div class="mcont-inner-div">
+            <!-- Enter Domain Name -->
+            <div class="mcont-inner-col" *ngIf="subDomainFlag && !tvsSSOFlag">
+                <div class="heading">SIGNUP</div>
+                <div class="stripe-line-div" *ngIf="!collabticDomain">
+                    <span class="stripe-line-text stripe-line-lt  active">Existing Business Account</span>
+                    <span class="stripe-line-text stripe-line-rt deactive">New Business Account</span>
+                </div>
+                <div class="stripe-line-div" *ngIf="collabticDomain">
+                    <span class="stripe-line-text stripe-line-lt cursor" [ngClass] = " { 'active': !newAccountSetup, 'normal': newAccountSetup } " (click)="changeAccountType()" >Existing Business Account</span>
+                    <span class="stripe-line-text stripe-line-rt cursor" [ngClass] = " { 'active':  newAccountSetup, 'normal': !newAccountSetup } " (click)="changeAccountType()" >New Business Account</span>
+                </div>
+                <div *ngIf="!newAccountSetup">
+                    <form [formGroup]="subdomainForm" (ngSubmit)="subdomainFormValue()">
+                        <div class="input-group" [ngClass]="{ 'active': companyNameInputFlag , 'error': domainServerError }">
+                            <div class="input-group-prepend domain-img normal"  [ngClass]="{ 'active': companyNameInputFlag , 'setOpacity3' : loading1}"></div>
+                            <input #myInput3 type="text" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading1 }" matInput placeholder="Enter company name" formControlName="companyName" maxlength="100" (keyup)="onKeypress(1,$event)" />                                            
+                            <div class="input-group-postpend" [ngClass]="{ 'setOpacity3' : loading1 }">{{MainDomainName}}</div>
+                            <div *ngIf="!loading1" class="input-group-postpend-arrow" (click)="subdomainFormValue()" [ngClass]="{ 'active': companyNameInputFlag }"></div> 
+                            <div *ngIf="loading1" class="input-group-postpend-arrow loading-img"></div>                        
+                        </div>  
+                    </form>                                    
+                    <div class="login-invalid-feedback" *ngIf="domainServerError">
+                        <img src="assets/images/login/error-img.png" /> <span>{{domainServerErrorMsg}}</span>
+                    </div>
+                    <div class="example-text"><span>Example: </span>fieldpulse{{MainDomainName}}</div>
+                    <div class="line-row">
+                        <span class="line-col-1"><img src="assets/images/login/help-icon.png" /><a (click)="domainURL()">I’m not sure about the URL</a></span>
+                        <span class="line-col-2">Already have an account? <a routerLink="/auth/login">Sign In</a></span>
+                    </div>                    
+                </div>
+                <div *ngIf="newAccountSetup">
+                    <div class="" *ngIf="newAccountSetup1">
+                        <form [formGroup]="newsubdomainForm" (ngSubmit)="newBussSignup()">                        
+                            <div class="input-group" [ngClass]="{ 'active': businessNameInputFlag, 'error': submitted4 && f4.businessName.errors }">
+                                <div class="input-group-prepend business-img normal"  [ngClass]="{ 'active': businessNameInputFlag, 'setOpacity3' : loading4}"></div>
+                                <input #myInput3 type="text" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading4 }" matInput placeholder="Enter business name" formControlName="businessName" maxlength="40" (keyup)="onKeypress(8,$event)"/>                                                                                           
+                            </div> 
+                            <div class="input-group" [ngClass]="{ 'active': domainNameInputFlag, 'error': submitted4 && domainServerError }">
+                                <div class="input-group-prepend domain-img normal"  [ngClass]="{ 'active': domainNameInputFlag, 'setOpacity3' : loading4}"></div>
+                                <input type="text" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading4 }" matInput placeholder="Enter business/domain name" formControlName="domainCompName" maxlength="40" (keyup)="onKeypress(9,$event)" (keypress)="keyPressAlphaNumericWithCharacters($event)" />                                            
+                                <div class="input-group-postpend" [ngClass]="{ 'setOpacity3' : loading4 }">{{MainDomainName}}</div>
+                                <div *ngIf="!loading4" class="input-group-postpend-arrow" (click)="newBussSignup()" [ngClass]="{ 'active': domainNameInputFlag }"></div> 
+                                <div *ngIf="loading4" class="input-group-postpend-arrow loading-img"></div>                        
+                            </div>                                      
+                            <div class="login-invalid-feedback" *ngIf="domainServerError">
+                                <img src="assets/images/login/error-img.png" /> <span>{{domainServerErrorMsg}}</span>
+                            </div>
+                            <div *ngIf="!newAccountSetup" class="example-text"><span>Example: </span>fieldpulse{{MainDomainName}}</div>
+                            <div *ngIf="!newAccountSetup" class="example-text">
+                                <span>Example: </span>fieldpulse{{MainDomainName}}
+                            </div>
+                            <div *ngIf="newAccountSetup" class="example-text-new">
+                                <span class="white-text">Example: </span>
+                                <div><span class="domain-garrow"></span><span class="gray-text">john.doe@<span class="green-text">&lt;business-name&gt;.com</span></span></div>
+                                <div><span class="domain-garrow"></span><span class="gray-text"><span class="green-text">&lt;domain-name&gt;</span>.collabtic.com</span></div>
+                            </div>
+                            <div class="line-row">
+                                <span *ngIf="!newAccountSetup" class="line-col-1"><img src="assets/images/login/help-icon.png" /><a (click)="domainURL()">I’m not sure about the URL</a></span>
+                                <span class="line-col-2">Already have an account? <a routerLink="/auth/login">Sign In</a></span>
+                            </div>                        
+                        </form>
+                    </div>
+                </div>                    
+            </div>
+            <!-- Enter Signup Details -->                      
+            <div class="mcont-inner-col" *ngIf="(signupFlag && !tvsSSOFlag) && !newAccountSetup">
+                <div class="heading login-heading">Welcome to signup page for {{MainDomainNameIdentity}} account</div>
+                <div class="sub-domain-name">​{{subDomainURL}}<a (click)="bookmarkURL()" >&nbsp;&nbsp;<img src="assets/images/login/bookmark.png" /></a></div>   
+                <div *ngIf="fromUserElecpageFlag" class="bname-text">Business Name:&nbsp;{{businessNameUserElecpage}}</div>                                 
+                <form [formGroup]="signupForm1">  
+                    <div class="input-group" [ngClass]="{ 'active': emailInputFlag, 'error': submitted1 && f1.email.errors || emailValidationError }">
+                        <div class="input-group-prepend email-img normal"  [ngClass]="{ 'active': emailInputFlag}"></div>
+                        <input tabindex="1" #myInput1 type="text" class="form-control inputtext" matInput placeholder="Email" formControlName="email" [(ngModel)]="fromURLEmail" maxlength="100" (input)="onKeypress(2,$event)" (change)="checkEmailValition('email1')" />                                                                                                                   
+                    </div> 
+                    <div *ngIf="passwordchecker" class="passwordchecke-div">                        
+                        <div *ngIf="emailValidationError" class="login-invalid-feedback">
+                            <img src="assets/images/login/error-img.png" /> 
+                            <span>{{emailValidationErrorMsg}}</span>
+                        </div>
+                    </div>                     
+                    <div *ngIf="signupFlagS2" class="input-group" [ngClass]="{ 'active': passwordInputFlag, 'error': (submitted1 && f1.password.errors && !passwordValidationError) || (passwordValidationError) }">
+                        <div class="input-group-prepend pass-img normal"  [ngClass]="{ 'active': passwordInputFlag , 'setOpacity3' : loading2 }"></div>
+                        <input tabindex="2" [type]="pwdFieldTextType ? 'text' : 'password'" class="form-control inputtext" [ngClass]="{ 'setOpacity3' : loading2 }" matInput placeholder="Password" formControlName="password" maxlength="30" (keyup)="onKeypress(3,$event)"  (change)="checkPwdStrongValidation('pass1')"/>                                                                    
+                        <div (click)="showPassword(pwdFieldTextType)" class="input-group-pwd normal" [ngClass]="{ 'active' : pwdFieldTextType }"></div>
+                        <a *ngIf="!loading2" tabindex="3" (click)="signupSubmitStep1()" class="input-group-postpend-arrow" [ngClass]="{ 'active': passwordInputArrowFlag }"></a> 
+                        <a *ngIf="loading2" class="input-group-postpend-arrow loading-img"></a>                       
+                    </div> 
+                    <div *ngIf="passwordchecker" class="passwordchecke-div">
+                        <div *ngIf="!passwordValidationError && !disableDefaultPasswordText" class="default-pwd-text">
+                            <span>Min. 8 chars, one uppercase, one lowercase & one special character</span>
+                        </div>
+                        <div *ngIf="passwordValidationError" class="login-invalid-feedback">
+                            <img src="assets/images/login/error-img.png" /> 
+                            <span>{{passwordValidationErrorMsg}}</span>
+                        </div>
+                    </div>                                                                                             
+                    <div class="forgot-text white-text" *ngIf="signupFlagS2" (click)="selectTermsandConditions(signupcbox)"><span class="terms-img-lt default"  [ngClass]="{ 'active': signupcbox, 'error': termsError }"></span><span class="terms-text-rt">Check to accept <a target="_blank" href="https://www.collabtic.com/terms-conditions" title="Terms">Terms</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://www.collabtic.com/privacy-policy" title="Policies">Policies</a></span></div>                                       
+                        
+                    <div *ngIf="serverError" class="login-invalid-feedback">
+                        <img src="assets/images/login/error-img.png" /> <span>{{serverErrorMsg}}</span>
+                    </div>                    
+                </form> 
+                <div class="line-row">
+                    <span *ngIf="platformIdInfo!='2'" class="line-col-1"><a class="back-text" (click)="gotoMainPage()"><img *ngIf="!signupFlagS2" src="assets/images/login/back-arrow-green.png" /><img *ngIf="signupFlagS2" src="assets/images/login/back-arrow-blue.png" /><span>BACK TO MAIN PAGE</span></a></span>
+                    <span class="line-col-2">Already have an account? <a routerLink="/auth/login">Sign In</a></span>
+                </div>       
+            </div>
+            <div class="mcont-inner-col marginTopZm" *ngIf="(signupProfileFlag || tvsSSOFlag) && !newAccountSetup">
+                <form [formGroup]="signupForm2">  
+                    <div class="responsive-uimg" *ngIf="signupFlagS2">
+                        <span (click)="changeProfile()" class="rounded-circle user-img" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></span>
+                        <span (click)="changeProfile()" class="default-img-edit"><img src="assets/images/login/default-img-edit.png" /></span>                        
+                    </div>  
+                    <div *ngIf="invalidFile || invalidFileSize" class="login-invalid-feedback login-invalid-feedback1">
+                        <img src="assets/images/login/error-img.png" /> <span>{{invalidFileErr}}</span>
+                    </div>              
+                    <div *ngIf="!tvsSSOFlag" class="label green-text">{{userEmail}}</div> 
+                    <div *ngIf="tvsSSOFlag" class="label green-text label-tvssso">
+                        <span class="label-sso-col">
+                            <span class="label-name">Employee ID:&nbsp;</span>
+                            <span class="text-name">{{tvsEmpId}}</span>
+                            <span class="setpadding"></span>
+                        </span>  
+                        <span class="label-sso-col">
+                            <span class="label-name">Email:&nbsp;</span>
+                            <span class="text-name">{{tvsEmpEmail}}</span>
+                        </span>
+                    </div> 
+                    <div class="input-group" [ngClass]="{ 'active': firstNameInputFlag, 'error': submitted2 && f2.firstName.errors}">
+                        <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': firstNameInputFlag}"></div>
+                        <input #myInput2 type="text" class="form-control inputtext" matInput placeholder="First Name" formControlName="firstName" maxlength="40" (keyup)="onKeypress(4,$event)"/>                                                                                           
+                    </div>                   
+                    <div class="input-group" [ngClass]="{ 'active': lastNameInputFlag, 'error': submitted2 && f2.lastName.errors}">
+                        <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': lastNameInputFlag}"></div>
+                        <input type="text" class="form-control inputtext" matInput placeholder="Last Name" formControlName="lastName" maxlength="40" (keyup)="onKeypress(5,$event)"/>                                                                                           
+                    </div>                   
+                    <div class="input-group" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                        <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                        <!--input appPhoneMask type="text" class="form-control inputtext" matInput placeholder="012-345-6789" formControlName="phonenumber" minlength="12"  (keyup)="onKeypress(6,$event)"/ -->                                                                                           
+                        <app-country-phonenumber [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                    </div> 
+                    <div *ngIf="tvsSSOFlag" class="input-group" [ngClass]="{ 'active': techInputFlag}">
+                        <div class="input-group-prepend tech-img normal"  [ngClass]="{ 'active': techInputFlag}"></div>
+                        <input type="text" class="form-control inputtext" formControlName="designation" matInput placeholder="Business Role" maxlength="40" (keyup)="onKeypress(7,$event)"/>                                                                                           
+                    </div>                                                       
+                    <div *ngIf="serverError" class="login-invalid-feedback ">
+                        <img src="assets/images/login/error-img.png" /> <span>{{serverErrorMsg}}</span>
+                    </div> 
+                    <div *ngIf="signupEnable && !loading3" class="action-button deactive"><button class="btn-text">SIGN UP&nbsp;&nbsp;<span class="signup-img"><img src="assets/images/login/signup-icon.png" alt="" /></span></button></div>
+                    <div *ngIf="!signupEnable && !loading3" class="action-button"><button (click)="signupSubmitStep2()" type="submit" class="btn-text">SIGN UP&nbsp;&nbsp;<span class="signup-img"><img src="assets/images/login/signup-icon.png" alt="" /></span></button></div>
+                    <div *ngIf="signupEnable && loading3" class="action-button"><button class="btn-text"><span class="setOpacity3">SIGN UP&nbsp;&nbsp;</span><span class="signup-img setOpacity3"><img src="assets/images/login/signup-icon.png" alt="" /></span><span class="loading-svg"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span></button></div>                                     
+                    <div class="line-row">
+                        <span class="line-col-1"><a class="back-text" (click)="gotoStep1()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>
+                        <span class="line-col-2">Already have an account? <a routerLink="/auth/login">Sign In</a></span>                      
+                    </div>   
+                </form>                                    
+            </div>
+            <div class="mcont-inner-col" *ngIf="newAccountSetup && newAccountSetup2">
+                <form [formGroup]="signupForm3" (ngSubmit)="signupSubmitStep3()">  
+                <div class="signupformNewDiv"> 
+                <div> 
+                                   
+                    <div class="responsive-uimg">
+                        <span (click)="changeProfile()" class="rounded-circle user-img" [ngStyle]="{'background-image': 'url(' + imgURL + ')'}"></span>
+                        <span (click)="changeProfile()" class="default-img-edit"><img src="assets/images/login/default-img-edit.png" /></span>                        
+                    </div>  
+                    <div *ngIf="invalidFile || invalidFileSize" class="login-invalid-feedback login-invalid-feedback1">
+                        <img src="assets/images/login/error-img.png" /> <span>{{invalidFileErr}}</span>
+                    </div>              
+                    <div class="heading login-heading">Welcome {{newBusinessName}}</div>
+                    <div class="label green-text green-text-new">{{newDomainName}}{{MainDomainName}}</div>                      
+                        <div class="input-group-col-new">
+                            <div class="input-group input-group-col1" [ngClass]="{ 'active': firstNameInputFlag, 'error': submitted3 && f3.firstName.errors}">
+                                <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': firstNameInputFlag}"></div>
+                                <input #myInput2 tabindex="1" type="text" class="form-control inputtext" matInput placeholder="First Name" formControlName="firstName" maxlength="40" (keyup)="onKeypress(4,$event)"/>                                                                                           
+                            </div>                   
+                            <div class="input-group input-group-col2" [ngClass]="{ 'active': lastNameInputFlag, 'error': submitted3 && f3.lastName.errors}">
+                                <div class="input-group-prepend user-img normal"  [ngClass]="{ 'active': lastNameInputFlag}"></div>
+                                <input type="text" tabindex="2" class="form-control inputtext" matInput placeholder="Last Name" formControlName="lastName" maxlength="40" (keyup)="onKeypress(5,$event)"/>                                                                                           
+                            </div> 
+                        </div>
+                        <div class="input-group-col-new">
+                            <div class="input-group input-group-col1" [ngClass]="{ 'active': emailInputFlag, 'error': submitted3 && f3.email.errors || emailValidationError }">
+                                <div class="input-group-prepend email-img normal"  [ngClass]="{ 'active': emailInputFlag}"></div>
+                                <input type="text" tabindex="3" class="form-control inputtext" matInput placeholder="Email" formControlName="email" maxlength="40" (keyup)="onKeypress(2,$event)" (change)="checkEmailValition('email2')"  />                                                                                                                   
+                            </div>                                              
+                            <div class="input-group input-group-col2" [ngClass]="{ 'active': passwordInputFlag, 'error': (submitted3 && f3.password.errors && !passwordValidationError) || (passwordValidationError) }">
+                                <div class="input-group-prepend pass-img normal"  [ngClass]="{ 'active': passwordInputFlag}"></div>
+                                <input tabindex="4" [type]="pwdFieldTextType ? 'text' : 'password'" class="form-control inputtext" matInput placeholder="Password" formControlName="password" maxlength="30" (keyup)="onKeypress(3,$event)"  (change)="checkPwdStrongValidation('pass2')"/>                                                                    
+                                <div (click)="showPassword(pwdFieldTextType)" class="input-group-pwd normal" [ngClass]="{ 'active' : pwdFieldTextType }"></div>
+                            </div> 
+                        </div>
+
+                            <div *ngIf="passwordchecker">   
+                                <div class="passwordchecke-div passwordchecke-div-new">                     
+                                    <div *ngIf="emailValidationError" class="login-invalid-feedback">
+                                        <img src="assets/images/login/error-img.png" /> 
+                                        <span>Email: {{emailValidationErrorMsg}}</span>
+                                    </div>
+                                </div>
+                            </div>   
+                            <div *ngIf="passwordchecker && !emailValidationError" >
+                                <div class="passwordchecke-div passwordchecke-div-new">
+                                    <div *ngIf="!passwordValidationError && !disableDefaultPasswordText" class="default-pwd-text default-pwd-text-new">
+                                        <span>Password: Min. 8 chars, one uppercase, one lowercase & one special character</span>
+                                    </div>
+                                    <div *ngIf="passwordValidationError" class="login-invalid-feedback">
+                                        <img src="assets/images/login/error-img.png" /> 
+                                        <span>Password: {{passwordValidationErrorMsg}}</span>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div *ngIf="!passwordValidationError && disableDefaultPasswordText && !emailValidationError" >
+                                <div class="setheight30">&nbsp;</div>
+                            </div>                                                 
+                            <div class="input-group mtop10" [ngClass]="{ 'active': phonenoInputFlag, 'error': !invalidNumber }">
+                                <div class="input-group-prepend phone-img normal"  [ngClass]="{ 'active': phonenoInputFlag}"></div>
+                                <!--input appPhoneMask type="text" class="form-control inputtext" matInput placeholder="012-345-6789" formControlName="phonenumber" minlength="12"  (keyup)="onKeypress(6,$event)"/ -->                                                                                           
+                                <app-country-phonenumber [phoneNumberData]="phoneNumberData" (isPhoneData)="getPhoneNumberData($event)"></app-country-phonenumber>
+                            </div> 
+                        </div>
+                    </div>       
+                    <div *ngIf="serverError" class="login-invalid-feedback ">
+                        <img src="assets/images/login/error-img.png" /> <span>{{serverErrorMsg}}</span>
+                    </div> 
+                    <div *ngIf="signupEnable && !loading3" class="action-button deactive action-button-mb0"><button class="btn-text">SIGN UP&nbsp;&nbsp;<span class="signup-img"><img src="assets/images/login/signup-icon.png" alt="" /></span></button></div>
+                    <div *ngIf="!signupEnable && !loading3" class="action-button action-button-mb0"><button tabindex="8" (click)="signupSubmitStep3()" type="submit" class="btn-text">SIGN UP&nbsp;&nbsp;<span class="signup-img"><img src="assets/images/login/signup-icon.png" alt="" /></span></button></div>
+                    <div *ngIf="signupEnable && loading3" class="action-button action-button-mb0"><button class="btn-text"><span class="setOpacity3">SIGN UP&nbsp;&nbsp;</span><span class="signup-img setOpacity3"><img src="assets/images/login/signup-icon.png" alt="" /></span><span class="loading-svg"><img src="assets/images/filter/filter-loading.svg" alt="Loader" /></span></button></div>                                     
+                    <div class="line-row line-row-bottom">
+                        <span class="line-col-1"><a class="back-text" (click)="backnewSubdomainForm()"><img src="assets/images/login/back-arrow-blue.png" /><span>BACK</span></a></span>
+                        <div tabindex="7" class="line-col-2 forgot-text white-text" (click)="selectTermsandConditions(signupcbox)"><span class="terms-img-lt default"  [ngClass]="{ 'active': signupcbox, 'error': termsError }"></span><span class="terms-text-rt">Check to accept <a target="_blank" href="https://www.collabtic.com/terms-conditions" title="Terms">Terms</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://www.collabtic.com/privacy-policy" title="Policies">Policies</a></span></div>                                     
+                    
+                    </div>                     
+                </form>   
+            
+            </div>  
+        </div>
+        <div *ngIf="!newAccountSetup2"><app-auth-footer></app-auth-footer></div>
+    </div>
+    <div *ngIf="!loading" class="mcont-col-2" [style.height.px]="innerHeight">
+        <app-auth-right-panel [ngClass]="{ 'signup-bg': subDomainFlag, 'business-bg': !subDomainFlag }"></app-auth-right-panel>
+    </div>      
+</div>
+

@@ -1,0 +1,203 @@
+<div id="header">
+    <!--app-probing-header [pageData]="headerData"></app-probing-header-->
+    <!--<app-product-header [pageData]="headerData"></app-product-header>-->
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>  
+</div>
+
+<div class="prob-new ws-new">
+    <div *ngIf="loading" class="cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+    <div *ngIf="!loading" class="row new-pro-cont step1 new-ws-cont col-lg-10">
+        <div class="form-cont col-lg-12">
+            <form class="form-horizontal" [formGroup]="newWorkstreamForm">
+                <div class="new-prob-head ws-prob-head">
+                    <div class="new-col title">
+                        {{title}}
+                    </div>
+                    <div class="new-col actions">
+                        <div class="btn cancel" (click)="closeWindow()">Cancel <img src="assets/images/site/workstream-creation/cancel-icon.png" /></div>
+                        <div class="btn next publish" [ngClass]="{'btn-opacity': !submitButtonFlag}" (click)="onSubmit()">Publish <img src="assets/images/site/workstream-creation/publish.png" /></div>
+                    </div>
+                </div>
+                <div class="form-items ws-form-items">
+                    <div class="prob-form-row ws-row col-lg-3" [style.height.px]="innerHeight+100">
+                        <div class="ps prob-form-row-inner workstream-scroll" [perfectScrollbar]="sconfig">
+                            <div class="form-col ws-col upload-col">
+                                <span *ngIf="imgURL == null" class="prob-upload">
+                                    <a (click)="selectFile.click()" class="browse-button"></a>
+                                    <input style="display: none" type="file" accept='image/*' (change)="onFileUpload($event)" #selectFile/>
+                                    <span class="upload-txt">Upload Workstream Image (Max 2MB)</span>
+                                </span>
+                                <span *ngIf="imgURL != null" class="prob-upload upload-bg" [ngStyle]="{'background': 'url(' + imgURL + ') no-repeat'}">    
+                                    <div class="upload-actions">
+                                        <a (click)="deleteUploadedFile()" class="action-btn delete-upload"></a>
+                                        <a (click)="selectFile.click()" class="action-btn edit-upload"></a>
+                                    </div>
+                                    <input style="display: none" type="file" accept='image/*' (change)="onFileUpload($event)" #selectFile/>
+                                </span><div class="page-error-text file-error" *ngIf="invalidFile || invalidFileSize">{{invalidFileErr}}</div>
+                            </div>
+                            <div class="form-col ws-col field-col">
+                                <div class="prob-form-control cust-comp-control">                                    
+                                    <div class="label-row">
+                                        <img src="assets/images/workstreams-page/label-ws.png">
+                                        <span class="label label-req">Workstream Name</span>
+                                        <span class="required">Required</span>
+                                    </div>
+                                    <textarea matInput placeholder="Enter Workstream Name" formControlName="workstreamName" [ngClass]="{'is-invalid': submitted && f.workstreamName.errors || (submitted && wsExistFlag)}" maxlength="{{wsMaxLen}}" (input)="onWsChange($event.target.value)"></textarea>
+                                    <span class="text-count ws-text-count">{{newWorkstreamForm.value.workstreamName.length}}/{{wsMaxLen}}</span>
+                                    <div *ngIf="submitted && f.workstreamName.errors" class="invalid-feedback">
+                                        <div *ngIf="submitted && f.workstreamName.errors.required">Workstream Name is required</div>
+                                    </div>
+                                    <div *ngIf="submitted && wsExistFlag" class="invalid-feedback">
+                                        Workstream name is already exists
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col ws-col field-col">
+                                <div class="prob-form-control cust-comp-control desc-text-control">
+                                    <div class="label-row">
+                                        <img src="assets/images/workstreams-page/label-ws-desc.png">
+                                        <span class="label">Description</span>                                        
+                                    </div>
+                                    <textarea matInput placeholder="Enter Description" formControlName="description" [ngClass]="{ 'is-invalid': submitted && f.description.errors }" maxlength="{{descMaxLen}}"></textarea>
+                                    <span class="text-count ws-text-count">{{newWorkstreamForm.value.description.length}}/{{descMaxLen}}</span>
+                                    <div *ngIf="submitted && f.description.errors" class="invalid-feedback">
+                                        <div *ngIf="submitted && f.description.errors.required">Description is required</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-col ws-col field-col">
+                                <div class="prob-form-control cust-comp-control">
+                                    <div class="label-row">
+                                        <img src="assets/images/workstreams-page/label-ws-content-types.png">
+                                        <span class="label">Add content-type to your workstream</span>                                        
+                                    </div>
+                                    <div class="content-type-error" *ngIf="invalidContentType">
+                                        <div class="content-text text-center"><span></span>{{invalidContentTypeErr}}</div>
+                                    </div>
+                                    <ul class="checkbox-items">
+                                        <li class="cursor" *ngFor="let item of contentTypes; let c = index;" (click)="changeSelection(c, item.id, item.isSelected, item.isDisabled)">
+                                            <div class="cont-type" [ngClass]="{'default-cont' : item.isDisabled}">
+                                                <div class="cont-icon" *ngIf="item.isDisabled || (!item.isDisabled && item.isSelected)" [ngStyle]="{'background': 'url(' + item.activeImg + ') no-repeat center'}"></div>
+                                                <div class="cont-icon" *ngIf="!item.isDisabled && !item.isSelected" [ngStyle]="{'background': 'url(' + item.normalImg + ') no-repeat center'}"></div>
+                                                <div class="cont-txt text-center">{{item.name}}</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-col ws-col field-col" *ngIf="showCategoryType">
+                                <div class="prob-form-control cust-comp-control">
+                                    <div class="label-row">
+                                        <img src="assets/images/workstreams-page/label-ws-category.png">
+                                        <span class="label">Select Category</span>                                        
+                                    </div>                                   
+                                    <ul class="checkbox-items">
+                                        <li class="cursor" *ngFor="let item of categories; let c = index;" (click)="changeCategorySelection(c, item.id, item.isSelected, item.isDisabled)">
+                                            <div class="cont-type" [ngClass]="{'default-cont' : item.isDisabled}">
+                                                <div class="cont-icon" *ngIf="item.isDisabled || (!item.isDisabled && item.isSelected)" [ngStyle]="{'background': 'url(' + item.activeImg + ') no-repeat center'}"></div>
+                                                <div class="cont-icon" *ngIf="!item.isDisabled && !item.isSelected" [ngStyle]="{'background': 'url(' + item.normalImg + ') no-repeat center'}"></div>
+                                                <div class="cont-txt text-center">{{item.name}}</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="prob-form-row ws-row col-lg-9">
+                        <div class="user-col ws-users">
+                            <div class="ws-users-head">
+                                <div class="head-col col-left">Workstream Users (<span>{{selectedUsers?.length}}</span>)</div>
+                                <div class="head-col col-right">
+                                    <span>Notify Users</span>
+                                    <div class="notify"><img src="assets/images/site/workstream-creation/toggle-active-icon.png" alt="Notify Users" /></div>
+                                </div>
+                            </div>
+                            <div class="search-div-outer">
+                                <div class="search-div ws-search-div">
+                                    <a *ngIf="!wsUserSearchClose" class="search-icon"><img alt="Search" src="assets/images/site/workstream-creation/search-icon.png"></a>
+                                    <input type="text" class="form-control search-control ws-search-control" id="searchKey" value="{{wsSearchVal}}" maxlength="50" placeholder="Search" (input)="onWorkstreamSearchChange($event.target.value)">
+                                    <a *ngIf="wsUserSearchClose" class="search-actions search-close" (click)="clearWorkstreamUserSearch()"><img alt="Search Close" src="assets/images/site/workstream-creation/close.png"></a>
+                                </div>
+                            </div>
+                            <div class="ws-user-list" [style.height.px]="innerHeight">
+                                <div class="ps workstream-scroll" [perfectScrollbar]="sconfig">
+                                    <div *ngIf="!workstreamUserEmpty" >
+                                        <div class="ws-user-item" [ngClass]="{'show': selUser.displayFlag, 'hide': !selUser.displayFlag, 'default-user' : s == 0}" *ngFor="let selUser of selectedUsers; let s = index">
+                                            <ng-template #username>
+                                                <div class="profile-info"><span>{{selUser.uname}}</span></div>
+                                            </ng-template>
+                                            <div class="ws-user-col col-left">
+                                                <span class="profile-info cursor remove remove-hidden" (click)="removeSelection(s, selUser.userId)">
+                                                    <img src="assets/images/site/workstream-creation/close.png" alt="Remove">
+                                                </span>
+                                                <span (click)="taponprofileclick(selUser.userId)" class="profile-info profile-icon cursor-pointer" [ngStyle]="{'background-image': 'url(' + selUser.profileImg + ')'}">
+                                                    <img class="hide" src="{{selUser.profileImg}}" alt="Profile" />
+                                                    <span class="user-status {{selUser.availStatus}}"></span>
+                                                </span>
+                                                <span class="profile-info user-name">
+                                                    <span (click)="taponprofileclick(selUser.userId)"  class="cursor custom-pop uname" popoverClass="custom-tooltip ws-tooltip" [ngbPopover]="username" container="body" placement="bottom" triggers="hover">{{selUser.userName}}</span>
+                                                    <span class="role">{{selUser.title}}</span>
+                                                </span>
+                                            </div>
+                                            <div class="ws-user-col col-right">{{selUser.role}}</div>
+                                        </div>
+                                        <div *ngIf="selectedUsers?.length < 2" class="select-user-cont text-center">
+                                            <div class="inner-cont">
+                                                <div class="prof-img"><img src="assets/images/site/workstream-creation/profile-icon.png" alt="User Profile" /></div>
+                                                <div>Select the users to add into workstream</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div *ngIf="workstreamUserEmpty" class="text-center">No users found.</div>  
+                                </div>
+                            </div>
+                        </div>
+                        <div class="user-col ws-all-users">
+                            <div class="ws-users-head">
+                                <div class="head-col col-left">All Users (<span>{{itemTotal}}</span>)</div>
+                            </div>
+                            <div class="search-div-outer">
+                                <div class="search-div">
+                                    <form [formGroup]="userSearchForm" (ngSubmit)="submitSearch()">
+                                        <a *ngIf="!userSearchClose" class="search-icon"><img alt="Search" src="assets/images/site/workstream-creation/search-icon.png"></a>
+                                        <input type="text" class="form-control search-control" id="searchKey" value="{{searchVal}}" maxlength="50" autocomplete="off" placeholder="Search" (input)="onSearchChange($event.target.value)">
+                                        <a *ngIf="userSearchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close" src="assets/images/site/workstream-creation/close.png"></a>
+                                        <a *ngIf="userSearchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search" src="assets/images/site/workstream-creation/search-icon.png"></a>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="ws-user-list ws-all-user-list" [style.height.px]="innerHeight">
+                                <div class="ps workstream-scroll" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">                                    
+                                    <div *ngIf="!itemEmpty">
+                                        <div class="ws-user-item {{user.disabledState == 0 ? 'active' : 'disable'}}" *ngFor="let user of itemList; let i = index">
+                                            <ng-template #username>
+                                                <div class="profile-info"><span>{{user.uname}}</span></div>
+                                            </ng-template>
+                                            <div class="ws-user-col col-left">
+                                                <span class="profile-info checkbox {{user.disabledState == 0 ? 'normal cursor' : 'active'}}" (click)="userSelection(i, user)"></span>
+                                                <span (click)="taponprofileclick(user.userId)" class="profile-info profile-icon cursor-pointer" [ngStyle]="{'background-image': 'url(' + user.profileImg + ')'}">
+                                                    <img class="hide" src="{{user.profileImg}}" alt="Profile" />
+                                                    <span class="user-status {{user.availStatus}}"></span>
+                                                </span>
+                                                <span class="profile-info user-name">
+                                                    <span (click)="taponprofileclick(user.userId)" class="cursor custom-pop uname" popoverClass="custom-tooltip ws-tooltip" [ngbPopover]="username" container="body" placement="bottom" triggers="hover">{{user.userName}}</span>
+                                                    <span class="role">{{user.userRole}}</span>
+                                                </span>
+                                            </div>
+                                            <div class="ws-user-col col-right">{{user.workstreamRole}}</div>
+                                        </div> 
+                                    </div>                                   
+                                    <div *ngIf="itemLoading" class="item-loading text-center">
+                                        <img src="assets/images/loading.svg" alt="Loader" />
+                                    </div>
+                                    <div *ngIf="itemEmpty" class="text-center no-user">No users found.</div>
+                                </div>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

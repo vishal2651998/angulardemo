@@ -1,0 +1,224 @@
+
+<div id="header">
+    <!--<app-product-header [pageData]="headerData"></app-product-header>-->
+    <app-new-edit-header [pageData]="headerData" ></app-new-edit-header>  
+</div>
+
+<div *ngIf="loading" class="dash-loader cust-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+
+
+<div *ngIf= "!loading" id="parts">
+    <div class="container-fluid">
+        <div class="wrapper">
+            <div class="container-fluid" id="content">
+                <div class="probing-content cbt-content part-content doc-content dynamic-form-content">
+                    <div class="prob-new">
+                        <div class="container">
+                            <div class="row new-pro-cont dynmic-new-form-cont col-lg-12">
+                                <div id="form-cont" class="form-cont" [ngClass]="{'col-lg-12': true, 'col-lg-8': true}">
+                                    <form class="form-horizontal" [formGroup]="bugorfeatureForm" >
+                                        <div class="new-prob-head">
+                                            <div class="new-col title">
+                                                {{titles}}
+                                            </div>
+                                            <div class="new-col actions">
+                                                <button class="btn cancel" (click)="closecall()">Cancel <img
+                                                        src="assets/images/parts/cancel-icon.png" /></button>
+                                                <button *ngIf = "!describtionText" class="btn next publish setOpacity3">Publish<img
+                                                            src="assets/images/parts/publish.png" /></button>
+                                                <button *ngIf = "describtionText" class="btn next publish " (click)="Onsubmit()">Publish<img
+                                                        src="assets/images/parts/publish.png" /></button>
+                                            </div>
+                                        </div>
+                                        <div [style.height.px]="innerHeight" class="dynamic-form-content">
+                                            <div  class=" form-fields" [perfectScrollbar]="sconfig">
+                                                <div class="form-items paddings_forms">
+                                                    <div class="system-info update-info"><div class="update-col6"><span class="Select-Report-Type">
+                                                        Select Report Type
+                                                    </span>
+                                                    <span class="Required-copy-3">
+                                                        Required
+                                                    </span>
+                                                    </div>
+                                                    <div class="update-col7"><span class="Select-Platform">
+                                                        Select Platform
+                                                    </span>
+                                                     
+                                                    <div [ngClass]="{'action-required' : buttonflag , 'requireds01' : !buttonflag }">
+                                                        Required
+                                                    </div>
+                                                    </div>
+                                                    </div>
+                                                   <div class="system-info update-info">
+                                                    <div class="update-col1"><button class="bug-place " (click)="changecolor()"
+                                                            [ngClass]="{'bug-action && bug-icon':!color , 'bug-normal && bug-hide-icon':color}"></button>
+                                                    <span class="Bug-or-Error "
+                                                        [ngClass]="{'bug-action-color':!color , 'bug-normal-color':color}">Bug
+                                                        or Error</span></div>
+                                                    <div class="update-col2"><button class="feature-img feature-icon" (click)="changecolor()"
+                                                            [ngClass]="{'bug-action && feature-icon':color , 'bug-normal && feature-hide-icon':!color}"
+                                                            ></button>
+                                                    <span class="Feature"
+                                                        [ngClass]="{'bug-action-color':color , 'bug-normal-color':!color}">Feature</span></div>
+                                                    
+                                                    <div class="update-col3"><button class="web-img" (click)="changecolorWeb()"
+                                                            [ngClass]="{'bug-action && web-icon': colorWeb && !colorMobile && !colorIos,'bug-normal && web-hide-icon':!colorWeb}"
+                                                            ></button>
+                                                    <span class="Web-text"
+                                                        [ngClass]="{'bug-action-color': colorWeb && !colorMobile && !colorIos,'bug-normal-color':!colorWeb}">Web</span></div>
+                                                        <div class="update-col4"><button class="mobile-img" (click)="changecolorMobile()"
+                                                            [ngClass]="{'bug-action && mobile-icon': colorMobile && !colorWeb && !colorIos,'bug-normal && mobile-hide-icon':!colorMobile}"
+                                                           ></button>
+                                                    <span class="Android-text"
+                                                        [ngClass]="{'bug-action-color': colorMobile && !colorWeb && !colorIos,'bug-normal-color':!colorMobile}">Android</span></div>
+                                                        <div class="update-col5"><button class="ios-img" (click)="changecolorIos()" 
+                                                            [ngClass]="{'bug-action && ios-icon': colorIos && !colorWeb && !colorMobile,'bug-normal && ios-hide-icon':!colorIos}"
+                                                            ></button>
+                                                    <span class="iOS-text"
+                                                        [ngClass]="{'bug-action-color': colorIos && !colorWeb && !colorMobile,'bug-normal-color':!colorIos}">iOS</span></div>
+                                                    </div>
+                                                        <div class="field-row">
+                                                        <div class="field-label i-symbols" [ngClass]="{'bg-label': 1 > 0}">
+                                                            Title & Despriction</div>
+                                                        <div [ngClass]="{'bg-fileld': 1 > 0}">
+                                                            <div class="web-fields default-fields">
+                                                                <span class="title-img"><img class="title-p-img"
+                                                                    src="\assets\images\knowledge_article_description.png" /></span>
+
+                                                                <div class="titles">Title</div>
+                                                                <div class="requireds02">Required</div>
+                                                                <textarea class="title-textarea-bug" formControlName="title" [(ngModel)] = "titleText"
+                                                                    placeholder="Title for bug or feature" 
+                                                                    maxlength="100" autocomplete="off">
+                                                                    
+                                                                </textarea>
+                                                                <div *ngIf="submitflag && f.title.errors?.required" class="invalid-feedback invalid-field">
+                                                                    <div id="valid-error" class="field-err">Title is required</div>
+                                                                </div>
+                                                                <span class="occurs-img-s"><img src="\assets\images\occurance.png"/></span>
+                                                                <div class="occurs">Occurs</div>
+                                                                <div class="requireds03">Required</div>
+                                                                <div class="occurs-dropdown">
+                                                                    <p-dropdown [style]="{ width: '102%' }"  class="occurs-dropdown"  [options]="occuranceValue" formControlName="occurance" [(ngModel)]="Occurs" optionLabel="type" optionValue="code" placeholder="Occurs"></p-dropdown>
+                                                                    <div *ngIf="submitflag && f.occurance.errors?.required" class="invalid-feedback invalid-field">
+                                                                        <div id="valid-error" class="field-err">occurance is required</div>
+                                                                    </div>
+                                                                </div>
+                                                                <span class="title-img"><img class="title-p-img"
+                                                                        src="\assets\images\knowledge_article_description.png" /></span>
+                                                                <div class="Description">Description</div>
+                                                                <div class="requireds04">Required</div>
+
+                                                                <div>
+
+                                                                    <div class="post-new-cont">
+                                                                        <!--<div class="post-error-msg" *ngIf="submitted1 && f1.postEditDesc.errors">Enter Reply</div>-->
+                                                                        <div class="post-desp-div">
+                                                                            <!--<textarea matInput class="post-desp" placeholder="Enter Reply" formControlName="postEditDesc" [ngModel]="postEditDesc" autocomplete="off" maxlength="{{descMaxLen}}" (ngModelChange)="changePostDesc($event,'edit')"></textarea>-->
+                                                                            <p-editor formControlName="description" [(ngModel)] = "description"
+                                                                                [style]="{'height': '180px'}" (onTextChange) = "onTextChange($event,'new')">
+                                                                                <p-header>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-bold"
+                                                                                            aria-label="Bold"></button>
+                                                                                        <button class="ql-italic"
+                                                                                            aria-label="Italic"></button>
+                                                                                        <button class="ql-underline"
+                                                                                            aria-label="Underline"></button>
+
+                                                                                        <select title="Text Color"
+                                                                                            class="ql-color"
+                                                                                            defaultValue="rgb(0, 0, 0)">
+                                                                                            <option
+                                                                                                *ngFor="let c of textColorValues"
+                                                                                                value="{{c.color}}"
+                                                                                                label="{{c.color}}">
+                                                                                            </option>
+                                                                                        </select>
+                                                                                        <button class="ql-list"
+                                                                                            value="ordered"></button>
+                                                                                        <button class="ql-list"
+                                                                                            value="bullet"></button>
+                                                                                        <select title="Text Alignment"
+                                                                                            class="ql-align">
+                                                                                            <option selected>Gauche
+                                                                                            </option>
+                                                                                            <option value="center"
+                                                                                                label="Center"></option>
+                                                                                            <option value="right"
+                                                                                                label="Right"></option>
+                                                                                            <option value="justify"
+                                                                                                label="Justify">
+                                                                                            </option>
+                                                                                        </select>
+                                                                                       
+                                                                                        <!--<button aria-label="Link" class="ql-link"></button>-->
+                                                                                        <!--button aria-label="Image" class="ql-image"></button-->
+                                                                                    </span>
+                                                                                </p-header>
+                                                                            </p-editor>
+                                                                            <div *ngIf="submitflag && f.description.errors?.required" class="invalid-feedback invalid-field">
+                                                                                <div id="valid-error" class="field-err">Description is required</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div>
+                                                                    
+                                                                    <!-- <div align="center" class="upload-area">
+                                                                        <div class="upload-col attachment-file common-attachment-file media-attachment-file files cursor">
+                                                                            <p-fileUpload #uploader name="upload[]" customUpload="true" 
+                                                                                [chooseLabel]="chooseLable" [chooseIcon]="chooseIcon" 
+                                                                                [showUploadButton]="showUpload" [showCancelButton]="showCancel"
+                                                                                
+                                                                                multiple="multiple">
+                                                                                <ng-template pTemplate="content">
+                                                                                    <p class="content-message placeholder text-center">Drop Files</p>
+                                                                                </ng-template>
+                                                                            </p-fileUpload>
+                                                                            
+                                                                        </div>
+                                                                        <div class="upload-col link common-link cursor" [ngClass]="{'disable': !addLinkFlag}">
+                                                                            <img src="/assets/images/media/manager/link-icon.png"
+                                                                                 >
+                                                                            Add Link
+                                                                        </div>
+                                                                    </div> -->
+
+                                                                </div>
+                                                                
+                                                                <div class="prob-form-row-bug attachment-row-bug">
+                                                                    <app-file-attachment *ngIf="partUpload" class="attachment-file" [apiData]="apiData" [action]="manageAction" 
+                                                                     (uploadedItems)="attachments($event)">
+                                                                    </app-file-attachment>
+                                                                <app-attachment-view *ngIf="load" [action]="EditAttachmentAction" [attachments]="attachmentItems"
+                                                                     (attachmentAction)="attachmentAction($event)"></app-attachment-view>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+</div>

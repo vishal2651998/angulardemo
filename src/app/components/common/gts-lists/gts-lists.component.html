@@ -1,0 +1,331 @@
+<div *ngIf="loading" class="loader cust-loader gts-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader" [ngClass]="{'gtss-ws-loader': this.pageDataInfo == 2, 'gtss-loader': this.pageDataInfo != 2}"></div>
+
+<div *ngIf="!loading">
+    <div *ngIf="thumbView && !ItemEmpty" class="parts-thumb-view" >    
+        <div *ngIf="!ItemEmpty" class="gts-grid-row" [style.height.px]="innerHeight">
+            <div #top *ngIf="!loading" style="border-radius:8px;" [ngClass]="{'opacity': opacityFlag}" id="partList" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">
+                <ngx-masonry [options]="{ gutter: 10 }" class="parts-grid-row masonry-item-container" [ngClass]="{'hide': displayNoRecords}" [updateLayout]="updateMasonryLayout" [ordered]="true">
+                    <div ngxMasonryItem class="parts-grid-col masonry-item" *ngFor="let item of gtsList">
+                        <p-card class="parts-card cursor" [ngClass]="{'parts-expand-card': expandFlag}"
+                        (click)="viewGtsProcedure(navAction, item.procedureId)">
+                            <div class="card-content part-card-content">
+                                <div class="parts-image card-image" [ngClass]="{'default-img': item.isDefaultImg}"
+                                    [ngStyle]="{'background-image': 'url(' + item.gtsImg + ')'}">
+                                    <span>ID# {{item.procedureId}}</span> 
+                                </div>
+                                <div class="part-cont">
+                                    <div class="card-title" title="{{item.name}}">{{item.name}}</div>
+                                    <div class="card-subtitle" [ngClass]="{'empty-card': item.likeCount == 0 && item.pinCount == 0 && item.viewCount == 0}">
+                                        <div class="app-info">
+                                            <div class="title truncate" title="{{item.partName}}">{{item.partName}}</div>
+                                            <div class="info truncate " *ngIf="item.model == 'All Models'">{{item.model}}</div>
+                                            <div class="info truncate" *ngIf="item.model != 'All Models' && tvsFlag">{{item.productType}} <img src="{{chevronImg}}" /> {{item.model}} <img src="{{chevronImg}}" /> {{item.year}}</div>
+                                            <div class="info truncate" *ngIf="item.model != 'All Models' && !tvsFlag">{{item.productType}} <span class="ch-icon" *ngIf="DICVDomain && item.emissionName != undefined && item.emissionName != '-' && item.emissionName != ''"><img src="{{chevronImg}}" /> {{item.emissionName}} </span><span class="ch-icon" *ngIf="item.model != '-' && item.model != ''"><img src="{{chevronImg}}" /> {{item.model}} </span><span class="ch-icon" *ngIf="item.year != '-' && item.year != ''"><img src="{{chevronImg}}" /> {{item.year}}</span></div>
+                                        </div>
+                                        <div class="info gts-date">{{item.createdOn}}</div>
+                                        <div class="parts-count">
+                                            <div *ngIf="item.likeCount > 0" class="parts-action parts-like">
+                                                {{item.likeCount}}
+                                                <span *ngIf="item.likeCount <= 1">Like</span>
+                                                <span *ngIf="item.likeCount > 1">Likes</span>
+                                            </div>
+                                            <div *ngIf="item.pinCount > 0" class="parts-action parts-pin">
+                                                {{item.pinCount}}
+                                                <span *ngIf="item.pinCount <= 1">Pin</span>
+                                                <span *ngIf="item.pinCount > 1">Pins</span>
+                                            </div>
+                                            <div *ngIf="item.viewCount > 0" class="parts-action parts-view">
+                                                {{item.viewCount}}
+                                                <span *ngIf="item.viewCount <= 1">View</span>
+                                                <span *ngIf="item.viewCount > 1">views</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </p-card>
+                    </div>           
+                </ngx-masonry>
+            </div> 
+        </div>     
+    </div>
+    <div *ngIf="!thumbView && !ItemEmpty" class="prob-list-cont">   
+        <div *ngIf="!ItemEmpty" class="prob-list-cont gts-list-row documents-grid-row documents-grid-row-new" [style.height.px]="innerHeight+10">
+            <div *ngIf="!loading" id="matrixTable" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" class="gts-mat-table">
+                <p-table #table *ngIf="itemLength > 0" [columns]="gtsListColumns" [scrollable]="true" [totalRecords]="gtsList.length" id="file-datatable" class="file-datatable thread-list-table gts-list-table" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" [value]="gtsList" [scrollHeight]="'calc(100vh - '+listHeight+'px)'" (scroll)="scroll($event)">
+                    <ng-template pTemplate="header" let-columns>
+                        <tr *ngIf="!displayNoRecords">
+                            <th *ngFor="let col of columns" class="{{col.columnpclass}}">    
+                                {{col.header}}
+                                <!--span *ngIf="col.field == 'createdOn' || col.field == 'id'"><p-sortIcon [field]="col.field"></p-sortIcon></span-->
+                            </th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-gtsList let-i="rowIndex">
+                        <tr class="cursor" id="{{gtsList.procedureId}}">
+                            <td class="w1 thl-col-1 col-sticky" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="catg-name">{{gtsList.productCategoryName}}</span>
+                                </div>
+                            </td>
+                            <td class="w2 thl-col-2 col-sticky" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="title">{{gtsList.name}}</span>
+                                </div>
+                            </td>
+                            <td *ngIf="tvsFlag" [ngClass]="{'w3 thl-col-3': tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="mod-type">{{gtsList.productModuleType}}</span>        
+                                </div>
+                            </td>
+                            <td *ngIf="tvsFlag" [ngClass]="{'w4 thl-col-4': tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="mod-mfg">{{gtsList.productModuleMfg}}</span>
+                                </div>
+                            </td>
+                            <td *ngIf="tvsFlag" [ngClass]="{'w5 thl-col-5': tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="dtc">{{gtsList.dtcCode}}</span>
+                                </div>
+                            </td>
+                            <td *ngIf="tvsFlag" [ngClass]="{'w6 thl-col-6': tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="dtc-desc">{{gtsList.dtcDesc}}</span>
+                                </div>
+                            </td>
+                            <td *ngIf="!gtsWorkflow" [ngClass]="{'w7 thl-col-7': tvsFlag, 'w3 thl-col-3': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="system-sel" >{{gtsList.systemSelection}}</span>
+                                </div>
+                            </td>                            
+                            <td *ngIf="gtsWorkflow" class="w18 thl-col-18 wflow18" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="system-sel" title="{{gtsList.workFlowName}}">{{gtsList.workFlowName}}</span>
+                                </div>
+                            </td>
+                            <td *ngIf="gtsSession" class="w18 thl-col-18" (click)="viewGtsSessionList(gtsList.procedureId,gtsList.gtsSessionCount)">
+                                <div class="p-table-col">
+                                    <span *ngIf="gtsList.gtsSessionCount != 0" class="action-link">{{gtsList.gtsSessionCount}}</span>
+                                    <span *ngIf="gtsList.gtsSessionCount == 0" class="action-nolink">-</span>
+                                </div>
+                            </td>  
+                            <td [ngClass]="{'w8 thl-col-8': tvsFlag, 'w4 thl-col-4': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="id">{{gtsList.procedureId}}</span>
+                                </div>
+                            </td>                                                     
+                            <td *ngIf="!DICVDomain" [ngClass]="{'w9 thl-col-9': tvsFlag, 'w5 thl-col-5': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId, gtsList.workstreamsLen)">
+                                <div class="p-table-col">
+                                    <span class="workstream {{gtsList.workstreamsLen > 1 ? 'multiple-items' : ''}}">
+                                        <div *ngIf="gtsList.workstreamsLen > 1" class="cursor multiple custom-pop" [matMenuTriggerFor]="ws" >    
+                                            {{gtsList.workstreams}}
+                                        </div>
+                                        <div *ngIf="gtsList.workstreamsLen == 1" class="ws-name">{{gtsList.workstreams}}</div>
+                                    </span>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #ws="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul>
+                                                    <li *ngFor="let m of gtsList.workstreamLists">{{m.name}}</li>
+                                                </ul>
+                                            </div> 
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                            </td>                            
+                            <td *ngIf="!DICVDomain" [ngClass]="{'w10 thl-col-10': tvsFlag, 'w6 thl-col-6': !tvsFlag}">
+                                <div class="p-table-col" (click)="viewGtsProcedure(gtsList.productType, gtsList.procedureId, gtsList.productTypeList?.length)">
+                                    <div class="product {{gtsList.productTypeList?.length > 1 && !gtsList.makeDCIVFlag ? 'multiple-items' : ''}}">
+                                        <div *ngIf="gtsList.productTypeList?.length > 1 && !gtsList.makeDCIVFlag" class="cursor multiple custom-pop" [matMenuTriggerFor]="product" (mouseleave)="onClickedOutside()">    
+                                            {{gtsList.productType}}
+                                        </div>
+                                        <div *ngIf="gtsList.makeDCIVFlag">
+                                            {{gtsList.productType}}
+                                        </div>
+                                        <div *ngIf="gtsList.productTypeList?.length <= 1">
+                                            {{gtsList.productType}}
+                                        </div>
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #product="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul>
+                                                    <li *ngFor="let m of gtsList.productTypeList">{{m.productType}}</li>
+                                                </ul>
+                                            </div> 
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                            </td>
+                            <td *ngIf="DICVDomain" [ngClass]="{'w7 thl-col-7': DICVDomain}" >
+                                <div class="p-table-col">
+                                    <span class="emission {{gtsList.emissionName == 'Multiple Emissions' ? 'multiple-items' : ''}}">
+                                        <div *ngIf="gtsList.emissionName == 'Multiple Emissions'" class="cursor multiple custom-pop" [matMenuTriggerFor]="gtsEmission" (mouseleave)="onClickedOutside()">    
+                                            {{gtsList.emissionName}}
+                                        </div>
+                                        <div *ngIf="gtsList.emissionName != 'Multiple Emissions'">
+                                            {{gtsList.emissionName}}
+                                        </div>
+                                        <mat-toolbar color="primary">
+                                            <mat-menu #gtsEmission="matMenu" backdropClass="ptabletmenu">
+                                                <div class="part-menu">
+                                                <ul *ngIf="gtsList.productTypeList && gtsList.productTypeList.length > 0">
+                                                        <li *ngFor="let m of gtsList.productTypeList">{{m.productType}}
+                                                            <ul class="inner-list">
+                                                                <li *ngFor="let emissionName of m.emissionName">
+                                                                    {{emissionName}}
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </mat-menu>
+                                        </mat-toolbar> 
+                                    </span>
+                                </div>
+                            </td>
+                            <td [ngClass]="{'w11 thl-col-11': tvsFlag, 'w7 thl-col-7': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId, gtsList.modelList?.length)">
+                                <div class="p-table-col">
+                                    <span class="model {{gtsList.model == 'Multiple Models' ? 'multiple-items' : ''}}">
+                                        <div *ngIf="gtsList.model == 'Multiple Models'" class="cursor multiple custom-pop" [matMenuTriggerFor]="gtsModel" (mouseleave)="onClickedOutside()">    
+                                            {{gtsList.model}}
+                                        </div>
+                                        <div *ngIf="gtsList.model != 'Multiple Models'">
+                                            {{gtsList.model}}
+                                        </div>
+                                        <mat-toolbar color="primary">
+                                            <mat-menu #gtsModel="matMenu" backdropClass="ptabletmenu">
+                                                <div class="part-menu">
+                                                <ul *ngIf="gtsList.productTypeList && gtsList.productTypeList.length > 0">
+                                                        <li *ngFor="let m of gtsList.productTypeList">{{m.productType}}
+                                                            <ul class="inner-list">                                                                
+                                                                <li *ngFor="let model of m.model">
+                                                                    {{model}}
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </mat-menu>
+                                        </mat-toolbar> 
+                                    </span>
+                                </div>
+                            </td>
+                            <td [ngClass]="{'w12 thl-col-12': tvsFlag, 'w8 thl-col-8': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId, gtsList.yearList?.length)">
+                                <span class="year {{gtsList.year == 'Multiple Years' ? 'multiple-items' : ''}}">
+                                    <div *ngIf="gtsList.year == 'Multiple Years'" class="cursor multiple custom-pop" [matMenuTriggerFor]="gtsYear" (mouseleave)="onClickedOutside()">    
+                                        {{gtsList.year}}
+                                    </div>
+                                    <div *ngIf="gtsList.year != 'Multiple Years'">
+                                    <span *ngIf="gtsList.year!=''">{{gtsList.year}}</span>
+                                    <span *ngIf="gtsList.year==''">-</span>
+                                    </div>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #gtsYear="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                            <ul *ngIf="gtsList.productTypeList && gtsList.productTypeList.length > 0">
+                                                    <li *ngFor="let m of gtsList.productTypeList">{{m.productType}}
+                                                        <ul class="inner-list" *ngIf="m.year!=''">                                                            
+                                                            <li *ngFor="let year of m.year">
+                                                                <span *ngIf="year==0">All</span>
+                                                                <span *ngIf="year!=0">{{year}}</span>
+                                                            </li>
+                                                        </ul>                                                         
+                                                        <ul class="inner-list" *ngIf="m.year==''">
+                                                            <li>-</li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </mat-menu>
+                                    </mat-toolbar> 
+                                </span>
+                            </td>
+                            <td [ngClass]="{'w13 thl-col-13': tvsFlag, 'w9 thl-col-9': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="created-on">{{gtsList.createdOn}}</span>
+                                </div>
+                            </td>
+                            <td [ngClass]="{'w14 thl-col-14': tvsFlag, 'w10 thl-col-10': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="created-by">{{gtsList.createdBy}}</span>
+                                </div>
+                            </td>
+                            <td [ngClass]="{'w15 thl-col-15': tvsFlag, 'w11 thl-col-11': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="modified-on">{{gtsList.updatedOn}}</span>
+                                </div>
+                            </td>
+                            <td [ngClass]="{'w16 thl-col-16': tvsFlag, 'w12 thl-col-12': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <span class="modified-by">{{gtsList.updatedBy}}</span>
+                                </div>
+                            </td>
+                            <td class="col-sticky header status-col" [ngClass]="{'w17 thl-col-17': tvsFlag, 'w13 thl-col-13': !tvsFlag}" (click)="viewGtsProcedure(navAction, gtsList.procedureId)">
+                                <div class="p-table-col">
+                                    <div class="status thread-status" [style.background-color]="gtsList.statusColor">
+                                        <div [ngStyle]="{'color': '#FFFFFF'}" align="center">{{gtsList.status | titlecase}}</div>
+                                    </div>
+                                    <span id="more" class="more-icon active" [matMenuTriggerFor]="more" (click)="$event.stopPropagation();">
+                                        <img src="assets/images/more-icon.svg" alt="GTS Action" onload="SVGInject(this)" />
+                                        <!-- <img src="assets/images/more-icon.png" alt="GTS Action" /> -->
+                                    </span>
+                                    <mat-toolbar color="primary">
+                                        <mat-menu #more="matMenu" backdropClass="ptabletmenu">
+                                            <div class="part-menu">
+                                                <ul class="more-actions" *ngIf="!deletedListFlag">
+                                                    <li class="cursor active" *ngIf="(gtsList.isProcedureAvailable && (gtsList.access || (accessLevel?.create)))" ><button (click)="startGTS(gtsList.procedureId)" class="start-gts-btn new-button-gts-design"><img width="23px" height="23px" class="w-25 simg" src="assets/images/gts/play.png" alt="">Start GTS</button></li>
+                                                    <li class="cursor active" (click)="viewGtsProcedure('single', gtsList.procedureId)"><img src="assets/images/gts/view.png" alt="View">&nbsp;&nbsp;View</li>
+                                                    <!--li *ngIf="gtsList.access || accessLevel?.editAccess == 1" class="cursor active" (click)="editGTS(gtsList.procedureId)"><img src="assets/images/gts/edit.png" alt="Edit">&nbsp;&nbsp;Edit</li-->
+                                                    <li *ngIf="( (gtsList.access || accessLevel?.edit)) || (!gtsList.isPublishedFlag && gtsList.access)" class="cursor active {{gtsList.isPublishedFlag}} {{gtsList.access}} {{gtsList.flowchartURL}}" (click)="GTSAction(gtsList.procedureId,gtsList.createdById,'','edit','Edit')"><img src="assets/images/gts/edit.png" alt="Edit">&nbsp;&nbsp;Edit GTS</li>
+                                                    <li  *ngIf="((gtsList.access || accessLevel?.edit) && gtsList.flowchartURL != '' && gtsList.flowchartURL != undefined)" class="cursor active " (click)="GTSAction(gtsList.procedureId,gtsList.createdById,gtsList.flowchartURL,'workflow','Edit')"><img src="assets/images/gts/edit.png" alt="Edit Workflow">&nbsp;&nbsp;Edit Workflow</li>
+                                                    <li *ngIf="( (accessLevel?.create))" class="cursor active" (click)="GTSAction(gtsList.procedureId,gtsList.createdById,'','duplicate','Create')"><img src="assets/images/duplicate.png" alt="Duplicate"><span class="duplicate">Duplicate</span></li>
+                                                    <li *ngIf="(gtsList.isPublishedFlag && (gtsList.access || accessLevel?.delete)) || (!gtsList.isPublishedFlag && gtsList.access)" class="cursor active" (click)="GTSAction(gtsList.procedureId,gtsList.createdById,'','delete','Delete')"><img class="del-gts" src="assets/images/gts/delete.png" alt="Delete">&nbsp;&nbsp;Delete</li>                                    
+                                                </ul>
+                                                <ul class="more-actions" *ngIf="deletedListFlag">
+                                                   <li class="cursor active" (click)="GTSAction(gtsList.procedureId,gtsList.createdById,'','restore','Restore')">&nbsp;&nbsp;Restore</li>                                    
+                                                </ul>
+                                            </div>
+                                        </mat-menu>
+                                    </mat-toolbar>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>        
+        </div>    
+    </div>
+
+    <div *ngIf="ItemEmpty && displayNoRecords && accessLevel.view" class="parts-thumb-view no-item-list-new"  [style.height.px]="innerHeight">
+        <div class="itm-empty-container">
+            <img src="assets/images/no-result-media.png" alt="no-result-media" width="112" height="102">
+            <p class="item-empty-para empty-res padd-top-20">No result found</p>
+        </div>
+    </div> 
+
+    <div *ngIf="ItemEmpty && displayNoRecords && (apiUrl.enableAccessLevel && !accessLevel.view)" class="parts-thumb-view no-item-list-new"  [style.height.px]="innerHeight">
+        <div class="itm-empty-container">
+            <img src="assets/images/thread/no-permission.png" alt="no-result-media" width="250" height="250">
+            <p class="item-empty-para empty-res padd-top-20">This view is restricted. Contact your administrator for access</p>
+        </div>
+    </div> 
+
+    <div *ngIf="ItemEmpty && !displayNoRecords" class="parts-thumb-view no-item-list" [style.height.px]="innerHeight">
+        <div class="item-empty-container item-empty-container-global">
+            <div class="empty-cont">
+                <div class="empty-res empty-res-new" *ngIf="currentPage == ''">
+                    <img src="assets/images/gts/no-gts.png" alt="GTS" />
+                    <p class="makepopuptext-spa">Create your flows, author detail steps to be followed, attach variety of media to assist the techs in the field.</p>   
+                    <span *ngIf="createAccess" class="new-prob" (click)="GTSAction('','','','new','Create')">New GTS Procedure</span>                 
+                </div>
+                <div class="empty-res empty-res-new" *ngIf="currentPage == 'landing'">
+                    <img src="assets/images/gts/no-gts.png" alt="GTS" />
+                    <p class="makepopuptext-spa">Tap on the ‘Go to GTS’ button to open the GTS page.</p>   
+                    <div class="goto-button" (click)="pageGts()">Go to GTS&nbsp;<img src="assets/images/login/redirect-login-arrow.png"></div>                                 
+                </div>
+            </div> 
+        </div>
+    </div> 
+</div>

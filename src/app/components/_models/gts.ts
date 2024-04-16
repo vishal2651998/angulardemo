@@ -1,0 +1,30 @@
+export class GTSModel {
+  apiKey: string;
+  workstreamId?: string;
+  procedureId: string;
+  processId: string;
+  userId: string;
+  domainId: string;
+  actionMode: string;
+  gtsid?: string;
+  frameNo?: string;
+  odometerNo?: string;
+  isFrameCutOffProcess?: string;
+  parentProcessId?: string;
+  parentNextProcessId?: string;
+  previousProcessId?: string;
+  previousNextMode?: string;
+  reviewResolutionStatus?: string;
+  processContentId?: string;
+  nextProcessIdFromBack?: string;
+  prevProcessId?: string;
+  instructionType?: string;
+  isLastProcess?: string;
+  isFirstProcess?: string;
+  actionStatus?: string;
+  contentId?: string;
+  userInput?: string;
+  userActionValue?: string;
+  userInputId?: string;
+  description?: string;
+}

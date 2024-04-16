@@ -1,0 +1,58 @@
+<div *ngIf="loading" class="cust-loader {{accessFrom}}"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="lazyLoading" class="cust-loader esc-loader lazy-loader cust-lazy-loader part-list-lazy-loader {{accessFrom}}"></div>
+<div *ngIf="!loading && listView" class="prob-list-cont">
+    <div *ngIf="!itemEmpty" class="documents-grid-row documents-grid-row-new" [style.height.px]="innerHeight">
+        <div id="matrixTable" class="gts-mat-table matrix-table parts-mat-table parts-mat-table-fs" [ngClass]="{'opacity': opacityFlag, 'parts-empty-table': displayNoRecords}">
+            <p-table #table [columns]="shopListColumns" [scrollable]="true" [totalRecords]="shopList.length" id="file-datatable" class="file-datatable thread-list-table shop-list-table ro-list" [ngClass]="{'opacity': opacityFlag, 'collapse-mat-table': !expandFlag, 'hide': displayNoRecords}" [value]="shopList" [scrollHeight]="'calc(100vh - 200px)'" (scroll)="scroll($event)">
+                <ng-template pTemplate="header" let-columns>
+                    <tr *ngIf="!displayNoRecords" >
+                        <th [pSortableColumn]="col.field" *ngFor="let col of columns" class="{{col.columnpclass}}">    
+                            {{col.header}}
+                            <p-sortIcon *ngIf="col.field  !== ''" [field]="col.field"></p-sortIcon>
+                            <p-columnFilter *ngIf="col.field !== ''" type="text" [field]="col.field" display="menu"></p-columnFilter>
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-shopList let-i="rowIndex">
+                    <tr class="cursor" id="{{shopList.storeNo}}" (click)="viewShop(shopList.storeNo)">
+                        <td class="w1 thl-col-1 col-sticky">
+                            <div class="p-table-col">
+                                <div class="p-table-col"><span class="shop-id">{{shopList.storeNo}}</span></div>        
+                            </div>
+                        </td>
+                        <td class="w2 thl-col-2">
+                            <div class="p-table-col"><span class="shop-id">{{shopList.storeName}}</span></div>
+                        </td>
+                        <td class="w3 thl-col-3" >
+                            <div class="p-table-col"><span class="symptom" title="{{shopList.emailAddress}}">{{shopList.emailAddress}}</span></div>
+                        </td>
+                        <td class="w4 thl-col-4" >
+                            <div class="p-table-col"><span class="release-date" title="{{shopList.storeCity}}">{{shopList.storeCity}}</span></div>
+                        </td>
+                        <td class="w5 thl-col-5">
+                            <div class="p-table-col"><span class="release-date" title="{{shopList.storeState}}">{{shopList.storeState}}</span></div>
+                        </td>
+                        <td class="w6 thl-col-6" >
+                            <div class="p-table-col"><span class="created-on">{{shopList.numberTechs}}</span></div>
+                        </td>
+                        <td class="w7 thl-col-7" >
+                            <div class="p-table-col"><span class="created-by text-left">{{shopList.numberTickets}}</span></div>
+                        </td>                       
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>    
+</div>
+<div class="prob-list-cont" [ngClass]="{ 'hide' : listView || itemEmpty  }" >
+    <div #mapRef id="map" [ngStyle]="{'width': '100%', 'height': mapHeight}" ></div>
+</div>
+<div class="list" *ngIf="!loading && itemEmpty">
+    <div class="documents-grid-row documents-grid-row-new" [style.height.px]="innerHeight">        
+        <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newPartInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="shopUrl"></app-empty-container>
+    </div>
+</div>
+
+
+
+

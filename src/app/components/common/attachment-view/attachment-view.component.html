@@ -1,0 +1,576 @@
+<div *ngIf="loading && (action == 'new' || action == 'edit')" class="loading cust-loader file-loader">
+    <img src="assets/images/loading.svg" alt="Loading" />
+</div>
+<div [ngClass]="{'refer-info': !isStartGTSTest, 'no-border': galleryHiddenFlag, 'no-padding': noPadding}" class="attachment-info {{action}} {{access}}" *ngIf="attachmentLength > 0">
+    <div class="label" *ngIf="!isStartGTSTest && !hideLabel">{{sectionHead}}</div>
+    <div class="attachment-cont" [ngStyle]="{'margin': hideLabel ? '0px' : '0px 25px'}">
+        <div *ngIf="loading" class="loading cust-loader file-loader">
+            <img src="assets/images/loading.svg" alt="Loading" />
+        </div>
+        <!-- New Attachments -->
+        <div *ngIf="action != 'view' && action != 'attachments'" id="newGallery" class="item-list item-list" cdkDropList [cdkDropListData]="attachments" (cdkDropListDropped)="drop($event)">
+            <div id="attachment-row-{{i}}" class="attachment-row action-row {{a.type}} {{a.excludeClass}}" [ngClass]="{'lang-row': a.filteredLangList.length > 0}" *ngFor="let a of attachments; let i = index;"
+            [attr.data-responsive]="a.thumbFilePath"
+            [attr.data-sub-html]="a.galleryCaption"
+            [attr.data-html]="a.galleryId"
+            [attr.data-poster]="a.posterImg"
+            [attr.data-src]="a.fileImg"
+            cdkDrag>
+                <!-- Hidden video div -->
+                <div *ngIf="a.flagId == 2" class="hide" [attr.id]="a.galleryHidden">
+                    <video [src]="a.videoUrl" width="90" height="90" controls>
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <!-- Hidden audio div -->
+                <div *ngIf="a.flagId == 3" class="hide" [attr.id]="a.galleryHidden">
+                    <audio [src]="a.audioUrl" controls>
+                        <source [src]="a.audioUrl" type="audio/ogg">
+                        <source [src]="a.audioUrl" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div *ngIf="a.flagId == 1 || a.flagId == 3 || a.flagId == 4 || a.flagId == 5" class="{{a.type}}">
+                    <div class="attachment-col bg-col action-col cursor {{a.type}}" [ngClass]="{'doc-bg' : (a.flagId > 2 )}" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                        <span class="drag-icon"></span>
+                        <img class="hide" src="{{a.thumbFilePath}}" />
+                    </div>
+                    <div class="attachment-col cont-col action-col">
+                        <div class="caption">
+                            <span class="caption-action">
+                                <!--span class="cursor caption-val hide" *ngIf="!a.captionFlag">{{a.fileCaption}} <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/></span>
+                                <input *ngIf="a.captionFlag" matInput type="text" placeholder="Enter Caption" class="caption-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" (clickOutside)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" (mouseleave)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" /-->
+                                <input matInput type="text" placeholder="Enter Caption" class="caption-control" [ngClass]="{'disabled': a.accessType == 'media'}" [(ngModel)]="a.fileCaption" [disabled]="a.accessType == 'media'" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" />
+                                <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i);$event.stopPropagation();" /></span>
+                            </span>
+                        </div>
+                        <div class="desc"> 
+                            {{a.originalName}} <span class="dot"></span> {{a.fileSize}} 
+                            <span class="media-type type-{{a.accessType}} text-right">{{a.accessTypeText}}</span>
+                        </div>
+                        <div class="cursor custom-drop-down attach-drop-down popup">
+                            <div class="multi-select" [ngClass]="{'opacity': a.accessType == 'media'}" (click)="getLang(i)">
+                                <div class="drop-col split-col language">
+                                    <span class="split-icon language-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="a.itemValues" [selectedItemsLabel]="langPlaceholder" placeholder="{{langPlaceholder | titlecase}}" autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" filterPlaceHolder="Search {{langPlaceholder | titlecase}}" [disabled]="true">
+                                    <ng-template pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of a.selectedLang; let i = index;">{{item}}<span *ngIf="a.selectedLang.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="a.selectedLang.length == 0">{{langPlaceholder | titlecase}}</span>
+                                        </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="a.filteredLangList.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of a.filteredLangList; let t=index" class="tag-text ws-tag-text" [ngClass]="{'tag-no-close': a.accessType == 'media'}">
+                                        <span>{{item}}</span>
+                                        <i class="material-icons tag-close" *ngIf="a.accessType != 'media'" (click)="disableTagSelection(i, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="a.flagId == 2" class="{{a.type}}">
+                    <div class="attachment-col bg-col action-col cursor {{a.type}}">
+                        <span class="drag-icon"></span>
+                        <video  class="fillWidth" [src]="a.videoUrl" width="90" height="90" controls preload="none">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <!--div *ngIf="a.fileAction == 'media'" class="attachment-col bg-col cursor {{a.type}}" (click)="showGallery('new',0)" [ngStyle]="{'background-image': 'url(' + a.posterImage + ')'}">
+                        <img class="hide" src="{{a.thumbFilePath}}" />
+                        <div *ngIf="a.flagId == 2" class="poster">
+                            <img src="assets/images/media/video-thumb.png" alt="Play">
+                        </div>
+                        <span class="drag-icon"></span>
+                    </div-->
+                    <div class="attachment-col cont-col action-col">
+                        <div class="caption">
+                            <span class="caption-action">
+                                <!--span class="cursor caption-val" *ngIf="!a.captionFlag">{{a.fileCaption}} <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/></span>
+                                <input *ngIf="a.captionFlag" matInput type="text" placeholder="Enter Caption" class="caption-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" (clickOutside)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" (mouseleave)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" /-->
+                                <input matInput type="text" placeholder="Enter Caption" class="caption-control" [ngClass]="{'disabled': a.accessType == 'media'}" [(ngModel)]="a.fileCaption" [disabled]="a.accessType == 'media'" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" (clickOutside)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" (mouseleave)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" />
+                                <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i);$event.stopPropagation();" /></span>
+                            </span>
+                        </div>
+                        <div class="desc"> 
+                            {{a.originalName}} <span class="dot"></span> {{a.fileSize}}
+                            <span class="media-type type-{{a.accessType}} text-right">{{a.accessTypeText}}</span>
+                        </div>
+                        <div class="cursor custom-drop-down attach-drop-down popup">
+                            <div class="multi-select" [ngClass]="{'opacity': a.accessType == 'media'}" (click)="getLang(i)">
+                                <div class="drop-col split-col language">
+                                    <span class="split-icon language-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="a.itemValues" [selectedItemsLabel]="langPlaceholder" placeholder="{{langPlaceholder | titlecase}}" autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" filterPlaceHolder="Search {{langPlaceholder | titlecase}}" [disabled]="true">
+                                    <ng-template pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of a.selectedLang; let i = index;">{{item}}<span *ngIf="a.selectedLang.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="a.selectedLang.length == 0">{{langPlaceholder | titlecase}}</span>
+                                        </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="a.filteredLangList.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of a.filteredLangList; let t=index" class="tag-text ws-tag-text">
+                                        <span>{{item}}</span>
+                                        <i class="material-icons tag-close" (click)="disableTagSelection(i, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--div *ngIf="a.flagId == 3" class="{{a.type}}">
+                    <div class="attachment-col bg-col action-col cursor {{a.type}}">
+                        <span class="drag-icon"></span>
+                        <audio [src]="a.audioUrl"  controls>
+                            <source [src]="a.audioUrl"  type="{{a.type}}">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    <div class="attachment-col cont-col action-col">
+                        <div class="caption">
+                            <span class="caption-action">
+                                <span class="cursor caption-val" *ngIf="!a.captionFlag">{{a.fileCaption}} <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('caption', i, !a.captionFlag)"/></span>
+                                <input *ngIf="a.captionFlag" matInput type="text" placeholder="Enter Caption" class="caption-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value)" (focusout)="onFocusEvent('caption', i, !a.captionFlag)" (clickOutside)="onFocusEvent('caption', i, !a.captionFlag)" (mouseleave)="onFocusEvent('caption', i, !a.captionFlag)" />
+                                <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i)" /></span>
+                            </span>
+                        </div>
+                        <div class="desc"> {{a.originalName}} <span class="dot"></span> {{a.fileSize}}</div>
+                    </div>
+                </div-->
+                <div *ngIf="a.flagId == 6" class="link">
+                    <div class="attachment-col bg-col action-col {{a.linkType}}" [ngStyle]="{'background-image': 'url(' + a.logo + ')'}">
+                        <span class="drag-icon"></span>
+                        <div *ngIf="a.linkType != 'site'" class="media-banner video-banner">
+                            <iframe id="myframe" [src]="a.aurl" width="90" height="90" frameborder="0" allowfullscreen=""></iframe>   
+                        </div>
+                    </div>
+                    <div class="attachment-col action-col cont-col link">
+                        <div class="caption desc">
+                            <span>
+                                <input matInput type="text" placeholder="Enter Caption" class="caption-control" [ngClass]="{'disabled': a.accessType == 'media'}" [disabled]="a.accessType == 'media'" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();$event.stopPropagation();" />
+                            </span>
+                        </div>
+                        <div id="alink" class="caption cursor link">
+                            <input matInput type="text" placeholder="Enter Link" class="caption-control link-control" [ngClass]="{'no-valid': !a.valid, 'disabled': a.accessType == 'media'}" [disabled]="a.accessType == 'media'" [(ngModel)]="a.url" (blur)="onChange('link', i, $event.target.value);$event.stopPropagation();" />
+                            <span class="action add">
+                                <!--img *ngIf="a.action == 'new' && a.url.length > 0 && a.fileCaption.length > 0" class="cursor" src="assets/images/checkbox-active.png" alt="Add Caption" (click)="manageCaption('edit', i)" /-->
+                                <!--img *ngIf="a.action == 'edit' && a.url.length > 0 && a.fileCaption.length > 0" class="cursor" src="assets/images/edit-circle.png" alt="Edit Caption" (click)="manageCaption('new', i)" /-->
+                            </span>
+                            <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i);$event.stopPropagation();" /></span>
+                            <div id="valid-error" *ngIf="!a.valid && a.validError" class="link-error">Invalid link</div>
+                            <div id="empty-link-{{i}}" class="link-error hide">Link is required</div>                            
+                        </div>
+                        <div class="link-media-type text-right">
+                            <span class="media-type type-{{a.accessType}}">{{a.accessTypeText}}</span>
+                        </div>
+                        <div class="cursor custom-drop-down attach-drop-down popup">
+                            <div class="multi-select" [ngClass]="{'opacity': a.accessType == 'media'}" (click)="getLang(i)">
+                                <div class="drop-col split-col language">
+                                    <span class="split-icon language-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="a.itemValues" [selectedItemsLabel]="langPlaceholder" placeholder="{{langPlaceholder | titlecase}}" autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" filterPlaceHolder="Search {{langPlaceholder | titlecase}}" [disabled]="true">
+                                    <ng-template let-language pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of a.selectedLang; let i = index;">{{item}}<span *ngIf="a.selectedLang.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="a.selectedLang.length == 0">{{langPlaceholder | titlecase}}</span>
+                                        </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="a.filteredLangList.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of a.filteredLangList; let t=index" class="tag-text ws-tag-text">
+                                        <span>{{item}}</span>
+                                        <i class="material-icons tag-close" (click)="disableTagSelection(i, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Attachments -->
+        <div *ngIf="action == 'attachments'" id="editGallery" class="item-list" cdkDropList [cdkDropListData]="attachments" (cdkDropListDropped)="drop($event)">
+            <div id="attachment-row-{{i}}" class="attachment-row action-row {{a.type}}  {{a.excludeClass}}" [ngClass]="{'lang-row': a.filteredLangList.length > 0}" *ngFor="let a of attachments; let i = index;"
+            [attr.data-responsive]="a.thumbFilePath"
+            [attr.data-sub-html]="a.galleryCaption"
+            [attr.data-html]="a.galleryId"
+            [attr.data-poster]="a.posterImg"
+            [attr.data-src]="a.fileImg"
+            [attr.data-download-url]="a.downloadUrl"
+            cdkDrag>
+                <!-- Hidden video div -->
+                <div *ngIf="a.flagId == 2" class="hide" [attr.id]="a.galleryHidden">
+                    <video class="lg-video-object lg-html5" controls preload="none">
+                        <source src="{{a.videoUrl}}" type="{{a.mime}}">
+                        Your browser does not support HTML5 video.
+                    </video>
+                </div>
+
+                <!-- Hidden audio div -->
+                <div *ngIf="a.flagId == 3" class="hide" [attr.id]="a.galleryHidden">
+                    <audio class="lg-video-object lg-html5" controls>
+                        <source src="{{a.audioUrl}}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div *ngIf="a.flagId < 6" class="{{a.type}}">
+                    <div id="edit-col" class="attachment-col action-col bg-col cursor" [ngClass]="{'doc-bg' : (a.flagId > 2 && a.flagId < 6)}" (click)="showGallery('edit',0)" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                        <span class="drag-icon"></span>
+                        <img class="hide" src="{{a.thumbFilePath}}" />
+                        <div *ngIf="a.flagId == 2" class="poster" >
+                            <img src="assets/images/media/video-thumb.png" alt="Play">
+                        </div>
+                    </div>
+                    <div class="attachment-col action-col cont-col">
+                        <div class="caption">
+                            <span class="caption-action">
+                                <!--span class="cursor caption-val" *ngIf="!a.captionFlag">{{a.fileCaption}} <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/></span>
+                                <input [ngClass]="{'hide': !a.captionFlag}" matInput id="input-{{i}}" type="text" placeholder="Enter Caption" class="caption-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();" /-->
+                                <input matInput id="input-{{i}}" type="text" placeholder="Enter Caption" class="caption-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (click)="$event.stopPropagation();" />
+                                <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i);$event.stopPropagation();" /></span>
+                            </span>
+                        </div>
+                        <div class="desc"> {{a.originalName}} <span class="dot"></span> {{a.fileSize}}</div>
+                        <div class="cursor custom-drop-down attach-drop-down popup">
+                            <div class="multi-select" (click)="getLang(i)">
+                                <div class="drop-col split-col language">
+                                    <span class="split-icon language-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="a.itemValues" [selectedItemsLabel]="langPlaceholder" placeholder="{{langPlaceholder | titlecase}}" autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" filterPlaceHolder="Search {{langPlaceholder | titlecase}}" [disabled]="true">
+                                    <ng-template pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of a.selectedLang; let i = index;">{{item}}<span *ngIf="a.selectedLang.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="a.selectedLang.length == 0">{{langPlaceholder | titlecase}}</span>
+                                        </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="a.filteredLangList.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of a.filteredLangList; let t=index" class="tag-text ws-tag-text">
+                                        <span>{{item}}</span>
+                                        <i class="material-icons tag-close" (click)="disableTagSelection(i, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="a.flagId == 6" class="link">
+                    <div id="edit-col" *ngIf="a.linkType  != 'site'" class="attachment-col bg-col action-col {{a.linkType}}" [ngStyle]="{'background-image': 'url(' + a.logo + ')'}">
+                        <span class="drag-icon"></span>
+                        <img class="hide" src="{{a.thumbFilePath}}" />
+                        <div *ngIf="a.linkType == 'video'" class="poster">
+                            <img src="assets/images/media/video-thumb.png" alt="Play">
+                        </div>
+                    </div>
+                    <div *ngIf="a.linkType != 'site'" class="attachment-col cont-col action-col link">
+                        <div class="caption desc">
+                            <div class="caption">
+                                <span class="caption-action">
+                                    <!--span class="cursor caption-val" *ngIf="!a.captionFlag" [ngClass]="{'empty-caption': a.fileCaption == ''}">
+                                        <span *ngIf="a.fileCaption == ''">Enter Caption</span>
+                                        <span *ngIf="a.fileCaption != ''">{{a.fileCaption}}</span>
+                                        <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/>
+                                    </span>
+                                    <input [ngClass]="{'hide': !a.captionFlag}" matInput id="input-{{i}}" type="text" placeholder="Enter Caption" class="caption-control edit-control caption-edit-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/-->
+                                    <input matInput id="input-{{i}}" type="text" placeholder="Enter Caption" class="caption-control edit-control caption-edit-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (click)="$event.stopPropagation();"/>
+                                    <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i); $event.stopPropagation();" /></span>
+                                </span>
+                            </div>
+                            <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i); $event.stopPropagation();" /></span>
+                        </div>
+                        <div class="caption">
+                            <span class="caption-action">
+                                <span *ngIf="!a.linkFlag" class="cursor link caption-val">
+                                    <span (click)="navUrl(a.link)">{{a.link}}</span>
+                                    <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('link', i, !a.linkFlag);$event.stopPropagation();"/>
+                                </span>
+                                <input [ngClass]="{'hide': !a.linkFlag, 'sdasd': a.linkFlag}" matInput id="linkinput-{{i}}" type="text" placeholder="Enter Link" class="caption-control link-control edit-control link-edit-control" [ngClass]="{'no-valid': !a.valid}" [(ngModel)]="a.link" (change)="onChange('link', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('link', i, !a.linkFlag);$event.stopPropagation();" autofocus/>
+                            </span>
+                            <div *ngIf="!a.valid && a.link.length > 0" class="link-error">Invalid link</div>
+                        </div>
+                        <div class="cursor custom-drop-down attach-drop-down popup">
+                            <div class="multi-select" (click)="getLang(i)">
+                                <div class="drop-col split-col language">
+                                    <span class="split-icon language-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="a.itemValues" [selectedItemsLabel]="langPlaceholder" placeholder="{{langPlaceholder | titlecase}}" autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" filterPlaceHolder="Search {{langPlaceholder | titlecase}}" [disabled]="true">
+                                    <ng-template pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of a.selectedLang; let i = index;">{{item}}<span *ngIf="a.selectedLang.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="a.selectedLang.length == 0">{{langPlaceholder | titlecase}}</span>
+                                        </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="a.filteredLangList.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of a.filteredLangList; let t=index" class="tag-text ws-tag-text">
+                                        <span>{{item}}</span>
+                                        <i class="material-icons tag-close" (click)="disableTagSelection(i, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="edit-col" *ngIf="a.linkType == 'site'" class="attachment-col bg-col action-col {{a.linkType}}" (click)="navUrlLink(a.link); $event.stopPropagation();" [ngStyle]="{'background-image': 'url(' + a.logo + ')'}">
+                        <span class="drag-icon"></span>
+                    </div>
+                    <div *ngIf="a.linkType == 'site'" class="attachment-col cont-col action-col link">
+                        <div class="caption desc">
+                            <div class="caption">
+                                <span class="caption-action">
+                                    <!--span class="cursor caption-val" *ngIf="!a.captionFlag" [ngClass]="{'empty-caption': a.fileCaption == ''}">
+                                        <span *ngIf="a.fileCaption == ''">Enter Caption</span>
+                                        <span *ngIf="a.fileCaption != ''">{{a.fileCaption}}</span>
+                                        <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/>
+                                    </span>
+                                    <input [ngClass]="{'hide': !a.captionFlag}" matInput id="input-{{i}}" type="text" placeholder="Enter Caption" class="caption-control edit-control caption-edit-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (focusout)="onFocusEvent('caption', i, !a.captionFlag);$event.stopPropagation();"/-->
+                                    <input matInput id="input-{{i}}" type="text" placeholder="Enter Caption" class="caption-control edit-control caption-edit-control" [(ngModel)]="a.fileCaption" (change)="onChange('caption', i, $event.target.value);$event.stopPropagation();" (click)="$event.stopPropagation();"/>
+                                    <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i);$event.stopPropagation();" /></span>
+                                </span>
+                            </div>
+                            <span class="action cursor remove"><img src="assets/images/delete-circle.png" alt="Remove" (click)="delete(i);$event.stopPropagation();" /></span>
+                        </div>
+                        <div class="caption">
+                            <span class="caption-action">
+                                <span *ngIf="!a.linkFlag" class="cursor link caption-val">
+                                    <span (click)="navUrl(a.link)">{{a.link}}</span>
+                                    <img src="assets/images/edit-list-icon.png" alt="Edit" (click)="onFocusEvent('link', i, !a.linkFlag);"/>
+                                </span>
+                                <input [ngClass]="{'hide': !a.linkFlag}" matInput id="linkinput-{{i}}" type="text" placeholder="Enter Link" class="caption-control link-control edit-control link-edit-control" [ngClass]="{'no-valid': !a.valid}" [(ngModel)]="a.link" (change)="onChange('link', i, $event.target.value)" (focusout)="onFocusEvent('link', i, !a.linkFlag)" autofocus/>
+                            </span>
+                            <div *ngIf="!a.valid && a.link.length > 0" class="link-error">Invalid link</div>
+                        </div>
+                        <div class="cursor custom-drop-down attach-drop-down popup">
+                            <div class="multi-select" (click)="getLang(i)">
+                                <div class="drop-col split-col language">
+                                    <span class="split-icon language-bg"></span>
+                                </div>
+                                <p-multiSelect #multi class="drop-col dropdown" [options]="a.itemValues" [selectedItemsLabel]="langPlaceholder" placeholder="{{langPlaceholder | titlecase}}" autoWidth="true" filter="true" optionLabel="name" optionId="id" resetFilterOnHide="true" filterPlaceHolder="Search {{langPlaceholder | titlecase}}" [disabled]="true">
+                                    <ng-template pTemplate="selectedItems">
+                                        <ng-container *ngFor="let item of a.selectedLang; let i = index;">{{item}}<span *ngIf="a.selectedLang.length > i+1">, </span>
+                                        </ng-container>
+                                        <span class="p-placeholder" *ngIf="a.selectedLang.length == 0">{{langPlaceholder | titlecase}}</span>
+                                        </ng-template>
+                                </p-multiSelect>
+                            </div>
+                            <div class="dynmic-selected-items" *ngIf="a.filteredLangList.length > 0">
+                                <div class="selected-items ws-selected-items">
+                                    <div *ngFor="let item of a.filteredLangList; let t=index" class="tag-text ws-tag-text">
+                                        <span>{{item}}</span>
+                                        <i class="material-icons tag-close" (click)="disableTagSelection(i, item, t);">close</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Attachments -->
+        <div *ngIf="action == 'view'">
+            <div [attr.id]="'viewGallery_' + dynamicGid">
+                <div id="lg-{{i}}-{{dynamicGid}}" class="attachment-row {{a.type}} {{a.excludeClass}} lg-{{a.flagId}} lg-v-{{i}}" 
+                    [ngClass]="{'hide': galleryHiddenFlag, 'lg-4-6': a.flagId == 6 && a.linkType == 'site', 'link-doc': a.flagId == 6 && a.typeClass == 'link-doc', 'non-doc': a.flagId == 6 && a.linkType != 'site'}" [ngStyle]="{'padding': hideLabel ? '5px 0 5px 0' : '15px 0 15px 0'}" *ngFor="let a of attachments; let i = index;"
+                [attr.data-responsive]="a.thumbFilePath"
+                [attr.data-sub-html]="a.galleryCaption"
+                [attr.data-html]="a.galleryId"
+                [attr.data-poster]="a.posterImg"
+                [attr.data-src]="a.fileImg"
+                [attr.data-download-url]="a.downloadUrl"
+                [attr.data-iframe] = "a.iframe"
+                >
+                    <!-- Hidden video div -->
+                    <div *ngIf="a.flagId == 2" class="hide" [attr.id]="a.galleryHidden">
+                        <video class="lg-video-object lg-html5" controls preload="none">
+                            <source src="{{a.videoUrl}}" type="{{a.mime}}">
+                            Your browser does not support HTML5 video.
+                        </video>
+                    </div>
+
+                    <!-- Hidden audio div -->
+                    <div *ngIf="a.flagId == 3" class="hide" [attr.id]="a.galleryHidden">
+                        <audio class="lg-video-object lg-html5" controls>
+                            <source src="{{a.audioUrl}}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    <div *ngIf="a.flagId > 0 && a.flagId < 4" class="cursor {{a.type}}">
+                        <div class="attachment-col bg-col cursor" [ngClass]="{'doc-bg' : (a.flagId > 2 && a.flagId < 6), 'image-width-margin': isStartGTSTest}" (click)="showGallery('gview',dynamicGid)" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                            <img class="hide" src="{{a.thumbFilePath}}" />
+                            <div *ngIf="a.flagId == 2" class="poster">
+                                <img src="assets/images/media/video-thumb.png" alt="Play">
+                            </div>
+                        </div>
+                        <div class="attachment-col cont-col" [ngClass]="{'width-64-perc' : isStartGTSTest}">
+                            <div class="caption" *ngIf="!isStartGTSTest">
+                                <span title="{{a.fileCaption}}" class="caption-action" *ngIf="a.flagId <= 3 && !isStartGTSTest">{{a.fileCaption}}</span>
+                                <span title="{{a.fileCaption}}" class="caption-action" *ngIf="a.flagId > 3 && a.fileCaption != '' && !isStartGTSTest">{{a.fileCaption}}</span>
+                                <span title="{{a.fileName}}" class="caption-action" *ngIf="a.flagId > 3 && a.fileCaption == '' && !isStartGTSTest">{{a.fileName}}</span>
+                                <span class="caption-action" *ngIf="isStartGTSTest">{{a.fileName}}</span>
+                            </div>
+                            <div class="caption" *ngIf="isStartGTSTest">
+                                <span class="caption-action" [ngClass]="{'word-break' : isStartGTSTest}">{{a.originalName}}</span>
+                            </div>
+                            <div title="{{a.originalName}}" class="desc" *ngIf="!isStartGTSTest"><span class="o-name"> {{a.originalName}} </span><span [ngClass]="{'dot' : !isStartGTSTest}"></span> {{a.fileSize}}</div>
+                            <div class *ngIf="isStartGTSTest">
+                                <p>{{a.fileSize}}</p>
+                            </div>
+                            <div class="custom-drop-down attach-drop-down popup" *ngIf="a.languageOptions">
+                                <div class="dynmic-selected-items" *ngIf="a.languageOptions.length > 0">
+                                    <div class="selected-items ws-selected-items tag-view">
+                                        <div *ngFor="let item of a.languageOptions; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="a.flagId == 4" class="cursor {{a.type}}">
+                        <div class="attachment-col bg-col cursor" [ngClass]="{'doc-bg' : (a.flagId > 2 && a.flagId < 6), 'image-width-margin': isStartGTSTest}" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                            <img class="hide" src="{{a.thumbFilePath}}" />
+                        </div>
+                        <div class="attachment-col cont-col" [ngClass]="{'width-64-perc' : isStartGTSTest}">
+                            <div class="caption" *ngIf="!isStartGTSTest">
+                                <span title="{{a.fileCaption}}" class="caption-action" *ngIf="a.fileCaption != ''">{{a.fileCaption}}</span>
+                                <span title="{{a.fileName}}" class="caption-action" *ngIf="a.fileCaption == ''">{{a.fileName}}</span>
+                            </div>
+                            <div class="caption" *ngIf="isStartGTSTest">
+                                <span class="caption-action" [ngClass]="{'word-break' : isStartGTSTest}">{{a.originalName}}</span>
+                            </div>
+                            <div title="{{a.originalName}}"  class="desc" *ngIf="!isStartGTSTest"><span class="o-name"> {{a.originalName}} </span><span [ngClass]="{'dot' : !isStartGTSTest}"></span> {{a.fileSize}}</div>
+                            <div class *ngIf="isStartGTSTest">
+                                <p>{{a.fileSize}}</p>
+                            </div>
+                            <div class="cursor custom-drop-down attach-drop-down popup">
+                                <div class="dynmic-selected-items" *ngIf="a.languageOptions.length > 0">
+                                    <div class="selected-items ws-selected-items tag-view">
+                                        <div *ngFor="let item of a.languageOptions; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="a.flagId > 4 && a.flagId < 6" class="cursor {{a.type}}" (click)="navUrlDownload(a.downloadUrl); $event.stopPropagation();">
+                        <div class="attachment-col bg-col cursor" [ngClass]="{'doc-bg' : (a.flagId > 2 && a.flagId < 6), 'image-width-margin': isStartGTSTest}" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                            <img class="hide" src="{{a.thumbFilePath}}" />
+                        </div>
+                        <div class="attachment-col cont-col" [ngClass]="{'width-64-perc' : isStartGTSTest}">
+                            <div class="caption" *ngIf="!isStartGTSTest">
+                                <span title="{{a.fileCaption}}" class="caption-action" *ngIf="a.flagId < 4">{{a.fileCaption}}</span>
+                                <span title="{{a.fileCaption}}" class="caption-action" *ngIf="a.flagId > 3 && a.fileCaption != ''">{{a.fileCaption}}</span>
+                                <span title="{{a.fileName}}" class="caption-action" *ngIf="a.flagId > 3 && a.fileCaption == ''">{{a.fileName}}</span>
+                            </div>
+                            <div class="caption" *ngIf="isStartGTSTest">
+                                <span class="caption-action" [ngClass]="{'word-break' : isStartGTSTest}">{{a.originalName}}</span>
+                            </div>
+                            <div title="{{a.originalName}}" class="desc" *ngIf="!isStartGTSTest"><span class="o-name"> {{a.originalName}} </span><span [ngClass]="{'dot' : !isStartGTSTest}"></span> {{a.fileSize}}</div>
+                            <div class *ngIf="isStartGTSTest">
+                                <p>{{a.fileSize}}</p>
+                            </div>
+                            <div class="cursor custom-drop-down attach-drop-down popup">
+                                <div class="dynmic-selected-items" *ngIf="a.languageOptions.length > 0">
+                                    <div class="selected-items ws-selected-items tag-view">
+                                        <div *ngFor="let item of a.languageOptions; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="a.flagId == 6" class="link cursor">
+                        <div *ngIf="a.linkType  != 'site'" class="attachment-col bg-col link cursor {{a.linkType}}" [ngStyle]="{'background-image': 'url(' + a.logo + ')'}" [ngClass]="{'image-width-margin': isStartGTSTest}">
+                            <div *ngIf="a.linkType == 'video'" class="poster">
+                                <img src="assets/images/media/video-thumb.png" alt="Play">
+                            </div>
+                        </div>
+                        <div class="attachment-col cont-col link" [ngClass]="{'width-64-perc' : isStartGTSTest}" *ngIf="a.linkType  != 'site'" >
+                            <div class="caption desc">
+                                <div class="caption">
+                                    <span title="{{a.fileCaption}}" class="caption-action" [ngClass]="{'word-break' : isStartGTSTest}">{{a.fileCaption}}</span>
+                                    <img class="hide" src="{{a.thumbFilePath}}" />
+                                </div>
+                            </div>
+                            <div class="caption">
+                                <span title="{{a.link}}" class="caption-action cursor link" [ngClass]="{'word-break' : isStartGTSTest}">{{a.link}}</span>
+                            </div>
+                            <div class="cursor custom-drop-down attach-drop-down popup">
+                                <div class="dynmic-selected-items" *ngIf="a.languageOptions.length > 0">
+                                    <div class="selected-items ws-selected-items tag-view">
+                                        <div *ngFor="let item of a.languageOptions; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="a.linkType  == 'site'"  class="attachment-col bg-col link cursor {{a.linkType}}" [ngStyle]="{'background-image': 'url(' + a.logo + ')'}" [ngClass]="{'image-width-margin': isStartGTSTest}">
+
+                        </div>
+                        <div class="attachment-col cont-col link" [ngClass]="{'width-64-perc' : isStartGTSTest}" *ngIf="a.linkType  == 'site'" >
+                            <div class="caption desc">
+                                <div class="caption">
+                                    <span title="{{a.fileCaption}}" class="caption-action" [ngClass]="{'word-break' : isStartGTSTest}">{{a.fileCaption}}</span>
+                                    <img class="hide" src="{{a.thumbFilePath}}" />
+                                </div>
+                            </div>
+                            <div class="caption">
+                                <span title="{{a.link}}" class="caption-action cursor link" [ngClass]="{'word-break' : isStartGTSTest}">{{a.link}}</span>
+                            </div>
+                            <div class="cursor custom-drop-down attach-drop-down popup">
+                                <div class="dynmic-selected-items" *ngIf="a.languageOptions && a.languageOptions.length > 0">
+                                    <div class="selected-items ws-selected-items tag-view">
+                                        <div *ngFor="let item of a.languageOptions; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="a.flagId == 8" class="cursor {{a.type}}" (click)="navUrlFile(a.previewId,a.previewTitle,a.downloadUrl); $event.stopPropagation();">
+                        <div class="attachment-col bg-col cursor" style="background-size: 70% !important;" [ngClass]="{'doc-bg' : (a.flagId > 2 && a.flagId < 6), 'image-width-margin': isStartGTSTest}" [ngStyle]="{'background-image': 'url(' + a.thumbFilePath + ')'}">
+                            <img class="hide" src="{{a.thumbFilePath}}" />
+                        </div>
+                        <div class="attachment-col cont-col">
+                            <div class="caption" *ngIf="!isStartGTSTest">
+                                <span title="{{a.fileCaption}}" class="caption-action" *ngIf="a.fileCaption != ''">{{a.fileCaption}}</span>
+                                <span title="{{a.fileName}}" class="caption-action" *ngIf="a.fileCaption == ''">{{a.fileName}}</span>
+                            </div>
+                            <div class="caption" *ngIf="isStartGTSTest">
+                                <span class="caption-action" [ngClass]="{'word-break' : isStartGTSTest}">{{a.originalName}}</span>
+                            </div>
+                            <div class="desc" title="{{a.originalName}}" *ngIf="!isStartGTSTest"><span class="o-name"> {{a.originalName}} </span><span [ngClass]="{'dot' : !isStartGTSTest}"></span> {{a.fileSize}}</div>
+                            <div class *ngIf="isStartGTSTest">
+                                <p>{{a.fileSize}}</p>
+                            </div>
+                            <div class="cursor custom-drop-down attach-drop-down popup">
+                                <div class="dynmic-selected-items" *ngIf="a.languageOptions.length > 0">
+                                    <div class="selected-items ws-selected-items tag-view">
+                                        <div *ngFor="let item of a.languageOptions; let t=index" class="tag-text ws-tag-text">
+                                            <span>{{item.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

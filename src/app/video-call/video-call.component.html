@@ -1,0 +1,114 @@
+<div
+  class="video-call on-call"
+  id="controls"
+  [ngStyle]="{
+    display: call.session && call.onCall && !call.rejoin && !call.joining ? 'block' : 'none'
+  }"
+>
+  <div class="call-popup h-100 d-flex flex-column">
+    <div
+      id="screenPublisherContainer"
+      class="h-100"
+      [ngStyle]="{ display: 'none', position: 'absolute' }"
+    ></div>
+    <div
+      id="screenSubscriberContainer"
+      class="h-100"
+      [ngStyle]="{ display: 'none' }"
+    ></div>
+
+    <div id="wrapper" [ngStyle]="getStyles()" class="h-100">
+      <div
+        class="d-flex justify-content-center align-items-center"
+        *ngFor="let stream of call.streams"
+      >
+        <app-app-subscriber
+          class="w-100 h-100"
+          [stream]="stream"
+          [session]="call.session"
+        ></app-app-subscriber>
+      </div>
+    </div>
+    <div class="publisher position-absolute" [ngStyle]="publisherStyle">
+      <div id="cameraPublisherContainer"></div>
+      <button
+        mat-mini-fab
+        color="warn"
+        class="bg-danger position-absolute"
+        [ngStyle]="{ transform: 'scale(0.7)' }"
+        (click)="toggleFullScreen()"
+      >
+        <mat-icon>
+          {{ call.isFullScreen ? "close_fullscreen" : "open_in_full" }}
+        </mat-icon>
+      </button>
+    </div>
+    <div class="w-100 action-buttons" [ngStyle]="{ zIndex: 100000000000000 }">
+      <div class="d-flex justify-content-end align-items-center flex-grow-1">
+        <button
+          mat-mini-fab
+          class="default"
+          matTooltip="Switch camera"
+          (click)="toggleCamera()"
+        >
+          <mat-icon>switch_video</mat-icon>
+        </button>
+        <button
+          mat-mini-fab
+          class="default"
+          [matTooltip]="call.publishAudio ? 'Disable mic' : 'Enable mic'"
+          matTooltipPosition="above"
+          (click)="call.toggleLocalAudio()"
+        >
+          <mat-icon>{{ call.publishAudio ? "mic" : "mic_off" }}</mat-icon>
+        </button>
+        <button
+          mat-mini-fab
+          class="default"
+          [matTooltip]="call.publishVideo ? 'Disable camera' : 'Enable camera'"
+          matTooltipPosition="above"
+          (click)="call.toggleLocalVideo()"
+        >
+          <mat-icon>
+            {{ call.publishVideo ? "videocam" : "videocam_off" }}
+          </mat-icon>
+        </button>
+        <button
+          mat-mini-fab
+          class="reject-call"
+          matTooltip="End call"
+          matTooltipPosition="above"
+          (click)="endCall()"
+        >
+          <mat-icon>call_end</mat-icon>
+        </button>
+        <button
+          mat-mini-fab
+          class="default"
+          [matTooltip]="
+            call.enableSharing ? 'Stop screen sharing' : 'Start screen sharing'
+          "
+          matTooltipPosition="above"
+          id="startScreenSharing"
+        >
+          <mat-icon>
+            {{ call.enableSharing ? "cancel_presentation" : "present_to_all" }}
+          </mat-icon>
+        </button>
+      </div>
+      <div
+        class="d-flex justify-content-end align-items-center"
+        [ngStyle]="{ flex: 1 }"
+      >
+        <button
+          mat-icon-button
+          class="default-text"
+          (click)="openActiveUsers()"
+        >
+          <mat-icon>group_add</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<app-rejoin-call [callEndedUserId]="callEndedUserId" *ngIf="call.rejoin || call.meetingEnded || call.joining"></app-rejoin-call>

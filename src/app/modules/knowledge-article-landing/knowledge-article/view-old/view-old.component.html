@@ -1,0 +1,145 @@
+<div *ngIf="loading" class="profile-loader"><img src="assets/images/loading.svg" alt="Loader" /></div>
+<div *ngIf="!loading">
+    <div class="th-error-div" *ngIf="knowledgeViewError">
+        <div class="error-msg">{{knowledgeViewErrorMsg}}</div>
+    </div>
+    <div *ngIf="!knowledgeViewError">
+        <div id="header" *ngIf="headerData != undefined">
+            <app-thread-detail-header [pageData]="headerData" (threadHeaderActionEmit)="threadHeaderAction($event)">
+            </app-thread-detail-header>
+        </div>
+        <div class="thread-detail-section">
+            <div class="th-outer-col th-outer-col-1"></div>
+            <div class="th-outer-col th-outer-col-2"
+                [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel}">
+                <div class="flex-row ">
+                    <div class="flex-col rel "
+                        [style.height.px]="midHeight" [perfectScrollbar]="sconfig">
+                        <div class="left__view" >
+                            <div class="ps_relative">
+                                <div *ngIf="knowledgeViewData.isDefaultImgStr=='1'">
+                                    <div class="bg__img"></div>
+
+                                    <img class="baner_img" src="assets/images/knowledge-article-view-title.png">
+                                </div>
+                                <div *ngIf="knowledgeViewData.isDefaultImgStr!='1'">
+                                    <img [src]="knowledgeViewData.bannerImage" class="knowledge_bannerImg" [ngClass]="{'cover': knowledgeViewData.bannerOption == 1, 'contain': knowledgeViewData.bannerOption == 0}">
+                                </div>
+                                <div class="knowledge_profileImgDiv" (click)="taponprofileclick(knowledgeViewData.userId)">
+                                    <img [src]="knowledgeViewData.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" class="knowledge_profileImg">
+                                </div>
+                                <div class="ka_user_details">
+                                    <span class="ka_username" (click)="taponprofileclick(knowledgeViewData.userId)"> {{knowledgeViewData.userName}},</span>
+                                    <span class="ka_userRole"> {{knowledgeViewData.userRole}}</span>
+                                </div>
+                            </div>
+
+
+                            <div class="created_date">
+                                {{knowledgeViewData.createdOn}}
+                            </div>
+                            <div class="knowledge_article_title">
+                                {{knowledgeViewData.threadTitle}}
+                            </div>
+                            
+                            <app-application [accordionList]="accordionList" [applicationList]="appList"
+                                *ngIf="showApplication">
+                            </app-application>
+
+                            <div class="knowledge_view__description">
+                                <div class="">
+                                    <span><img src="assets/images/document.png"></span>
+                                    <span class="description_text"> Description</span>
+                                </div>
+                                <div class="desc_main desc_main-text" [innerHTML]="knowledgeViewData.description"></div>
+                            </div>
+                            <div>
+                                <app-tag-view [tagItems]="knowledgeViewData.tagsNames" [isKnowledgeArticle]="true"></app-tag-view>
+                            </div>
+                            <div class="tag-info catg-info" *ngIf="catgOptions.length>0">
+                                <div class="tags">
+                                    <span class="list-txt catg-txt">Category</span>
+                                    <div><span class="tag-list" *ngFor="let list of knowledgeViewData.categoryOptions; let i=index">{{list.name}}</span></div>
+                                </div>
+                            </div>                            
+                            <div class="reference-info ka-info">
+                                <app-attachment-view *ngIf="!attachmentLoading" [loading]="attachmentLoading" [action]="action" [attachments]="attachments"></app-attachment-view>
+                            </div>
+                        </div>
+                        <div class="knowledge_view__icons">
+                            <div class="footer-selection">
+                                <div class="flex-row">
+                                    <div class="lft like-small pl-1r" >
+                                        <span class="lft footer-icon" >
+                                            <img [ngClass]="{'disable': disableLikeFlag}" (click)="socialAction('like', likeStatus)" src="{{assetPartPath}}{{likeImg}}" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer" *ngIf="knowledgeViewData.likeCount">{{knowledgeViewData.likeCount}}</span>
+                                        <span class="lft text-color-footer" *ngIf="!knowledgeViewData.likeCount">-</span>
+
+                                    </div>
+                                    <div class="lft pin-small pl-1r" >
+                                        <span class="lft footer-icon" >
+                                            <img src="{{assetPartPath}}{{pinImg}}" (click)="socialAction('pin', pinStatus)" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer" *ngIf="knowledgeViewData.pinCount">{{knowledgeViewData.pinCount}}</span>
+                                        <span class="lft text-color-footer" *ngIf="!knowledgeViewData.pinCount"> -</span>
+                                    </div>
+                                    <div class="lft view-small pl-1r" *ngIf="knowledgeViewData.viewCount">
+                                        <span class="lft footer-icon">
+                                            <img src="assets/images/workstreams-page/view-icon.svg" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer" *ngIf="knowledgeViewData.viewCount">{{knowledgeViewData.viewCount}}</span>
+                                        <span class="lft text-color-footer" *ngIf="!knowledgeViewData.viewCount">-</span>
+
+                                    </div>
+                                    <div class="lft view-reply" *ngIf="knowledgeViewData.replyCount">
+                                        <span class="lft footer-icon">
+                                            <img src="assets/images/workstreams-page/comment-icon.svg" alt="Loader" />
+                                        </span>
+                                        <span class="lft text-color-footer">{{knowledgeViewData.replyCount}}</span>
+                                    </div>
+
+
+                                    <div class="rht close-small" *ngIf="knowledgeViewData.closeStatus">
+                                        <span class="lft footer-icon">
+                                            <img class="footer-bulb-icon"
+                                                src="assets/images/workstreams-page/close_icon.svg" alt="Loader" />
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right__view">
+                        <div class="knowledge_view__editedOn" *ngIf="showUpdatedOn">
+                            <span><img class="img_16" src="assets/images/knowledge-article-calendar.png"></span>
+                            <span class="pl_9"> Edited On</span>
+
+                        </div>
+                        <div class="knowledge_view__editedOnText desc_main" *ngIf="showUpdatedOn">
+                            {{knowledgeViewData.updatedOn }}
+                        </div>
+                         <div class="knowledge_view__editedBy" *ngIf="knowledgeViewData.updatedBy!=''">
+                            <span><img class="img_16 user-icon" src="assets/images/knowledge-article-user-icon-visible.png"></span>
+                            <span class="pl_6"> Edited By </span>
+                        </div>
+                        <div class="knowledge_view__editedByText desc_main" *ngIf="knowledgeViewData.updatedBy!=''">
+                            {{knowledgeViewData.updatedBy}}
+                        </div>
+                       </div>
+                </div>
+            </div>
+            <div class="th-outer-col th-outer-col-3"
+                [ngClass]="{'col-expand': rightPanel, 'col-collapse': !rightPanel}">
+                <div class="cust-right-panel"
+                    [ngClass]="{'right-panel-expand': rightPanel, 'right-panel-collapse': !rightPanel}">
+                    <app-domain-members></app-domain-members>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+</div>

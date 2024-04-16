@@ -1,0 +1,273 @@
+<div class="dash-head">
+  <app-dashboard-header *ngIf="!headerFlag" [pageData]="headerData"></app-dashboard-header>
+  <app-dashboard-header *ngIf="headerFlag" [pageData]="headerData"></app-dashboard-header>
+</div>
+<div class="dashboard-content" [ngClass]="{ 'filter-collapse': !expandFlag, 'filter-expand': expandFlag }">
+  <div class="dashboard-charts detail-chart da-chart">
+    <div class="row col-lg-12 col-md-12 col-sm-12 chart-row pt-0">
+      <mat-accordion class="w-100">
+        <mat-expansion-panel [expanded]="panelOpenState" (opened)="updateState(true)" (closed)="updateState(false)">
+          <mat-expansion-panel-header class="h-50 mb-0">
+            <mat-panel-title> Open & Close Thread Status </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="row">
+            <div class="
+                col-lg-6 col-md-6 col-sm-12
+                p-0
+                dash-chart-col
+                col-split-left
+                border-right border-dark
+              ">
+              <div class="thread-chart-col">
+                <div class="chart-head thread-chart-head d-flex align-items-center justify-content-between" [ngStyle]="{padding:'10px'}">
+                  <div class="thread-head-col text-left">
+                    Open threads for {{ startDate }} - {{endDate}}
+                  </div>
+                  <div class="all-thread" [ngClass]="{ active: allOpenThreadFlag }"
+                    (click)="setAllThreads('open')">
+                    All Open Threads
+                  </div>
+                </div>
+                <div class="chart-cont thread-cont">
+                  <div class="chart-area open-thread-chart">
+                    <div *ngIf="openThreadLoading" class="loader dash-loader">
+                      <img src="assets/images/blue-loading.svg" alt="Loader" />
+                    </div>
+                    <div *ngIf="!openThreadLoading && !openThreadAvail" class="empty-chart text-center" style="color: #7b849b;">
+                      <img src="assets/images/dashboard/empty-chart.png" alt="Empty Chart" /><br />
+                      No Data
+                    </div>
+                    <app-open-thread-chart *ngIf="!openThreadLoading && openThreadAvail" [chartData]="openThreadData"
+                      [chartOptions]="openThreadOptions" (threadType)="setThreadType($event)"></app-open-thread-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="
+                col-lg-6 col-md-6 col-sm-12
+                p-0
+                dash-chart-col
+                col-split-right
+              ">
+              <div class="thread-chart-col">
+                <div class="chart-head thread-chart-head d-flex align-items-center justify-content-between">
+                  <div class="thread-head-col text-left">
+                    Closed threads for {{ startDate }} - {{endDate}}
+                  </div>
+                  <div class="all-thread" [ngClass]="{ active: allClosedThreadFlag }"
+                    (click)="setAllThreads('closed')">
+                    All Closed Threads
+                  </div>
+                </div>
+                <div class="chart-cont thread-cont">
+                  <div class="chart-area open-thread-chart">
+                    <div *ngIf="closedThreadLoading" class="loader dash-loader">
+                      <img src="assets/images/blue-loading.svg" alt="Loader" />
+                    </div>
+                    <div *ngIf="!closedThreadLoading && !closedThreadAvail" class="empty-chart text-center">
+                      <img src="assets/images/dashboard/empty-chart.png" alt="Empty Chart" /><br />
+                      No Data
+                    </div>
+                    <app-closed-thread-chart *ngIf="!closedThreadLoading && closedThreadAvail"
+                      [chartData]="closedThreadData" [chartOptions]="closedThreadOptions"
+                      (threadType)="setThreadType($event)"></app-closed-thread-chart>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div class="thread-table">
+      <div class="thread-title">
+        <div class="thread-head-col">
+          <span *ngIf="displayType">
+            {{ threadType | titlecase }} {{ threadTitle }} Threads
+          </span>
+          <span *ngIf="!displayType">
+           {{ threadTitle }} Threads
+          </span>
+        </div>
+        <div class="thread-head-col text-right thread-search-col">
+          <span class="search-div" [ngClass]="{
+              'search-filter search-btn': searchClose || searchTick
+            }">
+            <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+              <a *ngIf="!searchTick && !searchClose" class="search-icon"><img alt="Search"
+                  src="assets/images/dashboard/search-icon.png" /></a>
+              <input type="text" class="form-control search-control" value="{{ searchVal }}" id="searchKey"
+                formControlName="searchKey" maxlength="50" placeholder="Search"
+                (input)="onSearchChange($event.target.value)"
+                [ngClass]="{ 'is-invalid': submitted && f.searchKey.errors }" />
+              <!--div *ngIf="submitted && f.searchKey.errors" class="invalid-feedback page-error-text">
+                                <div *ngIf="f.searchKey.errors.required">Please enter search keyword</div>
+                            </div-->
+              <a *ngIf="searchClose" class="search-actions search-close" (click)="clearSearch()"><img alt="Search Close"
+                  src="assets/images/dashboard/close.png" /></a>
+              <a *ngIf="searchTick" class="search-actions search-tick" (click)="submitSearch()"><img alt="Search"
+                  src="assets/images/dashboard/search-icon.png" /></a>
+            </form>
+          </span>
+        </div>
+      </div>
+      <div class="scrollbar scrollbar-primary thin thread-list" [ngClass]="{
+          'thread-list-loading': threadTableLoading
+        }" [style.height.px]="innerHeightnew" (scroll)="onScroll($event)">
+        <!--[style.height.px]="innerHeightnew"-->
+        <div *ngIf="threadTableLoading" class="thread-loader text-center">
+          <img src="assets/images/blue-loading.svg" alt="Loader" />
+        </div>
+        <div *ngIf="!threadTableLoading && !threadListAvail" class="empty-chart text-center">
+          <img src="assets/images/dashboard/empty-chart.png" alt="Empty Chart" /><br />
+          No Data
+        </div>
+        <table *ngIf="!threadTableLoading && threadListAvail" [ngClass]="threadType == 'open' ? 'open' : 'closed'"
+          class="w-100">
+          <thead class="thread-header black white-text">
+            <tr *ngIf="threadType == 'open'">
+              <th *ngFor="let head of openHeadElements" class="{{ head.class }}" scope="col">
+                <span>{{ head.title }}</span>
+                <span *ngIf="head.info" title="{{ head.infoTxt }}"><img src="assets/images/dashboard/info-icon.png"
+                    alt="Info" /></span>
+              </th>
+            </tr>
+            <tr *ngIf="threadType == 'closed'">
+              <th *ngFor="let chead of closedHeadElements" class="{{ chead.class }}" scope="col">
+                <span>{{ chead.title }}</span>
+                <span *ngIf="chead.info" title="{{ chead.infoTxt }}"><img src="assets/images/dashboard/info-icon.png"
+                    alt="Info" /></span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="thread-items">
+            <tr *ngFor="let thread of threadElements">
+              <ng-template #prodCont>
+                <div *ngIf="thread.prodOwnerEmail != ''" class="contact-info mail">
+                  <span>{{ thread.prodOwnerEmail }}</span>
+                </div>
+                <div *ngIf="thread.prodOwnerPhone != ''" class="contact-info phone">
+                  <span>{{ thread.prodOwnerPhone }}</span>
+                </div>
+              </ng-template>
+              <ng-template #tmCont>
+                <div *ngIf="thread.tmEmail != ''" class="contact-info mail">
+                  <span>{{ thread.tmEmail }}</span>
+                </div>
+                <div *ngIf="thread.tmPhone != ''" class="contact-info phone">
+                  <span>{{ thread.tmPhone }}</span>
+                </div>
+              </ng-template>
+              <th scope="row" [ngClass]="{ sticky: !isCollabtic }">
+                <div *ngIf="isCollabtic" class="dealer-name text-elipse" title="{{ thread.threadOwner }}" [ngStyle]="{
+                    'border-left': '1px solid' + thread.thread_status_color
+                  }">
+                  {{ thread.threadOwner }}
+                </div>
+                <div *ngIf="!isCollabtic" class="dealer-name text-elipse" title="{{ thread.dealerName }}" [ngStyle]="{
+                    'border-left': '1px solid' + thread.thread_status_color
+                  }">
+                {{ thread.dealerName }}
+                </div>
+              </th>
+              <td *ngIf="!isCollabtic" scope="row" class="sticky td-sticky">
+                {{ thread.dealerCode }}
+              </td>
+              <td *ngIf="!isCollabtic">{{ thread.zone }}</td>
+              <td *ngIf="!isCollabtic">{{ thread.userarea }}</td>
+              <td *ngIf="!isCollabtic">{{ thread.territory }}</td>
+              <td *ngIf="!isCollabtic">
+                <div class="cursor custom-pop" popoverClass="custom-tooltip" [ngbPopover]="prodCont"
+                  popoverTitle="{{ thread.assigneeFirstLastname }}" placement="right">
+                  {{ thread.assigneeFirstLastname }}
+                </div>
+              </td>
+              <td *ngIf="!isCollabtic">
+                <div class="cursor custom-pop" popoverClass="custom-tooltip" [ngbPopover]="tmCont"
+                  popoverTitle="{{ thread.tmName }}" placement="right">
+                  {{ thread.tmName }}
+                </div>
+              </td>
+              <td>{{ thread.assignedUser }}</td>
+              <td>
+                <div class="text-elipse" title="{{ thread.model }}>{{ thread.year }}">
+                  {{ thread.model }} {{thread.year ? ' > ' + thread.year : ''}}
+                </div>
+              </td>
+              <td *ngIf="!isCollabtic">{{ thread.frameNo }}</td>
+              <td *ngIf="!isCollabtic">{{ thread.odoMeter }}</td>
+              <td>
+                <div class="text-elipse" title="{{ thread.title }}">
+                  {{ thread.title }}
+                </div>
+              </td>
+              <!-- <td>
+                <div class="text-elipse" title="{{ thread.error_code }}">
+                  {{ thread.error_code }}
+                </div>
+              </td> -->
+              <td>{{ thread.created_on }}</td>
+              <td>{{ thread.threadFixDate }}</td>
+              <td>{{ thread.timeToFix }}</td>
+              <td *ngIf="!isCollabtic">
+                <div class="text-elipse" title="{{ thread.description }}" [innerHTML]="thread.description"></div>
+              </td>
+              <td *ngIf="isCollabtic">  {{ thread.firstReplyFromEmp }}
+                </td>
+                <td *ngIf="isCollabtic">
+                  {{ thread.firstReplyTime }}
+                  
+                </td>
+                <td *ngIf="isCollabtic && this.threadType == 'closed'">
+                  {{ thread.close_date }}
+                </td>
+               
+                <td *ngIf="this.threadType == 'closed' && isCollabtic" class="text-center">
+                  {{ thread.timeToClose }}
+                </td>
+              <td class="thread-status">
+                <span [ngStyle]="{ 'background-color': thread.thread_status_color }">{{ thread.thread_status | titlecase
+                  }}</span>
+              </td>
+              <td *ngIf="!isCollabtic" class="text-center">
+                {{ thread.escalate_status_land }}
+              </td>
+              <td *ngIf="!isCollabtic">{{ thread.proposedFix_createdOn }}</td>
+              <!--<td  [innerHTML]="thread.proposedFix_content"> </td>-->
+              <td *ngIf="!isCollabtic" class="text-center">
+                {{ thread.firstReplyFromEmp }}
+              </td>
+              <td class="text-center thread-id">
+                <a *ngIf="isCollabtic" href="{{ mahlewebURL }}/threads/{{viewPath}}/{{
+                  thread.thread_id
+                }}">{{ thread.thread_id }}</a>
+                <a *ngIf="!isCollabtic" href="{{ mahlewebURL }}/threads/view/{{
+                    thread.thread_id
+                  }}">{{ thread.thread_id }}</a>
+              </td>
+              <td *ngIf="!isCollabtic && this.threadType == 'closed'">
+                {{ thread.close_date }}
+              </td>
+              <td *ngIf="!isCollabtic" class="text-center">
+                {{ thread.timeToRespond }}
+              </td>
+              <td *ngIf="this.threadType == 'closed' && !isCollabtic" class="text-center">
+                {{ thread.timeToClose }}
+              </td>
+              <td *ngIf="!isCollabtic" class="text-center">
+                {{ thread.feedbackStatus }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dash-filter" [ngClass]="{ 'filter-expand': expandFlag, 'filter-collapse': !expandFlag }">
+  <app-dash-filter *ngIf="filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+    (filterAction)="applyFilter($event)"></app-dash-filter>
+  <app-dash-filter *ngIf="!filterLoading" (toggle)="expandAction($event)" [filterOptions]="filterOptions"
+    (filterAction)="applyFilter($event)"></app-dash-filter>
+</div>

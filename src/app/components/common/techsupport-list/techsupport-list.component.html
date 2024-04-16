@@ -1,0 +1,189 @@
+<div align="center" #listDiv class="container-fluid thread-page-container thread-list-page-container" align="center" style="margin: 0 auto;" >
+    
+    <div class="thread-container" [style.height]="'calc(100vh - '+rmHeight+'px)'">        
+        <div #top align="center" id="thread-data-container" class="row row-data thread-scroll-container" [ngClass]="{'opacity': opacityFlag}" [perfectScrollbar]="sconfig" (scroll)="onScroll($event)">        
+            <div *ngIf="!loadingthread && (displayNoRecords || displayNoRecordsDefault)" class="no-item-list no-res-list text-center">
+                <app-empty-container [redirectionPage]="redirectionPage" [pageTitleText]="pageTitleText" [showType]="displayNoRecordsShow" [newPartInformation]="newThreadInfo" [contentTypeDefaultNewImg]="contentTypeDefaultNewImg" [contentTypeValue]="contentTypeValue" [contentTypeDefaultNewText]="contentTypeDefaultNewText" [contentTypeDefaultNewTextDisabled]="contentTypeDefaultNewTextDisabled" [actionUrl]="createThreadUrl"></app-empty-container>
+            </div>            
+            <div class="loading-small-screen-scroll trst" align="center" *ngIf="loadingthread && !centerloading && !hideFlag" ><img src="assets/images/loading.svg" alt="Loader" /></div>
+            <div >                
+                <div >            
+                    <div class="prob-list-cont ">
+                        <div class="inner-container1 mat-inner-container1 documents-grid-row documents-grid-row-new" [style.height.px]="listHeight">
+                            <div *ngIf="!displayNoRecords && !displayNoRecordsDefault" id="matrixTable" class="mat-elevation-z8 gts-mat-table matrix-table parts-mat-table parts-mat-table-ts">
+                                <p-table #table [columns]="cols" [scrollable]="true" [totalRecords]="threadListArray.length" id="file-datatable" [ngClass]="{'opacity': opacityFlag}" class="file-datatable thread-list-table" [value]="threadListArray" [scrollHeight]="pTableHeight" (scroll)="scroll($event)">
+                                    <ng-template pTemplate="header" let-columns>
+                                        <tr *ngIf="threadListArray.length>0" >
+                                            <th *ngFor="let col of columns" class="{{col.columnpclass}}">
+                                                <span *ngIf="col.checkbox" class="checkbox {{headercheckDisplay}} {{headerCheck}}" (click)="techsupportSelection('all', 0, 0, headerCheck);$event.stopPropagation();"></span>    
+                                                {{col.header}}
+                                                <!--span *ngIf="col.field == 'createdOn' || col.field == 'id'"><p-sortIcon [field]="col.field"></p-sortIcon></span-->
+                                            </th>
+                                        </tr>
+                                    </ng-template>
+                                    <ng-template pTemplate="body" let-threadListArray let-i="rowIndex">
+                                        <tr class="cursor" id="{{threadListArray.threadId}}">                                                        
+                                            <td class="tsw1 setPadding thl-col-1 col-sticky {{threadListArray.newNotificationState}}" (mouseenter)="t.close();" (click)="t.close();threadClick(threadListArray, $event);">
+                                                <!--span class="hide p-table-col" title="{{threadListArray.userName}}">{{threadListArray.userName}}</span-->
+                                                <div class="thread-bg thread-bg-no-margin p-table-col">
+                                                    <div class="profile-container" (mouseenter)="t.close();">
+                                                        <div class="profileimg-container no-padding">
+                                                            <div class="profile-left-container list-profile-left-container profile-left-container-no-margin" >
+                                                                <div class="tooltipUseDiv" >  
+                                                                    <div class="tooltipUseDivInner listtt listtt-tclist" (mouseenter)="t.close();getUserProfileStatus(threadListArray.threadUserId,i);t.open();$event.stopPropagation();"></div>                                                        
+                                                                    <div class="tooltipLeave tooltipLeave-tclist" (mouseleave)="t.close();" ></div> 
+                                                                    <span class="checkbox" [ngClass]="{'active': threadListArray.checkFlag, 'inactive': !threadListArray.checkFlag}" (click)="techsupportSelection('single', i, threadListArray.threadId, !threadListArray.checkFlag);$event.stopPropagation();"></span> 
+                                                                    <img tooltipClass="profile-tooltip" container="body" triggers="manual" #t="ngbTooltip" [openDelay]="1000" [autoClose]="'outside'" placement="top-left" [ngbTooltip]="profileTT" class="profileImg {{threadListArray.badgeTopUser}}" [src]="threadListArray.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'" />
+                                                                </div>                                                               
+                                                                <!---<img class="profileImg" [src]="threadListArray.profileImage" onerror="this.src='assets/images/thumb_profile_image.png'"/>
+                                                                <span class="list-availability-status availability-status availability-status{{threadListArray.availability}}"></span>-->
+                                                            </div>
+                                                            <ng-template #profileTT  >
+                                                                <div (mouseleave)="t.close();" class="edit-history-div visibilityHidden" [ngClass]="{ 'visibilityVisible' : threadListArray.profileShow } ">
+                                                                    <div class="table-row2">
+                                                                        <div class="profile-tt-row">
+                                                                            <div class="profile-tt-col-lt profile-status-tt">
+                                                                                <img class="" src="assets/images/thread/profile-status-{{threadListArray.availability}}.svg"/>
+                                                                            </div>
+                                                                            <div class="profile-tt-col-rt">                                                                        
+                                                                                <p class="profile-text-tt">{{threadListArray.availabilityStatusName}}</p>      
+                                                                            </div> 
+                                                                        </div>
+                                                                        <div class="line"></div>
+                                                                        <div class="profile-tt-row cursor-pointer" (click)="taponprofileclick(threadListArray.threadUserId);$event.stopPropagation();">
+                                                                            <div class="profile-tt-col-lt">
+                                                                                <img src="assets/images/thread-detail/tooltip-viewprofile.png" />
+                                                                            </div>
+                                                                            <div class="profile-tt-col-rt">                                                                        
+                                                                                <p class="profile-text-tt">View Profile</p>      
+                                                                            </div> 
+                                                                        </div>
+                                                                    </div>  
+                                                                </div>    
+                                                            </ng-template>
+                                                            <div class="profile-right-container">
+                                                                <div class="user-name" title="{{threadListArray.userName}}">  
+                                                                    {{threadListArray.userName}}
+                                                                </div>
+                                                                <!--div class="buss-title" title="{{threadListArray.badgeStatus}}">
+                                                                    {{threadListArray.badgeStatus}}
+                                                                </div>
+                                                                <div class="buss-title posted-from" [ngClass]="{'no-title': threadListArray.badgeStatus == ''}" title="{{threadListArray.postedFrom}}">
+                                                                    {{threadListArray.postedFrom}}
+                                                                </div-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="tsw2 setPadding thl-col-2 col-sticky" (click)="threadClick(threadListArray, $event);"><span class="p-table-col" title="{{threadListArray.threadTitle}}">{{threadListArray.threadTitle}}</span></td>
+                                            <td *ngIf="!diagnationDomain" class="tsw3 setPadding thl-col-3" (click)="threadClick(threadListArray, $event);">
+                                                <div *ngIf="threadListArray.curentDtclength" class="dtcCodedesc">
+                                                    <div *ngFor ="let dtcInfo of threadListArray.currentDtc; let i=index">
+                                                        <div *ngIf="i=='0'" style="height: 21px;">
+                                                            <!--span class="dtcInfo-icon dtcInfo-icon-new active" [ngClass]="{'engine-icon': industryType.id == 2}">
+                                                                <img class="dtc" [ngClass]="{'engine-dtc': industryType.id == 2}" src="{{errorDtcActiveIcon}}" alt="Loader" onload="SVGInject(this)" />
+                                                            </span-->
+                                                            <span style="max-width: 90%;" class="dtcInfo-code list-dtc" title="{{dtcInfo.code}} {{dtcInfo.description}}">{{dtcInfo.code}}</span>
+                                                            <!--span class="dtcInfo-desc" title="{{dtcInfo.description}}" *ngIf="dtcInfo.description"> - {{dtcInfo.description}}</span-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div *ngIf="!threadListArray.curentDtclength" class="dtcCodedesc">
+                                                    <!--span class="dtcInfo-icon dtcInfo-icon-new">
+                                                        <img class="dtc " [ngClass]="{'engine-dtc': industryType.id == 2}" src="{{errorDtcActiveIcon}}" alt="Loader" onload="SVGInject(this)" />
+                                                    </span-->
+                                                    <span class="dtcInfo-noerrorcode" style="color:#252b3b">-</span>  
+                                                </div>
+                                            </td>
+                                            <!--<td *ngIf="diagnationDomain" class="tsw3 setPadding thl-col-3" (click)="threadClick(threadListArray, $event);"><span class="p-table-col" title="{{threadListArray.workOrderCreatedOnDateFormat}}">{{threadListArray.workOrderCreatedOnDateFormat}}</span></td>-->
+                                            <td class="tsw4 setPadding thl-col-4" (click)="threadClick(threadListArray, $event);"><span class="p-table-col" title="{{threadListArray.threadId}}">{{threadListArray.threadId}}</span></td>
+                                            <td class="tsw5 setPadding thl-col-5" (click)="threadClick(threadListArray, $event);">
+                                                <span *ngIf="collabticDomain && threadListArray.threadCategoryStr == 7">-</span>
+                                                <span *ngIf="industryType.id != 2 && threadListArray.threadCategoryStr != 7" class="p-table-col" title="{{threadListArray.make}}, {{threadListArray.model}}">
+                                                    <span >{{threadListArray.make}}</span>
+                                                    <span *ngIf="threadListArray.model != ''" >, {{threadListArray.model}}</span>                                                    
+                                                </span>
+                                                <span *ngIf="industryType.id == 2 && threadListArray.threadCategoryStr != 7" class="p-table-col" title="{{threadListArray.make}}, {{threadListArray.model}}, {{threadListArray.year}}">
+                                                    <span >{{threadListArray.make}}</span>
+                                                    <span *ngIf="threadListArray.model != ''" >, {{threadListArray.model}}</span>
+                                                    <span *ngIf="threadListArray.year != ''" >, {{threadListArray.year}}</span>
+                                                </span>
+                                            </td>
+                                            <td class="tsw6 setPadding thl-col-6" (click)="threadClick(threadListArray, $event);"><span class="p-table-col" title="{{threadListArray.cdate}}">{{threadListArray.listCreatedOn}}</span></td>
+                                            <td class="tsw7 setPadding thl-col-7" (click)="threadClick(threadListArray, $event);"><span class="p-table-col" title="{{threadListArray.udate}}">{{threadListArray.listUpdatedOn}}</span></td>
+                                            <td class="tsw8 setPadding thl-col-8" (click)="threadClick(threadListArray, $event);"><span class="p-table-col" title="{{threadListArray.eLevel}}">{{threadListArray.eLevel}}</span></td>
+                                            <!-- <td class="w8 setPadding thl-col-8" (click)="threadClick(threadListArray, $event);">
+                                                <span class="fix-status-col text-center">
+                                                    <span class="rht bulb-small" [title]="shareFixTxt" *ngIf="threadListArray.shareFix">
+                                                        <span class="lft footer-icon">
+                                                            <img class="footer-bulb-icon" src="assets/images/workstreams-page/shareFix-icon.svg" alt="Loader" />
+                                                        </span> 
+                                                    </span>
+                                                    <span class="rht bulb-small"  [title]="proposedFixTxt" *ngIf="!threadListArray.shareFix && threadListArray.fixStatus=='yes' && threadListArray.fixPostStatus=='0'">
+                                                        <span class="lft footer-icon">
+                                                            <img class="footer-bulb-icon" src="assets/images/workstreams-page/gray-bulb-icon.svg" alt="Loader" />
+                                                        </span> 
+                                                    </span> 
+                                                    <span class="rht bulb-small"  [title]="threadwithFixTxt" *ngIf="!threadListArray.shareFix && threadListArray.fixStatus=='yes' && threadListArray.fixPostStatus=='1'">
+                                                        <span class="lft footer-icon">
+                                                            <img class="footer-bulb-icon" src="assets/images/workstreams-page/green-bulb-icon.svg" alt="Loader" />
+                                                        </span> 
+                                                    </span> 
+                                                    <span class="rht bulb-small"  [title]="threadwithHelpfulFixTxt" *ngIf="!threadListArray.shareFix && threadListArray.fixStatus=='yes' && threadListArray.fixPostStatus=='2'">
+                                                        <span class="lft footer-icon">
+                                                            <img class="footer-bulb-icon" src="assets/images/workstreams-page/yellow-bulb-icon.svg" alt="Loader" />
+                                                        </span> 
+                                                    </span> 
+                                                    <span class="rht bulb-small"  [title]="threadwithNotFixTxt" *ngIf="!threadListArray.shareFix && threadListArray.fixStatus=='yes' && threadListArray.fixPostStatus=='3'">
+                                                        <span class="lft footer-icon">
+                                                            <img class="footer-bulb-icon" src="assets/images/workstreams-page/red-bulb-icon.svg" alt="Loader" />
+                                                        </span> 
+                                                    </span>
+                                                    <span class="rht close-small"  [title]="threadCloseTxtTxt" *ngIf="threadListArray.closeStatus">
+                                                        <span class="lft footer-icon">
+                                                            <img class="footer-bulb-icon" src="assets/images/workstreams-page/close_icon.svg" alt="Loader" />
+                                                        </span> 
+                                                    </span> 
+                                                    <span *ngIf="threadListArray.closeStatus == 0 && !threadListArray.shareFix && threadListArray.fixStatus=='no'">-</span>
+                                                </span>
+                                            </td>-->
+                                            <td class="tsw9 setPadding thl-col-9 status-col col-sticky">
+                                                <span class="p-table-col" title="{{threadListArray.threadStatus}}">
+                                                    <div class="status thread-status" [style.background-color]="threadListArray.threadStatusBgColor">
+                                                        <div [style.color]="threadListArray.threadStatusColorValue" title="{{threadListArray.threadStatus}}" >{{threadListArray.threadStatus}}</div>
+                                                    </div> 
+                                                    <div id="more" class="more-icon" #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu">
+                                                        <!-- <img src="assets/images/more-icon.png" alt="Action" /> -->
+                                                        <img src="assets/images/more-icon.svg" alt="Action" onload="SVGInject(this)" />
+                                                    </div>
+                                                    <mat-toolbar color="primary" >
+                                                        <mat-menu #menu="matMenu" backdropClass="ptabletmenu">
+                                                            <div class="part-menu">
+                                                                <ul class="more-actions">
+                                                                    <li class="cursor" *ngIf="((ticketStatus == '1' && teamMemberId == userId) || (teamMemberId != userId)) && techSupportUserFlag" (click)="actionStatus(threadListArray, 'assignme');$event.stopPropagation();"><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to me</li>
+                                                                    <li class="cursor" (click)="menuTrigger.closeMenu();actionStatus(threadListArray, 'assignmember');$event.stopPropagation();"><img src="assets/images/tech-support/tech-support-assign.png" alt="View">&nbsp;&nbsp;Assign to team member</li>
+                                                                    <li class="cursor" *ngIf="threadListArray.closeAccess" (click)="menuTrigger.closeMenu();actionStatus(threadListArray, 'close');$event.stopPropagation();"><img src="assets/images/tech-support/tech-support-close.png" alt="View">&nbsp;&nbsp;Close</li>
+                                                                    <li class="cursor" *ngIf="threadListArray.deleteAccess" (click)="menuTrigger.closeMenu();actionStatus(threadListArray, 'delete');$event.stopPropagation();"><img src="assets/images/tech-support/tech-support-delete.png" alt="View">&nbsp;&nbsp;Delete</li>
+                                                                </ul>
+                                                            </div>
+                                                        </mat-menu>
+                                                    </mat-toolbar>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </ng-template>
+                                </p-table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div align="center" class="thread-loading-text " *ngIf="loadingthreadmore">loading..</div>-->
+</div>
+<div align="center" class="thread-loading-text bottom-loading" *ngIf="loadingthreadmore || centerloading"><img src="assets/images/landing-page/loading-more.svg" alt="Loader" /></div>
+<!--div align="center" class="thread-loading-text bottom-loading" *ngIf="!loadingthread && !displayNoRecords && nothingtoshow" style="color:#797777;font-size: 14px;top:0px;font-style: italic;">  </div-->
+
+ 
